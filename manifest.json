@@ -1,0 +1,17 @@
+{
+  "name": "RightMindMath",
+  "short_name": "RightMindMath",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#34495e",
+  "description": "Learn Basic Arithmetic",
+  "theme_color": "#34495e",
+  "icons": [
+    {
+      "src": "/static/html/mfapp_logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

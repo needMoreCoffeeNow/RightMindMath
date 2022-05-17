@@ -1,2 +1,2 @@
-# RightMindMath
-Right Mind Math
+# RightMindMath : Learn Simple Arithmetic
+
