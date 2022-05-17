@@ -61,8 +61,8 @@ var RMM_ASM = (function() {
     var carries = {0:0, 1:0, 2:0 }; // key=2 just for symmetry
     // in borrows only gives0, gives2, gets2, gets1 will get non-zero values
     // others keys are there to support building key reference with col value
-    var borrows = {'gives0':0, 'gets0':0, 
-                   'gives1':0, 'gets1':0, 
+    var borrows = {'gives0':0, 'gets0':0,
+                   'gives1':0, 'gets1':0,
                    'gives2':0, 'gets2':0};
     // multiply m1 controls
     var m1_digit = 0; // selected 1-9 by user else 0 (randomized)
