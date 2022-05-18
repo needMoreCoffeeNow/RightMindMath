@@ -1,7 +1,15 @@
 .DS_Store
 .gitignore
-*.py[cod]
 *.swp
+*.py[cod]
+sync_post_production_GET.py
+sync_post_production.py
+z_sync_get.py
+z_sync_post.py
+z_sync_post2.py
+z_sync_post3.py
+z_sync_read.py
+z_sync_test.py
 response.html
 __pycache__
 header-files-work.vim
