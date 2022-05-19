@@ -41,7 +41,7 @@ var RMM_DB = (function() {
             transactionInit();
             timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
             console.log('init open next');
-            req = window.indexedDB.open('mfapp_db', VERSION);
+            req = window.indexedDB.open('rmm_db', VERSION);
             req.onsuccess = dbhandleOpenSuccess;
             req.onerror = dbhandleOpenError;
             req.onupgradeneeded = dbhandleOpenUpgrade;

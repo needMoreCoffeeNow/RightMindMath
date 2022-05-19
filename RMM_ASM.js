@@ -92,6 +92,8 @@ var RMM_ASM = (function() {
         var slash_num_1 = mydoc.getElementById('asm_bc_1_slash_num');
         var slash_num_2 = mydoc.getElementById('asm_bc_2_slash_num');
         var spath = pathTransform(getSyms('slash'), 'borrow_carry_slash_num');
+        // log user agent string
+        console.log(window.navigator.userAgent);
         // handle PWA versus web page
         if (window.matchMedia('(display-mode: standalone)').matches) {
             console.log('This is PWA.');
@@ -1909,7 +1911,7 @@ var RMM_ASM = (function() {
         mydoc.getElementById('svg_asm_container').style.display = 'block';
         mydoc.getElementById('asm').style.display = 'block';
         mydoc.getElementById('asm_answer').style.display = 'block';
-        if (show_numpos) {
+        if (show_note) {
             mydoc.getElementById('div_note').style.visibility = 'visible';
             console.log('hundreds in answer');
             mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_10');
