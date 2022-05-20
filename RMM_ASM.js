@@ -1188,6 +1188,9 @@ var RMM_ASM = (function() {
         console.log('blurBreakStart()');
         console.log('milli', milli);
         mydoc.getElementById('asm').className.baseVal = 'f3';
+        // we use rotate(0deg) to force Safari to redraw asm in blurBreakEnd
+        // so must clear it here otherwise it only works first time 
+        mydoc.getElementById('asm').style.WebkitTransform = 'none';
         timervar = window.setTimeout(blurBreakEnd, milli);
     }
 
@@ -1490,7 +1493,7 @@ var RMM_ASM = (function() {
         mydoc.getElementById('svg_next').style.display = 'none';
         mydoc.getElementById('div_note').style.visibility = 'hidden';
         layoutToggleRow2Visibility(false);
-        blurBreakStart(220);
+        blurBreakStart(200);
         layoutPlaceholders();
         layoutPlaceholderBkgs(false, false, true);
         layoutBorrowCarry([0, 1, 2], false, false);
