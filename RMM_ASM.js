@@ -1186,6 +1186,7 @@ var RMM_ASM = (function() {
     // apply the blur filter to svg id=asm & set timer to call blur remove fnc
     function blurBreakStart(milli) {
         console.log('blurBreakStart()');
+        console.log('milli', milli);
         mydoc.getElementById('asm').className.baseVal = 'f3';
         timervar = window.setTimeout(blurBreakEnd, milli);
     }
@@ -1194,11 +1195,12 @@ var RMM_ASM = (function() {
     function blurBreakEnd() {
         console.log('blurBreakEnd()');
         window.clearTimeout(timervar);
-        mydoc.getElementById('blockAll').style.display = 'none';
-        mydoc.getElementById('svg_gear').style.display = 'block';
         mydoc.getElementById('asm').className.baseVal = 'f0';
         over_active = true;
         mydoc.getElementById('asm_answer').style.opacity = 1.0;
+        // rotate(0deg) to force Safari to redraw asm
+        // without this, the asm almost always stays blurred
+        mydoc.getElementById('asm').style.transform = 'rotate(0deg)';
         time_enter = Date.now();
         if (!borrow_note_active) {
             time_start = Date.now();
@@ -1209,6 +1211,7 @@ var RMM_ASM = (function() {
             borrowNoteCheck();
         }
         chunkMessage(true);
+        console.log('baseVal', mydoc.getElementById('asm').className.baseVal);
     }
 
     // handle click on answer box: set verdict=wrong OR call correct process
@@ -1487,7 +1490,7 @@ var RMM_ASM = (function() {
         mydoc.getElementById('svg_next').style.display = 'none';
         mydoc.getElementById('div_note').style.visibility = 'hidden';
         layoutToggleRow2Visibility(false);
-        blurBreakStart(200);
+        blurBreakStart(220);
         layoutPlaceholders();
         layoutPlaceholderBkgs(false, false, true);
         layoutBorrowCarry([0, 1, 2], false, false);
