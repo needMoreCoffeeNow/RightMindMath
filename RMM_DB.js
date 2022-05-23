@@ -559,6 +559,7 @@ var RMM_DB = (function() {
         if (!obj) { return; }
         transactionInit();
         req = obj.add(data);
+        console.error(data);
         req.onsuccess = function(ev) {
             console.log('addSessionRec idsession=' + data.idsession);
             db_complete = true;

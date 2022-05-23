@@ -6,6 +6,7 @@
         TXT_start : 'Start',
         TXT_off : 'off',
         TXT_on : 'on',
+        TXT_history : 'History',
         TXT_eq_off : '=&nbsp;off',
         TXT_eq_on : '=&nbsp;on',
         TXT_add_link : 'Add Link',
