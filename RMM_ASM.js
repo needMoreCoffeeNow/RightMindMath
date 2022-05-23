@@ -124,6 +124,7 @@ var RMM_ASM = (function() {
         console.log('initSetupDBSet()');
         var db_result = RMM_DB.getDbResult();
         var pd = null; // used only to shorten db_result.pdata for if stmts
+        var level = '';
         console.log(db_result);
         if (db_result) {
             // need to set pdata in Menu with indexedDB value
@@ -131,6 +132,9 @@ var RMM_ASM = (function() {
             name = db_result.name;
             mydoc.getElementById('div_name').innerHTML = name;
             RMM_MENU.setPdata(db_result.pdata);
+            console.log(db_result)
+            level += db_result.pdata.module + db_result.pdata.digits;
+            RMM_STATSLIVE.displayUserCounts(db_result.iduser, level, false);
         }
         if (!db_result || !db_result.pdata) {
             iduser = getStr('DAT_guest');
@@ -1439,6 +1443,7 @@ var RMM_ASM = (function() {
         data['r_str'] = r_str;
         console.log('%c' + r_str, 'color:#009933;');
         RMM_DB.addSessionRec(data);
+        RMM_STATSLIVE.displayUserCounts(iduser, level, true);
     }
 
     // handle click on block (full window cover) presented after correct ans

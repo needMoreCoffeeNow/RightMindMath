@@ -27,7 +27,7 @@ var RMM_STATSLIVE = (function() {
         var iduser = null;
         var idlevel = null;
         sdata = RMM_DB.getDbResult();
-        console.error(sdata, 'sdata');
+        console.log(sdata, 'sdata');
         len = sdata.length;
         if (len === 0) { return; }
         // setup the iduser data containers first
@@ -50,13 +50,42 @@ var RMM_STATSLIVE = (function() {
             statslive[iduser][idlevel][1] += 1;
             statslive[iduser]['grand'] += 1;
         }
-        console.error(statslive, 'statslive');
+        console.log(statslive, 'statslive');
         mydoc.getElementById('div_info').style.display = 'none';
         RMM_ASM.initReadUserLast();
     }
 
+    function updateUserCounts(iduser, level) {
+        if (!statslive[iduser][level]) {
+            console.error('updateUserCounts: %s, %s NotFound' % (iduser, level));
+            return;
+        }
+        statslive[iduser][level][0] += 1;
+        statslive[iduser][level][1] += 1;
+        statslive[iduser]['grand'] += 1;
+    }
+
+    function displayUserCounts(iduser, level, answered) {
+        console.error('displayUserCounts(iduser, level, answered)');
+        var txt = '';
+        if (answered) { updateUserCounts(iduser, level); }
+        console.log(statslive);
+        console.log(iduser, 'iduser');
+        console.log(level, 'level');
+        console.log(statslive[iduser]);
+        console.log(statslive[iduser][level]);
+        console.log(statslive[iduser][level][0]);
+        console.log(statslive[iduser][level][1]);
+        console.log(statslive[iduser]['grand']);
+        txt += statslive[iduser][level][0] + '&nbsp;:&nbsp;';
+        txt += statslive[iduser][level][1] + '&nbsp;:&nbsp;';
+        txt += statslive[iduser]['grand'];
+        mydoc.getElementById('div_statslive').innerHTML = txt;
+    }
+
     return {
         loadSessionData : loadSessionData,
-        handleReadData : handleReadData
+        handleReadData : handleReadData,
+        displayUserCounts : displayUserCounts
     };
 })();

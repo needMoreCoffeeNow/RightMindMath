@@ -19,7 +19,13 @@ body {
 }
 @page { margin:0; }
 
-
+div.statslive {
+  float:right;
+  margin-top:-10px;
+  margin-right:10px;
+  font-size:0.75em;
+  color:#ccc;
+}
 
 .chart {
   background:#ffe6e6;
