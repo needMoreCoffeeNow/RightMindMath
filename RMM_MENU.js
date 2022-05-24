@@ -805,29 +805,37 @@ var RMM_MENU = (function() {
     function checkProblemStart() {
         console.warn('checkProblemStart()');
         var start = false;
+        var idlevel = '';
         console.warn(pdata);
         if (pdata.module === 'd3') {
             mydoc.getElementById('div_header').style.display = 'block';
             startProblemD3();
+            RMM_STATSLIVE.displayUserCounts('d3', false);
             return;
         }
         if (pdata.module === 'a' && pdata.digits) {
             start = true;
+            idlevel = 'a' + pdata.digits;
         }
         if (pdata.module === 's') {
             // neg_pct only used for digits == 1
+            idlevel = 's' + pdata.digits;
             if (pdata.digits > 1) { start = true; }
             if (pdata.digits && pdata.subneg_pct !== null) {
                 start = true;
+            } else {
+                idlevel = 's1';
             }
         }
         if (pdata.module === 'm' && pdata.m1_row_max !== null) {
             pdata.digits = 1;
             start = true;
+            idlevel = 'm1';
         }
         if (pdata.module.substr(0, 2) === 'm2') {
             pdata.digits = 2;
             start = true;
+            idlevel = 'm2';
         }
         console.log(start);
         if (start) {
@@ -836,6 +844,7 @@ var RMM_MENU = (function() {
             mydoc.getElementById('div_header').style.display = 'block';
             startProblemASM();
         }
+        RMM_STATSLIVE.displayUserCounts(idlevel, false);
     }
 
     // start long division D3

@@ -142,6 +142,7 @@ var RMM_M2 = (function() {
         data['r_str'] = r_str;
         console.log('%c' + r_str, 'color:#009933;');
         RMM_DB.addSessionRec(data);
+        RMM_STATSLIVE.displayUserCounts('m2', true);
     }
 
     // basic step seven (index 06)

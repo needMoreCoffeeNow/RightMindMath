@@ -133,8 +133,11 @@ var RMM_ASM = (function() {
             mydoc.getElementById('div_name').innerHTML = name;
             RMM_MENU.setPdata(db_result.pdata);
             console.log(db_result)
-            level += db_result.pdata.module + db_result.pdata.digits;
-            RMM_STATSLIVE.displayUserCounts(db_result.iduser, level, false);
+            level = db_result.pdata.module;
+            if (level === 'a') { level += db_result.pdata.digits; }
+            if (level === 'm') { level += db_result.pdata.digits; }
+            if (level === 's') { level += db_result.pdata.digits; }
+            RMM_STATSLIVE.displayUserCounts(level, false);
         }
         if (!db_result || !db_result.pdata) {
             iduser = getStr('DAT_guest');
@@ -558,6 +561,7 @@ var RMM_ASM = (function() {
         console.log('nextLevelWrapUp()');
         carryAddProcess();
         answerLineReveal();
+        RMM_STATSLIVE.displayUserCounts(level, true);
     }
 
     // handle specific level steps for next prblem
@@ -1260,6 +1264,7 @@ var RMM_ASM = (function() {
     // steps for ASM correct answer click (problem level dependencies)
     function correctAnswerHandler(index) {
         console.warn('correctAnswerHandler(index) ------------------------------------------------------------------------');
+        console.log(module, 'module');
         console.log(shnote_numpos, 'shnote_numpos');
         console.log(shnote_next, 'shnote_next');
         bnext_note_active = false;
@@ -1290,6 +1295,7 @@ var RMM_ASM = (function() {
                 bnext_note_active = true;
                 activateSvgNext();
             } else {
+                RMM_STATSLIVE.displayUserCounts(level, true);
                 next_problem_init();
             }
             return;
@@ -1311,6 +1317,7 @@ var RMM_ASM = (function() {
         //////    nextProblemLevel();
         //////}
         if (bnext_note_active) {
+            RMM_STATSLIVE.displayUserCounts(level, true);
             activateSvgNext();
         } else {
             nextProblemLevel();
@@ -1443,7 +1450,6 @@ var RMM_ASM = (function() {
         data['r_str'] = r_str;
         console.log('%c' + r_str, 'color:#009933;');
         RMM_DB.addSessionRec(data);
-        RMM_STATSLIVE.displayUserCounts(iduser, level, true);
     }
 
     // handle click on block (full window cover) presented after correct ans

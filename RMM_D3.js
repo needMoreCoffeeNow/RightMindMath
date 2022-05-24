@@ -137,6 +137,7 @@ var RMM_D3 = (function() {
         data['r_str'] = r_str;
         console.log('%c' + r_str, 'color:#009933;');
         RMM_DB.addSessionRec(data);
+        RMM_STATSLIVE.displayUserCounts('d3', true);
     }
 
     function equationSetup() {
