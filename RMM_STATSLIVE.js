@@ -57,6 +57,8 @@ var RMM_STATSLIVE = (function() {
     }
 
     function updateUserCounts(iduser, level) {
+        console.log('updateUserCounts(iduser, level)');
+        console.log(statslive[iduser][level], 'statslive[iduser][level]');
         if (!statslive[iduser][level]) {
             console.log('updateUserCounts: %s, %s NotFound' % (iduser, level));
             return;
@@ -68,11 +70,13 @@ var RMM_STATSLIVE = (function() {
 
     function displayUserCounts(level, answered) {
         console.log('displayUserCounts(iduser, level, answered)');
+        var iduser = RMM_ASM.getIduser();
         var txt = '';
         // remove any unneccessary 3rd char qualifiers (e.g. m2b, m2c, m12)
         var idlevel = level.length > 2 ? level.substr(0, 2) : level;
+        console.warn(level, 'level');
         console.warn(idlevel, 'idlevel');
-        var iduser = RMM_ASM.getIduser();
+        console.warn(answered, 'answered');
         if (iduser === IDGUEST) { return; }
         if (answered) { updateUserCounts(iduser, idlevel); }
         console.log(statslive);
