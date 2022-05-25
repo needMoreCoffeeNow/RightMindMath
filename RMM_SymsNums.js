@@ -28,6 +28,20 @@ var RMM_SymsNums = (function() {
                             2:[173], 
                             3:[248]}
                 },
+            'd3' : { 
+                'triple' : {0:[9, 27, 45], 
+                            1:[85, 103, 121], 
+                            2:[161, 178, 197], 
+                            3:[235, 253, 271]},
+                'double' : {0:[ 8,  36], 
+                            1:[83, 111], 
+                            2:[158, 186], 
+                            3:[233, 262]},
+                'single' : {0:[23], 
+                            1:[98], 
+                            2:[173], 
+                            3:[248]}
+                },
             'chart_xright' : {0:520,
                               1:528,
                               2:536}
@@ -67,7 +81,15 @@ var RMM_SymsNums = (function() {
             'm2_verdict_0_check' : {'x' : 25, 'y' : 46},
             'm2_verdict_1_check' : {'x' : 100, 'y' : 46},
             'm2_verdict_2_check' : {'x' : 175, 'y' : 46},
-            'm2_verdict_3_check' : {'x' : 250, 'y' : 46}
+            'm2_verdict_3_check' : {'x' : 250, 'y' : 46},
+            'd3_verdict_0_multiply' : {'x' : 25, 'y' : -40},
+            'd3_verdict_1_multiply' : {'x' : 100, 'y' : -40},
+            'd3_verdict_2_multiply' : {'x' : 175, 'y' : -40},
+            'd3_verdict_3_multiply' : {'x' : 250, 'y' : -40},
+            'd3_verdict_0_check' : {'x' : 25, 'y' : 46},
+            'd3_verdict_1_check' : {'x' : 100, 'y' : 46},
+            'd3_verdict_2_check' : {'x' : 175, 'y' : 46},
+            'd3_verdict_3_check' : {'x' : 250, 'y' : 46}
         }
         var transforms = {
             'plus' : 'transform="matrix(.9 0 0 .9 1 1)"',
@@ -81,6 +103,8 @@ var RMM_SymsNums = (function() {
             'placeholder_s' : 'transform="matrix(.5 0 0 .5 0 0)"',
             'm2_answer_digit' : 'transform="matrix(.4 0 0 .4 0 2)"', //one or two digit answer values
             'm2_answer_digit_triple' : 'transform="matrix(.25 0 0 .40 0 2)"', //skinny triple digits (x-scale is .5 not .65)
+            'd3_answer_digit' : 'transform="matrix(.4 0 0 .4 0 2)"', //one or two digit answer values
+            'd3_answer_digit_triple' : 'transform="matrix(.25 0 0 .40 0 2)"', //skinny triple digits (x-scale is .5 not .65)
             'asm_answer_digit' : 'transform="matrix(.65 0 0 .65 0 0)"', //one or two digit answer values
             'asm_answer_digit_triple' : 'transform="matrix(.5 0 0 .65 0 0)"', //skinny triple digits (x-scale is .5 not .65)
             'asm_answer_neg_sign' : 'transform="matrix(.6 0 0 .6 0 0)"',
@@ -88,6 +112,8 @@ var RMM_SymsNums = (function() {
             'asm_verdict_check' : 'fill="#00e600" transform="matrix(1.1 0 0 1.1 0 0)"',
             'm2_verdict_multiply' : 'fill="red" transform="matrix(.3 0 0 .3 0 0)"',
             'm2_verdict_check' : 'fill="#00e600" transform="matrix(0.8 0 0 0.8 0 0)"',
+            'd3_verdict_multiply' : 'fill="red" transform="matrix(.3 0 0 .3 0 0)"',
+            'd3_verdict_check' : 'fill="#00e600" transform="matrix(0.8 0 0 0.8 0 0)"',
             'd3_number' : 'transform="matrix(0.35 0 0 0.35 0 0)"',
             'print' : ' transform="matrix(.15 0 0 .15 0 0)"',
             'printd3' : ' transform="matrix(.14 0 0 .14 0 0)"',

@@ -16,7 +16,7 @@ var RMM_ASM = (function() {
     var module = 'asm'; // asm, m2, dv
     var mod_lo = 'asm'; // module for layout (d3 becomes m2 else = module)
     var printmode = false; // identifies when creating print problem
-    var answers = []; // array with the answers positionally indexed L-to-R
+    var answers = [[1,2,3,4]]; // array with the answers positionally indexed L-to-R, [1,2,3,4] are dummy level_done=0 init values
     var responses = []; //stores the positional answer button value_time string
     var answer_active = []; // index 0-3 set true/false if answer is active
     var complete = false; //set to true when right answer is clicked
@@ -125,14 +125,12 @@ var RMM_ASM = (function() {
         var db_result = RMM_DB.getDbResult();
         var pd = null; // used only to shorten db_result.pdata for if stmts
         var level = '';
-        console.log(db_result);
         if (db_result) {
             // need to set pdata in Menu with indexedDB value
             iduser = db_result.iduser;
             name = db_result.name;
             mydoc.getElementById('div_name').innerHTML = name;
             RMM_MENU.setPdata(db_result.pdata);
-            console.log(db_result)
             level = db_result.pdata.module;
             if (level === 'a') { level += db_result.pdata.digits; }
             if (level === 'm') { level += db_result.pdata.digits; }
@@ -162,6 +160,7 @@ var RMM_ASM = (function() {
         showNotesSetValues(pd);
         showNotesSetHtml();
         setProblem(pd);
+        //RMM_D3.showAllD3();
     }
 
 //
@@ -1622,6 +1621,8 @@ var RMM_ASM = (function() {
     // set 4 answer values in ASM grid using values from answers[level_done]
     function layoutAnswerButtons() {
         console.log('layoutAnswerButtons()');
+        console.log(answers, 'answers');
+        console.log(level_done, 'level_done');
         var i = 0;
         var len = answers[level_done].length;
         for (i=0; i<len; i++) {
@@ -1631,8 +1632,9 @@ var RMM_ASM = (function() {
 
     // set an answer svg path and x/y position (tricky) to the value arg
     function layoutAnswerNumber(answer, index) {
-        //console.log('layoutAnswerNumber(answer, index)', answer, index);
+        console.log('layoutAnswerNumber(answer, index)', answer, index);
         // index in 0-base, left starting ref to answer box
+        console.error(mod_lo, 'mod_lo');
         var id0 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_0');
         var id1 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_1');
         var id2 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_2');
@@ -1765,7 +1767,9 @@ var RMM_ASM = (function() {
     function layoutVerdictMark(index, type) {
         //console.log('layoutVerdictMark(index, type)', index, type);
         var my_id = mod_lo + '_verdict_' + index;
+        console.warn(my_id, 'my_id');
         var my_tform = mod_lo + '_verdict_' + type;
+        console.warn(my_tform, 'my_tform');
         var verdict = mydoc.getElementById(my_id);
         var xydict = {};
         if (type.length === 0) {
@@ -1774,6 +1778,7 @@ var RMM_ASM = (function() {
         }
         verdict.innerHTML =  pathTransform(getSyms(type), my_tform);
         my_id += '_' + type;
+        console.warn(my_id, 'my_id');
         xydict = getOperatorXY(my_id);
         verdict.setAttribute('x', xydict.x);
         verdict.setAttribute('y', xydict.y);
@@ -2004,21 +2009,21 @@ var RMM_ASM = (function() {
         }
         if (pdata.module === 'm2b') {
             module = 'm2';
-            RMM_MENU.setNextProblemOnclick(RMM_M2.nextM2Equation);
+            RMM_MENU.setNextProblemOnclickM2(RMM_M2.nextM2Equation);
             RMM_M2.setLevel('m2b');
             RMM_M2.setCounters();
             RMM_M2.nextM2Equation();
         }
         if (pdata.module === 'm2c') {
             module = 'm2';
-            RMM_MENU.setNextProblemOnclick(RMM_M2.nextM2Equation);
+            RMM_MENU.setNextProblemOnclickM2(RMM_M2.nextM2Equation);
             RMM_M2.setLevel('m2c');
             RMM_M2.setCounters();
             RMM_M2.nextM2Equation();
         }
         if (pdata.module === 'd3') {
             module = 'd3';
-            RMM_MENU.setNextProblemOnclick(RMM_D3.nextD3Equation);
+            RMM_MENU.setNextProblemOnclickD3(RMM_D3.nextD3Equation);
             RMM_D3.setCounters();
             RMM_D3.setEquationVars(pdata);
             RMM_D3.nextD3Equation();
@@ -2040,8 +2045,8 @@ var RMM_ASM = (function() {
     function setModule(mod_in) {
         console.log('setModule(mod_in)', mod_in);
         module = mod_in;
-        mod_lo = module;
-        if (module === 'd3') { mod_lo = 'm2'; } // D3 uses M2 answers
+        mod_lo = module.toLowerCase();
+        ////////////if (module === 'd3') { mod_lo = 'm2'; } // D3 uses M2 answers
     }
 
     function getModule() {

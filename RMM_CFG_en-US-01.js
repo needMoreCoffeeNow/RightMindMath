@@ -210,6 +210,7 @@
         b_tog_exit : 'Continue',
         b_tog_help : 'Help',
         b_m2_next : 'New Problem',
+        b_d3_next : 'New Problem',
         div_tog_text : 'Click item below to switch it on<span style="font-size:80%;"> / </span>off',
         div_menu_main_header : 'Settings',
         div_menu_basics : 'Master Basic Arithmetic',

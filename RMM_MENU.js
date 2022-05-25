@@ -728,11 +728,18 @@ var RMM_MENU = (function() {
         checkProblemStart();
     }
 
-    // clear both the onclicks for Next Problem button, then set to arg
-    function setNextProblemOnclick(onclick_function) {
-        console.log('clearNextProblemClicks()');
+    // clear both the onclicks for M2 Next Problem button, then set to arg
+    function setNextProblemOnclickM2(onclick_function) {
+        console.log('setNextProblemOnclickM2()');
         var elem = mydoc.getElementById('b_m2_next');
         elem.removeEventListener('click', RMM_M2.nextM2Equation);
+        elem.addEventListener('click', onclick_function);
+    }
+
+    // clear both the onclicks for D3 Next Problem button, then set to arg
+    function setNextProblemOnclickD3(onclick_function) {
+        console.log('setNextProblemOnclickD3()');
+        var elem = mydoc.getElementById('b_d3_next');
         elem.removeEventListener('click', RMM_D3.nextD3Equation);
         elem.addEventListener('click', onclick_function);
     }
@@ -748,7 +755,7 @@ var RMM_MENU = (function() {
             RMM_M2.setLevel('m2c');
             pdata.module = 'm2c';
         }
-        RMM_MENU.setNextProblemOnclick(RMM_M2.nextM2Equation);
+        RMM_MENU.setNextProblemOnclickM2(RMM_M2.nextM2Equation);
         RMM_M2.setModule('m2');
         RMM_M2.setBkgdsRowsCols(5, 4);
         mydoc.getElementById('div_m2_options').style.display = 'none';
@@ -777,7 +784,7 @@ var RMM_MENU = (function() {
     function d3optionsSet(ev) {
         console.warn('d3optionsSet(ev)');
         hideAll();
-        RMM_MENU.setNextProblemOnclick(RMM_D3.nextD3Equation);
+        RMM_MENU.setNextProblemOnclickD3(RMM_D3.nextD3Equation);
         pdata.divisor_pct = parseInt(mydoc.getElementById('d3_divisor').value, 10);
         pdata.decimal_pct = parseInt(mydoc.getElementById('d3_decimal').value, 10);
         RMM_D3.setEquationVars(pdata);
@@ -1559,7 +1566,8 @@ var RMM_MENU = (function() {
         userDeleteWrapup : userDeleteWrapup,
         handleUserSnapshot : handleUserSnapshot,
         changUserCurrentWrapup : changUserCurrentWrapup,
-        setNextProblemOnclick : setNextProblemOnclick,
+        setNextProblemOnclickM2 : setNextProblemOnclickM2,
+        setNextProblemOnclickD3 : setNextProblemOnclickD3,
         hideAll : hideAll,
         // button handlers
 //////        userAddCheckClick : userAddCheckClick,

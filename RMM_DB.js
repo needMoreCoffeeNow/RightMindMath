@@ -799,7 +799,7 @@ var RMM_DB = (function() {
     // getter for db_result
     function getDbResult() {
         console.log('getDbResult()');
-        console.log(db_result);
+        //console.log(db_result);
         return db_result;
     }
 

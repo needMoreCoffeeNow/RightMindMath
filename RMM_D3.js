@@ -141,7 +141,7 @@ var RMM_D3 = (function() {
     }
 
     function equationSetup() {
-        console.log('equationSetup()');
+        console.warn('equationSetup()');
         var is_dec = false;
         var dr_two = false;
         // set divisor number of digits and decimal answer
@@ -164,27 +164,28 @@ var RMM_D3 = (function() {
         //eqz = {'divisor':5, 'dividend':487, 'quotient':97, 'decimal':4};
         //eqz = {'divisor':55, 'dividend':781, 'quotient':14, 'decimal':2};
         eqz = {'divisor':15, 'dividend':384, 'quotient':25, 'decimal':6};
+        console.log(eqz, 'eqz');
     }
 
     // start a long division problem
     function nextD3Equation() {
         console.warn('nextD3Equation');
         console.warn('nextD3Equation');
-        console.warn('nextD3Equation');
-        console.warn('nextD3Equation');
-        console.warn('nextD3Equation');
         // some housekeeping first to setup M2 controllers
+        // set some variables to leverage functions in other files
         RMM_M2.setModule('d3');
+        RMM_ASM.setModule('d3');
+        // override the number of bkgds_rows/cols in M2 with D3 values
+        // which will be used by RMM_M2.lo_bkgdNumsSet to set all bkgds colors
         RMM_M2.setBkgdsRowsCols(bkgds_rows, bkgds_cols);
         equationSetup();
-        // kludge: nextM2Equation 1st so M2_container renders properly
-        //////RMM_M2.setModule('m2'); // kludge
-        //RMM_M2.nextM2Equation(); // kludge
-        RMM_M2.showAllM2(); // kludge needed else positions all messed up
-        //////RMM_M2.setModule('d3');
-        RMM_ASM.setModule('d3');
+        ////////////// kludge: nextM2Equation 1st so M2_container renders properly
+        //////////////////RMM_M2.setModule('m2'); // kludge
+        //////////////RMM_M2.nextM2Equation(); // kludge
+        ////////////RMM_M2.showAllM2(); // kludge needed else positions all messed up
+        //////////////////RMM_M2.setModule('d3');
         // now layout equation
-        mydoc.getElementById('div_m2_instruct_container').style.marginTop = '-400px';
+        ////////////mydoc.getElementById('div_d3_instruct_container').style.marginTop = '-400px';
         time_start = Date.now();
         chunk_counter = 0;
         count_problem += 1;
@@ -293,7 +294,7 @@ var RMM_D3 = (function() {
         var txt = '';
         if (correct * eqz.divisor < 11 || step % 2 !== 0) {
             console.log('no chunk');
-            mydoc.getElementById('div_m2_chunk').style.visibility = 'hidden';
+            mydoc.getElementById('div_d3_chunk').style.visibility = 'hidden';
             return;
         }
         console.log(ones, 'ones', tens, 'tens', correct, 'correct', eqz.divisor, 'divisor');
@@ -316,9 +317,9 @@ var RMM_D3 = (function() {
         txt += ')&nbsp;]</span>';
         txt += '</div>';
         console.warn(txt);
-        lo_setInnerHtml('div_m2_chunk', txt);
-        mydoc.getElementById('div_m2_chunk').style.visibility = 'visible';
-        //////lo_setStyleDisplay('div_m2_chunk', 'block');
+        lo_setInnerHtml('div_d3_chunk', txt);
+        mydoc.getElementById('div_d3_chunk').style.visibility = 'visible';
+        //////lo_setStyleDisplay('div_d3_chunk', 'block');
     }
 
     // setup a print problem such that the problem_str is available
@@ -353,7 +354,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_num0', ''+subval0);
         txt = txt.replace('REPLACE_num1', ''+eqz.divisor);
         txt = txt.replace('REPLACE_num2', ''+eqz.decimal);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
     }
 
     // step06 (only occurs when decimal answer)
@@ -387,7 +388,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+eqz.divisor);
         txt = txt.replace('REPLACE_num1', ''+subval0);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
         // answers array
         asmAnswerSetup();
         dynamicMultiply();
@@ -426,7 +427,7 @@ var RMM_D3 = (function() {
                 lo_setInnerHtml('d3_num61', numPath(subval1, 100));
             }
         }
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
     }
 
     // step six
@@ -454,7 +455,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+subval0);
         txt = txt.replace('REPLACE_num1', ''+subval1);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
         // answers array
         asmAnswerSetup();
     }
@@ -489,7 +490,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+eqz.divisor);
         txt = txt.replace('REPLACE_num1', ''+subval0);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
         // answers array
         asmAnswerSetup();
         dynamicMultiply();
@@ -525,7 +526,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_num0', ''+down);
         txt = txt.replace('REPLACE_num1', ''+eqz.divisor);
         txt = txt.replace('REPLACE_num2', ''+subval0);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
         // answers array
         asmAnswerSetup();
         dynamicMultiply();
@@ -543,7 +544,7 @@ var RMM_D3 = (function() {
         var row = step;
         var i = 0;
         var len = 0;
-        mydoc.getElementById('div_m2_chunk').style.visibility = 'hidden';
+        mydoc.getElementById('div_d3_chunk').style.visibility = 'hidden';
         colsActiveSet();
         len = cols_active.length;
         lo_divisorToggle('r2white');
@@ -601,7 +602,7 @@ var RMM_D3 = (function() {
             }
             lo_setInnerHtml('d3_num53', numPath(0, 1));
         }
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
     }
 
     // step four
@@ -636,7 +637,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+subval0);
         txt = txt.replace('REPLACE_num1', ''+subval1);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
         // answers array
         asmAnswerSetup();
     }
@@ -675,7 +676,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_num0', ''+down);
         txt = txt.replace('REPLACE_num1', ''+eqz.divisor);
         txt = txt.replace('REPLACE_num2', ''+subval0);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
         // answers array
         asmAnswerSetup();
         dynamicMultiply();
@@ -695,7 +696,7 @@ var RMM_D3 = (function() {
         lo_setInnerHtml('d3_num21', numPath(fnum, 10));
         lo_setInnerHtml('d3_num22', numPath(fnum, 1));
         lo_setInnerHtml('d3_num32', numPath(0, 1));
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
 
     }
 
@@ -742,7 +743,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+subval0);
         txt = txt.replace('REPLACE_num1', ''+subval1);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
         // answers array
         asmAnswerSetup();
     }
@@ -809,10 +810,11 @@ var RMM_D3 = (function() {
 
     // step one
     function step00() {
-        console.log('----------------------------------------------------------------step00()');
-        console.log('----------------------------------------------------------------step00()');
-        console.log('----------------------------------------------------------------step00()');
+        console.warn('----------------------------------------------------------------step00()');
+        console.warn('----------------------------------------------------------------step00()');
+        console.warn('----------------------------------------------------------------step00()');
         var txt = getStr('D3_00');
+        console.log(eqz);
         if (eqz.quotient > 99) {
             correct = parseInt(eqz.quotient / 100, 10);
             subval0 = parseInt(eqz.dividend / 100, 10);
@@ -831,7 +833,7 @@ var RMM_D3 = (function() {
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+eqz.divisor);
         txt = txt.replace('REPLACE_num1', ''+subval0);
-        lo_setInnerHtml('div_m2_step', txt);
+        lo_setInnerHtml('div_d3_step', txt);
         // initial equation setup
         lo_clearEquation();
         lo_setEqNumbers(eqz);
@@ -857,9 +859,11 @@ var RMM_D3 = (function() {
         console.warn('nextStep()');
         var tic = step < 10 ? '0' : '';
         var pid = ('step_' + tic + step);
-        console.warn(step, step_max[step]);
+        console.log(tic, 'tic');
+        console.log(step, 'step');
+        console.warn(step, step_max, 'step, step_max');
         console.log(pid, 'pid');
-        if (step > step_max[step]) {
+        if (step > step_max) {
             finalMessage();
         } else {
             process[pid]();
@@ -875,9 +879,9 @@ var RMM_D3 = (function() {
     // show the D3 container components
     function lo_showContainer() {
         console.log('lo_showContainer()');
-        mydoc.getElementById('svg_m2_container').style.visibility = 'hidden';
-        mydoc.getElementById('div_m2_instruct_container').style.display = 'block';
-        mydoc.getElementById('div_m2_container').style.display = 'block';
+        mydoc.getElementById('svg_d3_container').style.visibility = 'visible';
+        mydoc.getElementById('div_d3_instruct_container').style.display = 'block';
+        mydoc.getElementById('div_d3_container').style.display = 'block';
         mydoc.getElementById('div_d3_container').style.display = 'block';
     }
 
@@ -1023,10 +1027,10 @@ var RMM_D3 = (function() {
         var tform = getTransforms('d3_number');
         var path = getNums(8);
         path = path.replace('/>', ' ' + tform + '/>');
+        RMM_ASM.setModule('d3');
         RMM_ASM.hideAll();
-        mydoc.getElementById('svg_m2_container').style.visibility = 'hidden';
-        mydoc.getElementById('div_m2_instruct_container').style.display = 'block';
-        mydoc.getElementById('div_m2_container').style.display = 'block';
+        mydoc.getElementById('svg_d3_container').style.visibility = 'visible';
+        mydoc.getElementById('div_d3_instruct_container').style.display = 'block';
         mydoc.getElementById('div_d3_container').style.display = 'block';
         // quotient (qt)
         mydoc.getElementById('d3_num00').innerHTML = path;
@@ -1069,6 +1073,10 @@ var RMM_D3 = (function() {
         mydoc.getElementById('d3_num71').innerHTML = path;
         mydoc.getElementById('d3_num72').innerHTML = path;
         mydoc.getElementById('d3_num73').innerHTML = path;
+        // instruction
+        lo_setInnerHtml('div_d3_step', 'test text');
+        // answers
+        RMM_ASM.layoutAnswerButtons();
     }
 //
 // >>> DEVELOPER:end

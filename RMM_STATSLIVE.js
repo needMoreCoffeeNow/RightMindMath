@@ -48,9 +48,6 @@ var RMM_STATSLIVE = (function() {
             // remove any unneccessary 3rd char qualifiers (e.g. m2b, m2c, m12)
             idlevel = idlevel.length > 2 ? idlevel.substr(0, 2) : idlevel;
             // drop the b(basic) & c(chunk) from m2
-            console.log(sdata[i]);
-            console.log(iduser);
-            console.log(idlevel);
             statslive[iduser][idlevel][1] += 1;
             statslive[iduser]['grand'] += 1;
         }
@@ -61,7 +58,7 @@ var RMM_STATSLIVE = (function() {
 
     function updateUserCounts(iduser, level) {
         if (!statslive[iduser][level]) {
-            console.error('updateUserCounts: %s, %s NotFound' % (iduser, level));
+            console.log('updateUserCounts: %s, %s NotFound' % (iduser, level));
             return;
         }
         statslive[iduser][level][0] += 1;
@@ -70,7 +67,7 @@ var RMM_STATSLIVE = (function() {
     }
 
     function displayUserCounts(level, answered) {
-        console.error('displayUserCounts(iduser, level, answered)');
+        console.log('displayUserCounts(iduser, level, answered)');
         var txt = '';
         // remove any unneccessary 3rd char qualifiers (e.g. m2b, m2c, m12)
         var idlevel = level.length > 2 ? level.substr(0, 2) : level;
@@ -79,12 +76,6 @@ var RMM_STATSLIVE = (function() {
         if (iduser === IDGUEST) { return; }
         if (answered) { updateUserCounts(iduser, idlevel); }
         console.log(statslive);
-        console.log(iduser, 'iduser');
-        console.log(statslive[iduser]);
-        console.log(statslive[iduser][idlevel]);
-        console.log(statslive[iduser][idlevel][0]);
-        console.log(statslive[iduser][idlevel][1]);
-        console.log(statslive[iduser]['grand']);
         txt += statslive[iduser][idlevel][0] + '&nbsp;:&nbsp;';
         txt += statslive[iduser][idlevel][1] + '&nbsp;:&nbsp;';
         txt += statslive[iduser]['grand'];

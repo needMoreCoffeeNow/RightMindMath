@@ -461,6 +461,16 @@ div.m2_instruction {
     text-align:center;
     padding:5px;
 }
+div.d3_instruction {
+    width:330px;
+    height:360px;
+    position:absolute;
+    margin-top:-400px;
+    margin-left:270px;
+    background:#ccffff;
+    text-align:center;
+    padding:5px;
+}
 a.next {
     font-size:0.8em;
     padding:5px;
