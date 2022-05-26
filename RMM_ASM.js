@@ -28,6 +28,7 @@ var RMM_ASM = (function() {
     var name = null; // string value will be set to DB.setup.name
 //////    var device = 'none';
     var rand_last3 = []; //store the last 3 random row1 ops to avoid pattern in m1 random
+    var answer_index_last = -1; // store the index position of the last answer
     var record = [];
     var test_dump = '';
     var tests = [];
@@ -408,9 +409,31 @@ var RMM_ASM = (function() {
         return val;
     }
 
+    function answersRandomOptimize(myval, found) {
+        console.log('answersRandomize(myval, myarr)');
+        var limit = 10;
+        var i = 0;
+        var count = 0;
+        var more = true;
+        var array_new = [];
+        while (more) {
+            array_new = [];
+            for (i = 0; i < 4; i++) {
+                array_new.push(getRandInt(0, 1000) + '_' + found[i]);
+            }
+            array_new.sort();
+            array_new = splitAnswerIntegers(array_new);
+            more = array_new.indexOf(myval) === answer_index_last;
+            count += 1;
+            if (count > limit) { more = false; }
+        }
+        answer_index_last = array_new.indexOf(myval);
+        return array_new;
+    }
+
     // fills the 4-answer array with values close to correct answer
     function answersResponsesSetValues() {
-        console.log('answersResponsesSetValues()');
+        console.error('answersResponsesSetValues()');
         var ans = null;
         var found = []; // use to avoid duplicate answers
         var i = 0;
@@ -437,13 +460,10 @@ var RMM_ASM = (function() {
                                          multiplyMinMax(mycol, true));
                 }
                 found.push(ans);
-                myarr.push(getRandInt(0, 1000) + '_' + ans);
             }
-            myarr.sort();
-            myarr = splitAnswerIntegers(myarr);
-            answers.push(myarr)
+            answers[0] = answersRandomOptimize(myval, found);
         }
-        console.warn(answers);
+        console.error(answers[0][0], answers[0][1], answers[0][2], answers[0][3]);
     }
 
     // finds a valid col answer using correct global & existing in 4-ans array
@@ -984,17 +1004,6 @@ var RMM_ASM = (function() {
         console.log(row1, 'row1');
         problemInit('m1', 1, 'x', 'multiply')
         if (!m1_order) { row1 = m1RandomPatternCheck(row1); }
-        ////////////console.warn(prob_asm[0], 'prob_asm[0] b/4');
-        ////////////console.warn(prob_asm[1], 'prob_asm[1] b/4');
-        ////////////console.warn(prob_asm[2], 'prob_asm[2] b/4');
-        ////////////probColumnSetRandValue(2, 0, 10);
-        ////////////console.warn(prob_asm[0], 'prob_asm[0] after');
-        ////////////console.warn(prob_asm[1], 'prob_asm[1] after');
-        ////////////console.warn(prob_asm[2], 'prob_asm[2] after');
-        ////////////console.log(m1_digit, 'm1_digit');
-        ////////////console.log(m1_order, 'm1_order');
-        ////////////console.error(prob_asm, 'prob_asm');
-        ////////////if (m1_digit) { prob_asm[0][2] = m1_digit; }
         prob_asm[0][2] = m1_digit;
         if (m1_order) {
             m1_order_count += 1;
@@ -1004,18 +1013,12 @@ var RMM_ASM = (function() {
             if (m1_order_count > m1_row1_max) { m1_order_count = 0; }
             row1 = m1_order_count > m1_row1_max ? m1_row1_min : m1_order_count;
         }
-        console.warn(prob_asm[0], 'prob_asm[0] after setting step4');
-        console.warn(prob_asm[1], 'prob_asm[1] after setting step4');
-        console.warn(prob_asm[2], 'prob_asm[2] after setting step4');
         if (row1 < 10) {
             prob_asm[1][2] = row1;
         } else {
             prob_asm[1][2] = row1 % 10;
             prob_asm[1][1] = parseInt(row1 / 10, 10);
         }
-        console.warn(prob_asm[0], 'prob_asm[0] after setting step5');
-        console.warn(prob_asm[1], 'prob_asm[1] after setting step5');
-        console.warn(prob_asm[2], 'prob_asm[2] after setting step5');
         //prob_asm  = [ [null,null,9], [null,1,2], [1,0,8] ];
         probAnswerSet();
         finishProbSetup();
