@@ -960,10 +960,6 @@ var RMM_ASM = (function() {
             // an ordered m1 process
             if (m1_order_count > m1_row1_max) { m1_order_count = 0; }
             row1 = m1_order_count > m1_row1_max ? m1_row1_min : m1_order_count;
-            console.error(row1, 'row1');
-            console.error(m1_row1_max, 'm1_row1_max');
-            console.error(m1_row1_min, 'm1_row1_min');
-            console.error(m1_order_count, 'm1_order_count');
         }
         if (row1 < 10) {
             prob_asm[1][2] = row1;
@@ -2019,7 +2015,6 @@ var RMM_ASM = (function() {
             // because first step in levelM1Problem() is to increment by one
             // to get next ordered value
             m1_order_count = m1_row1_min - 1;
-            console.error(m1_order_count, m1_row1_min, 'm1_order_count, m1_row1_min in setProblem');
             RMM_M2.setCounters();
             levelM1Init();
         }
