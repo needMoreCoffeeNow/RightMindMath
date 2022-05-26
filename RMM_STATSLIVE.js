@@ -3,6 +3,7 @@ var RMM_STATSLIVE = (function() {
     var sdata = {}; // array stores all the session data
     // statslive used to show problem type session:lifetime & grand totals
     var statslive = {};
+    var grand_start = 0; // display lifetime total from session start
     var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
     var IDGUEST = 10884293110550;
 
@@ -42,6 +43,7 @@ var RMM_STATSLIVE = (function() {
                                  'grand':0};
         }
         // accumulate total problems by level and grand total
+        grand_start = 0;
         for (i=0; i<len; i++) {
             iduser = sdata[i].iduser;
             idlevel = sdata[i].idlevel;
@@ -50,6 +52,7 @@ var RMM_STATSLIVE = (function() {
             // drop the b(basic) & c(chunk) from m2
             statslive[iduser][idlevel][1] += 1;
             statslive[iduser]['grand'] += 1;
+            grand_start += 1;
         }
         console.log(statslive, 'statslive');
         mydoc.getElementById('div_info').style.display = 'none';
@@ -69,7 +72,7 @@ var RMM_STATSLIVE = (function() {
     }
 
     function displayUserCounts(level, answered) {
-        console.log('displayUserCounts(iduser, level, answered)');
+        console.error('displayUserCounts(iduser, level, answered)');
         var iduser = RMM_ASM.getIduser();
         var txt = '';
         // remove any unneccessary 3rd char qualifiers (e.g. m2b, m2c, m12)
@@ -77,11 +80,13 @@ var RMM_STATSLIVE = (function() {
         console.warn(level, 'level');
         console.warn(idlevel, 'idlevel');
         console.warn(answered, 'answered');
+        txt = '(' + idlevel + ')&nbsp;&nbsp;';
         if (iduser === IDGUEST) { return; }
         if (answered) { updateUserCounts(iduser, idlevel); }
         console.log(statslive);
         txt += statslive[iduser][idlevel][0] + '&nbsp;:&nbsp;';
-        txt += statslive[iduser][idlevel][1] + '&nbsp;:&nbsp;';
+        txt += statslive[iduser][idlevel][1] + '&nbsp;&nbsp;|&nbsp;&nbsp;';
+        txt += (statslive[iduser]['grand'] - grand_start) + '&nbsp;:&nbsp;';
         txt += statslive[iduser]['grand'];
         mydoc.getElementById('div_statslive').innerHTML = txt;
     }

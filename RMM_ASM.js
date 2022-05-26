@@ -331,7 +331,7 @@ var RMM_ASM = (function() {
                     continue;
                 }
                 mydoc.getElementById(id).innerHTML = getNums(prob_asm[i][j]);
-                console.log(mydoc.getElementById(id).innerHTML, id);
+                //console.log(mydoc.getElementById(id).innerHTML, id);
             }
         }
     }
@@ -560,7 +560,6 @@ var RMM_ASM = (function() {
         console.log('nextLevelWrapUp()');
         carryAddProcess();
         answerLineReveal();
-        RMM_STATSLIVE.displayUserCounts(level, true);
     }
 
     // handle specific level steps for next prblem
@@ -1289,12 +1288,12 @@ var RMM_ASM = (function() {
         answerLineReveal();
         // any level 1 problem either show Next Problem or goto next problem
         if (level === 'a1' || level === 's1' || level === 'm1') {
+            RMM_STATSLIVE.displayUserCounts(level, true);
             if (shnote_next) {
                 mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_prob');
                 bnext_note_active = true;
                 activateSvgNext();
             } else {
-                RMM_STATSLIVE.displayUserCounts(level, true);
                 next_problem_init();
             }
             return;
@@ -1305,6 +1304,9 @@ var RMM_ASM = (function() {
             // check number position prompt befor increment level_done
             numberPositionText();
             level_done += 1;
+            if (level_steps === level_done) { 
+                RMM_STATSLIVE.displayUserCounts(level, true);
+            }
             // check next button prompt after incrementing level_done
             nextButtonText();
         }
@@ -1316,7 +1318,6 @@ var RMM_ASM = (function() {
         //////    nextProblemLevel();
         //////}
         if (bnext_note_active) {
-            RMM_STATSLIVE.displayUserCounts(level, true);
             activateSvgNext();
         } else {
             nextProblemLevel();
@@ -1564,9 +1565,9 @@ var RMM_ASM = (function() {
         console.log(show, columns);
         console.log(prob_asm);
         console.log(level, 'level');
-        console.log(mydoc.getElementById('asm_num_20').innerHTML, 'asm_num_20');
-        console.log(mydoc.getElementById('asm_num_21').innerHTML, 'asm_num_21');
-        console.log(mydoc.getElementById('asm_num_22').innerHTML, 'asm_num_22');
+        ////////////console.log(mydoc.getElementById('asm_num_20').innerHTML, 'asm_num_20');
+        ////////////console.log(mydoc.getElementById('asm_num_21').innerHTML, 'asm_num_21');
+        ////////////console.log(mydoc.getElementById('asm_num_22').innerHTML, 'asm_num_22');
         if (!show) {
             mydoc.getElementById('asm_num_20').style.display = 'none';
             mydoc.getElementById('asm_num_21').style.display = 'none';
@@ -1634,7 +1635,7 @@ var RMM_ASM = (function() {
     function layoutAnswerNumber(answer, index) {
         console.log('layoutAnswerNumber(answer, index)', answer, index);
         // index in 0-base, left starting ref to answer box
-        console.error(mod_lo, 'mod_lo');
+        console.log(mod_lo, 'mod_lo');
         var id0 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_0');
         var id1 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_1');
         var id2 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_2');

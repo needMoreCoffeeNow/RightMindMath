@@ -928,6 +928,7 @@ var RMM_M2 = (function() {
     function setModule(mod_in) {
         console.log('setModule()', mod_in);
         module = mod_in;
+        RMM_STATSLIVE.displayUserCounts('m2', false);
     }
 
     // initial counters & controls when starting D3 session
