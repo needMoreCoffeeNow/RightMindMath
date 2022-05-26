@@ -522,9 +522,10 @@ var RMM_ASM = (function() {
 
     // sets row0 row1 in prob_asm matrix to min/man randInt for a given column
     function probColumnSetRandValue(col_in, min, max) {
-        //console.log('probColumnSetRandValue(col)');
+        console.log('probColumnSetRandValue(col)');
         prob_asm[0][col_in] =  getRandInt(min, max);
         prob_asm[1][col_in] =  getRandInt(min, max);
+        console.log(prob_asm, prob_asm);
     }
 
     // set prob_asm 3rd (answer) row using row0 opASM and row1
@@ -949,10 +950,20 @@ var RMM_ASM = (function() {
         var row1 = getRandInt(m1_row1_min, m1_row1_max);
         problemInit('m1', 1, 'x', 'multiply')
         probColumnSetRandValue(2, 0, 10);
+        console.log(m1_digit, 'm1_digit');
+        console.log(m1_order, 'm1_order');
         if (m1_digit) { prob_asm[0][2] = m1_digit; }
         if (m1_order) {
             m1_order_count += 1;
+            // need to reset m1_order_count to zero to properly handle
+            // when user wraps-around (more than 1 time) working thru
+            // an ordered m1 process
+            if (m1_order_count > m1_row1_max) { m1_order_count = 0; }
             row1 = m1_order_count > m1_row1_max ? m1_row1_min : m1_order_count;
+            console.error(row1, 'row1');
+            console.error(m1_row1_max, 'm1_row1_max');
+            console.error(m1_row1_min, 'm1_row1_min');
+            console.error(m1_order_count, 'm1_order_count');
         }
         if (row1 < 10) {
             prob_asm[1][2] = row1;
@@ -2004,7 +2015,11 @@ var RMM_ASM = (function() {
             m1_order = pdata.m1_order === 'ordered';
             m1_row1_min = pdata.m1_row1_min;
             m1_row1_max = pdata.m1_row1_max;
+            // need to set m1_order_count to -1 when initiating an m1 problem
+            // because first step in levelM1Problem() is to increment by one
+            // to get next ordered value
             m1_order_count = m1_row1_min - 1;
+            console.error(m1_order_count, m1_row1_min, 'm1_order_count, m1_row1_min in setProblem');
             RMM_M2.setCounters();
             levelM1Init();
         }
