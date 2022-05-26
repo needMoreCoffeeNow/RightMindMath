@@ -27,6 +27,7 @@ var RMM_ASM = (function() {
     var iduser = null; // string value will be set to DB.setup.iduser
     var name = null; // string value will be set to DB.setup.name
 //////    var device = 'none';
+    var rand_last3 = []; //store the last 3 random row1 ops to avoid pattern in m1 random
     var record = [];
     var test_dump = '';
     var tests = [];
@@ -522,10 +523,12 @@ var RMM_ASM = (function() {
 
     // sets row0 row1 in prob_asm matrix to min/man randInt for a given column
     function probColumnSetRandValue(col_in, min, max) {
-        console.log('probColumnSetRandValue(col)');
-        prob_asm[0][col_in] =  getRandInt(min, max);
-        prob_asm[1][col_in] =  getRandInt(min, max);
-        console.log(prob_asm, prob_asm);
+        console.log('probColumnSetRandValue(col)', min, max, 'col_in, min, ma');
+        var rand_1 = getRandInt(min, max);
+        var rand_2 = getRandInt(min, max);
+        prob_asm[0][col_in] =  rand_1;
+        prob_asm[1][col_in] =  rand_2;
+
     }
 
     // set prob_asm 3rd (answer) row using row0 opASM and row1
@@ -859,6 +862,9 @@ var RMM_ASM = (function() {
         opASM = op;
         operatorSet(op_sym);
         resetProblemArray();
+        console.error(prob_asm[0], 'prob_asm[0]');
+        console.error(prob_asm[1], 'prob_asm[1]');
+        console.error(prob_asm[2], 'prob_asm[2]');
         complete = false;
         count_problem += 1;
         count_record = 0;
@@ -943,16 +949,53 @@ var RMM_ASM = (function() {
         levelInit(levelA1Problem, col_layout_array);
     }
 
+    function m1RandomPatternCheck(rand_in) {
+        console.log('m1RandomPatternCheck(rand_in)', rand_in, 'rand_in');
+        var i = 0;
+        var len = rand_last3.length;
+        var exists = rand_last3.indexOf(rand_in);
+        var my_rand = rand_in;
+        while (exists > -1) {
+            my_rand = getRandInt(m1_row1_min, m1_row1_max);
+            exists = rand_last3.indexOf(my_rand);
+            i += 1;
+            if (i > 10) { exists = -1;}
+        }
+        if (len < 3) {
+            rand_last3.push(my_rand);
+        } else {
+            rand_last3[0] = rand_last3[1];
+            rand_last3[1] = rand_last3[2];
+            rand_last3[2] = my_rand;
+        }
+        return my_rand;
+    }
+
     // setup and finish a M1 problem
     function levelM1Problem() {
-        console.log('levelM1Problem()');
+        console.error('levelM1Problem()');
+        console.error('levelM1Problem()');
+        console.error('levelM1Problem()');
         var pos_needed = true;
         var row1 = getRandInt(m1_row1_min, m1_row1_max);
+        console.log(m1_order, 'm1_order')
+        console.log(m1_row1_min, 'm1_row1_min');
+        console.log(m1_row1_max, 'm1_row1_max');
+        console.log(row1, 'row1');
         problemInit('m1', 1, 'x', 'multiply')
-        probColumnSetRandValue(2, 0, 10);
-        console.log(m1_digit, 'm1_digit');
-        console.log(m1_order, 'm1_order');
-        if (m1_digit) { prob_asm[0][2] = m1_digit; }
+        if (!m1_order) { row1 = m1RandomPatternCheck(row1); }
+        ////////////console.warn(prob_asm[0], 'prob_asm[0] b/4');
+        ////////////console.warn(prob_asm[1], 'prob_asm[1] b/4');
+        ////////////console.warn(prob_asm[2], 'prob_asm[2] b/4');
+        ////////////probColumnSetRandValue(2, 0, 10);
+        ////////////console.warn(prob_asm[0], 'prob_asm[0] after');
+        ////////////console.warn(prob_asm[1], 'prob_asm[1] after');
+        ////////////console.warn(prob_asm[2], 'prob_asm[2] after');
+        ////////////console.log(m1_digit, 'm1_digit');
+        ////////////console.log(m1_order, 'm1_order');
+        ////////////console.error(prob_asm, 'prob_asm');
+        ////////////if (m1_digit) { prob_asm[0][2] = m1_digit; }
+        prob_asm[0][2] = m1_digit;
         if (m1_order) {
             m1_order_count += 1;
             // need to reset m1_order_count to zero to properly handle
@@ -961,15 +1004,24 @@ var RMM_ASM = (function() {
             if (m1_order_count > m1_row1_max) { m1_order_count = 0; }
             row1 = m1_order_count > m1_row1_max ? m1_row1_min : m1_order_count;
         }
+        console.warn(prob_asm[0], 'prob_asm[0] after setting step4');
+        console.warn(prob_asm[1], 'prob_asm[1] after setting step4');
+        console.warn(prob_asm[2], 'prob_asm[2] after setting step4');
         if (row1 < 10) {
             prob_asm[1][2] = row1;
         } else {
             prob_asm[1][2] = row1 % 10;
             prob_asm[1][1] = parseInt(row1 / 10, 10);
         }
+        console.warn(prob_asm[0], 'prob_asm[0] after setting step5');
+        console.warn(prob_asm[1], 'prob_asm[1] after setting step5');
+        console.warn(prob_asm[2], 'prob_asm[2] after setting step5');
         //prob_asm  = [ [null,null,9], [null,1,2], [1,0,8] ];
         probAnswerSet();
         finishProbSetup();
+        console.warn(prob_asm[0], 'prob_asm[0] after setting step6');
+        console.warn(prob_asm[1], 'prob_asm[1] after setting step6');
+        console.warn(prob_asm[2], 'prob_asm[2] after setting step6');
         correct = colAnswer(2);
         console.log(correct, '--------------------------------------------------correct');
     }
