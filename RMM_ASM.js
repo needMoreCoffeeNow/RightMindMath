@@ -1386,9 +1386,9 @@ var RMM_ASM = (function() {
         complete = false;
         console.log(shnote_numpos, 'shnote_numpos');
         console.log(shnote_next, 'shnote_next');
-        //////if (shnote_next === false && shnote_numpos === false) {
-        //////    nextProblemLevel();
-        //////}
+        if (shnote_next === false && shnote_numpos === false) {
+            nextProblemLevel();
+        }
         if (bnext_note_active) {
             activateSvgNext();
         } else {
