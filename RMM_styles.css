@@ -234,6 +234,7 @@ div.note {
     font-family:Sans-Serif;
     background:#ffffcc;
     opacity:1.0;
+    margin-left:-20px;
     margin:0px auto;
     text-align:center;
     padding:5px;

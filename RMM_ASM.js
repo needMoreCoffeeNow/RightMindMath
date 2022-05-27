@@ -290,7 +290,7 @@ var RMM_ASM = (function() {
                      answers[level_done][1], 
                      answers[level_done][2], 
                      answers[level_done][3]];
-        console.log(responses, 'responses');
+        console.error(responses, 'responses');
         answer_active = [true, true, true, true];
         console.log(answer_active, 'answer_active');
     }
@@ -411,6 +411,7 @@ var RMM_ASM = (function() {
 
     function answersRandomOptimize(myval, found) {
         console.log('answersRandomize(myval, myarr)');
+        console.error(myval, found, 'myval, found in optimize');
         var limit = 10;
         var i = 0;
         var count = 0;
@@ -446,7 +447,8 @@ var RMM_ASM = (function() {
             myarr = [];
             mycol = 2 - i;
             myval = colAnswer(mycol);
-            found = [myval];
+            console.error(myval, 'myval');
+            found.push(myval);
             myarr.push(getRandInt(0, 1000) + '_' + myval)
             for (j=0; j<3; j++) {
                 // need to be careful about how to get close give opASM value
@@ -461,9 +463,11 @@ var RMM_ASM = (function() {
                 }
                 found.push(ans);
             }
-            answers[0] = answersRandomOptimize(myval, found);
+            answers[i] = answersRandomOptimize(myval, found);
+            found = [];
         }
-        console.error(answers[0][0], answers[0][1], answers[0][2], answers[0][3]);
+        console.error(answers, 'answers in SetValues');
+        console.error(answers[level_done][0], answers[level_done][1], answers[level_done][2], answers[level_done][3]);
     }
 
     // finds a valid col answer using correct global & existing in 4-ans array
@@ -600,6 +604,7 @@ var RMM_ASM = (function() {
         complete = false;
         mydoc.getElementById('svg_next').style.display = 'none';
         mydoc.getElementById('div_note').style.visibility = 'hidden';
+        console.error(answers, 'answers b/4');
         setResponsesAnswersActive();
         layoutVerdict(null, '');
         layoutAnswerButtons();
@@ -2132,13 +2137,13 @@ var RMM_ASM = (function() {
         level_done = val;
     }
 
-    // set level_done
+    // set correct
     function setCorrect(val) {
         console.log('setCorrect(val)');
         correct = val;
     }
 
-    // set level_done
+    // set complete
     function setComplete(val) {
         console.log('setComplete(val)');
         complete = val;
