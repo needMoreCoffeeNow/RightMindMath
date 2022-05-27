@@ -48,7 +48,7 @@ var RMM_ASM = (function() {
     var s3_doubleborrow_allow = true; // no double borrow problems if false
     var total_problems = 0; // counter of total problems when level is started
     // toggles start: next & borrow/carry notes between step levels
-    var shnote_borrow = false; // check for display note when popup inactive
+    ////////////var shnote_borrow = false; // check for display note when popup inactive
     var shnote_next = true; // controls display of next_problem notes
     var shnote_numpos = true; // controls display of number_position notes
     var shnote_carry = true; // controls display of carry notes
@@ -652,7 +652,8 @@ var RMM_ASM = (function() {
         var n_row0 = prob_asm[0][this_col];
         var n_row1 = prob_asm[1][this_col];
         var dbl_note = '';
-        shnote_borrow = false;
+        var after_borrow = '';
+        ////////////shnote_borrow = false;
         if (giver < 0 || giver > 2) {
             return;
         }
@@ -668,23 +669,27 @@ var RMM_ASM = (function() {
         }
         if (this_col === 1 && borrows.gives1 && prob_asm[0][1] === 1) {
             dbl_note = ' (1-1+10)';
+            after_borrow = ' (' + getStr('TXT_after_borrow') + ')';
         }
         if (borrows['gets'+this_col]) {
-            note = getStr('TXT_borrow_receives');
-            note = note.replace('REPLACE_row0', ''+n_row0);
-            note = note.replace('REPLACE_row1', ''+n_row1);
-            note = note.replace('REPLACE_n_gets', ''+n_gets);
-            note = note.replace('REPLACE_n_gives', ''+n_gives);
-            note = note.replace('REPLACE_c_gets', c_gets);
-            note = note.replace('REPLACE_c_gives', c_gives);
-            note = note.replace('REPLACE_c_gives', c_gives);
-            note = note.replace('REPLACE_dbl_note', dbl_note);
-            mydoc.getElementById('div_note_txt').innerHTML = note;
-            mydoc.getElementById('div_note').style.visibility = 'visible';
+            if (shnote_borrow) {
+                note = getStr('TXT_borrow_receives');
+                note = note.replace('REPLACE_row0', ''+n_row0);
+                note = note.replace('REPLACE_row1', ''+n_row1);
+                note = note.replace('REPLACE_n_gets', ''+n_gets);
+                note = note.replace('REPLACE_n_gives', ''+n_gives);
+                note = note.replace('REPLACE_c_gets', c_gets);
+                note = note.replace('REPLACE_c_gives', c_gives);
+                note = note.replace('REPLACE_c_gives', c_gives);
+                note = note.replace('REPLACE_dbl_note', dbl_note);
+                note = note.replace('REPLACE_after_borrow', after_borrow);
+                mydoc.getElementById('div_note_txt').innerHTML = note;
+                mydoc.getElementById('div_note').style.visibility = 'visible';
+            }
             borrowPathValues(this_col, n_gets);
             borrowPathValues(giver, n_gives);
         }
-        shnote_borrow = true;
+        ////////////shnote_borrow = true;
     }
 
     // show the explanatory alert if tens col previous borrow was negative
@@ -1103,7 +1108,7 @@ var RMM_ASM = (function() {
         console.error(prob_asm[0]);
         console.error(prob_asm[1]);
         console.error(prob_asm[2]);
-        //prob_asm  = [ [4,1,2], [1,8,3], [2,2,9] ];
+        prob_asm  = [ [4,1,2], [1,8,3], [2,2,9] ];
         //prob_asm  = [ [8,6,2], [5,0,9], [3,5,3] ];
         //prob_asm  = [ [7,0,5], [5,6,8], [1,4,3] ];
         //prob_asm  = [ [8,1,1], [6,6,3], [1,4,8] ];
@@ -1388,6 +1393,9 @@ var RMM_ASM = (function() {
             activateSvgNext();
         } else {
             nextProblemLevel();
+        }
+        if (shnote_bpopup) {
+            mydoc.getElementById('div_note').style.visibility = 'hidden';
         }
         console.log('correctAnswerHandler DONE ------------------------------------------------------------------------');
     }
@@ -2103,7 +2111,7 @@ var RMM_ASM = (function() {
 
     // set any of the notes control vars based on input received
     function setToggleNotes(id, is_on) {
-        console.log('setToggleNotes(id,');
+        console.log('setToggleNotes(id, is_on) = ', id, is_on);
         if (id === 'b_tog_numpos') { shnote_numpos = is_on; }
         if (id === 'b_tog_next') { shnote_next = is_on; }
         if (id === 'b_tog_carry') { shnote_carry = is_on; }

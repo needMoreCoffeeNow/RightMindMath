@@ -226,13 +226,13 @@ div.menu_info {
     font-size:80%;
 }
 div.note {
-    width:50%;
+    width:100%;
     min-width:400px;
     max-width:1000px;
     color:#000;
     font-size:1.1em;
     font-family:Sans-Serif;
-    background:#ffffcc;
+    background-color:rgba(204, 238, 255, 1.0);
     opacity:1.0;
     margin-left:-20px;
     margin:0px auto;
