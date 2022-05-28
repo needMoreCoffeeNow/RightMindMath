@@ -37,11 +37,7 @@ var RMM_STATSLIVE = (function() {
         for (i=0; i<len; i++) {
             iduser = sdata[i].iduser;
             if (statslive[iduser]) { continue; }
-            grand_start[iduser] = 0;
-            statslive[iduser] =  {'a1':[0,0], 'a2':[0,0], 'a3':[0,0],
-                                  's1':[0,0], 's2':[0,0], 's3':[0,0],
-                                  'm1':[0,0], 'm2':[0,0], 'd3':[0,0],
-                                  'grand':0};
+            newUserAdd(iduser);
         }
         // accumulate total problems by level and grand total
         for (i=0; i<len; i++) {
