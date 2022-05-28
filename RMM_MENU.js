@@ -619,6 +619,7 @@ var RMM_MENU = (function() {
         data.iduser += RMM_ASM.getRandInt(100, 1000) * 1000;
         // leading digit cannot be a 1 to protect default guest id
         data.iduser += RMM_ASM.getRandInt(200, 1000) * 1000000;
+        RMM_STATSLIVE.newUserAdd(data.iduser);
         console.log(data);
         RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserAdd);
         RMM_DB.addRecord('user', data);
