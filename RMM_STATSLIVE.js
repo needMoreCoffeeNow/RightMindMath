@@ -17,6 +17,8 @@ var RMM_STATSLIVE = (function() {
         txt = txt.replace('REPLACE_count', type);
         mydoc.getElementById('div_info_text').innerHTML = txt;
         mydoc.getElementById('div_info').style.display = 'block';
+        statslive = {};
+        newUserAdd(IDGUEST);
         RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_STATSLIVE.handleReadData);
         RMM_DB.sessionGetAllRollup(null, 50, 'div_info_text');
     }
@@ -31,9 +33,12 @@ var RMM_STATSLIVE = (function() {
         sdata = RMM_DB.getDbResult();
         len = sdata.length;
         console.warn(len, 'sdata.length');
-        if (len === 0) { return; }
+        if (len === 0) {
+            mydoc.getElementById('div_info').style.display = 'none';
+            RMM_ASM.initReadUserLast();
+            return;
+        }
         // setup the iduser data containers first
-        statslive = {};
         for (i=0; i<len; i++) {
             iduser = sdata[i].iduser;
             if (statslive[iduser]) { continue; }
@@ -69,7 +74,8 @@ var RMM_STATSLIVE = (function() {
     }
 
     function displayUserCounts(level, answered) {
-        console.error('displayUserCounts(iduser, level, answered)');
+        console.error('displayUserCounts(iduser, level, answered)', level, answered, 'level, answered');
+        if (!level) { return; } // initial GUEST page load = no idlevel exists
         var iduser = RMM_ASM.getIduser();
         var txt = '';
         // remove any unneccessary 3rd char qualifiers (e.g. m2b, m2c, m12)
