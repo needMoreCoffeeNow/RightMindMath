@@ -312,8 +312,6 @@ var RMM_DB = (function() {
             cursor = ev.target.result;
             if (cursor) {
                 data = cursor.value;
-                console.log(data);
-                console.warn(data['tstamp'], tstamp_in);
                 if (data['tstamp'] > tstamp_in) {
                     recs.push(data);
                 }
@@ -322,6 +320,7 @@ var RMM_DB = (function() {
             db_result = recs;
             db_complete = true;
         }
+        console.error(recs.length, 'recs.length');
         cursor_req.onerror = function(ev) {
             alert('ERR: sessionDeviceUserGet:' + table + ' : ' + 'ival=' + ival);
             db_result = {};

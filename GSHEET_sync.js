@@ -4,7 +4,7 @@ var SCRIPT_PROP = PropertiesService.getScriptProperties(); // new property servi
 function aa_setup() {
     var doc = SpreadsheetApp.getActiveSpreadsheet();
     SCRIPT_PROP.setProperty('key', doc.getId());
-    Logger.log('---start---');
+    Logger.log('---start--- 5/28/1141');
     Logger.log(doc.getId());
 }
 
@@ -176,9 +176,12 @@ var g_s = (function() {
         var tstamps = buildDeviceTstamps();
         var key = null;
         var output = [];
+        var mystamp = '';
         tstamps[device] = tstamp_max;
         for (key in tstamps) {
-            output.push(key + '_' + tstamps[key]);
+            mystamp = '' + tstamps[key];
+            if (mystamp === 'NaN') { continue; }
+            output.push(key + '_' + mystamp);
         }
         range.setValue(output.join('#'));
     }
