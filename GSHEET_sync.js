@@ -4,7 +4,7 @@ var SCRIPT_PROP = PropertiesService.getScriptProperties(); // new property servi
 function aa_setup() {
     var doc = SpreadsheetApp.getActiveSpreadsheet();
     SCRIPT_PROP.setProperty('key', doc.getId());
-    Logger.log('---start--- 5/28/1141');
+    Logger.log('---start--- 5/28/1635');
     Logger.log(doc.getId());
 }
 
@@ -273,6 +273,28 @@ function handleLinkTest(e) {
     return g_s.returnSrcJS();
 }
 
+function controlAvailable() {
+    var cntl_sheet = null;
+    var c_err = null;
+    var range = null;
+    try {
+        cntl_sheet = g_s.getDoc().getSheetByName('control');
+    } catch(c_err) {
+        g_s.setResult('ERR', c_err.message, 'controlSheetMissing');
+        return false;
+    }
+    if (!cntl_sheet) {
+        g_s.setResult('ERR', '', 'controlSheetFalse');
+        return false;
+    }
+    range = cntl_sheet.getRange(1, 1);
+    if (range.getValue() !== 1) {
+        g_s.setResult('ERR', range.getValue(), 'controlNotAvailable');
+        return false;
+    }
+    return true;
+}
+
 function handleGetDownload(e) {
     var tstamps = {};
     var c_err = null;
@@ -308,6 +330,8 @@ function doGet(e) {
     if (!g_s.setLock()) { return g_s.returnSrcJS(); }
     if (!g_s.setDoc()) { return g_s.returnSrcJS(); }
     if (!g_s.setSheet(sheet)) { return g_s.returnSrcJS(); }
+    // check control is available
+    if (!controlAvailable()) { return g_s.returnSrcJS(); }
     // process type of call
     if (idtype === 'getDownload') {
         return handleGetDownload(e);
@@ -363,6 +387,8 @@ function doPost(e) {
     if (!g_s.setLock()) { return g_s.returnResultStr(); }
     if (!g_s.setDoc()) { return g_s.returnResultStr(); }
     if (!g_s.setSheet(sheet)) { return g_s.returnResultStr(); }
+    // check control is available
+    if (!controlAvailable()) { return g_s.returnSrcJS(); }
     g_s.addDataRows(device, datastr);
     g_s.updateDeviceTstampMax(device, tstamp_max);
     if (!writeTimeStamp(e)) { return g_s.returnResultStr(); }
