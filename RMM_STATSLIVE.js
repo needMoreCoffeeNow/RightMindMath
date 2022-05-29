@@ -11,7 +11,7 @@ var RMM_STATSLIVE = (function() {
     function getStr(id) { return RMM_CFG.getStr(id); }
 
     function loadSessionData() {
-        console.error('loadSessionData()');
+        console.log('loadSessionData()');
         var txt = getStr('TXT_data_loading');
         var type = getStr('TXT_history');
         txt = txt.replace('REPLACE_count', type);
@@ -25,15 +25,14 @@ var RMM_STATSLIVE = (function() {
 
     // handle stats after data is read
     function handleReadData() {
-        console.error('handleReadData()');
+        console.log('handleReadData()');
         var i = 0;
         var len = 0;
         var iduser = null;
         var idlevel = null;
         sdata = RMM_DB.getDbResult();
         len = sdata.length;
-        console.error(len, 'sdata.length');
-        console.error(sdata);
+        console.log(len, 'sdata.length');
         if (len === 0) {
             mydoc.getElementById('div_info').style.display = 'none';
             RMM_ASM.initReadUserLast();
@@ -75,7 +74,7 @@ var RMM_STATSLIVE = (function() {
     }
 
     function displayUserCounts(level, answered) {
-        console.error('displayUserCounts(level, answered)', level, answered, 'level, answered');
+        console.log('displayUserCounts(level, answered)', level, answered, 'level, answered');
         if (!level) { return; } // initial GUEST page load = no idlevel exists
         var iduser = RMM_ASM.getIduser();
         var txt = '';

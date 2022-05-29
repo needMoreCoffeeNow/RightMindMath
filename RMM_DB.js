@@ -467,8 +467,6 @@ var RMM_DB = (function() {
                 //////console.error(data.idsession, data.idlevel, basic.indexOf(data.idlevel));
                 id_curr = data.idsession.split('_');
                 id_curr = id_curr[0] + '_' + id_curr[1];
-                //////console.warn(id_curr, 'idcurr');
-                //////console.warn(data.time, 'time');
                 // skip recs not matching iduser
                 if (iduser !== null) {
                     if (data.iduser !== iduser) { cursor.continue; }
@@ -581,7 +579,7 @@ var RMM_DB = (function() {
 
     // set pdata in setup table
     function setupPdataSet(my_iduser, pdata) {
-        console.warn('setupPdataSet(pdata)');
+        console.log('setupPdataSet(pdata)');
         console.log(pdata);
         var obj = objectstoreGet('setup', true);
         var req = null;
@@ -603,7 +601,7 @@ var RMM_DB = (function() {
 
     // set pdata for non-IDSETUP iduser in setup table
     function setupSnapshotPdataSet(my_iduser, pdata) {
-        console.warn('setupSnapshotPdataSet(my_iduser, pdata)');
+        console.log('setupSnapshotPdataSet(my_iduser, pdata)');
         console.log(pdata);
         var my_iduser = RMM_ASM.getIduser();
         var obj = objectstoreGet('setup', true);
