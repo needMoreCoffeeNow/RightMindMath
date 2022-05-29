@@ -79,7 +79,6 @@ var RMM_STATS = (function() {
         var digit = -1;
         var m1_id = '';
         sdata = RMM_DB.getDbResult();
-        console.error(sdata, 'sdata');
         len = sdata.length;
         if (len === 0) {
             alert(getStr('MSG_no_session_data'));
@@ -98,7 +97,6 @@ var RMM_STATS = (function() {
         for (i=0; i<len; i++) {
             iduser = sdata[i].iduser;
             idlevel = sdata[i].idlevel;
-            //////console.error(idlevel, 'in rollup');
             // remove the digit identifier from m1 recs
             if (idlevel.indexOf('m1') > -1) { idlevel = idlevel.substr(0, 2); }
             if (!rollup[iduser]['total']) {
@@ -121,17 +119,11 @@ var RMM_STATS = (function() {
                 m1_id = '' + digit + '_R';
             }
             if (!rollup_m1[iduser][m1_id]) {
-                //////console.log('new');
                 rollup_m1[iduser][m1_id] =  1;
-                //////console.warn(rollup_m1);
             } else {
                 rollup_m1[iduser][m1_id] +=  1;
-                //////console.log('incr');
-                //////console.warn(rollup_m1);
             }
         }
-        console.error(rollup, 'rollup');
-        console.error(rollup_m1, 'rollup_m1');
         buildUserButtons();
     }
 
@@ -269,8 +261,6 @@ var RMM_STATS = (function() {
         var i = 0;
         var len = sdata.length;
         var basic = 'a1_s1_m1';
-        console.warn(idstats, 'idstats');
-        console.warn(idlevel, 'idlevel');
         showMomentPlease('MSG_moment_please');
         times = [];
         tries = [];
@@ -283,7 +273,6 @@ var RMM_STATS = (function() {
             if (mylevel !== idlevel) { continue; }
             // handle m1 ordered/random & digit in 3rd position
             if (idlevel === 'm1') {
-                console.warn(sdata[i]);
                 console.log(m1_ordered, m1_ordered !== sdata[i].ordered);
                 if (sdata[i].ordered !== m1_ordered) { continue; }
                 mydigit = sdata[i].idlevel.substr(2, 1);
@@ -298,7 +287,6 @@ var RMM_STATS = (function() {
                     times.push(sdata[i].elapsed);
             }
         }
-        console.error(times);
         averaged = false;
         avg_len = times.length;
         if (times.length > 100) { averageTimes(); }
@@ -428,7 +416,7 @@ var RMM_STATS = (function() {
 
     // main control for building chart
     function chartBuild() {
-        console.error('chartBuild()');
+        console.log('chartBuild()');
         var basic = 'a1_s1_m1'.indexOf(idlevel) > -1;
         var color = '#0074d9';
         var stroke = 1.5;
@@ -478,12 +466,10 @@ var RMM_STATS = (function() {
         console.log(ymax, 'ymax');
         for (i=0; i<len; i++) {
             if (times[i] > limit) {
-                console.error(times[i], limit, times[i] - limit);
                 times_ypos[i] = 0;
             } else {
                 temp = (times[i] / limit);
                 temp = ymax - (ymax * temp).toFixed(1);
-                //////console.warn(i, times[i], limit, times[i] / limit, (times[i]/limit).toFixed(1), temp);
                 // set floor for any times just less than limit to 1
                 temp = temp === 0 ? 1 : temp;
                 times_ypos.push(temp);
@@ -727,7 +713,6 @@ var RMM_STATS = (function() {
         keys.sort();
         for (i=0; i<len; i++) {
             color = row_count % 2 === 0 ? '#fff' : '#ddd';
-            console.warn(row_count % 2, color);
             if (detail) {
                 html += '<tr style="background:#999;line-height:5px;">';
                 html += '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -785,7 +770,6 @@ var RMM_STATS = (function() {
             html += '</td>';
             html += '</tr>';
         }
-        console.warn(html);
         return html;
     }
 

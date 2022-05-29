@@ -43,7 +43,7 @@ var RMM_SYNC = (function() {
 
     // show the moment please info dialog using CFG id as arg
     function showMomentPlease(id) {
-        console.error('showMomentPlease(id)', id);
+        console.log('showMomentPlease(id)', id);
         hideAll();
         mydoc.getElementById('div_info_text').innerHTML = getStr(id);
         mydoc.getElementById('div_info').style.display = 'block';
@@ -338,7 +338,6 @@ var RMM_SYNC = (function() {
 
     function gsDoGet(url) {
         console.log('gsDoGet(url)');
-        console.warn(url);
         var head = document.getElementsByTagName('head')[0];
         var script = document.createElement('script');
         var err = false;
@@ -387,7 +386,7 @@ var RMM_SYNC = (function() {
     }
 
     function linkAddCheck() {
-        console.warn('linkAddCheck()');
+        console.log('linkAddCheck()');
         var url = mydoc.getElementById('sync_input_url').value.trim();
         var pwd = mydoc.getElementById('sync_input_pwd').value.trim();
         showMomentPlease('MSG_moment_please');
@@ -518,7 +517,6 @@ var RMM_SYNC = (function() {
             alert(getStr('MSG_no_link_user_recs'));
             return;
         }
-        console.warn(html);
         hideAll();
         link_list.style.marginLeft = '0px';
         link_list.style.textAlign = 'center';
@@ -558,12 +556,10 @@ var RMM_SYNC = (function() {
 
     function procUpGetDeviceTstamp() {
         console.log('procUpGetDeviceTstamp()');
-        console.error(sync_user_url);
         url = sync_user_url;
         url += '?idtype=getDeviceTstamp';
         url += '&sheet=' + sync_iduser;
         url += '&device=' +  RMM_DB.getDevice();
-        console.warn(url);
         sync_callback = RMM_SYNC.handleProcUpGetDeviceTstamp;
         showMomentPlease('MSG_sync_process_step2');
         sync_caller = 'procUpGetDeviceTstamp';
@@ -602,10 +598,8 @@ var RMM_SYNC = (function() {
     }
 
     function handleUserSessionUpGet() {
-        console.error('handleUserSessionUpGet()');
+        console.log('handleUserSessionUpGet()');
         var recs = RMM_DB.getDbResult();
-        console.error(recs.length, 'recs.length');
-        console.error(recs);
         var d_device = RMM_DB.getDevice();
         var a_recs = [];
         var data = {};
@@ -635,7 +629,6 @@ var RMM_SYNC = (function() {
         data['tstamp_max'] = tstamp_max;
         data['datastr'] = a_recs.join('####');
         console.log(data['tstamp_max'], 'data.tstamp_max');
-        console.error('fetch post', sync_user_url);
         showMomentPlease('MSG_sync_process_step4');
         fetch(sync_user_url, {
             method: 'post',
@@ -652,12 +645,10 @@ var RMM_SYNC = (function() {
         console.log('confirmSessionUpPost(response)');
         console.log(response);
         var url = '';
-        console.error(sync_user_url);
         url = sync_user_url;
         url += '?idtype=getConfirmationTstamp';
         url += '&sheet=' + sync_iduser;
         url += '&device=' +  RMM_DB.getDevice();
-        console.warn(url);
         sync_callback = RMM_SYNC.handleConfirmationTstamp;
         showMomentPlease('MSG_sync_process_step5');
         sync_caller = 'confirmSessionUpPost';
@@ -692,7 +683,6 @@ var RMM_SYNC = (function() {
         url += '&pwd=' + sync_user_pwd;
         url += '&device=' +  RMM_DB.getDevice();
         url += '&tstamps_max=' +  tstamps_str;
-        console.error(url);
         sync_callback = RMM_SYNC.handleDownload;
         showMomentPlease('MSG_sync_process_step6');
         sync_caller = 'procdnStartDownload';
@@ -734,7 +724,6 @@ var RMM_SYNC = (function() {
             my_msg += '(' + (sync_procdn_i+1) + ' / ' + sync_procdn_len + ')';
             mydoc.getElementById('div_info_text').innerHTML = my_msg;
         }
-        console.error(sync_procdn_data);
         my_data = JSON.parse(decodeURI(sync_procdn_data[sync_procdn_i]));
         console.log(my_data);
         RMM_DB.addSessionRecRecursive(my_data, RMM_SYNC.procdnRecursiveAddsCallback);
