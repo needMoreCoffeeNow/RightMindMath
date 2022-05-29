@@ -329,9 +329,10 @@ function doGet(e) {
     // set lock, doc and sheet successfully else exit
     if (!g_s.setLock()) { return g_s.returnSrcJS(); }
     if (!g_s.setDoc()) { return g_s.returnSrcJS(); }
-    if (!g_s.setSheet(sheet)) { return g_s.returnSrcJS(); }
     // check control is available
     if (!controlAvailable()) { return g_s.returnSrcJS(); }
+    // finally get sheet
+    if (!g_s.setSheet(sheet)) { return g_s.returnSrcJS(); }
     // process type of call
     if (idtype === 'getDownload') {
         return handleGetDownload(e);
@@ -386,9 +387,10 @@ function doPost(e) {
     // set lock, doc and sheet successfully else exit
     if (!g_s.setLock()) { return g_s.returnResultStr(); }
     if (!g_s.setDoc()) { return g_s.returnResultStr(); }
-    if (!g_s.setSheet(sheet)) { return g_s.returnResultStr(); }
     // check control is available
     if (!controlAvailable()) { return g_s.returnSrcJS(); }
+    // finally get sheet
+    if (!g_s.setSheet(sheet)) { return g_s.returnResultStr(); }
     g_s.addDataRows(device, datastr);
     g_s.updateDeviceTstampMax(device, tstamp_max);
     if (!writeTimeStamp(e)) { return g_s.returnResultStr(); }
