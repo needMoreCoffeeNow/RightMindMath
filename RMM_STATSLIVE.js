@@ -25,14 +25,15 @@ var RMM_STATSLIVE = (function() {
 
     // handle stats after data is read
     function handleReadData() {
-        console.log('handleReadData()');
+        console.error('handleReadData()');
         var i = 0;
         var len = 0;
         var iduser = null;
         var idlevel = null;
         sdata = RMM_DB.getDbResult();
         len = sdata.length;
-        console.warn(len, 'sdata.length');
+        console.error(len, 'sdata.length');
+        console.error(sdata);
         if (len === 0) {
             mydoc.getElementById('div_info').style.display = 'none';
             RMM_ASM.initReadUserLast();

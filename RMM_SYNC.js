@@ -602,9 +602,10 @@ var RMM_SYNC = (function() {
     }
 
     function handleUserSessionUpGet() {
-        console.log('handleUserSessionUpGet()');
+        console.error('handleUserSessionUpGet()');
         var recs = RMM_DB.getDbResult();
-        console.log(recs);
+        console.error(recs.length, 'recs.length');
+        console.error(recs);
         var d_device = RMM_DB.getDevice();
         var a_recs = [];
         var data = {};

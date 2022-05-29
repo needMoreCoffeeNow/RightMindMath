@@ -292,7 +292,7 @@ var RMM_DB = (function() {
 
     // read table using an index filter
     function sessionDeviceUserGet(tstamp_in, ival) {
-        console.log('sessionDeviceUserGet(table, iname, ival)');
+        console.log('sessionDeviceUserGet(tstamp_in, ival)');
         console.log(tstamp_in, ival);
         var obj = objectstoreGet('session', true);
         var req = null;
@@ -302,8 +302,9 @@ var RMM_DB = (function() {
         var cursor = null;
         var recs = [];
         var data = {};
+        var date_now = Date.now();
         if (!obj) { return; }
-        timervar = window.setTimeout(dbWait, DB_MILLI_STD);
+        timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 100);
         transactionInit();
         myindex = obj.index('device_iduser');
         myrange = IDBKeyRange.only(ival);
@@ -316,11 +317,13 @@ var RMM_DB = (function() {
                     recs.push(data);
                 }
                 cursor.continue();
+            } else {
+                console.warn('sessionDeviceUserGet finished');
+                console.warn(Date.now() - date_now, 'milliseconds to run');
+                db_result = recs;
+                db_complete = true;
             }
-            db_result = recs;
-            db_complete = true;
         }
-        console.error(recs.length, 'recs.length');
         cursor_req.onerror = function(ev) {
             alert('ERR: sessionDeviceUserGet:' + table + ' : ' + 'ival=' + ival);
             db_result = {};
@@ -440,7 +443,7 @@ var RMM_DB = (function() {
         var date_now = Date.now();
         if (!obj) { return; }
         transactionInit();
-        timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
+        timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 10);
         count_read = 0;
         obj.openCursor().onsuccess = function(ev) {
             cursor = ev.target.result;
@@ -519,6 +522,8 @@ var RMM_DB = (function() {
                     db_result = recs;
                 }
                 db_complete = true;
+                console.warn('sessionGetAllRollup finished');
+                console.warn(Date.now() - date_now, 'milliseconds to run');
             }
         }
     }

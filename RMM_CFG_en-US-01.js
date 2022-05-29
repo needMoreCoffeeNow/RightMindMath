@@ -105,7 +105,6 @@
         MSG_no_special_characters : 'Please limit entry to the characters shown.',
         MSG_sync_iduser_exists : 'That ID User has already been entered.',
         MSG_sync_user_added : 'The user has been added. Please note that we added a "+" to the name (REPLACE_NAME) to mark it as a sync user from another device.',
-        MSG_sync_process_final_err : 'ERROR: Sync download for REPLACE_user did not complete.',
         MSG_sync_process_step1 : 'Syncing Data<br><span style="color:#0000b3;">(step 1 of 6)</span><br>Moment Please',
         MSG_sync_process_step2 : 'Syncing Data<br><span style="color:#0000b3;">(step 2 of 6)</span><br>Please Be Patient',
         MSG_sync_process_step3 : 'Syncing Data<br><span style="color:#0000b3;">(step 3 of 6)</span><br>Adding Records',
