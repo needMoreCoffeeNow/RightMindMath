@@ -78,7 +78,6 @@ var RMM_MENU = (function() {
     function getFullModule() {
         console.log('getFullModule()');
         var mod_str = pdata.module;
-        console.warn(mod_str, 'mod_str');
         if (mod_str == 'a' || mod_str === 's' || mod_str === 'm') {
             mod_str = '' + mod_str + pdata.digits;
         }
@@ -117,7 +116,7 @@ var RMM_MENU = (function() {
 
     // handle settings icon click
     function settingsClick(ev) {
-        console.warn('settingsClick()');
+        console.log('settingsClick()');
         console.log(pdata, 'pdata');
         var setup_needed = settingsUpdateCurrent();
         RMM_ASM.hideAll();
@@ -140,28 +139,28 @@ var RMM_MENU = (function() {
 
     // show the menu to select number of digits in add/subtract problems
     function showMenuDigits() {
-        console.warn('showMenuDigits()');
+        console.log('showMenuDigits()');
         hideAll();
         mydoc.getElementById('div_menu_digits').style.display = 'block';
     }
 
     // show the menu for number of negative one-digit subtractions to show
     function showSubnegMenu() {
-        console.warn('showSubnegMenu()');
+        console.log('showSubnegMenu()');
         hideAll();
         mydoc.getElementById('div_menu_subneg').style.display = 'block';
     }
 
     // show the menu for the option to include borrows in s2 & s3 problems
     function showSubBorrowMenu() {
-        console.warn('showSubBorrowMenu()');
+        console.log('showSubBorrowMenu()');
         hideAll();
         mydoc.getElementById('div_menu_subborrow').style.display = 'block';
     }
 
     // show the options for multiplying one digit
     function showM1options() {
-        console.warn('showM1options()');
+        console.log('showM1options()');
         console.log(pdata);
         if (pdata.module === 'm') {
             mydoc.getElementById('m1_digit').value = pdata.m1_digit;
@@ -180,7 +179,7 @@ var RMM_MENU = (function() {
 
     // show the options for long division
     function showD3options() {
-        console.warn('showD3options()');
+        console.log('showD3options()');
         hideAll();
         if (pdata.decimal_pct) {
             mydoc.getElementById('d3_decimal').value = pdata.decimal_pct;
@@ -197,14 +196,14 @@ var RMM_MENU = (function() {
 
     // show the options for multiplying two digits
     function showM2options() {
-        console.warn('showM2options()');
+        console.log('showM2options()');
         hideAll();
         mydoc.getElementById('div_m2_options').style.display = 'block';
     }
 
     // hide help and return to last dialog
     function helpContinue(ev) {
-        console.warn('helpContinue(ev)');
+        console.log('helpContinue(ev)');
         hideAll();
         if (mydoc.getElementById(dialog_last)) {
             mydoc.getElementById(dialog_last).style.display = 'block';
@@ -215,7 +214,7 @@ var RMM_MENU = (function() {
 
     // show help for multiply one digit
     function helpNotes(ev) {
-        console.warn('helpM1(ev)');
+        console.log('helpNotes(ev)');
         dialog_last = 'div_tog_notes';
         var help_text = getStr('HLP_tog_notes');
         hideAll();
@@ -225,7 +224,7 @@ var RMM_MENU = (function() {
 
     // show help for showing notes & info
     function helpM1(ev) {
-        console.warn('helpNotes(ev)');
+        console.log('helpM1(ev)');
         dialog_last = 'div_m1_options';
         var help_text = getStr('HLP_m1_options');
         hideAll();
@@ -280,7 +279,7 @@ var RMM_MENU = (function() {
 
     // prompt the user for a device name
     function inputDeviceName() {
-        console.warn('inputDeviceName()');
+        console.log('inputDeviceName()');
         var txt = getStr('TXT_input_device');
         mydoc.getElementById('input_1').value = '';
         input_active = true;
@@ -295,7 +294,7 @@ var RMM_MENU = (function() {
 
     // prompt the user for a user name
     function inputUserName() {
-        console.warn('inputUserName()');
+        console.log('inputUserName()');
         var txt = getStr('TXT_input_user');
         hideAll();
         mydoc.getElementById('input_1').value = '';
@@ -507,21 +506,17 @@ var RMM_MENU = (function() {
 
     // handle pdata change based on user snapshot
     function handleUserSnapshot() {
-        console.warn('handleUserSnapshot()');
+        console.log('handleUserSnapshot()');
         var result = RMM_DB.getDbResult();
         var data = {};
         console.log(result);
         if (result !== undefined) {
-            console.warn(result.pdata, 'setting result.pdata');
             pdata = result.pdata;
             changUserCurrentWrapup();
             return;
         }
-        console.warn(pdata, 'ADDING result.pdata');
         data = { 'idkey' : RMM_ASM.getIduser(),
                  'pdata' : pdata}
-        console.warn(pdata, pdata);
-        console.warn(data);
         RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.changUserCurrentWrapup);
         RMM_DB.addRecord('setup', data);
     }
@@ -547,7 +542,7 @@ var RMM_MENU = (function() {
 
     // handle input1 continue click
     function input1Continue(ev) {
-        console.warn('input1Continue()');
+        console.log('input1Continue()');
         var start = mydoc.getElementById('input_1').value;
         var end = '';
         var len = start.length;
@@ -659,7 +654,7 @@ var RMM_MENU = (function() {
 
     // handle levels change
     function levelsSet(ev) {
-        console.warn('levelsSet(ev)');
+        console.log('levelsSet(ev)');
         console.log(pdata);
         var id = (ev.target.id);
         console.log(id, 'id');
@@ -726,7 +721,6 @@ var RMM_MENU = (function() {
         console.log(ev.target.id);
         console.log(ev.target.value);
         pdata.subborrow = parseInt(num_str, 10);
-        console.error(pdata);
         checkProblemStart();
     }
 
@@ -748,7 +742,7 @@ var RMM_MENU = (function() {
 
     // handle m2 type (basic / chunk) selection
     function m2optionsType(ev) {
-        console.warn('m2optionsType(ev)');
+        console.log('m2optionsType(ev)');
         var type = ev.target.id;
         if (type === 'b_m2_type_basic') {
             RMM_M2.setLevel('m2b');
@@ -771,7 +765,7 @@ var RMM_MENU = (function() {
 
     // handle m1 change of start number
     function m1optionsStartChange(ev) {
-        console.warn('m1optionsStartChange(ev)');
+        console.log('m1optionsStartChange(ev)');
         var start = parseInt(mydoc.getElementById('m1_start').value, 10);
         console.log(start, 'start');
         if (start === 11) {
@@ -784,7 +778,7 @@ var RMM_MENU = (function() {
 
     // handle d3 options
     function d3optionsSet(ev) {
-        console.warn('d3optionsSet(ev)');
+        console.log('d3optionsSet(ev)');
         hideAll();
         RMM_MENU.setNextProblemOnclickD3(RMM_D3.nextD3Equation);
         pdata.divisor_pct = parseInt(mydoc.getElementById('d3_divisor').value, 10);
@@ -796,7 +790,7 @@ var RMM_MENU = (function() {
 
     // handle m1 options
     function m1optionsSet(ev) {
-        console.warn('m1optionsSet(ev)');
+        console.log('m1optionsSet(ev)');
         var start = parseInt(mydoc.getElementById('m1_start').value, 10);
         var end = parseInt(mydoc.getElementById('m1_end').value, 10);
         if (end < start) {
@@ -812,10 +806,9 @@ var RMM_MENU = (function() {
 
     // checks pdata to find completed states to start a problem
     function checkProblemStart() {
-        console.warn('checkProblemStart()');
+        console.log('checkProblemStart()');
         var start = false;
         var idlevel = '';
-        console.warn(pdata);
         if (pdata.module === 'd3') {
             mydoc.getElementById('div_header').style.display = 'block';
             startProblemD3();
@@ -858,7 +851,7 @@ var RMM_MENU = (function() {
 
     // start long division D3
     function startProblemD3() {
-        console.warn('startProblemD3()');
+        console.log('startProblemD3()');
         //RMM_ASM.hideAll();
         RMM_ASM.setModule('d3');
         RMM_DB.setupPdataSet(IDSETUP, pdata);
@@ -868,7 +861,7 @@ var RMM_MENU = (function() {
 
     // start the ASM problem setting the data first
     function startProblemASM() {
-        console.warn('startProblemASM()');
+        console.log('startProblemASM()');
         RMM_ASM.setModule('asm');
         RMM_DB.setupPdataSet(IDSETUP, pdata);
         RMM_ASM.setProblem(pdata);
