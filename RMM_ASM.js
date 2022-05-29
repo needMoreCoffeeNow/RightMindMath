@@ -290,7 +290,6 @@ var RMM_ASM = (function() {
                      answers[level_done][1], 
                      answers[level_done][2], 
                      answers[level_done][3]];
-        console.error(responses, 'responses');
         answer_active = [true, true, true, true];
         console.log(answer_active, 'answer_active');
     }
@@ -411,7 +410,7 @@ var RMM_ASM = (function() {
 
     function answersRandomOptimize(myval, found) {
         console.log('answersRandomize(myval, myarr)');
-        console.error(myval, found, 'myval, found in optimize');
+        console.log(myval, found, 'myval, found in optimize');
         var limit = 10;
         var i = 0;
         var count = 0;
@@ -434,7 +433,7 @@ var RMM_ASM = (function() {
 
     // fills the 4-answer array with values close to correct answer
     function answersResponsesSetValues() {
-        console.error('answersResponsesSetValues()');
+        console.log('answersResponsesSetValues()');
         var ans = null;
         var found = []; // use to avoid duplicate answers
         var i = 0;
@@ -447,7 +446,6 @@ var RMM_ASM = (function() {
             myarr = [];
             mycol = 2 - i;
             myval = colAnswer(mycol);
-            console.error(myval, 'myval');
             found.push(myval);
             myarr.push(getRandInt(0, 1000) + '_' + myval)
             for (j=0; j<3; j++) {
@@ -466,8 +464,7 @@ var RMM_ASM = (function() {
             answers[i] = answersRandomOptimize(myval, found);
             found = [];
         }
-        console.error(answers, 'answers in SetValues');
-        console.error(answers[level_done][0], answers[level_done][1], answers[level_done][2], answers[level_done][3]);
+        console.log(answers, 'answers in SetValues');
     }
 
     // finds a valid col answer using correct global & existing in 4-ans array
@@ -597,14 +594,13 @@ var RMM_ASM = (function() {
         if (level_done === level_steps) { // start a new problem
             nextLevelWrapUp();
             next_problem_init();
-            console.warn('if (level_done === level_steps) EXIT');
+            console.log('if (level_done === level_steps) EXIT');
             return;
         }
         correct = colAnswer(2 - level_done);
         complete = false;
         mydoc.getElementById('svg_next').style.display = 'none';
         mydoc.getElementById('div_note').style.visibility = 'hidden';
-        console.error(answers, 'answers b/4');
         setResponsesAnswersActive();
         layoutVerdict(null, '');
         layoutAnswerButtons();
@@ -779,9 +775,9 @@ var RMM_ASM = (function() {
 
     // sets the borrows Dict, and returns true if borrowing is needed
     function borrowNeeded() {
-        console.error('borrowNeeded');
+        console.log('borrowNeeded');
         borrowsSetDict();
-        console.error(borrows.gets0 + borrows.gets1 + borrows.gets2 > 0);
+        console.log(borrows.gets0 + borrows.gets1 + borrows.gets2 > 0);
         return borrows.gets0 + borrows.gets1 + borrows.gets2 > 0;
     }
     
@@ -892,9 +888,6 @@ var RMM_ASM = (function() {
         opASM = op;
         operatorSet(op_sym);
         resetProblemArray();
-        console.error(prob_asm[0], 'prob_asm[0]');
-        console.error(prob_asm[1], 'prob_asm[1]');
-        console.error(prob_asm[2], 'prob_asm[2]');
         complete = false;
         count_problem += 1;
         count_record = 0;
@@ -1003,9 +996,7 @@ var RMM_ASM = (function() {
 
     // setup and finish a M1 problem
     function levelM1Problem() {
-        console.error('levelM1Problem()');
-        console.error('levelM1Problem()');
-        console.error('levelM1Problem()');
+        console.log('levelM1Problem()');
         var pos_needed = true;
         var row1 = getRandInt(m1_row1_min, m1_row1_max);
         console.log(m1_order, 'm1_order')
@@ -1032,9 +1023,6 @@ var RMM_ASM = (function() {
         //prob_asm  = [ [null,null,9], [null,1,2], [1,0,8] ];
         probAnswerSet();
         finishProbSetup();
-        console.warn(prob_asm[0], 'prob_asm[0] after setting step6');
-        console.warn(prob_asm[1], 'prob_asm[1] after setting step6');
-        console.warn(prob_asm[2], 'prob_asm[2] after setting step6');
         correct = colAnswer(2);
         console.log(correct, '--------------------------------------------------correct');
     }
@@ -1091,7 +1079,7 @@ var RMM_ASM = (function() {
     // setup and finish a S3 problem
     function levelS3Problem() {
         console.log('levelS3Problem()');
-        console.error(subborrow, 'subborrow');
+        console.log(subborrow, 'subborrow');
         var pos_needed = true;
         problemInit('s3', 3, '-', 'minus')
         while (pos_needed) {
@@ -1105,9 +1093,6 @@ var RMM_ASM = (function() {
             if (!subborrow && borrowNeeded()) { continue; }
             if (probRowsAsTotal('-') > -1) { pos_needed = false; }
         }
-        console.error(prob_asm[0]);
-        console.error(prob_asm[1]);
-        console.error(prob_asm[2]);
         prob_asm  = [ [4,1,2], [1,8,3], [2,2,9] ];
         //prob_asm  = [ [8,6,2], [5,0,9], [3,5,3] ];
         //prob_asm  = [ [7,0,5], [5,6,8], [1,4,3] ];
@@ -1333,7 +1318,7 @@ var RMM_ASM = (function() {
 
     // steps for ASM correct answer click (problem level dependencies)
     function correctAnswerHandler(index) {
-        console.warn('correctAnswerHandler(index) ------------------------------------------------------------------------');
+        console.log('correctAnswerHandler(index) ------------------------------------------------------------------------');
         console.log(module, 'module');
         console.log(shnote_numpos, 'shnote_numpos');
         console.log(shnote_next, 'shnote_next');
@@ -1411,7 +1396,7 @@ var RMM_ASM = (function() {
 
     // show appropriate next button text based on levels & done
     function numberPositionText() {
-        console.warn('numberPositionText()');
+        console.log('numberPositionText()');
         console.log(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
 //////        //if (!b_next_active) { return; }
@@ -1431,12 +1416,12 @@ var RMM_ASM = (function() {
             if (level_done === 2) { bnext.innerHTML = getStr('TXT_next_prob'); }
         }
         console.log(bnext.innerHTML, 'bnext.innerHTML');
-        console.warn('numberPositionText Done');
+        console.log('numberPositionText Done');
     }
 
     // show appropriate next button text based on levels & done
     function nextButtonText() {
-        console.warn('nextButtonText()');
+        console.log('nextButtonText()');
         console.log(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
 //////        console.log(b_next_active, 'b_next_active', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
@@ -1446,7 +1431,6 @@ var RMM_ASM = (function() {
         bnext_note_active = true;
         if (level_steps > level_done) { console.log('EXIT steps'); return; }
         mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_prob');
-        console.warn('nextButtonTextDone');
         //////if (level_steps === 2) {
         //////    if (level_done === 0) { bnext.innerHTML = getStr('TXT_next_10'); }
         //////    if (level_done === 1) { bnext.innerHTML = getStr('TXT_next_prob'); }
@@ -1648,7 +1632,7 @@ var RMM_ASM = (function() {
             mydoc.getElementById('asm_num_21').style.display = 'none';
             mydoc.getElementById('asm_num_22').style.display = 'none';
             mydoc.getElementById('asm_num_22_neg').style.display = 'none';
-            console.warn('NO SHOW EXit');
+            console.log('NO SHOW EXit');
             return;
         }
         console.log('-------------------1');
@@ -1666,10 +1650,10 @@ var RMM_ASM = (function() {
         console.log('-------------------4');
         mydoc.getElementById('asm_num_22_neg').style.display = 'none';
         // special handling of negative sign for s1 problems
-        if (level !== 's1') { console.warn('NO NEG'); return; }
+        if (level !== 's1') { console.log('NO NEG'); return; }
         console.log('-------------------5');
         if (prob_asm[2][2] < 0) {
-            console.warn('YES NEG');
+            console.log('YES NEG');
             mydoc.getElementById('asm_num_22_neg').style.display = 'block';
         }
         console.log('-------------------6');
@@ -1843,9 +1827,7 @@ var RMM_ASM = (function() {
     function layoutVerdictMark(index, type) {
         //console.log('layoutVerdictMark(index, type)', index, type);
         var my_id = mod_lo + '_verdict_' + index;
-        console.warn(my_id, 'my_id');
         var my_tform = mod_lo + '_verdict_' + type;
-        console.warn(my_tform, 'my_tform');
         var verdict = mydoc.getElementById(my_id);
         var xydict = {};
         if (type.length === 0) {
@@ -1854,7 +1836,6 @@ var RMM_ASM = (function() {
         }
         verdict.innerHTML =  pathTransform(getSyms(type), my_tform);
         my_id += '_' + type;
-        console.warn(my_id, 'my_id');
         xydict = getOperatorXY(my_id);
         verdict.setAttribute('x', xydict.x);
         verdict.setAttribute('y', xydict.y);
