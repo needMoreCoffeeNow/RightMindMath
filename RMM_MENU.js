@@ -528,7 +528,8 @@ var RMM_MENU = (function() {
 
     // handle pdata change based on user snapshot
     function changUserCurrentWrapup() {
-        console.warn('changUserCurrentWrapup()');
+        console.log('changUserCurrentWrapup()');
+        console.log(pdata)
         RMM_ASM.showNotesSetValues(pdata);
         RMM_ASM.showNotesSetHtml();
         settingsUpdateCurrent();
