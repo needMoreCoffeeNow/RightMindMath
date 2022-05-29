@@ -304,7 +304,7 @@ var RMM_DB = (function() {
         var data = {};
         var date_now = Date.now();
         if (!obj) { return; }
-        timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 100);
+        //timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 100);
         transactionInit();
         myindex = obj.index('device_iduser');
         myrange = IDBKeyRange.only(ival);
@@ -322,6 +322,7 @@ var RMM_DB = (function() {
                 console.warn(Date.now() - date_now, 'milliseconds to run');
                 db_result = recs;
                 db_complete = true;
+                db_next_function();
             }
         }
         cursor_req.onerror = function(ev) {
@@ -443,7 +444,7 @@ var RMM_DB = (function() {
         var date_now = Date.now();
         if (!obj) { return; }
         transactionInit();
-        timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 10);
+        //timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 10);
         count_read = 0;
         obj.openCursor().onsuccess = function(ev) {
             cursor = ev.target.result;
@@ -524,6 +525,7 @@ var RMM_DB = (function() {
                 db_complete = true;
                 console.warn('sessionGetAllRollup finished');
                 console.warn(Date.now() - date_now, 'milliseconds to run');
+                db_next_function();
             }
         }
     }
