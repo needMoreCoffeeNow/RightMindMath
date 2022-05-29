@@ -288,7 +288,7 @@ var RMM_SYNC = (function() {
         for (i=0; i<len; i++) {
             if (ids[i].name === guest) { continue; }
             type = 'sync_url' in ids[i] ? s_edit : s_add;
-            html += '<div style="margin-top:15px;">';
+            html += '<div style="margin-top:15px;margin-left:-25px;">';
             html += '<button id="b_user_link_';
             html += ids[i].iduser + '_' + ids[i].name + '" ';
             if ('sync_url' in ids[i]) {
@@ -302,6 +302,13 @@ var RMM_SYNC = (function() {
             html += '<span class="link_name">' + ids[i].name + '</span>';
             html += '&nbsp;';
             html += '<span class="link_iduser">(' + ids[i].iduser + ')</span>';
+            if (ids[i].sync_url) {
+                html += '<div style="font-size:50%;float:right;margin-top:7px;">';
+                html += '<textarea rows="1" cols="15" style="resize:none">';
+                html += ids[i].sync_url;
+                html += '</textarea>';
+                html += '</div>';
+            }
             html += '</div>';
             // add existing url/pwd
             if (ids[i].sync_url) {
@@ -327,10 +334,16 @@ var RMM_SYNC = (function() {
         sync_user = parms[4];
         console.log(sync_existing);
         console.log(sync_iduser in sync_existing);
+        console.log(sync_iduser);
+        console.log(sync_existing);
         if (sync_iduser in sync_existing) {
             console.log('setting', sync_existing[sync_iduser]['url']);
             mydoc.getElementById('sync_input_url').value = sync_existing[sync_iduser]['url'];
             mydoc.getElementById('sync_input_pwd').value = sync_existing[sync_iduser]['pwd'];
+        } else {
+            console.log('new user so set inputs to empty string');
+            mydoc.getElementById('sync_input_url').value = '';
+            mydoc.getElementById('sync_input_pwd').value = '';
         }
         mydoc.getElementById('div_sync_link').style.display = 'none';
         mydoc.getElementById('div_sync_link_add').style.display = 'block';
