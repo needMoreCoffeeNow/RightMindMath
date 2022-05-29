@@ -26,7 +26,6 @@ var RMM_ASM = (function() {
     // tracking
     var iduser = null; // string value will be set to DB.setup.iduser
     var name = null; // string value will be set to DB.setup.name
-//////    var device = 'none';
     var rand_last3 = []; //store the last 3 random row1 ops to avoid pattern in m1 random
     var answer_index_last = -1; // store the index position of the last answer
     var record = [];
@@ -48,7 +47,6 @@ var RMM_ASM = (function() {
     var s3_doubleborrow_allow = true; // no double borrow problems if false
     var total_problems = 0; // counter of total problems when level is started
     // toggles start: next & borrow/carry notes between step levels
-    ////////////var shnote_borrow = false; // check for display note when popup inactive
     var shnote_next = true; // controls display of next_problem notes
     var shnote_numpos = true; // controls display of number_position notes
     var shnote_carry = true; // controls display of carry notes
@@ -56,7 +54,6 @@ var RMM_ASM = (function() {
     var shnote_bpopup = true; // controls display of borrow popup
     var shnote_borrow = true; // controls display of borrow info notes
     var borrow_note_active = false; // used to advance prob when block all click
-//////    var b_next_active = true; // control if svg_next is shown between steps
     var bnext_note_active = false; // 
     // toggles end
     var next_problem_init = null; // reference to next problem init function
@@ -589,7 +586,6 @@ var RMM_ASM = (function() {
 
     // handle specific level steps for next prblem
     function nextProblemLevel() {
-        //////level_done += 1;
         // keep if (level_done === level_steps) as first check
         if (level_done === level_steps) { // start a new problem
             nextLevelWrapUp();
@@ -649,7 +645,6 @@ var RMM_ASM = (function() {
         var n_row1 = prob_asm[1][this_col];
         var dbl_note = '';
         var after_borrow = '';
-        ////////////shnote_borrow = false;
         if (giver < 0 || giver > 2) {
             return;
         }
@@ -685,7 +680,6 @@ var RMM_ASM = (function() {
             borrowPathValues(this_col, n_gets);
             borrowPathValues(giver, n_gives);
         }
-        ////////////shnote_borrow = true;
     }
 
     // show the explanatory alert if tens col previous borrow was negative
@@ -903,7 +897,6 @@ var RMM_ASM = (function() {
         setResponsesAnswersActive();
         complete = false;
         this_col = 2;
-        ///////time_start = Date.now();
     }
 
     // common steps to init a new problem - prob_fnc is the problem setup fnc
@@ -1323,11 +1316,6 @@ var RMM_ASM = (function() {
         console.log(shnote_numpos, 'shnote_numpos');
         console.log(shnote_next, 'shnote_next');
         bnext_note_active = false;
-        //////if ((shnote_numpos || shnote_next) && module !== 'm2' && module != 'd3') {
-        //////    console.log('blockAll TURNED ON <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-        //////    mydoc.getElementById('blockAll').style.display = 'block';
-        //////    //////mydoc.getElementById('svg_gear').style.opacity = '0.4';
-        //////}
         // answer buttons updates
         answerButtonClassReset();
         layoutVerdict(index, 'check');
@@ -1399,7 +1387,6 @@ var RMM_ASM = (function() {
         console.log('numberPositionText()');
         console.log(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
-//////        //if (!b_next_active) { return; }
         if (shnote_numpos === false && shnote_carry === false) {
             bnext_note_active = false;
             return;
@@ -1423,23 +1410,12 @@ var RMM_ASM = (function() {
     function nextButtonText() {
         console.log('nextButtonText()');
         console.log(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
-//////        console.log(b_next_active, 'b_next_active', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
-//////        if (!b_next_active) { console.log('EXIT inactive'); return; }
         if (!shnote_next) { console.log('EXIT shnote_next'); return; }
         if (level_done < level_steps) { console.log('EXIT steps'); return; }
         bnext_note_active = true;
         if (level_steps > level_done) { console.log('EXIT steps'); return; }
         mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_prob');
-        //////if (level_steps === 2) {
-        //////    if (level_done === 0) { bnext.innerHTML = getStr('TXT_next_10'); }
-        //////    if (level_done === 1) { bnext.innerHTML = getStr('TXT_next_prob'); }
-        //////}
-        //////if (level_steps === 3) {
-        //////    if (level_done === 0) { bnext.innerHTML = getStr('TXT_next_10'); }
-        //////    if (level_done === 1) { bnext.innerHTML = getStr('TXT_next_100'); }
-        //////    if (level_done === 2) { bnext.innerHTML = getStr('TXT_next_prob'); }
-        //////}
     }
 
     // answer line (row2): display the appropriate numbers
@@ -1518,7 +1494,6 @@ var RMM_ASM = (function() {
         mydoc.getElementById('blockAll').style.display = 'none';
         mydoc.getElementById('svg_gear').style.display = 'block';
         over_active = true;
-        //////mydoc.getElementById('svg_gear').style.opacity = '1.0';
         if (borrow_note_active && ['s2', 's3'].indexOf(level) > -1) {
             mydoc.getElementById('svg_borrow_note').style.display = 'none';
             borrow_note_active = false;
@@ -1624,9 +1599,6 @@ var RMM_ASM = (function() {
         console.log(show, columns);
         console.log(prob_asm);
         console.log(level, 'level');
-        ////////////console.log(mydoc.getElementById('asm_num_20').innerHTML, 'asm_num_20');
-        ////////////console.log(mydoc.getElementById('asm_num_21').innerHTML, 'asm_num_21');
-        ////////////console.log(mydoc.getElementById('asm_num_22').innerHTML, 'asm_num_22');
         if (!show) {
             mydoc.getElementById('asm_num_20').style.display = 'none';
             mydoc.getElementById('asm_num_21').style.display = 'none';
@@ -2106,7 +2078,6 @@ var RMM_ASM = (function() {
         console.log('setModule(mod_in)', mod_in);
         module = mod_in;
         mod_lo = module.toLowerCase();
-        ////////////if (module === 'd3') { mod_lo = 'm2'; } // D3 uses M2 answers
     }
 
     function getModule() {

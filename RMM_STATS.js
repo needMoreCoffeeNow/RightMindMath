@@ -33,7 +33,6 @@ var RMM_STATS = (function() {
         var txt = getStr('TXT_data_loading');
         txt = txt.replace('REPLACE_count', '1');
         mydoc.getElementById('div_info_text').innerHTML = txt;
-//////        mydoc.getElementById('div_info_buttons').style.display = 'none';
         mydoc.getElementById('div_info').style.display = 'block';
         RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_STATS.idXrefSetup);
         RMM_DB.tableGetAll('user');
@@ -44,7 +43,6 @@ var RMM_STATS = (function() {
         console.log('showMomentPlease(id)');
         mydoc.getElementById('div_stats_container').style.display = 'none';
         mydoc.getElementById('div_info_text').innerHTML = getStr(id);
-//////        mydoc.getElementById('div_info_buttons').style.display = 'none';
         mydoc.getElementById('div_info').style.display = 'block';
     }
 
@@ -111,8 +109,6 @@ var RMM_STATS = (function() {
             if (sdata[i].idlevel.indexOf('m1') === -1) { continue; }
             // special handling to break out m1 by level and ordered/random
             digit = parseInt(sdata[i].idlevel.substr(2, 1), 10);
-            //////console.log(digit, 'digit');
-            //////console.log(sdata[i].ordered, 'ordered');
             if (sdata[i].ordered) {
                 m1_id = '' + digit + '_O';
             } else {
@@ -151,17 +147,12 @@ var RMM_STATS = (function() {
         var len = nlist.length;
         var total = 0;
         var i = 0;
-        //////var rec_str = getStr('TXT_Records');
         for (i=0; i<len; i++) {
             total = rollup[nlist[i][1]]['total'];
             html += '<div style="margin-top:10px;">';
             html += '<button id="b_' + nlist[i][1] + '_' + nlist[i][0] + '_' + total + ' " class="stats_id" ';
             html += 'onclick="RMM_STATS.userNameClick(event);">';        
             html += nlist[i][0];
-            //////html += nlist[i][0] + '<br>';
-            //////html += '<span id="bspan_' + nlist[i][1] + '" ';
-            //////html += 'style="font-size:70%;">(' + total + ')</span>' ;
-            //////html += '&nbsp;' + rec_str + ')</span>';
             html += '</button></div>';
         }
         html += '<div style="margin-top:15px;">';
@@ -269,7 +260,6 @@ var RMM_STATS = (function() {
             // m1 idlevel had digit at end else length = 2
             mylevel = sdata[i].idlevel.substr(0, 2);
             if (mylevel === 'm2') { mylevel = sdata[i].idlevel.substr(0, 3) }
-            //////console.log(mylevel, 'mylevel', sdata[i].idlevel);
             if (mylevel !== idlevel) { continue; }
             // handle m1 ordered/random & digit in 3rd position
             if (idlevel === 'm1') {
@@ -292,8 +282,6 @@ var RMM_STATS = (function() {
         if (times.length > 100) { averageTimes(); }
         console.log(times, times.length, 'times');
         console.log(tries, tries.length, 'tries');
-        //////mydoc.getElementById('div_info').style.display = 'none';
-        //////mydoc.getElementById('div_stats_container').style.display = 'block';
         chartBuild();
     }
 
@@ -514,7 +502,6 @@ var RMM_STATS = (function() {
         }
         xvalueSetRight(len, xpos);
         html += '"/>"';
-        //////console.log(html);
         mydoc.getElementById('chart_line').innerHTML = html;
     }
 

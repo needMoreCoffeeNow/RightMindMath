@@ -45,7 +45,6 @@ var RMM_MENU = (function() {
         mydoc.getElementById('div_print_menu').style.display = 'none';
         mydoc.getElementById('div_info').style.display = 'none';
         mydoc.getElementById('div_user_menu').style.display = 'none';
-//////        mydoc.getElementById('div_user_add_check').style.display = 'none';
         mydoc.getElementById('div_d3_options').style.display = 'none';
     }
 
@@ -306,25 +305,6 @@ var RMM_MENU = (function() {
         mydoc.getElementById('div_input1_text').innerHTML = txt;
     }
     
-//////    // dialog to check new user add versus adding sync user
-//////    function userAddCheck() {
-//////        console.log('userAddCheck()');
-//////        mydoc.getElementById('div_user_add_check').style.display = 'block';
-//////    }
-//////
-//////    // handle button clicks from user add check dialog
-//////    function userAddCheckClick(ev) {
-//////        console.log('userAddCheckClick()');
-//////        var id = ev.target.id;
-//////        if (id === 'b_user_add_check_yes') {
-//////            inputUserName();
-//////            return;
-//////        }
-//////        alert(getStr('MSG_change_to_sync_user_add'));
-//////        mydoc.getElementById('div_user_add_check').style.display = 'none';
-//////        mydoc.getElementById('div_menu_main').style.display = 'block';
-//////    }
-//////
     // handle button clicks from print menu
     function userMenuClick(ev) {
         console.log('userMenuClick(ev)');
@@ -335,7 +315,6 @@ var RMM_MENU = (function() {
             mydoc.getElementById('div_menu_main').style.display = 'block';
         }
         if (id === 'b_user_create') {
-//////            //////userAddCheck();
             inputUserName();
         }
         if (id === 'b_user_load') {
@@ -567,7 +546,6 @@ var RMM_MENU = (function() {
         if (input1_type === 'device_name') {
             // add a random 3-digit number to device name to ensure unique
             end += '.' + (Math.floor(Math.random() * (1000 - 100) ) + 100);
-//////            RMM_DB.setupParametersUpdate({device_name : end});
             RMM_DB.setDevice(end);
             RMM_DB.setupParametersUpdate({device : end});
             hideAll();
@@ -1070,7 +1048,6 @@ var RMM_MENU = (function() {
         var rows = len / 7;
         var j = 0;
         var num_prob = 6;
-        //////var ptrans = [20, 65, 110, 155, 200, 245]; // x position of 6 problems
         var div_top = '<div id="div_print_line_';
         var div_bot = '</div>';
         var svg_txt = '<svg width="70" height="70" viewBox="0 0 70 70" x="0" y="0" transform="translate(';
@@ -1118,7 +1095,6 @@ var RMM_MENU = (function() {
         console.log('showMomentPlease(id)');
         hideAll();
         mydoc.getElementById('div_info_text').innerHTML = getStr(id);
-//////        mydoc.getElementById('div_info_buttons').style.display = 'none';
         mydoc.getElementById('div_info').style.display = 'block';
     }
 
@@ -1565,7 +1541,6 @@ var RMM_MENU = (function() {
         setNextProblemOnclickD3 : setNextProblemOnclickD3,
         hideAll : hideAll,
         // button handlers
-//////        userAddCheckClick : userAddCheckClick,
         settingsClick : settingsClick,
         notesExit : notesExit,
         menuMainClick : menuMainClick,

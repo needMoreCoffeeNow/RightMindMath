@@ -178,13 +178,7 @@ var RMM_D3 = (function() {
         // which will be used by RMM_M2.lo_bkgdNumsSet to set all bkgds colors
         RMM_M2.setBkgdsRowsCols(bkgds_rows, bkgds_cols);
         equationSetup();
-        ////////////// kludge: nextM2Equation 1st so M2_container renders properly
-        //////////////////RMM_M2.setModule('m2'); // kludge
-        //////////////RMM_M2.nextM2Equation(); // kludge
-        ////////////RMM_M2.showAllM2(); // kludge needed else positions all messed up
-        //////////////////RMM_M2.setModule('d3');
         // now layout equation
-        ////////////mydoc.getElementById('div_d3_instruct_container').style.marginTop = '-400px';
         time_start = Date.now();
         chunk_counter = 0;
         count_problem += 1;
@@ -317,7 +311,6 @@ var RMM_D3 = (function() {
         txt += '</div>';
         lo_setInnerHtml('div_d3_chunk', txt);
         mydoc.getElementById('div_d3_chunk').style.visibility = 'visible';
-        //////lo_setStyleDisplay('div_d3_chunk', 'block');
     }
 
     // setup a print problem such that the problem_str is available

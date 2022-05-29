@@ -270,7 +270,6 @@ var RMM_M2 = (function() {
         txt = txt.replace('REPLACE_ones', ('' + nums.n43));
         txt = txt.replace('REPLACE_num0', ('' + nums.n22));
         txt = txt.replace('REPLACE_num1', ('' + nums.n32));
-        //////if (carry.c21) { txt += carryReminder('TXT_carry_remember', 10); }
         stepInit(bkgds, txt);
     }
 
@@ -690,15 +689,6 @@ var RMM_M2 = (function() {
     function nextM2Equation(ev) {
         console.log('nextM2Equation(ev)');
         console.log(module, 'module in nextM2Equation');
-        // d3 must kludge by setting up a M2 equation first
-        // so we have this quick exit when function is called for this reason
-        //////if (module === 'd3') {
-        //////    RMM_D3.nextD3Equation();
-        //////    return;
-        //////}
-        // kludge1: without putting something in ASM svg elements 
-        // the numbers in M2 do not show so we do a show all here
-        // with the container hidden
         chunk_counter = 0;
         mydoc.getElementById('div_m2_chunk').style.visibility = 'visible';
         finalstep = false;
@@ -708,16 +698,10 @@ var RMM_M2 = (function() {
         equationSetup();
         setCarry();
         mydoc.getElementById('div_m2_instruct_container').style.marginTop = '-310px';
-        // kludge1: resetting ASM container visibility
-        // and setting display to none must have a short wait
-        // so we use a timer dealy function to do this
-        // and finish M2 layout and start after timer
-        //////if (module != 'd3') {
-            mydoc.getElementById('div_asm_container').style.display = 'block';
-            mydoc.getElementById('div_asm_container').style.visibility = 'hidden';
-            RMM_ASM.showAllASM(true);
-            timervar = window.setTimeout(kludge1_clearASM, 10);
-        //////}
+        mydoc.getElementById('div_asm_container').style.display = 'block';
+        mydoc.getElementById('div_asm_container').style.visibility = 'hidden';
+        RMM_ASM.showAllASM(true);
+        timervar = window.setTimeout(kludge1_clearASM, 10);
     }
 
     function kludge1_clearASM(ev) {
@@ -993,17 +977,14 @@ var RMM_M2 = (function() {
         path = path.replace('/>', ' ' + tform + '/>');
         mydoc.getElementById('m2_c01_num').innerHTML = path;
         mydoc.getElementById('m2_c02_num').innerHTML = path;
-//////        mydoc.getElementById('m2_c22_num').innerHTML = path;
         mydoc.getElementById('m2_c21_num').innerHTML = path;
         mydoc.getElementById('m2_c20_num').innerHTML = path;
         mydoc.getElementById('m2_c01_num').style.display = 'block';
         mydoc.getElementById('m2_c02_num').style.display = 'block';
-//////        mydoc.getElementById('m2_c22_num').style.display = 'block';
         mydoc.getElementById('m2_c21_num').style.display = 'block';
         mydoc.getElementById('m2_c20_num').style.display = 'block';
         mydoc.getElementById('m2_c01_box').style.display = 'block';
         mydoc.getElementById('m2_c02_box').style.display = 'block';
-//////        mydoc.getElementById('m2_c22_box').style.display = 'block';
         mydoc.getElementById('m2_c21_box').style.display = 'block';
         mydoc.getElementById('m2_c20_box').style.display = 'block';
         mydoc.getElementById('div_m2_container').style.display = 'block';

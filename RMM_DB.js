@@ -138,8 +138,6 @@ var RMM_DB = (function() {
                      iduser : data_user.iduser,
                      name : data_user.name,
                      pdata : pdata,
-//////                     device : Date.now(),
-//////                     device_name : null};
                      device : null};
         if (!obj) { return; }
         transactionInit();
@@ -170,13 +168,10 @@ var RMM_DB = (function() {
         console.log('dbWait()');
         window.clearTimeout(timervar);
         db_tries_count += 1;
-//////        console.log(RMM_DB.getDbActive(), 'RMM_DB.getDbActive()');
-//////        console.log(RMM_DB.getDbComplete(), 'RMM_DB.getDbComplete()');
         if (db_tries_count > MAX_TRIES) {
             alert(getStr('MSG_db_timeout'));
             return;
         }
-//////        if (!RMM_DB.getDbActive() || !RMM_DB.getDbComplete()) {
         if (!db_active || !db_complete) {
             timervar = window.setTimeout(dbWait, DB_MILLI_STD);
             return;
@@ -395,8 +390,7 @@ var RMM_DB = (function() {
     }
 
     function rollupRec(data, id_curr, eq_time, date_now) {
-        //////console.log('----------------------------------------------------------rollupRec(data, id_curr, eq_time)');
-        //////console.log(eq_time, id_curr);
+        //console.log('----------------------------------------------------------rollupRec(data, id_curr, eq_time)');
         var date_eq = parseInt(id_curr.split('_'), 10);
         var day_milli = (1000*60*60*24);
         var basic = 'a1_s1_m1';
@@ -449,7 +443,6 @@ var RMM_DB = (function() {
         obj.openCursor().onsuccess = function(ev) {
             cursor = ev.target.result;
             if (cursor) {
-                //////console.log(eq_time, '=====eq_time START');
                 write_active = true;
                 // handle info msg update fist
                 count_read += 1;
@@ -459,12 +452,9 @@ var RMM_DB = (function() {
                 }
                 // save last rec's data if last rec was multi-step
                 if (id_last !== '') {
-                    //////console.log('##### ##### set rec_last');
                     rec_last = rollupRec(data, id_last, eq_time, date_now);
                 }
                 data = cursor.value;
-                //////console.log(data, 'data');
-                //////console.error(data.idsession, data.idlevel, basic.indexOf(data.idlevel));
                 id_curr = data.idsession.split('_');
                 id_curr = id_curr[0] + '_' + id_curr[1];
                 // skip recs not matching iduser
@@ -474,7 +464,6 @@ var RMM_DB = (function() {
                 if (basic.indexOf(data.idlevel) > -1) {
                     // basic one-digit problems have only one rec per problem
                     if (multi) {
-                        //////console.log('---------------------------------------MAYBEMAYBE multi write add last rec');
                         recs.push(rec_last);
                     }
                     multi = false;
@@ -485,25 +474,18 @@ var RMM_DB = (function() {
                     multi = true;
                     eq_time += data.time;
                     // if id_last is not '', then it is second or later step
-                    //////console.log('>>>>>', id_curr, '+', id_last, '= curr + last');
                     if (id_last !== '') {
                        if (id_curr !== id_last) {
                             // new problem following multi-step problem
-                            //////console.log('---------------------------------------YESYES multi write add last rec');
                             recs.push(rec_last);
                             id_last = '';
                             eq_time = data.time;
                         }
                     } else {
-                        ///////console.log('>>>>>>set id_last');
                         id_last = id_curr;
                     }
                 }
-                //////console.log('>>>>>', id_curr, '+', id_last, '= curr + last');
-                //////console.log(multi, 'multi');
-                //////console.log(eq_time, '=====eq_time END');
                 if (!multi) {
-                    //////console.log('---------------------------------------NOTNOT multi write add last rec');
                     recs.push(rollupRec(data, id_curr, eq_time, date_now));
                     eq_time = 0;
                     id_last = '';
@@ -515,7 +497,6 @@ var RMM_DB = (function() {
                 } else {
                     // if very last rec was last step of a multi add a rec
                     if (multi) {
-                        //////console.log('FINALFINAL rec push');
                         recs.push(rollupRec(data, id_curr, eq_time, date_now));
                     }
                     db_result = recs;
