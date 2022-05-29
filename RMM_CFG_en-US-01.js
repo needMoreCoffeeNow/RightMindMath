@@ -160,6 +160,7 @@
         SYNC_src_error_404 : 'You are not on-line, or the Google Sheet URL is no longer available. Please investigate, and try again later.',
         SYNC_error_offline : 'It appears you are not on-line. Please investigate, and try later.',
         SYNC_error_pwd : 'The password is incorrect. The link test failed, so the user link was not saved.',
+        SYNC_error_control : 'Cell A1 in the control ply of the sheet is not set to the integer value 1.',
         SYNC_error_sheetNF : 'The Google Sheet does not have a sheet named: REPLACE_sync_iduser (the user ID). The link test failed, so the user link was not saved.',
         SYNC_error_other : 'Something is wrong with the Google Sheet (REPLACE_error). The link test failed, so the user link was not saved.'
         };

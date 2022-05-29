@@ -409,6 +409,9 @@ var RMM_SYNC = (function() {
         if (response.error === 'pwd') {
             reason = getStr('SYNC_error_pwd');
         }
+        if (response.error.indexOf('control') === 0) {
+            reason = getStr('SYNC_error_control');
+        }
         if (response.error === 'sheetNF') {
             reason = getStr('SYNC_error_sheetNF');
             reason = reason.replace('REPLACE_sync_iduser', (''+sync_iduser));
