@@ -120,7 +120,7 @@ var RMM_M2 = (function() {
 
     // create concatenated str with user/prob/ans data & push() it is testing
     function recordAnswer() {
-        console.error('recordAnswer()');
+        console.log('recordAnswer()');
         console.log(nums);
         var time_stop = Date.now();
         var data = {'idsession' : '' + session + '_' + count_problem};
@@ -429,7 +429,7 @@ var RMM_M2 = (function() {
 
     // goto next step in process
     function nextStep() {
-        console.warn('nextStep()');
+        console.log('nextStep()');
         var tic = step < 10 ? '0' : '';
         var pid = level + ('_' + tic + step);
         if (step > step_max[level]) {
@@ -688,7 +688,7 @@ var RMM_M2 = (function() {
 
     // set up next M2 equation
     function nextM2Equation(ev) {
-        console.error('nextM2Equation(ev)');
+        console.log('nextM2Equation(ev)');
         console.log(module, 'module in nextM2Equation');
         // d3 must kludge by setting up a M2 equation first
         // so we have this quick exit when function is called for this reason
@@ -713,7 +713,6 @@ var RMM_M2 = (function() {
         // so we use a timer dealy function to do this
         // and finish M2 layout and start after timer
         //////if (module != 'd3') {
-            console.warn('---------------------------------------------------kludge');
             mydoc.getElementById('div_asm_container').style.display = 'block';
             mydoc.getElementById('div_asm_container').style.visibility = 'hidden';
             RMM_ASM.showAllASM(true);
@@ -730,7 +729,7 @@ var RMM_M2 = (function() {
     }
 
     function finishM2Equation() {
-        console.warn('finishM2Equation()');
+        console.log('finishM2Equation()');
         lo_rows0And1();
         lo_showM2();
         time_start = Date.now();
@@ -953,7 +952,7 @@ var RMM_M2 = (function() {
 
     // initialize M2 grid with some value to assess layout (dev only fnc)
     function showAllM2(ev) {
-        console.warn('showAllM2(ev)');
+        console.log('showAllM2(ev)');
         var i = 0;
         var j = 0;
         var id = 'm2_num_';

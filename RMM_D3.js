@@ -117,7 +117,7 @@ var RMM_D3 = (function() {
 
     // create concatenated str with user/prob/ans data & push() it is testing
     function recordAnswer() {
-        console.error('recordAnswer()');
+        console.log('recordAnswer()');
         var time_stop = Date.now();
         var data = {'idsession' : '' + session + '_' + count_problem};
         var r_str = '';
@@ -141,7 +141,7 @@ var RMM_D3 = (function() {
     }
 
     function equationSetup() {
-        console.warn('equationSetup()');
+        console.log('equationSetup()');
         var is_dec = false;
         var dr_two = false;
         // set divisor number of digits and decimal answer
@@ -169,8 +169,7 @@ var RMM_D3 = (function() {
 
     // start a long division problem
     function nextD3Equation() {
-        console.warn('nextD3Equation');
-        console.warn('nextD3Equation');
+        console.log('nextD3Equation');
         // some housekeeping first to setup M2 controllers
         // set some variables to leverage functions in other files
         RMM_M2.setModule('d3');
@@ -316,7 +315,6 @@ var RMM_D3 = (function() {
         txt += (tens * correct) + '&nbsp;+&nbsp;' + (ones * correct);
         txt += ')&nbsp;]</span>';
         txt += '</div>';
-        console.warn(txt);
         lo_setInnerHtml('div_d3_chunk', txt);
         mydoc.getElementById('div_d3_chunk').style.visibility = 'visible';
         //////lo_setStyleDisplay('div_d3_chunk', 'block');
@@ -570,7 +568,6 @@ var RMM_D3 = (function() {
             path = numPath(subval1, (Math.pow(10, i)));
             lo_setInnerHtml(id, path);
         }
-        console.warn(bkgds, 'bkgds');
         lo_bkgdNumsSet(bkgds, 'r2bkgd');
     }
 
@@ -710,7 +707,6 @@ var RMM_D3 = (function() {
         for (i=0; i<len; i++) {
             cols_active.push(col - i);
         }
-        console.error(cols_active, 'cols_active');
         return cols_active;
     }
 
@@ -773,7 +769,7 @@ var RMM_D3 = (function() {
     }
 
     function dynamicMultiply() {
-        console.warn('dynamicMultiply()');
+        console.log('dynamicMultiply()');
         console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         var txt = '';
         var bkgds = '';
@@ -782,7 +778,6 @@ var RMM_D3 = (function() {
         var row = step + 1;
         var i = 0;
         var len = numLength(subval0);
-        console.warn(col, 'col');
         //lo_divisorToggle('r2bkgd');
         lo_bkgdNumsSet('', 'r2white');
         chunkHtml(90);
@@ -797,22 +792,17 @@ var RMM_D3 = (function() {
         }
         // add in the quotient number if decimal
         if (col === 3) { bkgds += '.03'; }
-        console.warn(bkgds, '--------------------------------------------------------------------bkgds');
         lo_bkgdNumsSet(bkgds, 'r2bkgd');
         if (row === 1) { return; } // no need to set dividend row values
         for (i=0; i<len; i++) {
             id = 'd3_num' + row + (col - i);
-            console.warn(id, 'id', subval0, 'subval0', Math.pow(10, i), 'pow', i);
             lo_setInnerHtml(id, numPath(subval0, Math.pow(10, i)));
-            console.warn(id, 'id');
         }
     }
 
     // step one
     function step00() {
-        console.warn('----------------------------------------------------------------step00()');
-        console.warn('----------------------------------------------------------------step00()');
-        console.warn('----------------------------------------------------------------step00()');
+        console.log('----------------------------------------------------------------step00()');
         var txt = getStr('D3_00');
         console.log(eqz);
         if (eqz.quotient > 99) {
@@ -856,12 +846,12 @@ var RMM_D3 = (function() {
 
     // process next step
     function nextStep() {
-        console.warn('nextStep()');
+        console.log('nextStep()');
         var tic = step < 10 ? '0' : '';
         var pid = ('step_' + tic + step);
         console.log(tic, 'tic');
         console.log(step, 'step');
-        console.warn(step, step_max, 'step, step_max');
+        console.log(step, step_max, 'step, step_max');
         console.log(pid, 'pid');
         if (step > step_max) {
             finalMessage();
@@ -1023,7 +1013,7 @@ var RMM_D3 = (function() {
     
     // initialize D3 grid with some value to assess layout (dev only fnc)
     function showAllD3(ev) {
-        console.warn('showAllD3(ev)');
+        console.log('showAllD3(ev)');
         var tform = getTransforms('d3_number');
         var path = getNums(8);
         path = path.replace('/>', ' ' + tform + '/>');
