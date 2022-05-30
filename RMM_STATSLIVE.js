@@ -74,7 +74,7 @@ var RMM_STATSLIVE = (function() {
     }
 
     function displayUserCounts(level, answered) {
-        console.log('displayUserCounts(level, answered)', level, answered, 'level, answered');
+        console.error('displayUserCounts(level, answered)', level, answered, 'level, answered');
         if (!level) { return; } // initial GUEST page load = no idlevel exists
         var iduser = RMM_ASM.getIduser();
         var txt = '';
@@ -84,12 +84,14 @@ var RMM_STATSLIVE = (function() {
         console.warn(idlevel, 'idlevel');
         console.warn(iduser, 'iduser');
         console.warn(answered, 'answered');
+        console.warn(grand_start, 'grand_start');
         // handle case where user was added, then session immediately quit
         // creating an iduser without session rec needed initialize live stats
         if (!grand_start[iduser]) { newUserAdd(iduser); }
         txt = '(' + idlevel + ')&nbsp;&nbsp;';
         if (iduser === IDGUEST) {
             mydoc.getElementById('div_statslive').innerHTML = '';
+            console.log('exit IDGUEST');
             return;
         }
         if (answered) { updateUserCounts(iduser, idlevel); }
@@ -101,6 +103,7 @@ var RMM_STATSLIVE = (function() {
         txt += '&nbsp;:&nbsp;';
         txt += statslive[iduser]['grand'];
         mydoc.getElementById('div_statslive').innerHTML = txt;
+        console.error(txt, 'txt');
     }
 
     function newUserAdd(iduser) {

@@ -541,11 +541,10 @@ var RMM_DB = (function() {
         console.log(data);
         var obj = objectstoreGet('session', true);
         var req = null;
-        console.error(data, 'data');
+        console.warn(data, 'data');
         if (!obj) { return; }
         transactionInit();
         req = obj.add(data);
-        console.error(data);
         req.onsuccess = function(ev) {
             console.log('addSessionRec idsession=' + data.idsession);
             db_complete = true;
