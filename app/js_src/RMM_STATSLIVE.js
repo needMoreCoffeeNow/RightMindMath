@@ -96,7 +96,6 @@ var RMM_STATSLIVE = (function() {
         txt += '&nbsp;:&nbsp;';
         txt += statslive[iduser]['grand'];
         mydoc.getElementById('div_statslive').innerHTML = txt;
-        console.error(txt, 'txt');
     }
 
     function newUserAdd(iduser) {
