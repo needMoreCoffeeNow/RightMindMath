@@ -8,7 +8,7 @@
   "theme_color": "#34495e",
   "icons": [
     {
-      "src": "/static/html/mfapp_logo.svg",
+      "src": "/logo/rmm_logo_icon_symmetric.svg",
       "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
       "type": "image/svg+xml",
       "purpose": "any"
