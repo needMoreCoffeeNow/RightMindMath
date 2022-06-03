@@ -586,7 +586,10 @@ var RMM_ASM = (function() {
 
     // handle specific level steps for next prblem
     function nextProblemLevel() {
+        console.log('nextProblemLevel()');
         // keep if (level_done === level_steps) as first check
+        console.log(level_done, level_steps, 'level_done, level_steps');
+        console.log(this_col, 'this_col');
         if (level_done === level_steps) { // start a new problem
             nextLevelWrapUp();
             next_problem_init();
@@ -604,13 +607,16 @@ var RMM_ASM = (function() {
         answerButtonClassReset();
         carryAddProcess();
         nextColumnHighlight();
+        if (level_done === 0) { return; }
         // advance the column, and then check for borrows
+        console.log(this_col, 'this_col--------------------------------------------------b4');
         this_col -= 1;
+        console.log(this_col, 'this_col--------------------------------------------------after');
         borrowNoteCheck();
         if (level === 's2' || level === 's3') { borrowShowInfo(); }
         if (level === 's3' && this_col === 1) { doubleborrowAlert(); }
         time_start = Date.now();
-        console.log(time_start, 'time_start nextProblemLevel');
+        console.warn(time_start, 'time_start nextProblemLevel');
     }
 
     // set the highlight for the column
@@ -646,6 +652,10 @@ var RMM_ASM = (function() {
         var dbl_note = '';
         var after_borrow = '';
         if (giver < 0 || giver > 2) {
+            if (shnote_borrow) {
+                // correct borrowing note has already been set so we just show it
+                mydoc.getElementById('div_note').style.visibility = 'visible';
+            }
             return;
         }
         n_gives = prob_asm[0][giver] - borrows['gives'+giver];
@@ -905,7 +915,9 @@ var RMM_ASM = (function() {
         hideAll();
         level_done = 0;
         total_problems += 1;
+        console.log('prob_fnc()----------------------start');
         prob_fnc();
+        console.log('prob_fnc()----------------------end');
         layoutInitialGrid(col_layout_array);
     }
 
@@ -1086,7 +1098,8 @@ var RMM_ASM = (function() {
             if (!subborrow && borrowNeeded()) { continue; }
             if (probRowsAsTotal('-') > -1) { pos_needed = false; }
         }
-        prob_asm  = [ [4,1,2], [1,8,3], [2,2,9] ];
+        //prob_asm  = [ [9,0,0], [7,5,9], [1,4,1] ];
+        //prob_asm  = [ [4,1,2], [1,8,3], [2,2,9] ];
         //prob_asm  = [ [8,6,2], [5,0,9], [3,5,3] ];
         //prob_asm  = [ [7,0,5], [5,6,8], [1,4,3] ];
         //prob_asm  = [ [8,1,1], [6,6,3], [1,4,8] ];
@@ -1332,6 +1345,8 @@ var RMM_ASM = (function() {
         // update answer line befor incrementing level_done
         answerLineReveal();
         // any level 1 problem either show Next Problem or goto next problem
+        console.log(level);
+        console.log('starting: if (level === a1 || level === s1 || level === m1) {');
         if (level === 'a1' || level === 's1' || level === 'm1') {
             RMM_STATSLIVE.displayUserCounts(level, true);
             if (shnote_next) {
@@ -1341,11 +1356,14 @@ var RMM_ASM = (function() {
             } else {
                 next_problem_init();
             }
+            next_problem_init();
             return;
         }
         // handel multi-step problems where either b_next is shown with either
         // number position or next problem prompts are shown
+        console.log(level_steps, level_done, 'level_steps, level_done');
         if (level_steps > 1) {
+            console.log('if (level_steps > 1) {');
             // check number position prompt befor increment level_done
             numberPositionText();
             level_done += 1;
@@ -1360,15 +1378,23 @@ var RMM_ASM = (function() {
         console.log(shnote_numpos, 'shnote_numpos');
         console.log(shnote_next, 'shnote_next');
         if (shnote_next === false && shnote_numpos === false) {
+            console.log('-----1-----------------------start');
             nextProblemLevel();
+            console.log('-----1-----------------------end');
         }
         if (bnext_note_active) {
+            console.log('-----2-----------------------start');
             activateSvgNext();
+            console.log('-----2-----------------------end');
         } else {
+            console.log('-----3-----------------------start');
             nextProblemLevel();
+            console.log('-----3-----------------------end');
         }
         if (shnote_bpopup) {
+            console.log('-----4-----------------------start');
             mydoc.getElementById('div_note').style.visibility = 'hidden';
+            console.log('-----4-----------------------end');
         }
         console.log('correctAnswerHandler DONE ------------------------------------------------------------------------');
     }
@@ -1389,6 +1415,7 @@ var RMM_ASM = (function() {
         var bnext = mydoc.getElementById('b_next');
         if (shnote_numpos === false && shnote_carry === false) {
             bnext_note_active = false;
+            console.log('exit if (shnote_numpos === false && shnote_carry === false) {');
             return;
         }
         bnext_note_active = true;
@@ -1536,7 +1563,7 @@ var RMM_ASM = (function() {
 
     // set the color css value of the column bkgds in the ASM grid
     function layoutInitialGrid(col_backfront_array) {
-        console.log('layoutInitialGrid()');
+        console.log('layoutInitialGrid()---------------------------------------start');
         mydoc.getElementById('svg_next').style.display = 'none';
         mydoc.getElementById('div_note').style.visibility = 'hidden';
         layoutToggleRow2Visibility(false);
@@ -1560,6 +1587,7 @@ var RMM_ASM = (function() {
         answerButtonClassReset();
         layoutVerdict(null, '');
         showASM();
+        console.log('layoutInitialGrid()---------------------------------------end');
     }
 
     // set style.display for SINGLE row0 number slash
@@ -1596,8 +1624,8 @@ var RMM_ASM = (function() {
     // show/hide row2 (answer) in ASM grid: if grid box has value show/hide it
     function layoutToggleRow2Visibility(show, columns) {
         console.log('layoutToggleRow2Visibility(show)');
-        console.log(show, columns);
-        console.log(prob_asm);
+        console.log(show, columns, 'show, columns');
+        console.log(prob_asm, 'prob_asm');
         console.log(level, 'level');
         if (!show) {
             mydoc.getElementById('asm_num_20').style.display = 'none';
@@ -1876,7 +1904,7 @@ var RMM_ASM = (function() {
 
     // reset the className for the 4 answer buttons to normal (no effects)
     function answerButtonClassReset() {
-        //console.log('answerButtonClassReset');
+        console.log('answerButtonClassReset');
         mydoc.getElementById(mod_lo + '_answer_b0').className.baseVal = 'answer_button';
         mydoc.getElementById(mod_lo + '_answer_b1').className.baseVal = 'answer_button';
         mydoc.getElementById(mod_lo + '_answer_b2').className.baseVal = 'answer_button';
