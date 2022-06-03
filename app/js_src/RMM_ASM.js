@@ -257,9 +257,9 @@ var RMM_ASM = (function() {
 
     // read the SymnNums transform string & add it to end of svg path string
     function pathTransform(path, id) {
-        //console.log('pathTransform(path, id)');
-        //console.log(id, 'id');
-        //console.log(path, 'path');
+        console.log('pathTransform(path, id)');
+        console.log(id, 'id');
+        console.log(path, 'path');
         var tform = getTransforms(id);
         //console.log(tform);
         return path.replace('/>', ' ' + tform + '/>');

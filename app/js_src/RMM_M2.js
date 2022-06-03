@@ -663,10 +663,10 @@ var RMM_M2 = (function() {
         nums.n13 = getRandInt(0,9);
         nums.n12 = getRandInt(1,9);
 
-        nums.n03 = 3;
-        nums.n02 = 7;
-        nums.n13 = 4;
-        nums.n12 = 7;
+////////////        nums.n03 = 3;
+////////////        nums.n02 = 7;
+////////////        nums.n13 = 4;
+////////////        nums.n12 = 7;
 
         rows.r0 = (nums.n02 * 10) + nums.n03;
         rows.r1 = (nums.n12 * 10) + nums.n13;
@@ -683,6 +683,7 @@ var RMM_M2 = (function() {
         nums.n42 = numAtIndex(rows.r4, 10);
         nums.n41 = numAtIndex(rows.r4, 100);
         if (rows.r4 > 999) { nums.n40 = numAtIndex(rows.r4, 1000); }
+        console.warn(nums, 'nums (problem setup)');
     }
 
     // set up next M2 equation

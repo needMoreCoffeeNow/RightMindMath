@@ -163,8 +163,13 @@ var RMM_D3 = (function() {
         //eqz = {'divisor':90, 'dividend':468, 'quotient':5, 'decimal':2};
         //eqz = {'divisor':5, 'dividend':487, 'quotient':97, 'decimal':4};
         //eqz = {'divisor':55, 'dividend':781, 'quotient':14, 'decimal':2};
-        eqz = {'divisor':15, 'dividend':384, 'quotient':25, 'decimal':6};
-        console.log(eqz, 'eqz');
+        //eqz = {'divisor':15, 'dividend':384, 'quotient':25, 'decimal':6};
+        //eqz = {'divisor':5, 'dividend':373, 'quotient':74, 'decimal':6};
+        //eqz = {'divisor':10, 'dividend':373, 'quotient':37, 'decimal':3};
+        //eqz = {'divisor':10, 'dividend':684, 'quotient':68, 'decimal':4};
+        //eqz = {'divisor':2, 'dividend':131, 'quotient':65, 'decimal':5};
+        eqz = {'divisor':5, 'dividend':399, 'quotient':79, 'decimal':8};
+        console.warn(eqz, 'eqz');
     }
 
     // start a long division problem
@@ -172,11 +177,11 @@ var RMM_D3 = (function() {
         console.log('nextD3Equation');
         // some housekeeping first to setup M2 controllers
         // set some variables to leverage functions in other files
-        RMM_M2.setModule('d3');
+        //RMM_M2.setModule('d3');
         RMM_ASM.setModule('d3');
         // override the number of bkgds_rows/cols in M2 with D3 values
         // which will be used by RMM_M2.lo_bkgdNumsSet to set all bkgds colors
-        RMM_M2.setBkgdsRowsCols(bkgds_rows, bkgds_cols);
+        //RMM_M2.setBkgdsRowsCols(bkgds_rows, bkgds_cols);
         equationSetup();
         // now layout equation
         time_start = Date.now();

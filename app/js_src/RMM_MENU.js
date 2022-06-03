@@ -762,7 +762,7 @@ var RMM_MENU = (function() {
         pdata.divisor_pct = parseInt(mydoc.getElementById('d3_divisor').value, 10);
         pdata.decimal_pct = parseInt(mydoc.getElementById('d3_decimal').value, 10);
         RMM_D3.setEquationVars(pdata);
-        console.log(pdata);
+        console.warn(pdata);
         checkProblemStart();
     }
 
