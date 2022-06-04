@@ -173,6 +173,7 @@ var RMM_D3 = (function() {
         //eqz = {'divisor':5, 'dividend':399, 'quotient':79, 'decimal':8};
         //eqz = {'divisor':5, 'dividend':291, 'quotient':58, 'decimal':2};
         //eqz = {'divisor':35, 'dividend':560, 'quotient':16, 'decimal':0};
+        //eqz = {'divisor':8, 'dividend':492, 'quotient':61, 'decimal':5};
         console.warn(eqz, 'eqz');
     }
 
@@ -536,7 +537,10 @@ var RMM_D3 = (function() {
         console.log('----------------------------------------------------------------dynamicSubtract()');
         console.log('----------------------------------------------------------------dynamicSubtract()');
         console.log('----------------------------------------------------------------dynamicSubtract()');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
+        //console.warn(correct, 'correct');
+        //console.warn(subval0, 'subval0');
+        //console.warn(subval1, 'subval1');
+        //console.warn(subval2, 'subval2');
         console.log(eqz);
         var bkgds = '';
         var path = '';
@@ -546,6 +550,7 @@ var RMM_D3 = (function() {
         var len = 0;
         mydoc.getElementById('div_d3_chunk').style.visibility = 'hidden';
         colsActiveSet();
+        //console.warn(cols_active, 'cols_active');
         len = cols_active.length;
         lo_divisorToggle('r2white');
         for (i=0; i<len; i++) {
@@ -563,6 +568,9 @@ var RMM_D3 = (function() {
         console.log('---');
         console.log('---');
         console.log('---');
+        // avoid repeating single digit number in tens spot when subval0 >= 10
+        // which happens because 10s spot is still highlighted to match rows
+        if (subval1 < 10) { len = 1; }
         for (i=0; i<len; i++) {
             console.log('---', i, '---');
             id = 'd3_num' + (row + 1) + cols_active[i];
