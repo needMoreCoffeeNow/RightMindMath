@@ -259,7 +259,6 @@ var RMM_ASM = (function() {
     function pathTransform(path, id) {
         console.log('pathTransform(path, id)');
         console.log(id, 'id');
-        console.log(path, 'path');
         var tform = getTransforms(id);
         //console.log(tform);
         return path.replace('/>', ' ' + tform + '/>');

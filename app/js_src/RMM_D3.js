@@ -89,8 +89,10 @@ var RMM_D3 = (function() {
             check = decimalStrip(dividend, 10) * 10;
             if (decimalStrip(check, 10) !== 0) { continue; }
             todo = false;
-
         }
+        // need to convert quotient and decimal to whole integers
+        quotient = Math.floor(quotient);
+        decimal = parseInt(decimal * 10, 10);
         return pkgEq(divisor, dividend, quotient, decimal);
     }
 
@@ -168,7 +170,9 @@ var RMM_D3 = (function() {
         //eqz = {'divisor':10, 'dividend':373, 'quotient':37, 'decimal':3};
         //eqz = {'divisor':10, 'dividend':684, 'quotient':68, 'decimal':4};
         //eqz = {'divisor':2, 'dividend':131, 'quotient':65, 'decimal':5};
-        eqz = {'divisor':5, 'dividend':399, 'quotient':79, 'decimal':8};
+        //eqz = {'divisor':5, 'dividend':399, 'quotient':79, 'decimal':8};
+        //eqz = {'divisor':5, 'dividend':291, 'quotient':58, 'decimal':2};
+        //eqz = {'divisor':35, 'dividend':560, 'quotient':16, 'decimal':0};
         console.warn(eqz, 'eqz');
     }
 
@@ -177,11 +181,11 @@ var RMM_D3 = (function() {
         console.log('nextD3Equation');
         // some housekeeping first to setup M2 controllers
         // set some variables to leverage functions in other files
-        //RMM_M2.setModule('d3');
+        RMM_M2.setModule('d3');
         RMM_ASM.setModule('d3');
         // override the number of bkgds_rows/cols in M2 with D3 values
         // which will be used by RMM_M2.lo_bkgdNumsSet to set all bkgds colors
-        //RMM_M2.setBkgdsRowsCols(bkgds_rows, bkgds_cols);
+        RMM_M2.setBkgdsRowsCols(bkgds_rows, bkgds_cols);
         equationSetup();
         // now layout equation
         time_start = Date.now();
@@ -581,14 +585,15 @@ var RMM_D3 = (function() {
         lo_bkgdNumsSet('', 'r2white');
         lo_setStyleDisplay('d3_line_2', 'block');
         if (eqz.decimal === 0) {
-            console.log('no decimal');
             lo_setInnerHtml('d3_num02', numPath(eqz.quotient, 1));
+            if (fnum > 99) {
+                lo_setInnerHtml('d3_num40', numPath(fnum, 100));
+            }
             lo_setInnerHtml('d3_num41', numPath(fnum, 10));
             lo_setInnerHtml('d3_num42', numPath(fnum, 1));
             lo_setInnerHtml('d3_num52', numPath(0, 1));
         } else {
             fnum = eqz.decimal * eqz.divisor;
-            console.log('yes decimal');
             lo_setInnerHtml('d3_num03', numPath(eqz.decimal, 1));
             lo_setInnerHtml('d3_num43', numPath(fnum, 1));
             lo_setInnerHtml('d3_num42', numPath(fnum, 10));
@@ -605,8 +610,6 @@ var RMM_D3 = (function() {
         console.log('----------------------------------------------------------------step03()');
         console.log('----------------------------------------------------------------step03()');
         console.log('----------------------------------------------------------------step03()');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2', currentCol(), 'col')
-        console.log(eqz);
         var bkgds = '';
         var txt = getStr('D3_03');
         var bkgds = '30.31.41';
@@ -627,7 +630,6 @@ var RMM_D3 = (function() {
             lo_setInnerHtml('d3_num01', numPath(eqz.quotient, 10));
         }
         correct = subval2;
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         // instruction text
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+subval0);
@@ -642,8 +644,6 @@ var RMM_D3 = (function() {
         console.log('----------------------------------------------------------------step02()');
         console.log('----------------------------------------------------------------step02()');
         console.log('----------------------------------------------------------------step02()');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2');
-        console.log(eqz);
         var txt = getStr('D3_02');
         var down = -1;
         lo_divisorToggle('r2bkgd');
@@ -665,7 +665,6 @@ var RMM_D3 = (function() {
         }
         subval2 = subval0 - (correct * eqz.divisor);
         subval1 = subval0 - subval2;
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         // instruction text
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+down);
@@ -700,7 +699,6 @@ var RMM_D3 = (function() {
         var col = currentCol();
         var len = numLength(subval0);
         var i = 0;
-        console.log(col, 'col');
         cols_active = [];
         for (i=0; i<len; i++) {
             cols_active.push(col - i);
@@ -713,8 +711,6 @@ var RMM_D3 = (function() {
         console.log('----------------------------------------------------------------step01()');
         console.log('----------------------------------------------------------------step01()');
         console.log('----------------------------------------------------------------step01()');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2', currentCol(), 'col')
-        console.log(eqz);
         var txt = getStr('D3_01');
         lo_divisorToggle('r2white');
         lo_setStyleDisplay('d3_line_1', 'block');
@@ -768,7 +764,6 @@ var RMM_D3 = (function() {
 
     function dynamicMultiply() {
         console.log('dynamicMultiply()');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         var txt = '';
         var bkgds = '';
         var id = '';
@@ -829,8 +824,6 @@ var RMM_D3 = (function() {
         lo_showContainer();
         // answers array
         asmAnswerSetup();
-        console.log(eqz, 'eqz');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         dynamicMultiply();
         mydoc.getElementById('asm_answer').style.display = 'block';
     }
@@ -941,7 +934,6 @@ var RMM_D3 = (function() {
     // set bkgd for divisor bkgds
     function lo_bkgdsDivisor(ids_in, class_str) {
         console.log('lo_bkgdsDivisor(ids_in, class_str)');
-        console.log(ids_in, 'ids_in', class_str, 'class_str');
         var both = ids_in.length === 0;
         if (ids_in.indexOf('0') > -1 || both) {
             lo_setAttribute('d3_bkgd_dr_0', 'class', class_str);
@@ -989,8 +981,6 @@ var RMM_D3 = (function() {
         var total = 0;
         var start = Date.now();
         var eq = findDecimalEq(10);
-        console.log(eq);
-        console.log(Date.now() - start, 'milliseconds');
         return;
         for (var i=70; i<81; i++) {
             for (var j=10; j<101; j++) {
