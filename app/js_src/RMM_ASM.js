@@ -1418,7 +1418,7 @@ var RMM_ASM = (function() {
             console.log('-----3-----------------------end');
         }
         console.log(level, 'level');
-        if (shnote_bpopup && level.subStr(0,1) === 's') {
+        if (shnote_bpopup && level.substr(0,1) === 's') {
             console.log('-----4-----------------------start');
             mydoc.getElementById('div_note').style.visibility = 'hidden';
             console.log('-----4-----------------------end');
