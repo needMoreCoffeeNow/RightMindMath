@@ -55,6 +55,7 @@ var RMM_ASM = (function() {
     var shnote_borrow = true; // controls display of borrow info notes
     var borrow_note_active = false; // used to advance prob when block all click
     var bnext_note_active = false; // 
+    var borrow_info_active = false; // 
     // toggles end
     var next_problem_init = null; // reference to next problem init function
     var carries = {0:0, 1:0, 2:0 }; // key=2 just for symmetry
@@ -611,8 +612,10 @@ var RMM_ASM = (function() {
         console.log(this_col, 'this_col--------------------------------------------------b4');
         this_col -= 1;
         console.log(this_col, 'this_col--------------------------------------------------after');
-        borrowNoteCheck();
-        if (level === 's2' || level === 's3') { borrowShowInfo(); }
+        if (level === 's2' || level === 's3') {
+            borrowNoteCheck();
+            borrowShowInfo();
+        }
         if (level === 's3' && this_col === 1) { doubleborrowAlert(); }
         time_start = Date.now();
         console.warn(time_start, 'time_start nextProblemLevel');
@@ -640,6 +643,7 @@ var RMM_ASM = (function() {
     // show the appropriate borrowInfo
     function borrowShowInfo() {
         console.log('borrowShowInfo()');
+        console.log(level, level_steps, level_done, '(level, level_steps, level_done');
         var note = '';
         var c_gets = this_col === 2 ? '1s' : '10s';
         var c_gives = this_col === 2 ? '10s' : '100s';
@@ -650,11 +654,21 @@ var RMM_ASM = (function() {
         var n_row1 = prob_asm[1][this_col];
         var dbl_note = '';
         var after_borrow = '';
+        if (borrow_info_active) { return; }
+        if (level_done > 1) {
+            mydoc.getElementById('div_note').style.visibility = 'hidden';
+            return;
+        }
         if (giver < 0 || giver > 2) {
             if (shnote_borrow) {
                 // correct borrowing note has already been set so we just show it
-                mydoc.getElementById('div_note').style.visibility = 'visible';
+                if (!shnote_bpopup ) { // no need to wait for popup to clear
+                    mydoc.getElementById('div_note').style.visibility = 'visible';
+                } else {
+                    borrow_info_active = true; // set flag for display after bnote popup clears
+                }
             }
+            console.warn('EXIT: if (giver < 0 || giver > 2)');
             return;
         }
         n_gives = prob_asm[0][giver] - borrows['gives'+giver];
@@ -684,7 +698,16 @@ var RMM_ASM = (function() {
                 note = note.replace('REPLACE_dbl_note', dbl_note);
                 note = note.replace('REPLACE_after_borrow', after_borrow);
                 mydoc.getElementById('div_note_txt').innerHTML = note;
-                mydoc.getElementById('div_note').style.visibility = 'visible';
+                if (shnote_bpopup)
+                    if (level_done === 0) {
+                        mydoc.getElementById('div_note').style.visibility = 'visible';
+                        borrow_info_active = true;
+                    } else {
+                        borrow_info_active = true;
+                    }
+                else {
+                    mydoc.getElementById('div_note').style.visibility = 'visible';
+                }
             }
             borrowPathValues(this_col, n_gets);
             borrowPathValues(giver, n_gives);
@@ -743,7 +766,7 @@ var RMM_ASM = (function() {
             mydoc.getElementById('b_borrow_continue').innerHTML = note;
             mydoc.getElementById('svg_borrow_note').style.display = 'block';
             mydoc.getElementById('blockAll').style.display = 'block';
-            mydoc.getElementById('svg_gear').style.display = 'none';
+            mydoc.getElementById('svg_gear').style.opacity = '0.3';
         }
     }
 
@@ -1104,7 +1127,7 @@ var RMM_ASM = (function() {
         //prob_asm  = [ [8,1,1], [6,6,3], [1,4,8] ];
         //prob_asm  = [ [4,9,6], [3,0,0], [1,9,6] ];
         //prob_asm  = [ [8,0,1], [5,1,9], [2,8,2] ];
-        ///prob_asm  = [ [7,2,3], [3,7,0], [3,5,3] ];
+        //prob_asm  = [ [7,2,3], [3,7,0], [3,5,3] ];
         //prob_asm  = [ [9,7,2], [7,6,0], [2,1,2] ];
         //prob_asm  = [ [8,8,1], [8,2,7], [0,5,2] ];
         borrowsSetDict();
@@ -1189,7 +1212,8 @@ var RMM_ASM = (function() {
             prob_asm[0][0] = getRandInt(1, 5);
             prob_asm[1][0] = getRandInt(1, 4);
         }
-        prob_asm  = [ [1, 6, 5], [2, 7, 8], [4,4,3] ];
+        //prob_asm  = [ [1, 6, 5], [2, 7, 8], [4,4,3] ];
+        //prob_asm  = [ [1, 0, 4], [2, 7, 8], [4,4,3] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
@@ -1204,7 +1228,7 @@ var RMM_ASM = (function() {
         problemInit('a2', 2, '+', 'plus')
         probColumnSetRandValue(2, 0, 10);
         probColumnSetRandValue(1, 1, 10);
-        prob_asm  = [ [null, 6, 5], [null, 7, 6], [1,4,2] ];
+        //prob_asm  = [ [null, 6, 5], [null, 7, 6], [1,4,2] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
@@ -1285,6 +1309,9 @@ var RMM_ASM = (function() {
         }
         chunkMessage(true);
         console.log('baseVal', mydoc.getElementById('asm').className.baseVal);
+        if (!borrow_note_active) {
+            mydoc.getElementById('svg_gear').style.opacity = '1.0';
+        }
     }
 
     // handle click on answer box: set verdict=wrong OR call correct process
@@ -1390,7 +1417,8 @@ var RMM_ASM = (function() {
             nextProblemLevel();
             console.log('-----3-----------------------end');
         }
-        if (shnote_bpopup) {
+        console.log(level, 'level');
+        if (shnote_bpopup && level.subStr(0,1) === 's') {
             console.log('-----4-----------------------start');
             mydoc.getElementById('div_note').style.visibility = 'hidden';
             console.log('-----4-----------------------end');
@@ -1402,7 +1430,7 @@ var RMM_ASM = (function() {
     function activateSvgNext() {
         console.log('activateSvgNext()');
         mydoc.getElementById('blockAll').style.display = 'block';
-        mydoc.getElementById('svg_gear').style.display = 'none';
+        mydoc.getElementById('svg_gear').style.opacity = '0.3';
         mydoc.getElementById('svg_next').style.display = 'block';
         mydoc.getElementById('asm_answer').style.opacity = 0.6;
     }
@@ -1410,15 +1438,24 @@ var RMM_ASM = (function() {
     // show appropriate next button text based on levels & done
     function numberPositionText() {
         console.log('numberPositionText()');
-        console.log(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
-        if (shnote_numpos === false && shnote_carry === false) {
-            bnext_note_active = false;
-            console.log('exit if (shnote_numpos === false && shnote_carry === false) {');
+        var carryOverride = false;
+        // check for a carry. Note carries[0] = hundreds, [1]=tens, [2]=ones
+        // which is opposite how number cols work. So when level_done=0 we
+        // add one to check tens, and level_done=1 we add one to check 000s
+        if (level_done === 0 || level_done === 1) {
+            if (carries[level_done + 1]) {
+                carryOverride = true;
+            }
+        }
+        bnext_note_active = false;
+        if (shnote_numpos === false && !carryOverride) {
+            return;
+        }
+        if (level_steps === level_done) {
             return;
         }
         bnext_note_active = true;
-        if (level_steps === level_done) { console.log('EXIT steps'); return; }
         if (level_steps === 2) {
             if (level_done === 0) { bnext.innerHTML = getStr('TXT_next_10'); }
             if (level_done === 1) { bnext.innerHTML = getStr('TXT_next_prob'); }
@@ -1428,7 +1465,6 @@ var RMM_ASM = (function() {
             if (level_done === 1) { bnext.innerHTML = getStr('TXT_next_100'); }
             if (level_done === 2) { bnext.innerHTML = getStr('TXT_next_prob'); }
         }
-        console.log(bnext.innerHTML, 'bnext.innerHTML');
         console.log('numberPositionText Done');
     }
 
@@ -1516,10 +1552,15 @@ var RMM_ASM = (function() {
     // handle click on block (full window cover) presented after correct ans
     function blockAllClick(ev) {
         console.log('blockAllClick(ev)');
+        console.log( borrow_info_active, 'borrow_info_active');
         //alert('blockAllClick');
         mydoc.getElementById('blockAll').style.display = 'none';
-        mydoc.getElementById('svg_gear').style.display = 'block';
+        mydoc.getElementById('svg_gear').style.opacity = '1.0';
         over_active = true;
+        if (borrow_info_active) {
+            mydoc.getElementById('div_note').style.visibility = 'visible';
+            borrow_info_active = false;
+        }
         if (borrow_note_active && ['s2', 's3'].indexOf(level) > -1) {
             mydoc.getElementById('svg_borrow_note').style.display = 'none';
             borrow_note_active = false;
