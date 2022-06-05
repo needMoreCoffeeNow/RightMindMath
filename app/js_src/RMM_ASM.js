@@ -1382,7 +1382,6 @@ var RMM_ASM = (function() {
             } else {
                 next_problem_init();
             }
-            next_problem_init();
             return;
         }
         // handel multi-step problems where either b_next is shown with either
