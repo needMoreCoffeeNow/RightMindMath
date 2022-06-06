@@ -56,6 +56,7 @@ var RMM_ASM = (function() {
     var borrow_note_active = false; // used to advance prob when block all click
     var bnext_note_active = false; // 
     var borrow_info_active = false; // 
+    var carry_override = false; // flag when next step involves a carry
     // toggles end
     var next_problem_init = null; // reference to next problem init function
     var carries = {0:0, 1:0, 2:0 }; // key=2 just for symmetry
@@ -1218,7 +1219,7 @@ var RMM_ASM = (function() {
         }
         //prob_asm  = [ [1, 6, 5], [2, 7, 8], [4, 4, 3] ];
         //prob_asm  = [ [1, 0, 4], [2, 7, 8], [4, 4, 3] ];
-        prob_asm  = [ [2, 4, 7], [5, 6, 4], [8, 1, 1] ];
+        prob_asm  = [ [2, 4, 5], [5, 6, 0], [8, 0, 5] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
@@ -1358,11 +1359,11 @@ var RMM_ASM = (function() {
     // steps for ASM correct answer click (problem level dependencies)
     function correctAnswerHandler(index) {
         console.error('correctAnswerHandler(index) ------------------------------------------------------------------------');
-        var carryOverride = setCarryOverride();
         console.error(module, 'module');
         console.error(shnote_numpos, 'shnote_numpos');
         console.error(shnote_next, 'shnote_next');
         bnext_note_active = false;
+        setCarryOverride();
         // answer buttons updates
         answerButtonClassReset();
         layoutVerdict(index, 'check');
@@ -1395,10 +1396,19 @@ var RMM_ASM = (function() {
         }
         console.error('MULTI-STEP----------------------------------------------');
         // handle completed multi-step problem and next_problem popup false
+        console.error('---------vars start----------');
+        console.error('---------vars start----------');
         console.error(complete, 'complete');
         console.error(shnote_next, 'shnote_next');
         console.error(shnote_numpos, 'shnote_numpos');
+        console.error(shnote_carry, 'shnote_carry');
+        console.error(shnote_bpopup, 'shnote_bpopup');
+        console.error(shnote_borrow, 'shnote_borrow');
+        console.error(carry_override, 'carry_override');
         console.error(level_steps, level_done, 'level_steps, level_done-------');
+        console.error(carries, 'carries');
+        console.error('---------vars end----------');
+        console.error('---------vars end----------');
         // handle last step in multi-step
         // either go to next problem or show Next Problem popup
         if ( (level_done + 1) >= level_steps) {
@@ -1460,7 +1470,7 @@ var RMM_ASM = (function() {
                 activateSvgNext();
                 console.error('-----4-----------------------end');
             } else {
-                if (!shnote_carry || !carryOverride) {
+                if (!shnote_carry || !carry_override) {
                     console.error('-----5-----------------------start');
                     nextProblemLevel();
                     console.error('-----5-----------------------end');
@@ -1490,26 +1500,25 @@ var RMM_ASM = (function() {
     }
 
     function setCarryOverride() {
-        console.log('setCarryOverride()');
-        var carryOverride = false;
+        console.error('setCarryOverride()');
+        console.error(level_done, 'level_done');
+        console.error(carries, 'carries');
+        var carry_ahead = 0;
         // check for a carry. Note carries[0] = hundreds, [1]=tens, [2]=ones
-        // which is opposite how number cols work. So when level_done=0 we
-        // add one to check tens, and level_done=1 we add one to check 000s
-        if (level_done === 0 || level_done === 1) {
-            if (carries[level_done + 1]) {
-                carryOverride = true;
-            }
-        }
-        return carryOverride;
+        // which is opposite how number cols work. Only check tens & 000s.
+        if (level_done === 0) { carry_ahead = carries[1]; } // num col = 1s [2]
+        if (level_done === 1) { carry_ahead = carries[0]; } // nom col = 10s [1]
+        carry_override = carry_ahead !== 0;
+        console.error(carry_override, '= carry_override at exit');
     }
 
     // show appropriate next button text based on levels & done
     function numberPositionText() {
         console.error('numberPositionText()');
         var bnext = mydoc.getElementById('b_next');
-        var carryOverride = setCarryOverride();
+        setCarryOverride();
         bnext_note_active = false;
-        if (shnote_numpos === false && !carryOverride) {
+        if (shnote_numpos === false && !carry_override) {
             console.error('----exit 01');
             return;
         }
@@ -1535,10 +1544,19 @@ var RMM_ASM = (function() {
         console.error('nextButtonText()');
         console.error(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
-        if (!shnote_next) { console.error('EXIT shnote_next'); return; }
-        if (level_done < level_steps) { console.error('EXIT steps'); return; }
+        if (!shnote_next) {
+            console.error('EXIT !shnote_next');
+            return;
+        }
+        if (level_done < level_steps) {
+            console.error('EXIT level_done < level_steps');
+            return;
+        }
         bnext_note_active = true;
-        if (level_steps > level_done) { console.error('EXIT steps'); return; }
+        if (level_steps > level_done) {
+            console.error('EXIT level_steps > level_done');
+            return;
+        }
         mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_prob');
         console.error(mydoc.getElementById('b_next').innerHTML, 'getElementById(b_next).innerHTML');
     }
