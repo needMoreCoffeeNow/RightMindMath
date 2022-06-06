@@ -283,6 +283,10 @@ var RMM_ASM = (function() {
         console.log(answers, 'answers b/4');
         if (!answers[level_done]) { return; }
         responses = [];
+        if (level_done > 3) {
+            console.error(level_done, 'g.t 3 error in setResponsesAnswersActive()');
+            return;
+        }
         responses = [answers[level_done][0], 
                      answers[level_done][1], 
                      answers[level_done][2], 
@@ -586,7 +590,7 @@ var RMM_ASM = (function() {
 
     // handle specific level steps for next prblem
     function nextProblemLevel() {
-        console.log('nextProblemLevel()');
+        console.error('nextProblemLevel()');
         // keep if (level_done === level_steps) as first check
         console.log(level_done, level_steps, 'level_done, level_steps');
         console.log(this_col, 'this_col');
@@ -766,7 +770,7 @@ var RMM_ASM = (function() {
             mydoc.getElementById('b_borrow_continue').innerHTML = note;
             mydoc.getElementById('svg_borrow_note').style.display = 'block';
             mydoc.getElementById('blockAll').style.display = 'block';
-            mydoc.getElementById('svg_gear').style.opacity = '0.3';
+            mydoc.getElementById('svg_gear').style.opacity = 0.3;
         }
     }
 
@@ -1212,8 +1216,9 @@ var RMM_ASM = (function() {
             prob_asm[0][0] = getRandInt(1, 5);
             prob_asm[1][0] = getRandInt(1, 4);
         }
-        //prob_asm  = [ [1, 6, 5], [2, 7, 8], [4,4,3] ];
-        //prob_asm  = [ [1, 0, 4], [2, 7, 8], [4,4,3] ];
+        //prob_asm  = [ [1, 6, 5], [2, 7, 8], [4, 4, 3] ];
+        //prob_asm  = [ [1, 0, 4], [2, 7, 8], [4, 4, 3] ];
+        prob_asm  = [ [2, 4, 7], [5, 6, 4], [8, 1, 1] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
@@ -1228,7 +1233,7 @@ var RMM_ASM = (function() {
         problemInit('a2', 2, '+', 'plus')
         probColumnSetRandValue(2, 0, 10);
         probColumnSetRandValue(1, 1, 10);
-        //prob_asm  = [ [null, 6, 5], [null, 7, 6], [1,4,2] ];
+        prob_asm  = [ [null, 7, 5], [null, 5, 6], [1,3,1] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
@@ -1330,6 +1335,7 @@ var RMM_ASM = (function() {
         index = parseInt(bid.replace('b', '') , 10);
         answer_active[index] = false;
         complete = responses[index] === correct;
+        console.warn(complete, 'complete-------------------------------------');
         // add timestamp to int in responses if not yet clicked (still an int)
         if (typeof(responses[index]) !== 'string') {
             responses[index] = Date.now() + '_' + responses[index];
@@ -1337,7 +1343,7 @@ var RMM_ASM = (function() {
         }
         if (!complete) {
             layoutVerdict(index, 'multiply');
-            console.log('exiting: !complete');
+            console.warn('EXIT answerClick !complete-------------------------');
             return;
         }
         if (module != 'm2' && module != 'd3') {
@@ -1346,14 +1352,16 @@ var RMM_ASM = (function() {
             recordAnswer();
         }
         correctAnswerHandler(index);
+        console.warn('FINISHED answerClick complete=true---------------------');
     }
 
     // steps for ASM correct answer click (problem level dependencies)
     function correctAnswerHandler(index) {
-        console.log('correctAnswerHandler(index) ------------------------------------------------------------------------');
-        console.log(module, 'module');
-        console.log(shnote_numpos, 'shnote_numpos');
-        console.log(shnote_next, 'shnote_next');
+        console.error('correctAnswerHandler(index) ------------------------------------------------------------------------');
+        var carryOverride = setCarryOverride();
+        console.error(module, 'module');
+        console.error(shnote_numpos, 'shnote_numpos');
+        console.error(shnote_next, 'shnote_next');
         bnext_note_active = false;
         // answer buttons updates
         answerButtonClassReset();
@@ -1368,11 +1376,12 @@ var RMM_ASM = (function() {
             RMM_M2.correctAnswerHandler();
             return;
         }
+        console.error(level, 'level-----------------------');
+        console.error(level_steps, level_done, 'level_steps, level_done-------');
         // update answer line befor incrementing level_done
         answerLineReveal();
         // any level 1 problem either show Next Problem or goto next problem
-        console.log(level);
-        console.log('starting: if (level === a1 || level === s1 || level === m1) {');
+        console.error('starting: if (level === a1 || level === s1 || level === m1) {');
         if (level === 'a1' || level === 's1' || level === 'm1') {
             RMM_STATSLIVE.displayUserCounts(level, true);
             if (shnote_next) {
@@ -1384,11 +1393,31 @@ var RMM_ASM = (function() {
             }
             return;
         }
-        // handel multi-step problems where either b_next is shown with either
+        console.error('MULTI-STEP----------------------------------------------');
+        // handle completed multi-step problem and next_problem popup false
+        console.error(complete, 'complete');
+        console.error(shnote_next, 'shnote_next');
+        console.error(shnote_numpos, 'shnote_numpos');
+        console.error(level_steps, level_done, 'level_steps, level_done-------');
+        // handle last step in multi-step
+        // either go to next problem or show Next Problem popup
+        if ( (level_done + 1) >= level_steps) {
+            console.error('HANDLE LAST STEP------------------------------------');
+            level_done += 1;
+            RMM_STATSLIVE.displayUserCounts(level, true);
+            if (!shnote_next) {
+                next_problem_init();
+            } else {
+                console.error('DO --- nextButtonText()');
+                nextButtonText();
+                activateSvgNext();
+            }
+            return;
+        }
+        // handle multi-step problems where either b_next is shown with either
         // number position or next problem prompts are shown
-        console.log(level_steps, level_done, 'level_steps, level_done');
         if (level_steps > 1) {
-            console.log('if (level_steps > 1) {');
+            console.error('if (level_steps > 1) {');
             // check number position prompt befor increment level_done
             numberPositionText();
             level_done += 1;
@@ -1400,44 +1429,68 @@ var RMM_ASM = (function() {
         }
         setResponsesAnswersActive();
         complete = false;
-        console.log(shnote_numpos, 'shnote_numpos');
-        console.log(shnote_next, 'shnote_next');
+        console.error(shnote_numpos, 'shnote_numpos');
+        console.error(shnote_next, 'shnote_next');
+        console.error(carries, 'carries');
         if (shnote_next === false && shnote_numpos === false) {
-            console.log('-----1-----------------------start');
+            console.error('-----1-----------------------start');
             nextProblemLevel();
-            console.log('-----1-----------------------end');
+            console.error('-----1-----------------------end');
         }
-        if (bnext_note_active) {
-            console.log('-----2-----------------------start');
-            activateSvgNext();
-            console.log('-----2-----------------------end');
-        } else {
-            console.log('-----3-----------------------start');
-            nextProblemLevel();
-            console.log('-----3-----------------------end');
+        if (level.substr(0, 1) === 's') {
+            if (bnext_note_active) {
+                console.error('-----2-----------------------start');
+                activateSvgNext();
+                console.error('-----2-----------------------end');
+            } else {
+                console.error('-----3-----------------------start');
+                nextProblemLevel();
+                console.error('-----3-----------------------end');
+            }
         }
-        console.log(level, 'level');
+        if (level.substr(0, 1) === 'a') {
+            if (complete && !shnote_next) {
+                if ( (level_done + 1) >= level_steps) {
+                    next_problem_init();
+                    return;
+                }
+            }
+            if (shnote_numpos) {
+                console.error('-----4-----------------------start');
+                activateSvgNext();
+                console.error('-----4-----------------------end');
+            } else {
+                if (!shnote_carry || !carryOverride) {
+                    console.error('-----5-----------------------start');
+                    nextProblemLevel();
+                    console.error('-----5-----------------------end');
+                } else {
+                    console.error('-----6-----------------------start');
+                    activateSvgNext();
+                    console.error('-----6-----------------------end');
+                }
+            }
+        }
+        console.error(level, 'level');
         if (shnote_bpopup && level.substr(0,1) === 's') {
-            console.log('-----4-----------------------start');
+            console.error('-----7-----------------------start');
             mydoc.getElementById('div_note').style.visibility = 'hidden';
-            console.log('-----4-----------------------end');
+            console.error('-----7-----------------------end');
         }
-        console.log('correctAnswerHandler DONE ------------------------------------------------------------------------');
+        console.error('correctAnswerHandler DONE ------------------------------------------------------------------------');
     }
 
     // show the blockAll and svg_next elements
     function activateSvgNext() {
         console.log('activateSvgNext()');
         mydoc.getElementById('blockAll').style.display = 'block';
-        mydoc.getElementById('svg_gear').style.opacity = '0.3';
+        mydoc.getElementById('svg_gear').style.opacity = 0.3;
         mydoc.getElementById('svg_next').style.display = 'block';
         mydoc.getElementById('asm_answer').style.opacity = 0.6;
     }
 
-    // show appropriate next button text based on levels & done
-    function numberPositionText() {
-        console.log('numberPositionText()');
-        var bnext = mydoc.getElementById('b_next');
+    function setCarryOverride() {
+        console.log('setCarryOverride()');
         var carryOverride = false;
         // check for a carry. Note carries[0] = hundreds, [1]=tens, [2]=ones
         // which is opposite how number cols work. So when level_done=0 we
@@ -1447,11 +1500,21 @@ var RMM_ASM = (function() {
                 carryOverride = true;
             }
         }
+        return carryOverride;
+    }
+
+    // show appropriate next button text based on levels & done
+    function numberPositionText() {
+        console.error('numberPositionText()');
+        var bnext = mydoc.getElementById('b_next');
+        var carryOverride = setCarryOverride();
         bnext_note_active = false;
         if (shnote_numpos === false && !carryOverride) {
+            console.error('----exit 01');
             return;
         }
         if (level_steps === level_done) {
+            console.error('----exit 02');
             return;
         }
         bnext_note_active = true;
@@ -1469,14 +1532,15 @@ var RMM_ASM = (function() {
 
     // show appropriate next button text based on levels & done
     function nextButtonText() {
-        console.log('nextButtonText()');
-        console.log(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
+        console.error('nextButtonText()');
+        console.error(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
-        if (!shnote_next) { console.log('EXIT shnote_next'); return; }
-        if (level_done < level_steps) { console.log('EXIT steps'); return; }
+        if (!shnote_next) { console.error('EXIT shnote_next'); return; }
+        if (level_done < level_steps) { console.error('EXIT steps'); return; }
         bnext_note_active = true;
-        if (level_steps > level_done) { console.log('EXIT steps'); return; }
+        if (level_steps > level_done) { console.error('EXIT steps'); return; }
         mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_prob');
+        console.error(mydoc.getElementById('b_next').innerHTML, 'getElementById(b_next).innerHTML');
     }
 
     // answer line (row2): display the appropriate numbers
