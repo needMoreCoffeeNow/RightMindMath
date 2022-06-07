@@ -195,7 +195,7 @@ var RMM_ASM = (function() {
 
     // toggle the show notes span values and class
     function showNotesToggle(id, turn_on) {
-        console.log('showNotesToggle(id, is_on)', id, turn_on);
+        console.warn('showNotesToggle(id, is_on)', id, turn_on);
         var ele = mydoc.getElementById(id);
         if (turn_on) {
             ele.innerHTML = getStr('TXT_eq_on');
@@ -1219,7 +1219,7 @@ var RMM_ASM = (function() {
         }
         //prob_asm  = [ [1, 6, 5], [2, 7, 8], [4, 4, 3] ];
         //prob_asm  = [ [1, 0, 4], [2, 7, 8], [4, 4, 3] ];
-        prob_asm  = [ [2, 4, 5], [5, 6, 0], [8, 0, 5] ];
+        //prob_asm  = [ [2, 4, 5], [5, 6, 0], [8, 0, 5] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
@@ -1234,7 +1234,8 @@ var RMM_ASM = (function() {
         problemInit('a2', 2, '+', 'plus')
         probColumnSetRandValue(2, 0, 10);
         probColumnSetRandValue(1, 1, 10);
-        prob_asm  = [ [null, 7, 5], [null, 5, 6], [1,3,1] ];
+        //prob_asm  = [ [null, 7, 5], [null, 5, 6], [1,3,1] ];
+        //prob_asm  = [ [null, 1, 6], [null, 5, 6], [null, 7, 6] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();

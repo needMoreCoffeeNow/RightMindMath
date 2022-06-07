@@ -143,7 +143,7 @@ div.name {
 .number_column_front {
     stroke:blue;
     stroke-width:2;
-    fill:#b3ccff;
+    fill:#ffffca;
 }
 .number_column_back {
     stroke:#000000;
@@ -297,6 +297,7 @@ div.block {
 /*menus start*/
 div.menu_text {
     font-size:85%;
+    margin-left:20px;
 }
 .sync_text {
     padding:20px;
@@ -337,6 +338,23 @@ div.msg_text {
 }
 .help_hi { 
     color:blue;
+    margin-bottom:10px;
+}
+div.help_notes_line {
+    margin-top:8px;
+}
+div.help_notes_header {
+    margin-left:-20px;
+    font-size:100%;
+    font-weight:bold;
+}
+div.help_notes_footer {
+    margin-top:20px;
+    margin-left:-20px;
+    font-size:85%;
+}
+div.help_notes_empty_line {
+    margin-top:10px;
 }
 button.print_id {
     min-width:130px;
@@ -374,11 +392,15 @@ button.stats_id:hover {
 }
 /*menus end*/
 /*toggle start*/
+div.tog_button_header {
+    text-align:left;
+    margin-top:10px;
+}
 a.toggle {
     border-radius:5px;
     box-shadow:0 2px 4px 0 rgba(0,0,0,0.2), 0 3px 6px 0 rgba(0,0,0,0.19);
     width:70%;
-    background:#fff;
+    background:#cceeff;
     border:1px solid #999;
     font-size:0.75em;
     color:#000;
