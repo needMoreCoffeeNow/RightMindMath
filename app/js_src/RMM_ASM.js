@@ -195,7 +195,7 @@ var RMM_ASM = (function() {
 
     // toggle the show notes span values and class
     function showNotesToggle(id, turn_on) {
-        console.warn('showNotesToggle(id, is_on)', id, turn_on);
+        console.log('showNotesToggle(id, is_on)', id, turn_on);
         var ele = mydoc.getElementById(id);
         if (turn_on) {
             ele.innerHTML = getStr('TXT_eq_on');
@@ -285,7 +285,7 @@ var RMM_ASM = (function() {
         if (!answers[level_done]) { return; }
         responses = [];
         if (level_done > 3) {
-            console.error(level_done, 'g.t 3 error in setResponsesAnswersActive()');
+            ////////console.error(level_done, 'g.t 3 error in setResponsesAnswersActive()');
             return;
         }
         responses = [answers[level_done][0], 
@@ -591,7 +591,7 @@ var RMM_ASM = (function() {
 
     // handle specific level steps for next prblem
     function nextProblemLevel() {
-        console.error('nextProblemLevel()');
+        console.log('nextProblemLevel()');
         // keep if (level_done === level_steps) as first check
         console.log(level_done, level_steps, 'level_done, level_steps');
         console.log(this_col, 'this_col');
@@ -1359,10 +1359,10 @@ var RMM_ASM = (function() {
 
     // steps for ASM correct answer click (problem level dependencies)
     function correctAnswerHandler(index) {
-        console.error('correctAnswerHandler(index) ------------------------------------------------------------------------');
-        console.error(module, 'module');
-        console.error(shnote_numpos, 'shnote_numpos');
-        console.error(shnote_next, 'shnote_next');
+        console.log('correctAnswerHandler(index) ------------------------------------------------------------------------');
+        console.log(module, 'module');
+        ////////console.error(shnote_numpos, 'shnote_numpos');
+        ////////console.error(shnote_next, 'shnote_next');
         bnext_note_active = false;
         setCarryOverride();
         // answer buttons updates
@@ -1378,12 +1378,12 @@ var RMM_ASM = (function() {
             RMM_M2.correctAnswerHandler();
             return;
         }
-        console.error(level, 'level-----------------------');
-        console.error(level_steps, level_done, 'level_steps, level_done-------');
+        ////////console.error(level, 'level-----------------------');
+        ////////console.error(level_steps, level_done, 'level_steps, level_done-------');
         // update answer line befor incrementing level_done
         answerLineReveal();
         // any level 1 problem either show Next Problem or goto next problem
-        console.error('starting: if (level === a1 || level === s1 || level === m1) {');
+        ////////console.error('starting: if (level === a1 || level === s1 || level === m1) {');
         if (level === 'a1' || level === 's1' || level === 'm1') {
             RMM_STATSLIVE.displayUserCounts(level, true);
             if (shnote_next) {
@@ -1395,31 +1395,31 @@ var RMM_ASM = (function() {
             }
             return;
         }
-        console.error('MULTI-STEP----------------------------------------------');
+        ////////console.error('MULTI-STEP----------------------------------------------');
         // handle completed multi-step problem and next_problem popup false
-        console.error('---------vars start----------');
-        console.error('---------vars start----------');
-        console.error(complete, 'complete');
-        console.error(shnote_next, 'shnote_next');
-        console.error(shnote_numpos, 'shnote_numpos');
-        console.error(shnote_carry, 'shnote_carry');
-        console.error(shnote_bpopup, 'shnote_bpopup');
-        console.error(shnote_borrow, 'shnote_borrow');
-        console.error(carry_override, 'carry_override');
-        console.error(level_steps, level_done, 'level_steps, level_done-------');
-        console.error(carries, 'carries');
-        console.error('---------vars end----------');
-        console.error('---------vars end----------');
-        // handle last step in multi-step
+        ////////console.error('---------vars start----------');
+        ////////console.error('---------vars start----------');
+        ////////console.error(complete, 'complete');
+        ////////console.error(shnote_next, 'shnote_next');
+        ////////console.error(shnote_numpos, 'shnote_numpos');
+        ////////console.error(shnote_carry, 'shnote_carry');
+        ////////console.error(shnote_bpopup, 'shnote_bpopup');
+        ////////console.error(shnote_borrow, 'shnote_borrow');
+        ////////console.error(carry_override, 'carry_override');
+        ////////console.error(level_steps, level_done, 'level_steps, level_done-------');
+        ////////console.error(carries, 'carries');
+        ////////console.error('---------vars end----------');
+        ////////console.error('---------vars end----------');
+        ////////// handle last step in multi-step
         // either go to next problem or show Next Problem popup
         if ( (level_done + 1) >= level_steps) {
-            console.error('HANDLE LAST STEP------------------------------------');
+            ////////console.error('HANDLE LAST STEP------------------------------------');
             level_done += 1;
             RMM_STATSLIVE.displayUserCounts(level, true);
             if (!shnote_next) {
                 next_problem_init();
             } else {
-                console.error('DO --- nextButtonText()');
+                ////////console.error('DO --- nextButtonText()');
                 nextButtonText();
                 activateSvgNext();
             }
@@ -1428,7 +1428,7 @@ var RMM_ASM = (function() {
         // handle multi-step problems where either b_next is shown with either
         // number position or next problem prompts are shown
         if (level_steps > 1) {
-            console.error('if (level_steps > 1) {');
+            ////////console.error('if (level_steps > 1) {');
             // check number position prompt befor increment level_done
             numberPositionText();
             level_done += 1;
@@ -1440,23 +1440,23 @@ var RMM_ASM = (function() {
         }
         setResponsesAnswersActive();
         complete = false;
-        console.error(shnote_numpos, 'shnote_numpos');
-        console.error(shnote_next, 'shnote_next');
-        console.error(carries, 'carries');
+        ////////console.error(shnote_numpos, 'shnote_numpos');
+        ////////console.error(shnote_next, 'shnote_next');
+        ////////console.error(carries, 'carries');
         if (shnote_next === false && shnote_numpos === false) {
-            console.error('-----1-----------------------start');
+            console.log('-----1-----------------------start');
             nextProblemLevel();
-            console.error('-----1-----------------------end');
+            console.log('-----1-----------------------end');
         }
         if (level.substr(0, 1) === 's') {
             if (bnext_note_active) {
-                console.error('-----2-----------------------start');
+                console.log('-----2-----------------------start');
                 activateSvgNext();
-                console.error('-----2-----------------------end');
+                console.log('-----2-----------------------end');
             } else {
-                console.error('-----3-----------------------start');
+                console.log('-----3-----------------------start');
                 nextProblemLevel();
-                console.error('-----3-----------------------end');
+                console.log('-----3-----------------------end');
             }
         }
         if (level.substr(0, 1) === 'a') {
@@ -1467,28 +1467,28 @@ var RMM_ASM = (function() {
                 }
             }
             if (shnote_numpos) {
-                console.error('-----4-----------------------start');
+                console.log('-----4-----------------------start');
                 activateSvgNext();
-                console.error('-----4-----------------------end');
+                console.log('-----4-----------------------end');
             } else {
                 if (!shnote_carry || !carry_override) {
-                    console.error('-----5-----------------------start');
+                    console.log('-----5-----------------------start');
                     nextProblemLevel();
-                    console.error('-----5-----------------------end');
+                    console.log('-----5-----------------------end');
                 } else {
-                    console.error('-----6-----------------------start');
+                    console.log('-----6-----------------------start');
                     activateSvgNext();
-                    console.error('-----6-----------------------end');
+                    console.log('-----6-----------------------end');
                 }
             }
         }
-        console.error(level, 'level');
+        console.log(level, 'level');
         if (shnote_bpopup && level.substr(0,1) === 's') {
-            console.error('-----7-----------------------start');
+            console.log('-----7-----------------------start');
             mydoc.getElementById('div_note').style.visibility = 'hidden';
-            console.error('-----7-----------------------end');
+            console.log('-----7-----------------------end');
         }
-        console.error('correctAnswerHandler DONE ------------------------------------------------------------------------');
+        console.log('correctAnswerHandler DONE ------------------------------------------------------------------------');
     }
 
     // show the blockAll and svg_next elements
@@ -1501,30 +1501,30 @@ var RMM_ASM = (function() {
     }
 
     function setCarryOverride() {
-        console.error('setCarryOverride()');
-        console.error(level_done, 'level_done');
-        console.error(carries, 'carries');
+        console.log('setCarryOverride()');
+        ////////console.error(level_done, 'level_done');
+        ////////console.error(carries, 'carries');
         var carry_ahead = 0;
         // check for a carry. Note carries[0] = hundreds, [1]=tens, [2]=ones
         // which is opposite how number cols work. Only check tens & 000s.
         if (level_done === 0) { carry_ahead = carries[1]; } // num col = 1s [2]
         if (level_done === 1) { carry_ahead = carries[0]; } // nom col = 10s [1]
         carry_override = carry_ahead !== 0;
-        console.error(carry_override, '= carry_override at exit');
+        ////////console.error(carry_override, '= carry_override at exit');
     }
 
     // show appropriate next button text based on levels & done
     function numberPositionText() {
-        console.error('numberPositionText()');
+        console.log('numberPositionText()');
         var bnext = mydoc.getElementById('b_next');
         setCarryOverride();
         bnext_note_active = false;
         if (shnote_numpos === false && !carry_override) {
-            console.error('----exit 01');
+            ////////console.error('----exit 01');
             return;
         }
         if (level_steps === level_done) {
-            console.error('----exit 02');
+            ////////console.error('----exit 02');
             return;
         }
         bnext_note_active = true;
@@ -1542,24 +1542,24 @@ var RMM_ASM = (function() {
 
     // show appropriate next button text based on levels & done
     function nextButtonText() {
-        console.error('nextButtonText()');
-        console.error(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
+        console.log('nextButtonText()');
+        console.log(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
         if (!shnote_next) {
-            console.error('EXIT !shnote_next');
+            ////////console.error('EXIT !shnote_next');
             return;
         }
         if (level_done < level_steps) {
-            console.error('EXIT level_done < level_steps');
+            ////////console.error('EXIT level_done < level_steps');
             return;
         }
         bnext_note_active = true;
         if (level_steps > level_done) {
-            console.error('EXIT level_steps > level_done');
+            ////////console.error('EXIT level_steps > level_done');
             return;
         }
         mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_prob');
-        console.error(mydoc.getElementById('b_next').innerHTML, 'getElementById(b_next).innerHTML');
+        ////////console.error(mydoc.getElementById('b_next').innerHTML, 'getElementById(b_next).innerHTML');
     }
 
     // answer line (row2): display the appropriate numbers
@@ -2026,7 +2026,7 @@ var RMM_ASM = (function() {
 
     // reset the className for the 4 answer buttons to normal (no effects)
     function answerButtonClassReset() {
-        console.log('answerButtonClassReset');
+        //console.log('answerButtonClassReset');
         mydoc.getElementById(mod_lo + '_answer_b0').className.baseVal = 'answer_button';
         mydoc.getElementById(mod_lo + '_answer_b1').className.baseVal = 'answer_button';
         mydoc.getElementById(mod_lo + '_answer_b2').className.baseVal = 'answer_button';
