@@ -10,6 +10,7 @@ z_sync_post2.py
 z_sync_post3.py
 z_sync_read.py
 z_sync_test.py
+z_sync_get_device_tstamp.py
 response.html
 __pycache__
 header-files-work.vim
