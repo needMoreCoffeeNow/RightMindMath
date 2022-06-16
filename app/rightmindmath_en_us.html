@@ -26,17 +26,18 @@
             console.log('syncSheetCallback(obj)');
             console.log(obj);
         }
-//        function registerSW() {
-//            if ('serviceWorker' in navigator) {
-//                try {
-//                    navigator.serviceWorker.register('./serviceworker.js');
-//                } catch (e) {
-//                    alert('Sorry ServiceWorker registration failed.');
-//                }
-//            } else {
-//                document.querySelector('.alert').removeAttribute('hidden');
-//            }
-//        }
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    // LOCALIZATION: service worker name must be locale specific
+                    navigator.serviceWorker.register('./serviceworker_en_us.js');
+                } catch (e) {
+                    console.warn('Sorry ServiceWorker registration failed.');
+                }
+            } else {
+                console.log('Service Worker NOT available');
+            }
+        }
         function makeDoubleDelegate(function1, function2) {
             return function() {
                 if (function1)
@@ -46,7 +47,7 @@
             };
         }
         // start header js processes
-//        registerSW();
+//        registerServiceWorker();
         window.onload = makeDoubleDelegate(window.onload, RMM_ASM.init);
     </script>
 </head>
