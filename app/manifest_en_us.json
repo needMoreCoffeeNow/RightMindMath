@@ -9,7 +9,7 @@
   "icons": [
     {
       "src": "/app/logo/rmm_logo_icon_symmetric.svg",
-      "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
+      "sizes": "48x48 72x72 96x96 128x128 256x256 512x512 1024x1024",
       "type": "image/svg+xml",
       "purpose": "any"
     }
