@@ -1,7 +1,7 @@
 {
   "name": "RightMindMath",
   "short_name": "RightMindMath",
-  "start_url": ".",
+  "start_url": "/app/rightmindmath_en_us.html",
   "display": "standalone",
   "background_color": "#34495e",
   "description": "Learn Basic Arithmetic",
