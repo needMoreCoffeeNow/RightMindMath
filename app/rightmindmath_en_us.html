@@ -19,24 +19,25 @@
     <script src="./js_src/RMM_SYNC.js"></script>
     <script src="./js_src/RMM_MENU.js"></script>
     <script>
+        console.error('register ServiceWorker');
+        if ('serviceWorker' in navigator) {
+            try {
+                // LOCALIZATION: service worker name must be locale specific
+                navigator.serviceWorker.register('./serviceworker_en_us.js');
+            } catch (e) {
+                console.warn('Sorry ServiceWorker registration failed.');
+            }
+        } else {
+            console.log('Service Worker NOT available');
+        }
+    </script>
+    <script>
         function scriptLoaded () {
             alert('loaded');
         }
         function syncSheetCallback(obj) {
             console.log('syncSheetCallback(obj)');
             console.log(obj);
-        }
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                try {
-                    // LOCALIZATION: service worker name must be locale specific
-                    navigator.serviceWorker.register('./serviceworker_en_us.js');
-                } catch (e) {
-                    console.warn('Sorry ServiceWorker registration failed.');
-                }
-            } else {
-                console.log('Service Worker NOT available');
-            }
         }
         function makeDoubleDelegate(function1, function2) {
             return function() {
@@ -47,7 +48,6 @@
             };
         }
         // start header js processes
-        registerServiceWorker();
         window.onload = makeDoubleDelegate(window.onload, RMM_ASM.init);
     </script>
 </head>
