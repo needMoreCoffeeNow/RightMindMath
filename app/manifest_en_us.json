@@ -1,14 +1,14 @@
 {
   "name": "RightMindMath",
   "short_name": "RightMindMath",
-  "start_url": "/app/rightmindmath_en_us.html",
+  "start_url": "https://www.rightmindmath.com/app/rightmindmath_en_us.html",
   "display": "standalone",
   "background_color": "#34495e",
   "description": "Learn Basic Arithmetic",
   "theme_color": "#34495e",
   "icons": [
     {
-      "src": "/logo/rmm_logo_icon_symmetric.svg",
+      "src": "https://www.rightmindmath.com/logo/rmm_logo_icon_symmetric.svg",
       "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
       "type": "image/svg+xml",
       "purpose": "any"
