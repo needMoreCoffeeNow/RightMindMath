@@ -838,11 +838,7 @@ var RMM_ASM = (function() {
         carries = {0:0, 1:0, 2:0}; // key=2 just for symmetry
         // possible carries: 1s (col=2) & 10s (col=1)
         carries[1] = parseInt(calcColumn(2, opASM) / 10, 10);
-        carries[0] = parseInt((calcColumn(1, opASM) + carries[1]) / 10, 10);
-        // handle A2 equation with a hundreds carry & no numbers in rows 0 & 1
-        if (prob_asm[0][0] === null && prob_asm[1][0] === null && prob_asm[2][0] === 1) {
-            carries[0] = 1;
-        }
+        carries[0] = parseInt(calcColumn(1, opASM) / 10, 10) + carries[1];
     }
     // display the carry info note
     function displayCarryNote(val) {
