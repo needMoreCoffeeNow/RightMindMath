@@ -1,4 +1,4 @@
-const cache_name = 'rightmindmath_en_us_v03';
+const cache_name = 'rightmindmath_en_us_v04';
 const assets = [
     // localized assets
     './css/RMM_styles_en_us.css',
