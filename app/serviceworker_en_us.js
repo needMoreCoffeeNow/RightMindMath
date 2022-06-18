@@ -15,19 +15,12 @@ const assets = [
     './js_src/RMM_MENU.js'
 ];
 
-self.addEventListener('install', (e) => {
-    e.waitUntil((async () => {
-      const cache = await caches.open(cache_name);
-      await cache.addAll(assets);
-    })());
-});
-
 
 self.addEventListener('install', (e) => {
-    console.log('[ServiceWorker] Install');
+    console.warn('[ServiceWorker] Install');
     e.waitUntil((async () => {
         const cache = await caches.open(cache_name);
-        console.log('[ServiceWorker] Caching all: app shell and content');
+        console.warn('[ServiceWorker] Caching all: app shell and content');
         await cache.addAll(assets);
     })());
 });
@@ -36,11 +29,11 @@ self.addEventListener('install', (e) => {
 self.addEventListener('fetch', (e) => {
     e.respondWith((async () => {
         const r = await caches.match(e.request);
-        console.log(`[ServiceWorker] Fetching resource: ${e.request.url}`);
+        console.warn(`[ServiceWorker] Fetching resource: ${e.request.url}`);
         if (r) { return r; }
         const response = await fetch(e.request);
         const cache = await caches.open(cache_name);
-        console.log(`[ServiceWorker] Caching new resource: ${e.request.url}`);
+        console.warn(`[ServiceWorker] Caching new resource: ${e.request.url}`);
         cache.put(e.request, response.clone());
         return response;
     })());
