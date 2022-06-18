@@ -1,4 +1,4 @@
-const cache_name = 'rightmindmath_en_us_v06';
+const cache_name = 'rightmindmath_en_us_v01';
 const assets = [
     // localized assets
     './css/RMM_styles_en_us.css',
@@ -17,10 +17,10 @@ const assets = [
 
 
 self.addEventListener('install', (e) => {
-    console.warn('[ServiceWorker] Install');
+    console.log('[ServiceWorker] Install');
     e.waitUntil((async () => {
         const cache = await caches.open(cache_name);
-        console.warn('[ServiceWorker] Caching all: app shell and content');
+        console.log(`[ServiceWorker] Open/add cache: ${cache_name}`);
         await cache.addAll(assets);
     })());
 });
@@ -29,11 +29,11 @@ self.addEventListener('install', (e) => {
 self.addEventListener('fetch', (e) => {
     e.respondWith((async () => {
         const r = await caches.match(e.request);
-        console.warn(`[ServiceWorker] Fetching resource: ${e.request.url}`);
+        //console.log(`[ServiceWorker] Fetching resource: ${e.request.url}`);
         if (r) { return r; }
         const response = await fetch(e.request);
         const cache = await caches.open(cache_name);
-        console.warn(`[ServiceWorker] Caching new resource: ${e.request.url}`);
+        console.log(`[ServiceWorker] Caching new resource: ${e.request.url}`);
         cache.put(e.request, response.clone());
         return response;
     })());
@@ -44,7 +44,7 @@ self.addEventListener('activate', (e) => {
     e.waitUntil(caches.keys().then((keyList) => {
         return Promise.all(keyList.map((key) => {
             if (key === cache_name) { return; }
-            console.warn(`[ServiceWorker] Deleting Cache Key: ${key}`);
+            console.log(`[ServiceWorker] Deleting Cache Key: ${key}`);
             return caches.delete(key);
         }))
     }));
