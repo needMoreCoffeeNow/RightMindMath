@@ -5,6 +5,131 @@
         <meta name="keywords" content="arithmetic" >
         <meta name="description" content="Dedicated success with arithmetic." >
         <title>RightMindMath</title>
+        <script>
+            var scroll_top = 0;
+//topic text array start-->
+            var topic_text_array = [
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+
+                'What is Right Mind Math (RMM) ??What is Right Mind Math (RMM) ??What is Right Mind Math (RMM) ??',
+
+                '<p>RMM is a uniquie approach to learning.Right Mind Math <strong>(RMM)</strong> is a free, open-source math app. It develops instant recall for simple arithmetic, and shows  how easy math can be once simple arithmetic is mastered.</p> <p>RMM is a uniquie approach to learning.Right Mind Math <strong>(RMM)</strong> is a free, open-source math app. It develops instant recall for simple arithmetic, and shows  how easy math can be once simple arithmetic is mastered.</p> <p>RMM is a uniquie approach to learning.Right Mind Math <strong>(RMM)</strong> is a free, open-source math app. It develops instant recall for simple arithmetic, and shows  how easy math can be once simple arithmetic is mastered.</p>'
+                
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'What is Right Mind Math (RMM) ??',
+                'RMM is a uniquie approach to learning.'
+                ],
+                [
+                'How Does RMM help me with Engagement &amp; Interest ??',
+                'It allows you to get your kid to practice every day'
+                ]
+            ];
+//topic text array end-->
+            function topicBuildButtons() {
+                console.log('topicBuildButtons()');
+                var new_div = null;
+                var content = null;
+                var html = '';
+                var receiver = mydoc.getElementById('div_topics_headers');
+                var i = 0;
+                var len = topic_text_array.length;
+                for (i=0; i<len; i++) {
+                    console.log(topic_text_array[i][0]);
+                    console.log(topic_text_array[i][1]);
+                    html += '<div id="div_topic_' + i + '" ';
+                    html += 'class="topic_header" ';
+                    html += 'onclick="clickTopicHeader(event);" >';
+                    html += topic_text_array[i][0];
+                    html += '</div>';
+                }
+                receiver.innerHTML = html;
+                mydoc.getElementById('div_moment').style.display = 'none';
+                mydoc.getElementById('div_main').style.display = 'block';
+            }
+            function clickTopicHeader(ev) {
+                var id = ev.target['id'];
+                var idnum = parseInt(id.split('_')[2], 10);
+                var mytext = topic_text_array[idnum];
+                var html = '';
+                var elem = document.scrollingElement;
+                scroll_top = window.pageYOffset;
+                console.error(scroll_top, 'scroll_top');
+                html += '<div style="color:#888;font-size:80%;text-align:left;">';
+                html += mytext[0];
+                html += '</div>';
+                html += '<hr>';
+                html += '<div style="font-size:90%;text-align:left;">';
+                html += mytext[1];
+                html += '</div>';
+                mydoc.getElementById('div_topic_text').innerHTML = html;
+                mydoc.getElementById('div_intro').style.display = 'none';
+                mydoc.getElementById('div_topic_detail').style.display = 'block';
+                elem.scrollTop = 0;
+            }
+        </script>
+        <script>
+            var mydoc = window.document;
+            function closeTopicText(ev) {
+                var elem = document.scrollingElement;
+                mydoc.getElementById('div_topic_detail').style.display = 'none';
+                mydoc.getElementById('div_intro').style.display = 'block';
+                elem.scrollTop = scroll_top;
+                //window.setTimeout(scrollReset, 500);
+            }
+            function scrollReset() {
+                //var elem = window.document.getElementById('div_main');
+                var elem = document.scrollingElement;
+                elem.scrollTop = scroll_top;
+                //var elem = window.document.body;
+                //elem.scrollTo({
+                //    top: scroll_top,
+                //    left: 0,
+                //    behavior: 'smooth'
+                //});
+                console.warn(elem.scrollTop);
+            }
+        </script>
         <style type="text/css">
             body {
                 font-size:1.5em;
@@ -26,28 +151,94 @@
                     width:200px;
                 }
             }
+            div.topic_header {
+                font-size: 2em;
+                color:#333;
+            }
+            div.b_close {
+                font-size:1.0em;
+                color:#000066;
+                background:#cce6ff;
+                border:1px solid #000099;
+                text-align:center;
+                margin-left:20%;
+                margin-right:20%;
+            }
+            div.b_close:hover { 
+                background-color: #ffffcc;
+            }
+            div.topic_text{
+                font-size:1.2em;
+                font-weight:normal;
+                font-family:sans-serif;
+                color:#000000;
+                max-width:700px;
+                text-align:center;
+                padding-left:10%;
+                padding-right:10%;
+                margin:0px auto;
+                background-color:#eee;
+            }
+            div.topic_header {
+                font-size:1.0em;
+                color:#000066;
+                background:#cce6ff;
+                background:rgba(204, 230, 255, 0.3);
+                border:1px solid #000099;
+                text-align:center;
+                margin-top:20px;
+                padding:5px;
+            }
+            div.topic_header:hover { 
+                background:rgba(255, 255, 204, 1.0);
+            }
         </style>
+        <script>
+            function makeDoubleDelegate(function1, function2) {
+                return function() {
+                    if (function1)
+                        function1();
+                    if (function2)
+                        function2();
+                };
+            }
+            window.onload = makeDoubleDelegate(window.onload, topicBuildButtons);
+        </script>
     </head>
     <body style="background-color:#eeeeee;">
-        <div id="page_home">
-            <img id="logo" src="./html_assets/rmm_logo.svg" alt="Mathflash App Logo" class="logo">
-            <div style="text-align:left;">
-                <p>Right Mind Math <strong>(RMM)</strong> is a free, open-source math app. It develops instant recall for simple arithmetic, and shows  how easy math can be once simple arithmetic is mastered.</p>
-                <hr>
-                <p>Here are some of the main reasons to use RMM:</p>
-                <ul>
-                    <li>Helps your engagement &amp; interest</li>
-                    <li>Free &amp; Open Source &#151; forever</li>
-                    <li>Pretty darn well-designed app</li>
-                    <li>100% private</li>
-                </ul>
-                <p>Item one (<i><b>engagement &amp; interest</b></i>) is the most important factor at work here. <span style="color:#C70039;">Engaging with, and being interested in your child&#039;s learning process is much, much more important than the app you use.</span> Fortunately RMM makes this easy &amp; natural for you.</p>
-                <hr>
-                <p>A series of Topics is below. Please take the time to read them to understand why RMM is such a great app for learning arithmetic.</p>
-                <hr>
-                <p>RMM is a <b>Progressive Web App</b> (PWA) like <span style="color:#C70039;"><i>Wordle</i></span>. It can be installed on your phones, pads, and computers. While RMM runs great in a web browser, please be sure to install it as a PWA.</p>
-                <p>To get a demo of RMM running in your browser <a target="_blank" href="https://www.rightmindmath.com/app/rightmindmath_en_us.html">Click&nbsp;Here</a> <span style="font-size:85%;">(opens in a new window).</span></p>
-                <hr>
+    <!--main page intro-->
+        <div id="div_main" style="display:none;">
+            <div id="div_intro">
+                <img id="logo" src="./html_assets/rmm_logo.svg" alt="Mathflash App Logo" class="logo">
+                <div id="div_main_text" style="text-align:left;">
+                    <p>Right Mind Math <strong>(RMM)</strong> is a free, open-source math app. It develops instant recall for simple arithmetic, and shows  how easy math can be once simple arithmetic is mastered.</p>
+                    <hr>
+                    <p>Here are some of the main reasons to use RMM:</p>
+                    <ul>
+                        <li>Helps your engagement &amp; interest</li>
+                        <li>Free &amp; Open Source &#151; forever</li>
+                        <li>Pretty darn well-designed app</li>
+                        <li>100% private</li>
+                    </ul>
+                    <p>Item one (<i><b>engagement &amp; interest</b></i>) is the most important factor at work here. <span style="background-color:#ffffcc">Engaging with, and being interested in your child&#039;s learning process is much, much more important than the app you use.</span> Fortunately RMM makes this easy &amp; natural for you.</p>
+                    <hr>
+                    <p>A series of Topics is below. Please take the time to read them to understand why RMM is such a great app for learning arithmetic.</p>
+                    <hr>
+                    <p>RMM is a <b>Progressive Web App</b> (PWA) like <span style="color:#C70039;"><i><strong>Wordle</strong></i></span>. It can be installed on your phones, pads, and computers. While RMM runs great in a web browser, please be sure to install it as a PWA.</p>
+                    <p>To get a demo of RMM running in your browser <a target="_blank" href="https://www.rightmindmath.com/app/rightmindmath_en_us.html">Click&nbsp;Here</a> <span style="font-size:85%;">(opens in a new window).</span></p>
+                    <hr>
+                </div>
+                <div style="text-align:left;width:100%;margin-top:15px;padding:5px;">
+                    <span style="background-color:#fff;">Topics (click for more info)</span>
+                </div>
+                <div id="div_topics_headers"></div>
             </div>
+    <!--topic text-->
+            <div id="div_topic_detail" style="display:none;">
+                <div id="div_topic_text" class="topic_text"></div>
+                <div id="b_topic_detail_close" class="b_close" style="margin-top:15px;" onclick="closeTopicText(event);">Close</div>
+            </div>
+        </div>
+        <div id="div_moment" class="topic_header" style="padding:20px;display:block;">Moment Please</div>
     </body>
 </html>
