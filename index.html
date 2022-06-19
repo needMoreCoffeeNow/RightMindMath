@@ -6,12 +6,13 @@
         <meta name="description" content="Dedicated success with arithmetic." >
         <title>RightMindMath</title>
         <script>
+            var mydoc = window.document;
             var scroll_top = 0;
 //topic text array start-->
             var topic_text_array = [
                 [
-                'What is Right Mind Math (RMM) ??',
-                '<p>RMM is a uniquie approach to learning.</p><p>More to come later.</p>'
+                'Why do you call it <i>Right Mind Math</i>',
+                '<p>Our brain is made up of two parts: <i>Right</i> &amp; <i>Left</i>. The right is very good at instantaneous response. The left is good at things like logic, calculations, and procedural stuff.</p><p>The right mind learns through a process of association. It learns by recognizing patterns that it sees repeatedly.</p><p>For example: If you are introduced to someone once or twice you will probably need to "remember the introduction" to recall their name.</p><p>However, if meet them enough your right mind associates the name with the face. Now anytime you meet them again, even years later, you instantly know their name. It just "happens".</p><p>RMM&#039;s design enables a child to learn the patterns of simple arithmetic. Imagining <span style="font-size:80%;">(not calculating)</span> the right answer relaxes the left mind allowing the right focus &amp; learn.</p><ul> <li>No Calculting</li><li>No Pressure</li><li>No Strenuous Effort</li></ul><p>Seems strange, but this is how the right mind learns. As Daniel Kahneman** describes it: <em>"...you experience greater cognitive ease in perceiving a word [or an equation] you have seen earlier, and it is this sense of ease that gives you the impression of familiarity."</em><p><span style="font-size:75%">** Nobel Prize winning Psychologist</span></p>'
                 ]
             ];
 //topic text array end-->
@@ -24,8 +25,6 @@
                 var i = 0;
                 var len = topic_text_array.length;
                 for (i=0; i<len; i++) {
-                    console.log(topic_text_array[i][0]);
-                    console.log(topic_text_array[i][1]);
                     html += '<div id="div_topic_' + i + '" ';
                     html += 'class="topic_header" ';
                     html += 'onclick="clickTopicHeader(event);" >';
@@ -37,13 +36,13 @@
                 mydoc.getElementById('div_main').style.display = 'block';
             }
             function clickTopicHeader(ev) {
+                console.log('clickTopicHeader(ev)');
                 var id = ev.target['id'];
                 var idnum = parseInt(id.split('_')[2], 10);
                 var mytext = topic_text_array[idnum];
                 var html = '';
                 var elem = document.scrollingElement;
                 scroll_top = window.pageYOffset;
-                console.error(scroll_top, 'scroll_top');
                 html += '<div style="color:#888;font-size:80%;text-align:left;">';
                 html += mytext[0];
                 html += '</div>';
@@ -56,27 +55,12 @@
                 mydoc.getElementById('div_topic_detail').style.display = 'block';
                 elem.scrollTop = 0;
             }
-        </script>
-        <script>
-            var mydoc = window.document;
             function closeTopicText(ev) {
+                console.log('closeTopicText(ev)');
                 var elem = document.scrollingElement;
                 mydoc.getElementById('div_topic_detail').style.display = 'none';
                 mydoc.getElementById('div_intro').style.display = 'block';
                 elem.scrollTop = scroll_top;
-                //window.setTimeout(scrollReset, 500);
-            }
-            function scrollReset() {
-                //var elem = window.document.getElementById('div_main');
-                var elem = document.scrollingElement;
-                elem.scrollTop = scroll_top;
-                //var elem = window.document.body;
-                //elem.scrollTo({
-                //    top: scroll_top,
-                //    left: 0,
-                //    behavior: 'smooth'
-                //});
-                console.warn(elem.scrollTop);
             }
         </script>
         <style type="text/css">
@@ -115,6 +99,7 @@
             }
             div.b_close:hover { 
                 background-color: #ffffcc;
+                cursor: pointer;
             }
             div.topic_text{
                 font-size:1.2em;
@@ -140,6 +125,7 @@
             }
             div.topic_header:hover { 
                 background:rgba(255, 255, 204, 1.0);
+                cursor: pointer;
             }
         </style>
         <script>
