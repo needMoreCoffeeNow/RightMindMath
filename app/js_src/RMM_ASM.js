@@ -838,7 +838,12 @@ var RMM_ASM = (function() {
         carries = {0:0, 1:0, 2:0}; // key=2 just for symmetry
         // possible carries: 1s (col=2) & 10s (col=1)
         carries[1] = parseInt(calcColumn(2, opASM) / 10, 10);
-        carries[0] = parseInt(calcColumn(1, opASM) / 10, 10) + carries[1];
+        carries[0] = parseInt(calcColumn(1, opASM) / 10, 10);
+        if (prob_asm[0][0] === null && prob_asm[1][0] === null) {
+            if (prob_asm[2][0] > 0) {
+                carries[0] = 1;
+            }
+        }
     }
     // display the carry info note
     function displayCarryNote(val) {
@@ -1219,6 +1224,7 @@ var RMM_ASM = (function() {
         //prob_asm  = [ [1, 6, 5], [2, 7, 8], [4, 4, 3] ];
         //prob_asm  = [ [1, 0, 4], [2, 7, 8], [4, 4, 3] ];
         //prob_asm  = [ [2, 4, 5], [5, 6, 0], [8, 0, 5] ];
+        //prob_asm  = [ [1, 9, 9], [1, 9, 9], [3, 9, 8] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
