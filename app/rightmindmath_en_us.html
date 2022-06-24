@@ -127,6 +127,9 @@
         <div id="div_chart_exit" style="margin-top:10px;text-align:center;">
             <a id="b_chart_exit" href="#" class="mbutton" onclick="RMM_STATS.chartExit(event);">IHNEEDED</a>
         </div>
+        <div id="div_tab_export">
+            <textarea id="stats_tab_export" rows="4" cols="50"></textarea>
+        </div>
     </div>
     <!--CHART End-->
 
@@ -921,9 +924,11 @@
         </div>
         <div id="div_stats_type" class="menu_items" style="display:none;">
             <div id="div_stats_user_name" style="margin-top:10px;"></div>
+            <hr style="width:75%;">
             <div style="margin-top:20px;">
                 <a id="b_stats_type_problem" href="#" class="mbutton" onclick="RMM_STATS.statsChartClick(event);"></a>
             </div>
+            <hr style="width:75%;">
             <div style="margin-top:10px;">
                 <a id="b_stats_type_history" href="#" class="mbutton" onclick="RMM_STATS.statsUsageClick(event);">IHNEEDED</a>
                 <div style="font-size:70%;">
@@ -933,8 +938,25 @@
                     </label>
                 </div>
             </div>
+            <hr style="width:75%;">
+            <div style="margin-top:10px;">
+                <a id="b_stats_export" href="#" class="mbutton" onclick="RMM_STATS.statsExportClick(event);">IHNEEDED</a>
+                <div style="font-size:70%;">
+                    <label>
+                        <input id="cb_export_ddmm" type="checkbox" />
+                        <span id="cb_export_txt">IHNEEDED</span>
+                    </label>
+                </div>
+            </div>
+            <hr style="width:75%;">
             <div style="margin-top:20px;">
                 <a id="b_stats_type_exit" href="#" class="mbutton" onclick="RMM_STATS.statsTypeExit(event);">IHNEEDED</a>
+            </div>
+        </div>
+        <div id="div_stats_export_close" class="menu_items" style="display:none;">
+            <div id="div_stats_export_close_txt" style="text-align:left;">IHNEEDED</div>
+            <div style="margin-top:20px;">
+                <a id="b_stats_export_close_exit" href="#" class="mbutton" onclick="RMM_STATS.statsExportExit(event);">IHNEEDED</a>
             </div>
         </div>
         <div id="div_stats_level_select" class="menu_items" style="display:none;">

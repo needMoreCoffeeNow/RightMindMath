@@ -77,6 +77,7 @@ var RMM_STATS = (function() {
         var digit = -1;
         var m1_id = '';
         sdata = RMM_DB.getDbResult();
+        console.log(sdata.length, 'sdata.length');
         len = sdata.length;
         if (len === 0) {
             alert(getStr('MSG_no_session_data'));
@@ -277,12 +278,80 @@ var RMM_STATS = (function() {
                     times.push(sdata[i].elapsed);
             }
         }
+        mydoc.getElementById('stats_tab_export').innerHTML = txt;
         averaged = false;
         avg_len = times.length;
         if (times.length > 100) { averageTimes(); }
         console.log(times, times.length, 'times');
         console.log(tries, tries.length, 'tries');
         chartBuild();
+    }
+
+    function statsExportClick(ev) {
+        console.log('statsExportClick()');
+        var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
+        console.error(ddmm_format ,'ddmm_format ');
+        var txt = 'idname,iduser,days,idlevel,idsession,timestamp,problemNum,Date,time,tries,ordered';
+        var date = null;
+        var i = 0;
+        var len = sdata.length;
+        var err = false;
+        var anchor = null; // used to create csv file download anchor link
+        showMomentPlease('MSG_moment_please');
+        for (i=0; i<len; i++) {
+            txt += '\n';
+            txt += idname + ',';
+            txt += sdata[i].iduser + ',';
+            txt += sdata[i].days + ',';
+            txt += sdata[i].idlevel + ',';
+            txt += sdata[i].idsession + ',';
+            txt += sdata[i].idsession.split('_')[0] + ',';
+            txt += sdata[i].idsession.split('_')[1] + ',';
+            date = new Date(parseInt( sdata[i].idsession.split('_')[0], 10));
+            if (ddmm_format) {
+                txt += (date.getMonth()+1) + '/' + (date.getDate());
+            } else {
+                txt += (date.getDate() + '/' + (date.getMonth()+1));
+            }
+            // finish remaind of sheet readable date
+            txt += '/' + date.getFullYear()
+                + ' ' + date.getHours()
+                + ':' + date.getMinutes()
+                + ':' + date.getSeconds()
+                + ',';
+            // end of sheet readable date
+            txt += (sdata[i].time/1000) + ',';
+            if (sdata[i].tries) {
+                txt += sdata[i].tries + ',';
+            } else {
+                txt += ',';
+            }
+            if (sdata[i].ordered) {
+                txt += 'True' + ',';
+            } else {
+                txt += ',';
+            }
+        }
+        RMM_MENU.hideAll();
+        mydoc.getElementById('div_stats_type').style.display = 'none';
+        mydoc.getElementById('div_stats_export_close').style.display = 'block';
+        mydoc.getElementById('div_stats_container').style.display = 'block';
+        try {
+            anchor = document.createElement('a');
+            anchor.id = 'a_stats_export_csv';
+            anchor.href = window.URL.createObjectURL(new Blob([txt], {type: 'text/plain'}));
+            anchor.download = 'RMM_' + idname + '_stats.csv';
+            anchor.click();
+        } catch(err) {
+            alert(getStr('MSG_export_not_supported'));
+        }
+    }
+
+    function statsExportExit(ev) {
+        console.log('statsExportExit(ev)');
+        window.URL.revokeObjectURL('a_stats_export_csv');
+        mydoc.getElementById('div_stats_export_close').style.display = 'none';
+        mydoc.getElementById('div_stats_type').style.display = 'block';
     }
 
     // fit more than 100 times into 100 buckets
@@ -793,6 +862,8 @@ var RMM_STATS = (function() {
         statsTypeExit : statsTypeExit,
         statsUsageExit : statsUsageExit,
         statsChartClick : statsChartClick,
+        statsExportClick : statsExportClick,
+        statsExportExit : statsExportExit,
         statsUsageClick : statsUsageClick
     };
 })();
