@@ -290,23 +290,25 @@ var RMM_STATS = (function() {
     function statsExportClick(ev) {
         console.log('statsExportClick()');
         var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
-        var txt = 'idname,iduser,days,idlevel,chunked,timestamp,problemNum,Date,time,tries,ordered';
+        var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,ordered,chunked';
         var date = null;
+        var chunked = ''; // stores b/c for m2 else ''
         var i = 0;
         var len = sdata.length;
         var err = false;
         var anchor = null; // used to create csv file download anchor link
         showMomentPlease('MSG_moment_please');
         for (i=0; i<len; i++) {
+            chunked = '';
             txt += '\n';
             txt += idname + ',';
             txt += sdata[i].iduser + ',';
             txt += sdata[i].days + ',';
             if (sdata[i].idlevel.substr(0, 2) !== 'm2') {
-                txt += sdata[i].idlevel + ',,';
+                txt += sdata[i].idlevel + ',';
             } else {
                 txt += sdata[i].idlevel.substr(0, 2) + ',';
-                txt += sdata[i].idlevel.substr(2, 3) + ',';
+                chunked = sdata[i].idlevel.substr(2, 3);
             }
             txt += sdata[i].idsession.split('_')[0] + ',';
             txt += sdata[i].idsession.split('_')[1] + ',';
@@ -335,6 +337,7 @@ var RMM_STATS = (function() {
             } else {
                 txt += ',';
             }
+            txt += chunked;
         }
         RMM_MENU.hideAll();
         mydoc.getElementById('div_stats_type').style.display = 'none';
