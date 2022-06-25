@@ -290,8 +290,7 @@ var RMM_STATS = (function() {
     function statsExportClick(ev) {
         console.log('statsExportClick()');
         var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
-        console.error(ddmm_format ,'ddmm_format ');
-        var txt = 'idname,iduser,days,idlevel,idsession,timestamp,problemNum,Date,time,tries,ordered';
+        var txt = 'idname,iduser,days,idlevel,chunked,timestamp,problemNum,Date,time,tries,ordered';
         var date = null;
         var i = 0;
         var len = sdata.length;
@@ -303,15 +302,20 @@ var RMM_STATS = (function() {
             txt += idname + ',';
             txt += sdata[i].iduser + ',';
             txt += sdata[i].days + ',';
-            txt += sdata[i].idlevel + ',';
-            txt += sdata[i].idsession + ',';
+            if (sdata[i].idlevel.substr(0, 2) !== 'm2') {
+                txt += sdata[i].idlevel + ',,';
+            } else {
+                txt += sdata[i].idlevel.substr(0, 2) + ',';
+                txt += sdata[i].idlevel.substr(2, 3) + ',';
+            }
             txt += sdata[i].idsession.split('_')[0] + ',';
             txt += sdata[i].idsession.split('_')[1] + ',';
             date = new Date(parseInt( sdata[i].idsession.split('_')[0], 10));
+            console.error(ddmm_format ,'ddmm_format ');
             if (ddmm_format) {
-                txt += (date.getMonth()+1) + '/' + (date.getDate());
-            } else {
                 txt += (date.getDate() + '/' + (date.getMonth()+1));
+            } else {
+                txt += (date.getMonth()+1) + '/' + (date.getDate());
             }
             // finish remaind of sheet readable date
             txt += '/' + date.getFullYear()
