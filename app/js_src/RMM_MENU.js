@@ -817,6 +817,7 @@ var RMM_MENU = (function() {
             start = true;
             idlevel = 'm2';
         }
+        RMM_ASM.setSessionCount(); // need this even for s1 which is not started here
         console.log(start);
         if (start) {
             mydoc.getElementById('div_asm_container').style.display = 'block';

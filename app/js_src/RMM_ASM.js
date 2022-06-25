@@ -2270,6 +2270,12 @@ var RMM_ASM = (function() {
         printmode = val;
     }
 
+    //set session
+    function setSessionCount() {
+    session = Date.now();
+    count_problem = 0; // count is incremented at problem init
+    }
+
     // get printmode
     function getPrintmode() {
         return printmode;
@@ -2342,6 +2348,7 @@ var RMM_ASM = (function() {
         setCorrect : setCorrect,
         setComplete : setComplete,
         getPrintmode : getPrintmode,
-        setPrintmode : setPrintmode
+        setPrintmode : setPrintmode,
+        setSessionCount : setSessionCount
     };
 })();

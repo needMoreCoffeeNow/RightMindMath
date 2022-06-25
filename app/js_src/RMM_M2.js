@@ -915,11 +915,12 @@ var RMM_M2 = (function() {
         RMM_STATSLIVE.displayUserCounts(mod_in, false);
     }
 
-    // initial counters & controls when starting D3 session
+    // initial counters & controls when starting M2 session
     function setCounters() {
         console.log('setCounters()');
         session = Date.now();
-        count_problem = 0;
+        console.error(session, 'session');
+        count_problem = 1;
         chunk_counter = 0;
         time_start = -1;
     }
