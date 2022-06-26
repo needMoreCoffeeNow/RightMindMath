@@ -1,12 +1,12 @@
 <p>Our brain is made up of two parts: <i>Right</i> &amp; <i>Left</i>. The right is very good at instantaneous response. The left is good at things like logic, calculations, and procedural stuff.</p>
 
-<p>The right mind learns through a process of association. It learns by recognizing patterns that it sees repeatedly.</p>
+<p><span style="background-color:#ffffcc">The right mind learns through a process of association. It learns by recognizing patterns that it sees repeatedly.</span></p>
 
 <p>For example: If you are introduced to someone once or twice you will probably need to "remember the introduction" to recall their name.</p>
 
-<p>However, if meet them enough your right mind associates the name with the face. Now anytime you meet them again, even years later, you instantly know their name. It just "happens".</p>
+<p>However, if you meet them enough your right mind associates the name with the face. Now anytime you meet them again, even years later, you instantly know their name. It just "happens".</p>
 
-<p>RMM&#039;s design enables a child to learn the patterns of simple arithmetic. Imagining <span style="font-size:80%;">(not calculating)</span> the right answer relaxes the left mind allowing the right focus &amp; learn.</p>
+<p>RMM&#039;s design enables a child to learn the patterns of simple arithmetic. Imagining <span style="font-size:80%;">(not calculating)</span> the right answer "quiets" the left mind allowing the right focus &amp; learn.</p>
 
 <ul>
 <li>No Calculating</li>

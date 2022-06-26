@@ -1,8 +1,8 @@
-<p><span style="background-color:#ffffcc">It is very important that your child <b>"imagines the right answer".</b></span> It is also very important to explain to your child that being wrong a lot when starting out is OK &#151; in fact it is a good thing.</b></p>
+<p><span style="background-color:#ffffcc">It is very important that your child <b>"imagines the right answer".</b></span> It is also very important to explain to your child that <span style="background-color:#ffffcc">being wrong a lot when starting out is OK &#151; in fact it is a good thing.</span></b></p>
 
 <p>What does <b>imagine the right answer</b> mean, and why is it important?</p>
 
-<p>Most children think they need to be right the first time. So they calculate the right answer. <span style="font-size:90%">(Most math apps require this.)</span> This is often expressed by finger counting, or silently speaking the counts as the left-mind works thru them.</p>
+<p>Most children think they need to be right the first time. So they calculate the right answer. <span style="font-size:90%">(Virtually all math apps require this.)</span> This is often expressed by finger counting, or silently speaking the counts as the left-mind works thru them.</p>
 
 <p><b>This is BAD.</b> <span style="background-color:#ffffcc">Calculation is a 100% left-mind activity. It causes the right-mind to "go quiet". So no right-mind learning.</span> Calculating is also tiring, and your child likely will feel pressure "to be right" (not fun).</p>
 
