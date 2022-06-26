@@ -1,4 +1,4 @@
-<p>Our brain is made up of two parts: <i>Right</i> &amp; <i>Left</i>. The right is very good at instantaneous response. The left is good at things like logic, calculations, and procedural stuff.</p>
+<p>Our brains are made up of two parts: <i>Right</i> &amp; <i>Left</i>. The right is very good at instantaneous response. The left is good at things like logic, calculations, and procedural stuff.</p>
 
 <p><span style="background-color:#ffffcc">The right mind learns through a process of association. It learns by recognizing patterns that it sees repeatedly.</span></p>
 
