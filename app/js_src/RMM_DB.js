@@ -51,6 +51,8 @@ var RMM_DB = (function() {
     // handle db open upgrade
     function dbhandleOpenUpgrade(ev) {
         console.log('dbhandleOpenUpgrade(ev)');
+        var old_version = ev.oldVersion;
+        var new_version = ev.newVersion;
         var db_session = null;
         var db_user = null;
         var db_setup = null;
@@ -58,14 +60,19 @@ var RMM_DB = (function() {
         var req = null;
         db_upgrade = true;
         db = ev.target.result;
-        db_session = db.createObjectStore('session', { keyPath: 'idsession' });
-        db_session.createIndex('iduser', 'iduser', { unique: false });
-        db_session.createIndex('idlevel', 'idlevel', { unique: false });
-        db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
-        db_user = db.createObjectStore('user', { keyPath: 'iduser' });
-        db_user.createIndex('name', 'name', { unique: true });
-        db_setup = db.createObjectStore('setup', { keyPath: 'idkey' });
-        db_setup = db.createObjectStore('print', { keyPath: 'idprint' });
+        console.log(db);
+        console.log(old_version, 'old_version');
+        console.log(ev);
+        if (old_version < 2) {
+            db_session = db.createObjectStore('session', { keyPath: 'idsession' });
+            db_session.createIndex('iduser', 'iduser', { unique: false });
+            db_session.createIndex('idlevel', 'idlevel', { unique: false });
+            db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
+            db_user = db.createObjectStore('user', { keyPath: 'iduser' });
+            db_user.createIndex('name', 'name', { unique: true });
+            db_setup = db.createObjectStore('setup', { keyPath: 'idkey' });
+            db_setup = db.createObjectStore('print', { keyPath: 'idprint' });
+        }
     }
 
     // handle db open success
@@ -138,7 +145,8 @@ var RMM_DB = (function() {
                      iduser : data_user.iduser,
                      name : data_user.name,
                      pdata : pdata,
-                     device : null};
+                     device : null,
+                     sync_key : RMM_SYNC.syncKeyCodeCreate()};
         if (!obj) { return; }
         transactionInit();
         req = obj.add(data);

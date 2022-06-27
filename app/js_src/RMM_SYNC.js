@@ -48,6 +48,21 @@ var RMM_SYNC = (function() {
         mydoc.getElementById('div_info_text').innerHTML = getStr(id);
         mydoc.getElementById('div_info').style.display = 'block';
     }
+
+    // generate 60 character sync_key cod
+    function syncKeyCodeCreate() {
+        console.log('syncKeyCodeCreate()');
+        var mykey = '';
+        var min = 33;
+        var max = 126 + 1; //getRandInt includes min val but is < max so add 1
+        var i = 0;
+        var len = 60;
+        for (i=0; i<len; i++) {
+            mykey += String.fromCharCode(RMM_ASM.getRandInt(min, max));
+        }
+        console.warn(mykey, mykey.length, 'mykey from syncKeyCodeCreate()');
+        return mykey
+    }
     
     // show listing of original userIDs setup on current device
     function userOrigClick(ev) {
@@ -110,14 +125,14 @@ var RMM_SYNC = (function() {
         mydoc.getElementById('div_sync_container').style.display = 'block';
     }
 
-    // eixt back to setting menu
+    // exit back to setting menu
     function exitClick() {
         console.log('exitClick()');
         mydoc.getElementById('div_sync_container').style.display = 'none';
         mydoc.getElementById('div_menu_main').style.display = 'block';
     }
 
-    // eixt listing of original device user IDs
+    // exit listing of original device user IDs
     function exitOrig() {
         console.log('exitOrig()');
         mydoc.getElementById('div_sync_orig').style.display = 'none';
@@ -767,6 +782,7 @@ var RMM_SYNC = (function() {
 
     return {
         mainMenuShow : mainMenuShow,
+        syncKeyCodeCreate : syncKeyCodeCreate,
         exitClick : exitClick,
         exitOrig : exitOrig,
         userOrigClick : userOrigClick,
