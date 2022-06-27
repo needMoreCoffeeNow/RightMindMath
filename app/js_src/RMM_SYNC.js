@@ -19,6 +19,7 @@ var RMM_SYNC = (function() {
     var sync_procdn_i = 0; // stores interator for download recursive adds
     var sync_procdn_len = 0; // stores interator limit for download recursive adds
     var sync_procdn_msg = ''; // stores recursive add message
+    var sync_key = ''; // 60 character sync key token to verify all calls to GSheet
     // db
     var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
     var IDGUEST = 10884293110550;
@@ -780,6 +781,23 @@ var RMM_SYNC = (function() {
 // >>> PROCESS:end
 //
 
+//
+// >>> GETTER+SETTER:start
+//
+
+    function setSyncKey(key_in) {
+        sync_key = key_in;
+        console.warn(sync_key, 'setSyncKey');
+    }
+
+    function getSyncKey() {
+        return sync_key;
+    }
+
+//
+// >>> GETTER+SETTER:end
+//
+
     return {
         mainMenuShow : mainMenuShow,
         syncKeyCodeCreate : syncKeyCodeCreate,
@@ -813,7 +831,10 @@ var RMM_SYNC = (function() {
         handleLinkAddTest : handleLinkAddTest,
         handleLinkAddSave : handleLinkAddSave,
         handleUserSessionUpGet : handleUserSessionUpGet,
-        gsDoGetError : gsDoGetError
+        gsDoGetError : gsDoGetError,
+        // get+set
+        setSyncKey : setSyncKey,
+        getSyncKey : getSyncKey
     };
 })();
 

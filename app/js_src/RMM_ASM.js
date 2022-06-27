@@ -151,6 +151,7 @@ var RMM_ASM = (function() {
             return;
         } else {
             RMM_DB.setDevice(db_result.device);
+            RMM_SYNC.setSyncKey(db_result.sync_key);
         }
         pd = db_result.pdata;
         if (pd.module === null) {
