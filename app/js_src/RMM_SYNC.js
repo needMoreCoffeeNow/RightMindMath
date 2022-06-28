@@ -49,21 +49,6 @@ var RMM_SYNC = (function() {
         mydoc.getElementById('div_info_text').innerHTML = getStr(id);
         mydoc.getElementById('div_info').style.display = 'block';
     }
-
-    // generate 60 character sync_key cod
-    function syncKeyCodeCreate() {
-        console.log('syncKeyCodeCreate()');
-        var mykey = '';
-        var min = 33;
-        var max = 126 + 1; //getRandInt includes min val but is < max so add 1
-        var i = 0;
-        var len = 60;
-        for (i=0; i<len; i++) {
-            mykey += String.fromCharCode(RMM_ASM.getRandInt(min, max));
-        }
-        console.warn(mykey, mykey.length, 'mykey from syncKeyCodeCreate()');
-        return mykey
-    }
     
     // show listing of original userIDs setup on current device
     function userOrigClick(ev) {
@@ -495,6 +480,34 @@ var RMM_SYNC = (function() {
 //
 
 //
+// >>> KEY:start
+//
+
+    // generate 60 character sync_key cod
+    function syncKeyCodeCreate() {
+        console.log('syncKeyCodeCreate()');
+        var mykey = '';
+        var min = 33;
+        var max = 126 + 1; //getRandInt includes min val but is < max so add 1
+        var i = 0;
+        var len = 60;
+        for (i=0; i<len; i++) {
+            mykey += String.fromCharCode(RMM_ASM.getRandInt(min, max));
+        }
+        console.warn(mykey, mykey.length, 'mykey from syncKeyCodeCreate()');
+        return mykey
+    }
+
+    //handle Create/Copy button click
+    function clickKeyCreateCopy(ev) {
+        console.log('clickKeyCreateCopy(ev)');
+    }
+
+//
+// >>> KEY:end
+//
+
+//
 // >>> PROCESS:start
 //
 
@@ -807,7 +820,6 @@ var RMM_SYNC = (function() {
 
     return {
         mainMenuShow : mainMenuShow,
-        syncKeyCodeCreate : syncKeyCodeCreate,
         exitClick : exitClick,
         exitOrig : exitOrig,
         userOrigClick : userOrigClick,
@@ -826,6 +838,9 @@ var RMM_SYNC = (function() {
         handleConfirmationTstamp : handleConfirmationTstamp,
         handleDeviceMaxTstamps : handleDeviceMaxTstamps,
         handleDownload : handleDownload,
+        //key
+        syncKeyCodeCreate : syncKeyCodeCreate,
+        clickKeyCreateCopy : clickKeyCreateCopy,
         // link edit
         linkExit : linkExit,
         linkAddClick : linkAddClick,

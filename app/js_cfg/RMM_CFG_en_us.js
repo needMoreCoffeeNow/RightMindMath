@@ -250,6 +250,7 @@
         b_menu_sync_orig : 'Show <b>User ID</b>s set up on this device',
         b_menu_sync_link : 'Add / Edit User <b>Google Sheet</b> Links',
         b_menu_sync_process : 'Sync this Device',
+        b_menu_sync_key : 'Create/Copy Sync Key',
         div_sync_note : 'Please note the <b>User ID</b> is a long number, and the <b>Google Sheet Link</b> is a very, very long url. Using a copy/paste process such as emailing the values will minimize errors.',
         div_sync_orig_note : 'The user name &amp; numeric IDs for users that were <u>originally setup</u> on this device <span style="font-size:80%;">(no &#039;name+&#039; names)</span> are shown below.<br><br>Carefully copy these fields to set up a sync user on another device. <span style="font-size:80%;"><br>(Note: Do not incude the equal (=) sign if you copy all the fields at once.)</span>',
         b_stats_type_exit : 'Exit',

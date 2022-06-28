@@ -137,6 +137,9 @@ var RMM_ASM = (function() {
             if (level === 'm') { level += db_result.pdata.digits; }
             if (level === 's') { level += db_result.pdata.digits; }
             RMM_STATSLIVE.displayUserCounts(level, false);
+            RMM_SYNC.setSyncKey(db_result.sync_key);
+            console.warn(db_result);
+            console.warn(RMM_SYNC.getSyncKey(), 'RMM_SYNC.getSyncKey()');
         }
         if (!db_result || !db_result.pdata) {
             iduser = getStr('DAT_guest');

@@ -35,9 +35,6 @@ var RMM_DB = (function() {
         console.warn('db.init()');
         console.log(Date.now(), 'Date.now()');
         var req = null;
-        console.error(VERSION, ' need to reset this to one after finishing Chrome testing.');
-        console.error(VERSION, ' need to reset this to one after finishing Chrome testing.');
-        console.error(VERSION, ' need to reset this to one after finishing Chrome testing.');
         if (!window.indexedDB) {
             alert(getStr('MSG_db_not_supported'));
         } else { 
