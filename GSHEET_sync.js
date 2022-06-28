@@ -294,6 +294,27 @@ function controlAvailable() {
     }
     return true;
 }
+function validSyncKey(sync_key_in) {
+    var cntl_sheet = null;
+    var c_err = null;
+    var range = null;
+    try {
+        cntl_sheet = g_s.getDoc().getSheetByName('control');
+    } catch(c_err) {
+        g_s.setResult('ERR', c_err.message, 'controlSheetMissing');
+        return false;
+    }
+    if (!cntl_sheet) {
+        g_s.setResult('ERR', '', 'controlSheetFalse');
+        return false;
+    }
+    range = cntl_sheet.getRange(4, 1);
+    if (range.getValue() !== sync_key_in) {
+        g_s.setResult('ERR', 'sync_key_hidden', 'syncKey');
+        return false;
+    }
+    return true;
+}
 
 function handleGetDownload(e) {
     var tstamps = {};
@@ -315,9 +336,14 @@ function handleGetDownload(e) {
 
 // GET returns a result object as script.src file (avoids CORS fails) 
 function doGet(e) {
+    var sync_key = e.parameter['sync_key'];
     var idtype = e.parameter['idtype'];
     var sheet = e.parameter['sheet'];
     // check for must-have params else exit
+    if (!sync_key) {
+        g_s.setResult('ERR', '', 'sync_keyNF')
+        return g_s.returnResultStr();
+    }
     if (!idtype) {
         g_s.setResult('ERR', '', 'idtypeNF')
         return g_s.returnSrcJS();
@@ -331,6 +357,8 @@ function doGet(e) {
     if (!g_s.setDoc()) { return g_s.returnSrcJS(); }
     // check control is available
     if (!controlAvailable()) { return g_s.returnSrcJS(); }
+    // check for valid sync_key
+    if (!validSyncKey(sync_key)) { return g_s.returnSrcJS(); }
     // finally get sheet
     if (!g_s.setSheet(sheet)) { return g_s.returnSrcJS(); }
     // process type of call
@@ -357,6 +385,7 @@ function doGet(e) {
 function doPost(e) {
     var jsonString = e.postData.getDataAsString();
     e.parameter = JSON.parse(jsonString);
+    var sync_key = e.parameter['sync_key'];
     var sheet = e.parameter['sheet'];
     var device = e.parameter['device'];
     var datastr = e.parameter['datastr'];
@@ -364,6 +393,10 @@ function doPost(e) {
     var tstamp = e.parameter['tstamp'];
     //tstamp_max is the largest tstamp for all the session recs read
     var tstamp_max = e.parameter['tstamp_max'];
+    if (!sync_key) {
+        g_s.setResult('ERR', '', 'sync_keyNF')
+        return g_s.returnResultStr();
+    }
     if (!sheet) {
         g_s.setResult('ERR', '', 'sheetNF')
         return g_s.returnResultStr();
@@ -389,6 +422,8 @@ function doPost(e) {
     if (!g_s.setDoc()) { return g_s.returnResultStr(); }
     // check control is available
     if (!controlAvailable()) { return g_s.returnSrcJS(); }
+    // check for valid sync_key
+    if (!validSyncKey(sync_key)) { return g_s.returnSrcJS(); }
     // finally get sheet
     if (!g_s.setSheet(sheet)) { return g_s.returnResultStr(); }
     g_s.addDataRows(device, datastr);

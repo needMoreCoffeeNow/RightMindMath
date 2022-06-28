@@ -421,6 +421,7 @@ var RMM_SYNC = (function() {
         showMomentPlease('MSG_moment_please');
         sync_confirm_tstamp = Date.now();
         url += '?idtype=linkTest';
+        url += '&sync_key=' + sync_key;
         url += '&sheet=' + sync_iduser;
         url += '&pwd=' + pwd;
         url += '&tstamp=' + sync_confirm_tstamp;
@@ -440,6 +441,9 @@ var RMM_SYNC = (function() {
         }
         if (response.error.indexOf('control') === 0) {
             reason = getStr('SYNC_error_control');
+        }
+        if (response.error.indexOf('syncKey') === 0) {
+            reason = getStr('SYNC_error_syncKey');
         }
         if (response.error === 'sheetNF') {
             reason = getStr('SYNC_error_sheetNF');
@@ -590,6 +594,7 @@ var RMM_SYNC = (function() {
         console.log('procUpGetDeviceTstamp()');
         url = sync_user_url;
         url += '?idtype=getDeviceTstamp';
+        url += '&sync_key=' + sync_key;
         url += '&sheet=' + sync_iduser;
         url += '&device=' +  RMM_DB.getDevice();
         sync_callback = RMM_SYNC.handleProcUpGetDeviceTstamp;
@@ -655,6 +660,7 @@ var RMM_SYNC = (function() {
         console.log(tstamp_max, 'tstamp_max');
         sync_confirm_tstamp = Date.now(); // confirms write after fetch return
         console.log(sync_confirm_tstamp, 'sync_confirm_tstamp');
+        data['sync_key'] = sync_key;
         data['device'] = d_device;
         data['sheet'] = sync_iduser;
         data['tstamp'] = sync_confirm_tstamp;
@@ -679,6 +685,7 @@ var RMM_SYNC = (function() {
         var url = '';
         url = sync_user_url;
         url += '?idtype=getConfirmationTstamp';
+        url += '&sync_key=' + sync_key;
         url += '&sheet=' + sync_iduser;
         url += '&device=' +  RMM_DB.getDevice();
         sync_callback = RMM_SYNC.handleConfirmationTstamp;
@@ -711,6 +718,7 @@ var RMM_SYNC = (function() {
         console.log('procdnStartDownload()');
         url = sync_user_url;
         url += '?idtype=getDownload';
+        url += '&sync_key=' + sync_key;
         url += '&sheet=' + sync_iduser;
         url += '&pwd=' + sync_user_pwd;
         url += '&device=' +  RMM_DB.getDevice();

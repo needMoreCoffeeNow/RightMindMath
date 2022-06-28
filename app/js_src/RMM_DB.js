@@ -104,7 +104,7 @@ var RMM_DB = (function() {
     }
 
     function setupSyncKey() {
-        console.error('setupSyncKey()');
+        console.log('setupSyncKey()');
         var obj = objectstoreGet('setup', true);
         var req = null;
         var data = null;
