@@ -10,7 +10,7 @@ var RMM_DB = (function() {
     var db_upgrade = false;
     var DB_MILLI_STD = 10; // standard wait time to check for db_result
     var timervar = null; // use for setTimeout and clearTimeout functions
-    var VERSION = 1; // indexedDB version - only change to force upgrade
+    var VERSION = 6; // indexedDB version - only change to force upgrade
     var IDSETUP = 1;
     var IDGUEST = 10884293110550;
     var pass_caller = ''; // set to function name to help passError debuging
@@ -58,12 +58,13 @@ var RMM_DB = (function() {
         var db_setup = null;
         var db_print = null;
         var req = null;
-        db_upgrade = true;
+        if (old_version !== new_version) { db_upgrade = true; }
         db = ev.target.result;
         console.log(db);
-        console.log(old_version, 'old_version');
+        console.log(old_version, new_version, 'old_version, new_version');
+        console.log(db_upgrade, 'db_upgrade');
         console.log(ev);
-        if (old_version < 2) {
+        if (old_version < 1) {
             db_session = db.createObjectStore('session', { keyPath: 'idsession' });
             db_session.createIndex('iduser', 'iduser', { unique: false });
             db_session.createIndex('idlevel', 'idlevel', { unique: false });
@@ -81,17 +82,39 @@ var RMM_DB = (function() {
         db = ev.target.result;
         db_active = true;
         if (db_upgrade) {
+            // write guest user rec first time DB is setup only
+            if (VERSION < 2) { dbupgradeWriteUser(); }
+            if (VERSION == 2) {
+                // need to add future upgrade logic herersion2();
+            }
             db_upgrade = false;
-            dbupgradeWriteUser();
         } else {
             db_complete = true;
         }
+        setupSyncKey();
     }
 
     // handle db open error
     function dbhandleOpenError(ev) {
         console.log('dbhandleOpenError(ev)');
         console.error('Database error:'  + ev.target.errorCode);
+    }
+
+    function setupSyncKey() {
+        console.error('setupSyncKey()');
+        var obj = objectstoreGet('setup', true);
+        var req = null;
+        var data = null;
+        if (!obj) { console.error('no obj in setupSyncKey'); return; }
+        req = obj.get(IDGUEST);
+        req.onsuccess = function(ev) {
+            data = req.result;
+            RMM_SYNC.setSyncKey(data['sync_key']);
+            console.warn(data['sync_key'], ' = sync_key from setup DB rec');
+        }
+        req.onerror = function(ev) {
+            req.onerror = console.error('sync_key NOT SET : req.onerror');
+        }
     }
 
     // write the Guest user record in new DB Note: after upgrade only

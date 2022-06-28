@@ -787,7 +787,6 @@ var RMM_SYNC = (function() {
 
     function setSyncKey(key_in) {
         sync_key = key_in;
-        console.warn(sync_key, 'setSyncKey');
     }
 
     function getSyncKey() {
