@@ -10,7 +10,7 @@ var RMM_DB = (function() {
     var db_upgrade = false;
     var DB_MILLI_STD = 10; // standard wait time to check for db_result
     var timervar = null; // use for setTimeout and clearTimeout functions
-    var VERSION = 6; // indexedDB version - only change to force upgrade
+    var VERSION = 1; // indexedDB version - only change to force upgrade
     var IDSETUP = 1;
     var IDGUEST = 10884293110550;
     var pass_caller = ''; // set to function name to help passError debuging
@@ -94,30 +94,12 @@ var RMM_DB = (function() {
         } else {
             db_complete = true;
         }
-        setupSyncKey();
     }
 
     // handle db open error
     function dbhandleOpenError(ev) {
         console.log('dbhandleOpenError(ev)');
         console.error('Database error:'  + ev.target.errorCode);
-    }
-
-    function setupSyncKey() {
-        console.log('setupSyncKey()');
-        var obj = objectstoreGet('setup', true);
-        var req = null;
-        var data = null;
-        if (!obj) { console.error('no obj in setupSyncKey'); return; }
-        req = obj.get(IDGUEST);
-        req.onsuccess = function(ev) {
-            data = req.result;
-            RMM_SYNC.setSyncKey(data['sync_key']);
-            console.warn(data['sync_key'], ' = sync_key from setup DB rec');
-        }
-        req.onerror = function(ev) {
-            req.onerror = console.error('sync_key NOT SET : req.onerror');
-        }
     }
 
     // write the Guest user record in new DB Note: after upgrade only
@@ -172,7 +154,7 @@ var RMM_DB = (function() {
                      name : data_user.name,
                      pdata : pdata,
                      device : null,
-                     sync_key : RMM_SYNC.syncKeyCodeCreate()};
+                     sync_key : ''};
         if (!obj) { return; }
         transactionInit();
         req = obj.add(data);
@@ -793,6 +775,31 @@ var RMM_DB = (function() {
         alert('transErrorPass() from: ' + pass_caller);
         console.log(ev);
     }
+
+    // set the sync_key value in the DB setup record
+    function updateSyncKey(sync_key_in) {
+        console.log('updateSyncKey()');
+        var obj = objectstoreGet('setup', true);
+        var req = null;
+        var data = null;
+        if (!obj) { console.error('no obj in updateSyncKey'); return; }
+        req = obj.get(IDGUEST);
+        req.onsuccess = function(ev) {
+            data = req.result;
+            data['sync_key'] = sync_key_in;
+            req = obj.put(data);
+            req.onsuccess = function(ev) {
+                RMM_SYNC.setSyncKey(data['sync_key']);
+                console.warn(data['sync_key'], ' setup[sync_key] updated');
+            }
+            req.onerror = function(ev) {
+                alert(getStr('MSG_sync_key_update_failed') + ' [obj.put]');
+            }
+        }
+        req.onerror = function(ev) {
+            req.onerror = console.error('sync_key NOT SET : req.onerror');
+        }
+    }
 //
 // >>> TRANS:End
 //
@@ -858,6 +865,7 @@ var RMM_DB = (function() {
         updateRecord : updateRecord,
         addRecord : addRecord,
         deleteRecs : deleteRecs,
+        updateSyncKey : updateSyncKey,
         // async
         dbWait : dbWait,
         dbSetWaitVars : dbSetWaitVars,
