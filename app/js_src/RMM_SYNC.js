@@ -505,7 +505,7 @@ var RMM_SYNC = (function() {
         console.log('keyClickOpenMenu(ev)');
         console.log(sync_key.length, 'sync_key.length');
         var info = mydoc.getElementById('div_txt_sync_key_info')
-        if (sync_key.length < 100) {
+        if (sync_key.length === 0) {
             info.innerHTML = getStr('SYNC_info_no_existing_key');
             mydoc.getElementById('div_key_create_button').style.display = 'block';
         } else {
@@ -514,13 +514,13 @@ var RMM_SYNC = (function() {
             mydoc.getElementById('div_key_create_button').style.display = 'none';
         }
         mydoc.getElementById('div_menu_sync_main').style.display = 'none';
-        mydoc.getElementById('div_sync_key_menu').style.display = 'block';
+        mydoc.getElementById('div_sync_key').style.display = 'block';
     }
 
     //exit sync_key menu returning to main sync menu
     function keyMenuExit(ev) {
         console.log('keyMenuExit(ev)');
-        mydoc.getElementById('div_sync_key_menu').style.display = 'none';
+        mydoc.getElementById('div_sync_key').style.display = 'none';
         mydoc.getElementById('div_menu_sync_main').style.display = 'block';
     }
 
@@ -528,15 +528,66 @@ var RMM_SYNC = (function() {
     function keyCreate(ev) {
         console.log('keyCreate(ev)');
         var info = mydoc.getElementById('div_txt_sync_key_info')
-        if (sync_key.length > 100) {
+        if (sync_key.length > 0) {
             alert(getStr('MSG_sync_key_already_exists'));
             return;
         }
         sync_key = syncKeyCodeCreate();
         RMM_DB.updateSyncKey(sync_key);
         info.innerHTML = getStr('SYNC_info_yes_existing_key');
-        mydoc.getElementById('txt_sync_key_existing').innerHTML = sync_key;
+        mydoc.getElementById('txt_sync_key_existing').value = sync_key;
         mydoc.getElementById('div_key_create_button').style.display = 'none';
+    }
+
+    //update after validation new sync_key
+    function keyUpdate(ev) {
+        console.log('keyUpdate(ev)');
+        var info = mydoc.getElementById('div_txt_sync_key_info')
+        var min = 33;
+        var max = 126; //getRandInt includes min val but is < max so add 1
+        var new_key = mydoc.getElementById('txt_sync_key_update').value;
+        console.warn('new_key', new_key);
+        var i = 0;
+        var len = new_key.length;
+        console.warn(len, 'len');
+        var msg = '';
+        var disallowed = '<>"&#;';
+        var invalids = '';
+        var char_str = null;
+        var char_val = null;
+        if (len != 60) {
+            msg = getStr('MSG_sync_key_not_valid');
+            msg = msg.replace('REPLACE_len', len);
+            alert(msg);
+            return;
+        }
+        for (i=0; i<len; i++) {
+            char_str = new_key.charAt(i);
+            char_val = new_key.charCodeAt(i);
+            if (disallowed.indexOf(char_str) > -1) {
+                invalids += char_str;
+                continue;
+            }
+            if (char_val < min || char_val > max) {
+                invalids += char_str;
+                continue;
+            }
+        }
+        console.warn(invalids, 'invalids');
+        if (invalids.length > 0) {
+            console.log('inside');
+            msg = getStr('MSG_sync_key_not_valid');
+            msg = msg.replace('REPLACE_invalids', invalids);
+            alert(msg);
+            return;
+        }
+        sync_key = new_key;
+        RMM_DB.updateSyncKey(sync_key);
+        info.innerHTML = getStr('SYNC_info_yes_existing_key');
+        mydoc.getElementById('txt_sync_key_existing').value = sync_key;
+        mydoc.getElementById('txt_sync_key_update').value = '';
+        mydoc.getElementById('div_key_create_button').style.display = 'none';
+        alert(getStr('MSG_sync_key_updated'));
     }
 
 //
@@ -879,6 +930,7 @@ var RMM_SYNC = (function() {
         keyClickOpenMenu : keyClickOpenMenu,
         keyMenuExit : keyMenuExit,
         keyCreate : keyCreate,
+        keyUpdate : keyUpdate,
         // link edit
         linkExit : linkExit,
         linkAddClick : linkAddClick,
