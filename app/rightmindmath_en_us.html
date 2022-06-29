@@ -86,7 +86,17 @@
         <button onclick="RMM_STATS.chartYaxisLabels(234, 567);">Chart</button>
     </div>
 
-    <!--CHART start-->
+<!--HEADER start-->
+    <div id="div_header" style="display:block;">
+        <svg id="svg_gear" class="gear" width="30" height="30" style="float:right;margin-right:10px;;" viewBox="0 0 35 35" onclick="RMM_MENU.settingsClick(event);" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2"><path d="M19.807.297a16.666 16.666 0 00-6.267 0c.353 1.848-.035 3.524-1.165 5.028-.66.25-1.296.556-1.902.916-1.88-.054-3.434-.795-4.658-2.224a16.67 16.67 0 00-3.907 4.9c1.665.875 2.734 2.224 3.205 4.046a12.13 12.13 0 00-.47 2.058C3.428 16.457 1.88 17.209 0 17.276c.075 2.106.548 4.179 1.394 6.11 1.723-.756 3.444-.75 5.162.016.39.588.83 1.14 1.316 1.651.366 1.845-.011 3.524-1.132 5.036a16.678 16.678 0 005.646 2.719c.484-1.818 1.56-3.16 3.232-4.025.702.062 1.409.062 2.111 0 1.671.865 2.748 2.207 3.232 4.025a16.678 16.678 0 005.646-2.72c-1.12-1.511-1.498-3.19-1.132-5.035.485-.51.926-1.063 1.316-1.65 1.718-.768 3.439-.773 5.162-.017a16.682 16.682 0 001.394-6.11c-1.88-.067-3.428-.819-4.643-2.255a12.13 12.13 0 00-.47-2.058c.472-1.822 1.54-3.17 3.205-4.046a16.67 16.67 0 00-3.907-4.9c-1.224 1.429-2.777 2.17-4.658 2.224a12.176 12.176 0 00-1.902-.916c-1.13-1.504-1.518-3.18-1.165-5.028zM16.673 11.78a4.907 4.907 0 014.905 4.905 4.907 4.907 0 01-4.905 4.905 4.907 4.907 0 01-4.904-4.905 4.907 4.907 0 014.904-4.905z"/></svg>
+        <div id="div_name" class="name" style="float:right;margin-right:10px;"></div>
+        <svg id="svg_logo" width="30" height="30" style="float:right;margin-right:10px;" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2"><path d="M70.739 284.734C25.94 359.41 2.333 444.12 2.283 530.368c-.16 271.188 228.202 491.485 509.64 491.65 281.435.167 510.053-219.86 510.214-491.047.05-86.25-23.46-170.989-68.17-245.715l-883.228-.52v-.002z" fill="#008ee6"/><ellipse cx="969.243" cy="1552.3" rx="110.362" ry="112.171" fill="#005186" transform="matrix(1.29126 0 0 1.25184 -1007.705 -1443.314)"/><ellipse cx="969.243" cy="1552.3" rx="110.362" ry="112.171" fill="#005186" transform="matrix(1.29126 0 0 1.25184 -481.527 -1445.774)"/><path d="M510.691 444.991L622.136 798.78h-222.89L510.691 444.99h-.001z" fill="#005186"/><ellipse cx="591.118" cy="1251.97" rx="90.461" ry="94.079" fill="#fff" transform="matrix(1.00983 0 0 1.00797 -355.558 -714.837)"/><ellipse cx="591.118" cy="1251.97" rx="90.461" ry="94.079" fill="#fff" transform="matrix(1.00983 0 0 1.00797 169.434 -718.914)"/><ellipse cx="968.998" cy="1696.25" rx="52.679" ry="49.486" transform="matrix(1.00983 0 0 1.00797 -735.897 -1206.36)"/><ellipse cx="968.998" cy="1696.25" rx="52.679" ry="49.486" transform="matrix(1.00983 0 0 1.00797 -209.302 -1211.723)"/><path d="M431.484 890.68c-.048 29.19 35.936 52.943 80.298 53.015 44.372.07 80.43-23.568 80.477-52.758-18.767 8.728-48.347 15.79-80.419 15.739-32.062-.052-61.618-7.207-80.356-15.996z" fill="#005186"/><path d="M754.433 962.045c-59.681-20.654-102.579-77.302-102.579-143.868 0-84.024 68.335-152.234 152.515-152.234 70.607 0 130.076 47.99 147.415 113.054-47.17 76.949-115.535 140.45-197.351 183.048zM63.732 763.102c22.442-56.185 77.473-95.939 141.733-95.939 84.173 0 152.518 68.21 152.518 152.234 0 62.776-38.15 116.733-92.57 140.007-85.137-45.52-155.337-113.82-201.68-196.302z" fill="#ff3554"/><g><path d="M65.156 233.827l125.19-120.764 30.739 31.865-125.19 120.765-30.74-31.866zM348.097 98.22l67.829.211-.095 30.96-67.734-.21v67.74h-30.96v-67.837l-67.842-.211.096-30.96 67.746.21V30.386h30.96V98.22zM486.174 190.833l46.953-48.952 22.344 21.432-46.885 48.882 49.032 46.74-21.362 22.409-49.102-46.806-46.962 48.962-22.344-21.431 46.896-48.892-49.033-46.738 21.362-22.411 49.101 46.805zM644.793 225.048l110.584-79.385 16.676 23.232-110.584 79.383-16.676-23.23zm-32.94-39.22l110.584-79.384 16.675 23.23-110.584 79.383-16.675-23.23zM872.079 80.134l.04-.033.062.16.066.08-.026.02 18.679 47.622-42.156-28.635-43.73 35.367 70.268 35.869-.34.665 2.184 74.874 49.971-40.415-18.974-47.647 42.274 28.804.047-.038.126.157.013.009-.004.002 10.164 12.567-82.971 67.1-10.298-12.734.219-.177-2.256-77.357-68.559-34.994.091-.179-.217.176-10.298-12.735 75.495-61.055 10.13 12.527z" fill="#bfdaed"/><ellipse cx="1401.64" cy="1058.39" rx="47.039" ry="37.993" fill="#bfdaed" transform="matrix(.37001 0 0 .47362 41.328 -479.209)"/><ellipse cx="1401.64" cy="1058.39" rx="47.039" ry="37.993" fill="#bfdaed" transform="matrix(.37001 0 0 .47362 87.253 -407.26)"/><path d="M512.139 92.206L643.32 8.745l11.476 18.037-131.182 83.462-11.476-18.038z" fill="#bfdaed"/></g></svg>
+        <div style="clear:both;"></div>
+        <div id="div_statslive" class="statslive"></div>
+    </div>
+<!--HEADER end-->
+
+<!--CHART start-->
     <div id="div_chart_container" class="container" style="margin:0px auto;;display:none;">
         <div id="div_chart_text" style="width:610px;background:#e6ffff;padding:5px;margin:0px auto;margin-bottom:15px;font-size:75%;">Test</div>
         <div id="div_chart_svg" style="margin:0px auto;background:white;width:610px;height:310px;padding:5px;">
@@ -131,19 +141,10 @@
             <textarea id="stats_tab_export" rows="4" cols="50"></textarea>
         </div>
     </div>
-    <!--CHART End-->
+<!--CHART End-->
 
 
-    <!--HEADER-->
-    <div id="div_header" style="display:block;">
-        <svg id="svg_gear" class="gear" width="30" height="30" style="float:right;margin-right:10px;;" viewBox="0 0 35 35" onclick="RMM_MENU.settingsClick(event);" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2"><path d="M19.807.297a16.666 16.666 0 00-6.267 0c.353 1.848-.035 3.524-1.165 5.028-.66.25-1.296.556-1.902.916-1.88-.054-3.434-.795-4.658-2.224a16.67 16.67 0 00-3.907 4.9c1.665.875 2.734 2.224 3.205 4.046a12.13 12.13 0 00-.47 2.058C3.428 16.457 1.88 17.209 0 17.276c.075 2.106.548 4.179 1.394 6.11 1.723-.756 3.444-.75 5.162.016.39.588.83 1.14 1.316 1.651.366 1.845-.011 3.524-1.132 5.036a16.678 16.678 0 005.646 2.719c.484-1.818 1.56-3.16 3.232-4.025.702.062 1.409.062 2.111 0 1.671.865 2.748 2.207 3.232 4.025a16.678 16.678 0 005.646-2.72c-1.12-1.511-1.498-3.19-1.132-5.035.485-.51.926-1.063 1.316-1.65 1.718-.768 3.439-.773 5.162-.017a16.682 16.682 0 001.394-6.11c-1.88-.067-3.428-.819-4.643-2.255a12.13 12.13 0 00-.47-2.058c.472-1.822 1.54-3.17 3.205-4.046a16.67 16.67 0 00-3.907-4.9c-1.224 1.429-2.777 2.17-4.658 2.224a12.176 12.176 0 00-1.902-.916c-1.13-1.504-1.518-3.18-1.165-5.028zM16.673 11.78a4.907 4.907 0 014.905 4.905 4.907 4.907 0 01-4.905 4.905 4.907 4.907 0 01-4.904-4.905 4.907 4.907 0 014.904-4.905z"/></svg>
-        <div id="div_name" class="name" style="float:right;margin-right:10px;"></div>
-        <svg id="svg_logo" width="30" height="30" style="float:right;margin-right:10px;" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2"><path d="M70.739 284.734C25.94 359.41 2.333 444.12 2.283 530.368c-.16 271.188 228.202 491.485 509.64 491.65 281.435.167 510.053-219.86 510.214-491.047.05-86.25-23.46-170.989-68.17-245.715l-883.228-.52v-.002z" fill="#008ee6"/><ellipse cx="969.243" cy="1552.3" rx="110.362" ry="112.171" fill="#005186" transform="matrix(1.29126 0 0 1.25184 -1007.705 -1443.314)"/><ellipse cx="969.243" cy="1552.3" rx="110.362" ry="112.171" fill="#005186" transform="matrix(1.29126 0 0 1.25184 -481.527 -1445.774)"/><path d="M510.691 444.991L622.136 798.78h-222.89L510.691 444.99h-.001z" fill="#005186"/><ellipse cx="591.118" cy="1251.97" rx="90.461" ry="94.079" fill="#fff" transform="matrix(1.00983 0 0 1.00797 -355.558 -714.837)"/><ellipse cx="591.118" cy="1251.97" rx="90.461" ry="94.079" fill="#fff" transform="matrix(1.00983 0 0 1.00797 169.434 -718.914)"/><ellipse cx="968.998" cy="1696.25" rx="52.679" ry="49.486" transform="matrix(1.00983 0 0 1.00797 -735.897 -1206.36)"/><ellipse cx="968.998" cy="1696.25" rx="52.679" ry="49.486" transform="matrix(1.00983 0 0 1.00797 -209.302 -1211.723)"/><path d="M431.484 890.68c-.048 29.19 35.936 52.943 80.298 53.015 44.372.07 80.43-23.568 80.477-52.758-18.767 8.728-48.347 15.79-80.419 15.739-32.062-.052-61.618-7.207-80.356-15.996z" fill="#005186"/><path d="M754.433 962.045c-59.681-20.654-102.579-77.302-102.579-143.868 0-84.024 68.335-152.234 152.515-152.234 70.607 0 130.076 47.99 147.415 113.054-47.17 76.949-115.535 140.45-197.351 183.048zM63.732 763.102c22.442-56.185 77.473-95.939 141.733-95.939 84.173 0 152.518 68.21 152.518 152.234 0 62.776-38.15 116.733-92.57 140.007-85.137-45.52-155.337-113.82-201.68-196.302z" fill="#ff3554"/><g><path d="M65.156 233.827l125.19-120.764 30.739 31.865-125.19 120.765-30.74-31.866zM348.097 98.22l67.829.211-.095 30.96-67.734-.21v67.74h-30.96v-67.837l-67.842-.211.096-30.96 67.746.21V30.386h30.96V98.22zM486.174 190.833l46.953-48.952 22.344 21.432-46.885 48.882 49.032 46.74-21.362 22.409-49.102-46.806-46.962 48.962-22.344-21.431 46.896-48.892-49.033-46.738 21.362-22.411 49.101 46.805zM644.793 225.048l110.584-79.385 16.676 23.232-110.584 79.383-16.676-23.23zm-32.94-39.22l110.584-79.384 16.675 23.23-110.584 79.383-16.675-23.23zM872.079 80.134l.04-.033.062.16.066.08-.026.02 18.679 47.622-42.156-28.635-43.73 35.367 70.268 35.869-.34.665 2.184 74.874 49.971-40.415-18.974-47.647 42.274 28.804.047-.038.126.157.013.009-.004.002 10.164 12.567-82.971 67.1-10.298-12.734.219-.177-2.256-77.357-68.559-34.994.091-.179-.217.176-10.298-12.735 75.495-61.055 10.13 12.527z" fill="#bfdaed"/><ellipse cx="1401.64" cy="1058.39" rx="47.039" ry="37.993" fill="#bfdaed" transform="matrix(.37001 0 0 .47362 41.328 -479.209)"/><ellipse cx="1401.64" cy="1058.39" rx="47.039" ry="37.993" fill="#bfdaed" transform="matrix(.37001 0 0 .47362 87.253 -407.26)"/><path d="M512.139 92.206L643.32 8.745l11.476 18.037-131.182 83.462-11.476-18.038z" fill="#bfdaed"/></g></svg>
-        <div style="clear:both;"></div>
-        <div id="div_statslive" class="statslive"></div>
-    </div>
-
-    <!--ANIMATIONS:Start-->
+<!--ANIMATIONS:Start-->
     <div id="div_animation_box" style="text-align:center;margin:0px auto;margin-top:100px;display:none;">
         <svg viewBox="0 0 160 160" width="160" height="160">
             <style> rect { -moz-transform-origin: 75px 75px; transform-origin: 50% 50%; } </style>
@@ -156,10 +157,10 @@
             </g>
         </svg>
     </div>
-    <!--ANIMATIONS:End-->
+<!--ANIMATIONS:End-->
 
 
-    <!--SYNC:Start-->
+<!--SYNC:Start-->
     <div id="div_sync_container" style="display:none;">
         <div id="div_menu_sync_main" class="menu_items" style="margin-top:10px;">
             <div id="div_sync_note" class="sync_note">IHNEEDED</div>
@@ -239,17 +240,31 @@
             </div>
         </div>
         <div id="div_sync_key_menu" class="menu_items" style="display:none;">
-            <div>synck key</div>
-            <div id="div_key_exit_button" style="margin-top:5px;">
+            <div id="div_txt_sync_key_info" style="font-size:90%;text-align:left;"></div>
+            <div style="background:#bbb;border:1px solid #000;padding-top:10px;padding-bottom:10px;margin-top:10px;">
+                <div id="div_txt_sync_key_existing">IHNEEDED</div>
+                <div style="margin-top:10px;"><textarea id="txt_sync_key_existing" name="sync_key_existing" rows="2" cols="62"></textarea></div>
+                <div id="div_key_create_button" style="margin-top:5px;">
+                    <a id="b_sync_key_create" href="#" class="mbutton min120 link" onclick="RMM_SYNC.keyCreate(event);">IHNEEDED</a>
+                </div>
+            </div>
+            <div style="background:#ddd;border:1px solid #000;padding-top:10px;padding-bottom:10px;margin-top:20px;">
+                <div id="div_txt_sync_key_update">IHNEEDED</div>
+                <div style="margin-top:10px;"><textarea id="txt_sync_key_update" name="sync_key_update" rows="2" cols="62"></textarea></div>
+                <div id="div_key_update_button" style="margin-top:5px;">
+                    <a id="b_sync_key_update" href="#" class="mbutton min120 link" onclick="RMM_SYNC.keyUpdate(event);">IHNEEDED</a>
+                </div>
+            </div>
+            <div id="div_key_exit_button" style="margin-top:20px;">
                 <a id="b_sync_key_menu_exit" href="#" class="mbutton min120 link" onclick="RMM_SYNC.keyMenuExit(event);">IHNEEDED</a>
             </div>
         </div>
     </div>
-    <!--SYNC:End-->
+<!--SYNC:End-->
 
 
 
-    <!--MENUS-->
+<!--MENUS start-->
     <div id="div_menu_container" style="display:none;">
         <div id="div_menu_main">
             <div id="div_menu_main_header" class="name">IHNEEDED</div>
@@ -509,9 +524,10 @@
         <a id="a_idprint" href="#" class="mbutton print_page_button" onclick="RMM_MENU.printPageExit(event);"></a>
         <div id="div_print_page" style="margin-top:30px"></div>
     </div>
+<!--MENUS end-->
 
 
-    <!--INPUT1-->
+<!--INPUT1 start-->
     <div id="div_input1" class="menu_items" style="display:none;">
         <div id="div_input1_text" class="menu_text"></div>
         <div id="div_input1_input" style="margin-top:10px;">
@@ -532,8 +548,9 @@
             <a id="b_msg_exit" href="#" class="mbutton" onclick="RMM_MENU.msgExit(event);">IHNEEDED</a>
         </div>
     </div>
+<!--INPUT1 end-->
 
-    <!--ASM SVG-->
+<!--ASM SVG start-->
     <div id="div_asm_container" class="container" style="display:none;">
         <svg id='svg_asm_container' class="container" width="400" height="400" viewBox="0 0 650 650" style="margin:0px auto;display:none;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <!--ADD_SUBTRACT_MULTIPLY(asm) SVG:Start-->
@@ -654,9 +671,10 @@
         </svg>
         <!--container end-->
     </div>
+<!--ASM SVG end-->
 
 
-    <!--M2 Start-->
+<!--M2 Start-->
     <div id="div_m2_container" class="container" style="position:absolute;top:70px;left:10px;height:330px;background:#fff;padding-top:30px;display:none;">
         <svg id='svg_m2_container' width="300" height="300" viewBox="0 0 700 700" style="margin-top:-20px;display:none;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <!--M2 NUMBERS START-->
@@ -772,9 +790,9 @@
         </div>
         <!--DIVIDE End-->
     </div>
-    <!--M2 End-->
+<!--M2 End-->
 
-    <!--D3 Start-->
+<!--D3 Start-->
     <div id="div_d3_container" class="container" style="position:absolute;top:70px;left:10px;height:355px;background:#fff;padding-top:10px;display:none;">
 
         <!--DIVIDE Start-->
@@ -926,10 +944,10 @@
             </div>
             <!--ANSWER M2:end-->
         </div>
-    <!--D3 End-->
     </div>
+<!--D3 End-->
 
-    <!--STATS Start-->
+<!--STATS Start-->
     <div id="div_stats_container" class="container" style="display:none;">
         <div id="div_stats_user_select" class="menu_items" style="display:none;">
             <div id="div_stats_user_select_text">IHNEEDED</div>
@@ -988,15 +1006,17 @@
             </div>
         </div>
     </div>
-    <!--STATS End-->
+<!--STATS End-->
 
-    <!--NOTE : display controled with visible/hidden-->
+    <!--NOTE start : display controled with visible/hidden-->
     <div id="div_note" class="note" style="visibility:hidden;">
         <div id="div_note_txt">note1<br>note2<br>note3<br>note4</div>
     </div>
 
     <!--TEST-->
+<!--OKTODEL TEST
     <div id="div_test_count" class="test_count" style="display:block;"></div>
+-->
 
     <!--INFO-->
     <div id="div_info" class="info" style="margin-top:10px;display:none;">

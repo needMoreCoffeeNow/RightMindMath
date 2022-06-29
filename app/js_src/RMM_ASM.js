@@ -369,7 +369,7 @@ var RMM_ASM = (function() {
         // ASM
         mydoc.getElementById('svg_asm_container').style.display = 'none';
         mydoc.getElementById('div_note').style.visibility = 'hidden';
-        mydoc.getElementById('div_test_count').style.display = 'none';
+//////        mydoc.getElementById('div_test_count').style.display = 'none';
         mydoc.getElementById('div_info').style.display = 'none';
         mydoc.getElementById('div_animation_box').style.display = 'none';
         mydoc.getElementById('blockAll').style.display = 'none';

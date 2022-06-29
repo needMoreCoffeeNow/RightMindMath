@@ -776,17 +776,21 @@ var RMM_DB = (function() {
     // set the sync_key value in the DB setup record
     function updateSyncKey(sync_key_in) {
         console.log('updateSyncKey()');
+        console.log('sync_key_in:', sync_key_in);
         var obj = objectstoreGet('setup', true);
+        console.log(obj);
         var req = null;
         var data = null;
         if (!obj) { console.error('no obj in updateSyncKey'); return; }
-        req = obj.get(IDGUEST);
+        console.warn(IDSETUP, 'IDSETUP');
+        req = obj.get(IDSETUP);
         req.onsuccess = function(ev) {
+            console.log('req', req);
             data = req.result;
+            console.log('data', data);
             data['sync_key'] = sync_key_in;
             req = obj.put(data);
             req.onsuccess = function(ev) {
-                RMM_SYNC.setSyncKey(data['sync_key']);
                 console.warn(data['sync_key'], ' setup[sync_key] updated');
             }
             req.onerror = function(ev) {

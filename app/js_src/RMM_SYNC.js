@@ -489,10 +489,12 @@ var RMM_SYNC = (function() {
         var mykey = '';
         var min = 33;
         var max = 126 + 1; //getRandInt includes min val but is < max so add 1
-        var i = 0;
-        var len = 60;
-        for (i=0; i<len; i++) {
-            mykey += String.fromCharCode(RMM_ASM.getRandInt(min, max));
+        var newchar = '';
+        var disallowed = '<>"&#;';
+        while (mykey.length < 60) {
+            newchar = String.fromCharCode(RMM_ASM.getRandInt(min, max));
+            if (disallowed.indexOf(newchar) > -1) { continue; }
+            mykey += newchar;
         }
         console.warn(mykey, mykey.length, 'mykey from syncKeyCodeCreate()');
         return mykey
@@ -501,6 +503,16 @@ var RMM_SYNC = (function() {
     //handle Create/Copy button click
     function keyClickOpenMenu(ev) {
         console.log('keyClickOpenMenu(ev)');
+        console.log(sync_key.length, 'sync_key.length');
+        var info = mydoc.getElementById('div_txt_sync_key_info')
+        if (sync_key.length < 100) {
+            info.innerHTML = getStr('SYNC_info_no_existing_key');
+            mydoc.getElementById('div_key_create_button').style.display = 'block';
+        } else {
+            info.innerHTML = getStr('SYNC_info_yes_existing_key');
+            mydoc.getElementById('txt_sync_key_existing').innerHTML = sync_key;
+            mydoc.getElementById('div_key_create_button').style.display = 'none';
+        }
         mydoc.getElementById('div_menu_sync_main').style.display = 'none';
         mydoc.getElementById('div_sync_key_menu').style.display = 'block';
     }
@@ -510,6 +522,21 @@ var RMM_SYNC = (function() {
         console.log('keyMenuExit(ev)');
         mydoc.getElementById('div_sync_key_menu').style.display = 'none';
         mydoc.getElementById('div_menu_sync_main').style.display = 'block';
+    }
+
+    //create a new key if there is no existing key
+    function keyCreate(ev) {
+        console.log('keyCreate(ev)');
+        var info = mydoc.getElementById('div_txt_sync_key_info')
+        if (sync_key.length > 100) {
+            alert(getStr('MSG_sync_key_already_exists'));
+            return;
+        }
+        sync_key = syncKeyCodeCreate();
+        RMM_DB.updateSyncKey(sync_key);
+        info.innerHTML = getStr('SYNC_info_yes_existing_key');
+        mydoc.getElementById('txt_sync_key_existing').innerHTML = sync_key;
+        mydoc.getElementById('div_key_create_button').style.display = 'none';
     }
 
 //
@@ -851,6 +878,7 @@ var RMM_SYNC = (function() {
         syncKeyCodeCreate : syncKeyCodeCreate,
         keyClickOpenMenu : keyClickOpenMenu,
         keyMenuExit : keyMenuExit,
+        keyCreate : keyCreate,
         // link edit
         linkExit : linkExit,
         linkAddClick : linkAddClick,

@@ -129,6 +129,7 @@
         MSG_change_to_sync_user_add : 'Click on the Sync button, and add a sync user. Note: you will need the user name and id number from the other device.',
         MSG_export_not_supported : 'Sorry but this device does not support the commonly used process to save files. Please try again using a personal computer.',
         MSG_sync_key_update_failed : 'Sorry could not update the sync_key',
+        MSG_sync_key_already_exists : 'The sync key already exists. Please use the key update process.',
         DAT_guest : 'Guest',
         HLP_m1_options : '<span class="help_hi">Number</span> is the number to pactice: 5 for example.<br><br><span class="help_hi">Ordered or Random</span> When ordered is selected, the problems advance from zero to the highest number: 5x0=0, 5x1=5, 5x2=10, etc.<br><br><span class="help_hi">Start Number</span> determines if the problems start at zero or eleven.<br><br><span class="help_hi">End Number</span> determines if the problems end at ten or twenty.<br><br><span style="font-size:80%;">Note: When starting out, it is easiest to do 0-10 ordered. Then do 11-20 ordered. Once you are good at both, do some additional practice using 0-20 random.</span>',
         HLP_tog_notes : '<div class="help_notes_header">Popups</div><div class="help_notes_line"><span class="help_hi">Number Position</span> identifies the next number position (10s or 100s) to be answered when doing multi-step addition or subtraction problems. Click/tap anywhwere to advance.</div><div class="help_notes_line"><span class="help_hi">Borrow Needed</span> shows the <u>Borrowing Needed</u> popup when the upcoming problem is a multi-step subtraction requiring borrows. Click/tap anywhere to advance.</div><div class="help_notes_line"><span class="help_hi">Next Problem</span> is shown after completing the problem. It allows the final solution to be viewed prior to moving on to the next problem. Click/tap anywhere to advance.</div><div class="help_notes_empty_line"></div><div class="help_notes_header">Explanations</div><div class="help_notes_line"><span class="help_hi">Carry Forward</span> appears below 2-digit and 3-digit addition problems when a carry forward is made.<span style="font-size:90%;"> <b>Note:</b> when the carry forward explanation is shown, the <u>Number Position</u> popup will always show when a carry is made.</span></div><div class="help_notes_line"><span class="help_hi">Borrow Explanation</span> is a note shown below a subtraction problems explaining how borrows between the ones, tens, and hundreds is done.</div><div class="help_notes_empty_line"><div class="help_notes_header">Helpers</div><div class="help_notes_line"><span class="help_hi">Chunk It</span> is information shown for a one-digit multiply problems explaining how to break the problem into its ones plus tens components.</div><div class="help_notes_footer">Note: When starting out, it is best to show all the <u>notes &amp; popups.</u> They do, though, slow down problem solving, so try to turn them off once the process for each level of arithmetic is well-understood. <u>Chunk It</u> has value by helping to see how to simplify a problem. Be careful, though, ensure it is not over-used.</div>',
@@ -165,7 +166,9 @@
         SYNC_error_control : 'Cell A1 in the control sheet of the Google Sheet is not set to the unlocked integer value: 1',
         SYNC_error_syncKey : 'Cell A4 in the control sheet of the Google Sheet does not match your 60 charcter sync_key. Use the "Show Sync Key" button to get the correct 60 character sync key value. Copy this and paste in into cell A4 in the control sheet. ',
         SYNC_error_sheetNF : 'The Google Sheet does not have a sheet named: REPLACE_sync_iduser (the user ID). The link test failed, so the user link was not saved.',
-        SYNC_error_other : 'Something is wrong with the Google Sheet (REPLACE_error). The link test failed, so the user link was not saved.'
+        SYNC_error_other : 'Something is wrong with the Google Sheet (REPLACE_error). The link test failed, so the user link was not saved.',
+        SYNC_info_no_existing_key : 'There is no current app key. Either <ol><li>Create a new key, or</li><li style="padding-top:10px;">Copy/paste a key you already setup &amp; Update the Existing Key. <span style="font-size:90%;">(Review the Sync Setup Instruction page for more info.)</span></li></ol>',
+        SYNC_info_yes_existing_key : 'There is an existing current app key. To change it copy/paste the new key into the update text box, and update the key.'
         };
     // innerHtml is used to localize buttons, divs, etc.
     var innerHtml = {
@@ -253,6 +256,8 @@
         b_menu_sync_key : 'Sync Key : Create / Update',
         div_sync_note : 'Before using Sync follow the setup procedures using at the link below <span style="font-size:80%;">(opens in a new window)</span><div style="text-align:center;margin-top:10px;"><span style="background-color:#ffffcc"><a target="_blank" href="./sync/sync_instructions_en_us.html">Click Here for Sync Setup Instructions</a></span></div>',
         div_sync_orig_note : 'The user name &amp; numeric IDs for users that were <u>originally setup</u> on this device <span style="font-size:80%;">(no &#039;name+&#039; names)</span> are shown below.<br><br>Carefully copy these fields to set up a sync user on another device. <span style="font-size:80%;"><br>(Note: Do not incude the equal (=) sign if you copy all the fields at once.)</span>',
+        div_txt_sync_key_existing : 'Current Sync Key',
+        div_txt_sync_key_update : 'New Key (will update the current key)',
         b_stats_type_exit : 'Exit',
         b_stats_usage_exit : 'Exit',
         b_stats_export_close_exit: 'Close',
@@ -272,6 +277,8 @@
         b_sync_add_link_test : 'Save',
         b_sync_add_link_exit : 'Cancel',
         b_sync_key_menu_exit : 'Exit',
+        b_sync_key_create : 'Create New Key',
+        b_sync_key_update : 'Update Existing Key',
         b_subborrow_0 : 'No',
         b_subborrow_1 : 'Yes'
     };
