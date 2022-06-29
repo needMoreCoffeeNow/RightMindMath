@@ -250,7 +250,7 @@
         b_menu_sync_orig : 'Show User IDs set up on this device',
         b_menu_sync_link : 'Add / Edit User Google Sheet Links',
         b_menu_sync_process : 'Sync this Device',
-        b_menu_sync_key : 'Create/Copy Sync Key',
+        b_menu_sync_key : 'Sync Key : Create / Update',
         div_sync_note : 'Before using Sync follow the setup procedures using at the link below <span style="font-size:80%;">(opens in a new window)</span><div style="text-align:center;margin-top:10px;"><span style="background-color:#ffffcc"><a target="_blank" href="./sync/sync_instructions_en_us.html">Click Here for Sync Setup Instructions</a></span></div>',
         div_sync_orig_note : 'The user name &amp; numeric IDs for users that were <u>originally setup</u> on this device <span style="font-size:80%;">(no &#039;name+&#039; names)</span> are shown below.<br><br>Carefully copy these fields to set up a sync user on another device. <span style="font-size:80%;"><br>(Note: Do not incude the equal (=) sign if you copy all the fields at once.)</span>',
         b_stats_type_exit : 'Exit',
@@ -271,6 +271,7 @@
         label_sync_input_url : 'Google Sheet URL',
         b_sync_add_link_test : 'Save',
         b_sync_add_link_exit : 'Cancel',
+        b_sync_key_menu_exit : 'Exit',
         b_subborrow_0 : 'No',
         b_subborrow_1 : 'Yes'
     };

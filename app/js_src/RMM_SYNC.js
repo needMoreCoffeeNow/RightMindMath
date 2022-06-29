@@ -499,8 +499,17 @@ var RMM_SYNC = (function() {
     }
 
     //handle Create/Copy button click
-    function clickKeyCreateCopy(ev) {
-        console.log('clickKeyCreateCopy(ev)');
+    function keyClickOpenMenu(ev) {
+        console.log('keyClickOpenMenu(ev)');
+        mydoc.getElementById('div_menu_sync_main').style.display = 'none';
+        mydoc.getElementById('div_sync_key_menu').style.display = 'block';
+    }
+
+    //exit sync_key menu returning to main sync menu
+    function keyMenuExit(ev) {
+        console.log('keyMenuExit(ev)');
+        mydoc.getElementById('div_sync_key_menu').style.display = 'none';
+        mydoc.getElementById('div_menu_sync_main').style.display = 'block';
     }
 
 //
@@ -840,7 +849,8 @@ var RMM_SYNC = (function() {
         handleDownload : handleDownload,
         //key
         syncKeyCodeCreate : syncKeyCodeCreate,
-        clickKeyCreateCopy : clickKeyCreateCopy,
+        keyClickOpenMenu : keyClickOpenMenu,
+        keyMenuExit : keyMenuExit,
         // link edit
         linkExit : linkExit,
         linkAddClick : linkAddClick,

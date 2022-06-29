@@ -179,7 +179,7 @@
             </div>
             <hr style="width:90%;">
             <div style="margin-top:10px;">
-                <a id="b_menu_sync_key" href="#" class="mbutton sync" onclick="RMM_SYNC.clickKeyCreateCopy(event);">IHNEEDED</a>
+                <a id="b_menu_sync_key" href="#" class="mbutton sync" onclick="RMM_SYNC.keyClickOpenMenu(event);">IHNEEDED</a>
             </div>
             <hr style="width:90%;">
             <div style="margin-top:20px;">
@@ -238,8 +238,11 @@
                 <a id="b_sync_add_link_exit" href="#" class="mbutton min120 link" onclick="RMM_SYNC.linkAddExit(event);">IHNEEDED</a>
             </div>
         </div>
-        <div id="div_sync_link_add" class="menu_items" style="display:none;">
+        <div id="div_sync_key_menu" class="menu_items" style="display:none;">
             <div>synck key</div>
+            <div id="div_key_exit_button" style="margin-top:5px;">
+                <a id="b_sync_key_menu_exit" href="#" class="mbutton min120 link" onclick="RMM_SYNC.keyMenuExit(event);">IHNEEDED</a>
+            </div>
         </div>
     </div>
     <!--SYNC:End-->
