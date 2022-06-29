@@ -173,10 +173,11 @@ div.name {
 }
 
 .sync_note {
-    padding:10px;
+    padding-left:10px;
+    padding-right:10px;
     font-size:0.8em;
     margin-top:10px;
-    text-align:center;
+    text-align:left;
 }
 
 .column_white {

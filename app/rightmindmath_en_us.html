@@ -163,21 +163,25 @@
     <div id="div_sync_container" style="display:none;">
         <div id="div_menu_sync_main" class="menu_items" style="margin-top:10px;">
             <div id="div_sync_note" class="sync_note">IHNEEDED</div>
-            <div style="margin-top:20px;">
-                <a id="b_menu_sync_user" href="#" class="mbutton sync" onclick="RMM_SYNC.userAddClick(event);">IHNEEDED</a>
-            </div>
-            <div style="margin-top:20px;">
-                <a id="b_menu_sync_orig" href="#" class="mbutton sync" onclick="RMM_SYNC.userOrigClick(event);">IHNEEDED</a>
-            </div>
-            <div style="margin-top:20px;">
-                <a id="b_menu_sync_link" href="#" class="mbutton sync" onclick="RMM_SYNC.linkAddClick(event);">IHNEEDED</a>
-            </div>
-            <div style="margin-top:20px;">
+            <hr style="width:90%;">
+            <div style="margin-top:10px;">
                 <a id="b_menu_sync_process" href="#" class="mbutton sync" onclick="RMM_SYNC.processStartClick(event);">IHNEEDED</a>
             </div>
-            <div style="margin-top:20px;">
+            <hr style="width:90%;">
+            <div style="margin-top:10px;">
+                <a id="b_menu_sync_user" href="#" class="mbutton sync" onclick="RMM_SYNC.userAddClick(event);">IHNEEDED</a>
+            </div>
+            <div style="margin-top:10px;">
+                <a id="b_menu_sync_orig" href="#" class="mbutton sync" onclick="RMM_SYNC.userOrigClick(event);">IHNEEDED</a>
+            </div>
+            <div style="margin-top:10px;">
+                <a id="b_menu_sync_link" href="#" class="mbutton sync" onclick="RMM_SYNC.linkAddClick(event);">IHNEEDED</a>
+            </div>
+            <hr style="width:90%;">
+            <div style="margin-top:10px;">
                 <a id="b_menu_sync_key" href="#" class="mbutton sync" onclick="RMM_SYNC.clickKeyCreateCopy(event);">IHNEEDED</a>
             </div>
+            <hr style="width:90%;">
             <div style="margin-top:20px;">
                 <a id="b_menu_sync_exit" href="#" class="mbutton sync_main" onclick="RMM_SYNC.exitClick(event);">IHNEEDED</a>
             </div>
@@ -200,10 +204,10 @@
                 <input type="text" id="sync_input_iduser" maxlength="14" class="input1"/>
             </div>
             <div style="text-align:center;margin-top:10px;">
-                <a id="b_sync_add_user" href="#" class="mbutton min120" onclick="RMM_SYNC.userAdd(event);">IHNEEDED</a>
+                <a id="b_sync_add_user" href="#" class="mbutton sync_main" onclick="RMM_SYNC.userAdd(event);">IHNEEDED</a>
             </div>
             <div id="div_input1_exit_area" style="margin-top:5px;">
-                <a id="b_sync_add_user_exit" href="#" class="mbutton min120" onclick="RMM_SYNC.userAddExit(event);">IHNEEDED</a>
+                <a id="b_sync_add_user_exit" href="#" class="mbutton sync_main" onclick="RMM_SYNC.userAddExit(event);">IHNEEDED</a>
             </div>
         </div>
         <div id="div_sync_link" class="menu_items" style="display:none;">
@@ -233,6 +237,9 @@
             <div id="div_input1_exit_area" style="margin-top:5px;">
                 <a id="b_sync_add_link_exit" href="#" class="mbutton min120 link" onclick="RMM_SYNC.linkAddExit(event);">IHNEEDED</a>
             </div>
+        </div>
+        <div id="div_sync_link_add" class="menu_items" style="display:none;">
+            <div>synck key</div>
         </div>
     </div>
     <!--SYNC:End-->
