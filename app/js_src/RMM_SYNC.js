@@ -546,10 +546,8 @@ var RMM_SYNC = (function() {
         var min = 33;
         var max = 126; //getRandInt includes min val but is < max so add 1
         var new_key = mydoc.getElementById('txt_sync_key_update').value;
-        console.warn('new_key', new_key);
         var i = 0;
         var len = new_key.length;
-        console.warn(len, 'len');
         var msg = '';
         var disallowed = '<>"&#;';
         var invalids = '';
@@ -573,9 +571,7 @@ var RMM_SYNC = (function() {
                 continue;
             }
         }
-        console.warn(invalids, 'invalids');
         if (invalids.length > 0) {
-            console.log('inside');
             msg = getStr('MSG_sync_key_not_valid');
             msg = msg.replace('REPLACE_invalids', invalids);
             alert(msg);
