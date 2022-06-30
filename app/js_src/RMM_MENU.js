@@ -615,10 +615,17 @@ var RMM_MENU = (function() {
         console.log('userAddFinish()');
         var data = RMM_DB.getDbResult();
         var txt = getStr('MSG_user_add_done');
+        var usr_txt = '';
         txt = txt.replace('REPLACE_name', data.name);
+        // add sheet copy/paste text
+        usr_txt += data.name + '\t';
+        usr_txt += data.iduser + '\t';
+        usr_txt += RMM_DB.getDevice();
         changeUserCurrent(data);
         hideAll();
         msg_div_next = 'div_menu_main';
+        mydoc.getElementById('txt_msg_textarea').value = usr_txt;
+        mydoc.getElementById('txt_msg_textarea').style.display = 'block';
         mydoc.getElementById('div_msg_text').innerHTML = txt;
         mydoc.getElementById('div_msg').style.display = 'block';
     }
@@ -1490,6 +1497,8 @@ var RMM_MENU = (function() {
         console.log('msgExit(ev)');
         console.log(msg_div_next, 'msg_div_next');
         input_active = false;
+        mydoc.getElementById('txt_msg_textarea').value = '';
+        mydoc.getElementById('txt_msg_textarea').style.display = 'none';
         if (msg_div_next === 'div_menu_main') {
             settingsClick(null);
             return;

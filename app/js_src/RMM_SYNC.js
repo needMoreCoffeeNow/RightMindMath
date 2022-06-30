@@ -97,6 +97,17 @@ var RMM_SYNC = (function() {
             html += '<span class="orig">=</span>';
             html += '<span class="orig">' + ids[i].iduser + '</span>';
             html += '</div>';
+            html += '<div style="margin-top:10px;text-align:left;">';
+            html += getStr('TXT_sync_sheet_text');
+            html += '</div>'
+            html += '<div style="margin-top:10px;">';
+            html += '<textarea rows="1" cols="40" readonly>';
+            html += ids[i].name + '\t';
+            html += ids[i].iduser + '\t';
+            html += RMM_DB.getDevice();
+            html += '</textarea>';
+            html += '</div>'
+            html += '<hr>';
         }
         hideAll();
         mydoc.getElementById('div_sync_orig_list').innerHTML = html;
