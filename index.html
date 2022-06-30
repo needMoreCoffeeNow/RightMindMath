@@ -55,8 +55,9 @@
                 margin:0px auto;
                 background-color:#eee;
             }
-            div.topic_header {
+            button.topic_header {
                 font-size:1.0em;
+                width:90%;
                 color:#000066;
                 background:#cce6ff;
                 background:rgba(204, 230, 255, 0.3);
@@ -65,7 +66,7 @@
                 margin-top:20px;
                 padding:5px;
             }
-            div.topic_header:hover { 
+            button.topic_header:hover { 
                 background:rgba(255, 255, 204, 1.0);
                 cursor: pointer;
             }
@@ -82,7 +83,7 @@
 //topic text array start-->
             var topic_text_array = [
                 [
-                'Why do you call it <i>Right Mind Math ?</i>',
+                'Why do you call it Right Mind Math ?',
                 '<p>Our brains are made up of two parts: <i>Right</i> &amp; <i>Left</i>. The right is very good at instantaneous response. The left is good at things like logic, calculations, and procedural stuff.</p><p><span style="background-color:#ffffcc">The right mind learns through a process of association. It learns by recognizing patterns that it sees repeatedly.</span></p><p>For example: If you are introduced to someone once or twice you will probably need to "remember the introduction" to recall their name.</p><p>However, if you meet them enough your right mind associates the name with the face. Now anytime you meet them again, even years later, you instantly know their name. It just "happens".</p><p>RMM&#039;s design enables a child to learn the patterns of simple arithmetic. Imagining <span style="font-size:80%;">(not calculating)</span> the right answer "quiets" the left mind allowing the right focus &amp; learn.</p><ul><li>No Calculating</li><li>No Pressure</li><li>No Strenuous Effort</li></ul><p>Seems strange, but this is how the right mind learns. As Daniel Kahneman** describes it: <em>"...you experience greater cognitive ease in perceiving a word [or an equation] you have seen earlier, and it is this sense of ease that gives you the impression of familiarity."</em></p><p><span style="font-size:75%">** Nobel Prize winning Psychologist</span></p>'
                 ],
                 [
@@ -104,11 +105,11 @@
                 var i = 0;
                 var len = topic_text_array.length;
                 for (i=0; i<len; i++) {
-                    html += '<div id="div_topic_' + i + '" ';
+                    html += '<button id="div_topic_' + i + '" ';
                     html += 'class="topic_header" ';
                     html += 'onclick="clickTopicHeader(event);" >';
                     html += topic_text_array[i][0];
-                    html += '</div>';
+                    html += '</button>';
                 }
                 receiver.innerHTML = html;
                 mydoc.getElementById('div_moment').style.display = 'none';
@@ -189,7 +190,7 @@
     <!--topic text-->
             <div id="div_topic_detail" style="display:none;">
                 <div id="div_topic_text" class="topic_text"></div>
-                <div id="b_topic_detail_close" class="b_close" style="margin-top:15px;" onclick="closeTopicText(event);">Close</div>
+                <button id="b_topic_detail_close" class="topic_header" style="margin-top:15px;" onclick="closeTopicText(event);">Close</button>
             </div>
             <div style="margin-top:20px;">&nbsp;</div>
         </div>
