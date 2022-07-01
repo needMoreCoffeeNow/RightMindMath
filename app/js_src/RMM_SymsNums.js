@@ -108,6 +108,7 @@ var RMM_SymsNums = (function() {
             'asm_answer_digit' : 'transform="matrix(.65 0 0 .65 0 0)"', //one or two digit answer values
             'asm_answer_digit_triple' : 'transform="matrix(.5 0 0 .65 0 0)"', //skinny triple digits (x-scale is .5 not .65)
             'asm_answer_neg_sign' : 'transform="matrix(.6 0 0 .6 0 0)"',
+            'asm_a1_neg_sign' : 'transform="matrix(.8 0 0 .8 30 -220)"',
             'asm_verdict_multiply' : 'fill="red" transform="matrix(.3 0 0 .3 0 0)"',
             'asm_verdict_check' : 'fill="#00e600" transform="matrix(1.1 0 0 1.1 0 0)"',
             'm2_verdict_multiply' : 'fill="red" transform="matrix(.3 0 0 .3 0 0)"',

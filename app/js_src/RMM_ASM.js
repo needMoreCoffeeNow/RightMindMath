@@ -322,24 +322,42 @@ var RMM_ASM = (function() {
                     [null, null, null]];
     }
 
+    // set the negative sign in rows 0 or 1 when level=a1 & negatives = true
+    function setA1NegSigns() {
+        console.error('setA1NetSigns()');
+        console.error(prob_asm);
+        var neg_sign = pathTransform(getSyms('minus'), 'asm_a1_neg_sign');
+        if (prob_asm[0][2] < 0) {
+           console.error('in _01');
+           mydoc.getElementById('asm_num_01').innerHTML = neg_sign;
+        }
+        if (prob_asm[1][2] < 0) {
+           console.error('in _12');
+           mydoc.getElementById('asm_num_11').innerHTML = neg_sign;
+        }
+            //mydoc.getElementById('asm_num_01').innerHTML = neg_sign;
+            //mydoc.getElementById('asm_num_11').innerHTML = neg_sign;
+    }
+
     // set each svg rect num innerHTML in the ASM grid to '' (blank)
     function setNumbers() {
-        console.log('setNumbers()');
+        console.error('setNumbers()');
+        console.error(level, 'level');
         var i = 0;
         var j = 0;
         var id = '';
-        console.log(prob_asm);
         for (i=0; i<3; i++) {
             for (j=0; j<3; j++) {
                 id = 'asm_num_' + i + j;
+                console.error(id, prob_asm[i][j]);
                 if (prob_asm[i][j] === null) {
                     mydoc.getElementById(id).innerHTML = '';
                     continue;
                 }
                 mydoc.getElementById(id).innerHTML = getNums(prob_asm[i][j]);
-                //console.log(mydoc.getElementById(id).innerHTML, id);
             }
         }
+        if (level === 'a1') { setA1NegSigns(); }
     }
 
     // blank out every element in ASM (nums, carrys, answers, etc)
@@ -1259,6 +1277,7 @@ var RMM_ASM = (function() {
         problemInit('a1', 1, '+', 'plus')
         probColumnSetRandValue(2, 0, 10);
         //prob_asm  = [ [null, null, 1], [null, null, 0], [null,null,1] ];
+        //prob_asm  = [ [null, null, -8], [null, null, 2], [null,null,-6] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
