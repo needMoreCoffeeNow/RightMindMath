@@ -46,8 +46,8 @@ var RMM_ASM = (function() {
     var subborrow = 0; // 1=yes_borrowing 0=no_borrowing
     var s3_doubleborrow_allow = true; // no double borrow problems if false
     var total_problems = 0; // counter of total problems when level is started
-    var addneg_pct = 0.0; // used to control pct of negative A1 problems
-    var addendumneg_pct = 0.0; // used to control pct of negative top addendum A1 problems
+    var addneg_pct = 0.0; // control pct of negative A1 problems
+    var addtopneg_pct = 0.0; // control pct of negative top addendum A1 problems
     var a1_neg_problems = 0; // used to control pct of negative S1 problems
     // toggles start: next & borrow/carry notes between step levels
     var shnote_next = true; // controls display of next_problem notes
@@ -1318,7 +1318,7 @@ var RMM_ASM = (function() {
     function addnegAddendumSet() {
         console.log('addnegAddendumSet()');
         var rand = parseFloat(getRandInt(0, 10) / 10, 10);
-        if (rand < addendumneg_pct) {
+        if (rand < addtopneg_pct) {
             // avoid -0 which causes logic to fail
             if (prob_asm[0][2] === 0) { prob_asm[0][2] = 1; }
             prob_asm[0][2] = prob_asm[0][2] * -1;
@@ -2250,7 +2250,7 @@ var RMM_ASM = (function() {
         total_problems = 0;
         if (pdata.module === 'a') {
             addneg_pct = parseFloat(pdata.addneg_pct / 10, 10);
-            addendumneg_pct = parseFloat(pdata.addendumneg_pct / 10, 10);
+            addtopneg_pct = parseFloat(pdata.addtopneg_pct / 10, 10);
             if (pdata.digits === 1) { levelA1Init(); }
             if (pdata.digits === 2) { levelA2Init(); }
             if (pdata.digits === 3) { levelA3Init(); }

@@ -96,7 +96,7 @@ var RMM_DB = (function() {
     // handle db open error
     function dbhandleOpenError(ev) {
         console.log('dbhandleOpenError(ev)');
-        console.error('Database error:'  + ev.target.errorCode);
+        console.error('Database error:'  + ev.target.errorCode); //KEEPIN
     }
 
     // write the Guest user record in new DB Note: after upgrade only
@@ -126,7 +126,7 @@ var RMM_DB = (function() {
             'digits' : null,
             'subneg_pct' : 0,
             'addneg_pct' : 0,
-            'addendumneg_pct' : 0,
+            'addtopneg_pct' : 0,
             'subborrow' : null,
             'm1_digit' : null,
             'm1_order' : null,
@@ -658,7 +658,7 @@ var RMM_DB = (function() {
 
     // set pdata in setup table
     function setupParametersUpdate(dict) {
-        console.error('setupParametersUpdate(dict)');
+        console.log('setupParametersUpdate(dict)');
         var obj = objectstoreGet('setup', true);
         var req = null;
         var data = null;
@@ -717,8 +717,8 @@ var RMM_DB = (function() {
                     do_delete = true;
                 } else {
                     // check for key_name & key_value
-                    console.error(table, key_name, key_value);
-                    console.error(cursor.value[key_name] === key_value);
+                    console.log(table, key_name, key_value);
+                    console.log(cursor.value[key_name] === key_value);
                     if (cursor.value[key_name] === key_value) {
                         do_delete = true;
                     }
@@ -783,7 +783,7 @@ var RMM_DB = (function() {
         console.log(obj);
         var req = null;
         var data = null;
-        if (!obj) { console.error('no obj in updateSyncKey'); return; }
+        if (!obj) { console.error('no obj in updateSyncKey'); return; } //KEEPIN
         console.warn(IDSETUP, 'IDSETUP');
         req = obj.get(IDSETUP);
         req.onsuccess = function(ev) {
@@ -800,7 +800,7 @@ var RMM_DB = (function() {
             }
         }
         req.onerror = function(ev) {
-            req.onerror = console.error('sync_key NOT SET : req.onerror');
+            req.onerror = console.error('sync_key NOT SET : req.onerror'); //KEEPING
         }
     }
 //

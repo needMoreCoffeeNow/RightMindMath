@@ -154,15 +154,14 @@ var RMM_MENU = (function() {
     // show the menu for number of negative one-digit additions to show
     function showAddnegMenu() {
         console.log('showAddnegMenu()');
-        console.error(pdata, 'pdata');
         var addneg = pdata.addneg_pct;
-        var addendumneg = pdata.addendumneg_pct;
+        var addtopneg = pdata.addtopneg_pct;
         var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
         txt = txt.replace('REPLACE_number', addneg);
         mydoc.getElementById('div_addneg_val').innerHTML = txt;
         txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
-        txt = txt.replace('REPLACE_number', addendumneg);
-        mydoc.getElementById('div_addendumneg_val').innerHTML = txt;
+        txt = txt.replace('REPLACE_number', addtopneg);
+        mydoc.getElementById('div_addtopneg_val').innerHTML = txt;
         hideAll();
         mydoc.getElementById('div_menu_addneg').style.display = 'block';
     }
@@ -715,33 +714,29 @@ var RMM_MENU = (function() {
 
     // handle a1 negative addendum clicks
     function addnegSet(ev) {
-        console.error('addnegSet(ev)');
+        console.log('addnegSet(ev)');
         var id = (ev.target.id);
         var parts = id.split('_');
         var pct = parseInt(parts[2], 10);
         var type = parts[1];
-        console.error(id, 'id');
-        console.error(type, 'type');
-        console.error(pct, 'pct');
         var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
         txt = txt.replace('REPLACE_number', pct);
         if (type === 'addneg') {
             mydoc.getElementById('div_addneg_val').innerHTML = txt;
         } else {
-            mydoc.getElementById('div_addendumneg_val').innerHTML = txt;
+            mydoc.getElementById('div_addtopneg_val').innerHTML = txt;
         }
 
     }
     // handle exiting the a1 negative menu which sets the 2 related pdata vars
     function addnegPdataUpdate(ev) {
-        console.error('clikAddNegExit(ev)');
+        console.log('clikAddNegExit(ev)');
         var addneg_str = mydoc.getElementById('div_addneg_val').innerHTML;
-        var addendumneg_str = mydoc.getElementById('div_addendumneg_val').innerHTML;
+        var addtopneg_str = mydoc.getElementById('div_addtopneg_val').innerHTML;
         var addneg = parseInt(addneg_str.substr(0, 1), 10);
-        var addendumneg = parseInt(addendumneg_str.substr(0, 1), 10);
-        console.error(addneg, addendumneg, 'addneg, addendumneg');
+        var addtopneg = parseInt(addtopneg_str.substr(0, 1), 10);
         pdata.addneg_pct = addneg;
-        pdata.addendumneg_pct = addendumneg;
+        pdata.addtopneg_pct = addtopneg;
         checkProblemStart();
     }
 
@@ -1542,9 +1537,8 @@ var RMM_MENU = (function() {
 
     // exit from levels options dialog
     function levelsExit(ev) {
-        console.error('levelsExit(ev)');
+        console.log('levelsExit(ev)');
         id = ev.target.id;
-        console.error(id, 'id');
         if (id == 'b_menu_addneg_exit') { addnegPdataUpdate(); }
         hideAll();
         mydoc.getElementById('div_menu_main').style.display = 'block';

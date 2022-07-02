@@ -235,7 +235,7 @@
         div_menu_digits_text : 'Number of Digits in Problem',
         div_menu_subneg_text : 'Select how many negative answer problems you want for every 10 one-digit subtraction problems shown.',
         div_menu_addneg_text : 'Select how many problems with <u>negative addendums</u> you want for every 10 one-digit addition problems shown.<br>The current setting is:',
-        div_menu_addendumneg_text : 'Select how many times out of ten you want a negative <u>top addendum</u> to be shown.<br>The current setting is:',
+        div_menu_addtopneg_text : 'Select how many times out of ten you want a negative <u>top addendum</u> to be shown.<br>The current setting is:',
         div_menu_subborrow_text : 'Do you want some of the subtractions to require borrowing?',
         div_menu_m1_options_text : 'Select the options for your<br>one-digit multiplication problems.',
         div_user_menu_text : 'Select the user action you want below',
