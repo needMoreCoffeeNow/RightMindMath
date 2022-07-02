@@ -27,6 +27,14 @@ div.statslive {
   color:#ccc;
 }
 
+div.a1_neg_current {
+  margin-top:15px;
+  text-align:center;
+  font-size:90%;
+  color:#0000ff;
+  background:#fff;
+}
+
 .chart {
   background:#ffe6e6;
   width:500px;

@@ -125,6 +125,8 @@ var RMM_DB = (function() {
             'module' : null,
             'digits' : null,
             'subneg_pct' : null,
+            'addneg_pct' : null,
+            'addendumneg_pct' : null,
             'subborrow' : null,
             'm1_digit' : null,
             'm1_order' : null,
@@ -656,7 +658,7 @@ var RMM_DB = (function() {
 
     // set pdata in setup table
     function setupParametersUpdate(dict) {
-        console.log('setupParametersUpdate(dict)');
+        console.error('setupParametersUpdate(dict)');
         var obj = objectstoreGet('setup', true);
         var req = null;
         var data = null;
