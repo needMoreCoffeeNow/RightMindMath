@@ -46,6 +46,9 @@ var RMM_ASM = (function() {
     var subborrow = 0; // 1=yes_borrowing 0=no_borrowing
     var s3_doubleborrow_allow = true; // no double borrow problems if false
     var total_problems = 0; // counter of total problems when level is started
+    var addneg_pct = 0.0; // used to control pct of negative A1 problems
+    var addendumneg_pct = 0.0; // used to control pct of negative top addendum A1 problems
+    var a1_neg_problems = 0; // used to control pct of negative S1 problems
     // toggles start: next & borrow/carry notes between step levels
     var shnote_next = true; // controls display of next_problem notes
     var shnote_numpos = true; // controls display of number_position notes
@@ -1279,12 +1282,11 @@ var RMM_ASM = (function() {
     // setup and finish a A1 problem
     function levelA1Problem() {
         console.log('levelA1Problem()');
-        var rand = getRandInt(0, 3);
         problemInit('a1', 1, '+', 'plus')
         probColumnSetRandValue(2, 0, 10);
-        if (rand < 6) { levelA1NegativeProblem(); }
+        levelA1NegativeProblem();
         //prob_asm  = [ [null, null, 1], [null, null, 0], [null,null,1] ];
-        //prob_asm  = [ [null, null, -8], [null, null, 2], [null,null,-6] ];
+        //prob_asm  = [ [null, null, -8], [null, null, -2], [null,null,-10] ];
         //prob_asm  = [ [null, null, -5], [null, null, 1], [null,null,-4] ];
         carryforwardSet();
         probAnswerSet();
@@ -1296,15 +1298,35 @@ var RMM_ASM = (function() {
     // change to a equation with negative addendums
     function levelA1NegativeProblem() {
         console.log('levelA1NegativeProblem()');
-        var rand = getRandInt(0, 3);
-        // avoid many complications from answer being > -9 (sorry)
-        if ((prob_asm[0][2]*-1) + (prob_asm[1][2]*-1) < -9) { return; };
-        if (rand < 1) {
+        var rand = parseFloat(getRandInt(0, 10) / 10, 10);
+        var pct_total = 0;
+        // calc overall pct of add neg problems
+        if (total_problems > 0) {
+            pct_total = parseFloat(a1_neg_problems / total_problems, 10);
+        }
+        // exit if too many addneg problems already unless in printmode
+        if (!printmode && pct_total >= addneg_pct) { return; }
+        // check if random percentage is below user set percentage
+        if (addneg_pct < rand) { return;}
+        addnegAddendumSet();
+        // finally set a neg a1 problem using either top or bottom addendum
+        prob_asm[2][2] = prob_asm[0][2] + prob_asm[1][2];
+        a1_neg_problems += 1;
+    }
+
+    // find a1 negative addendum (top or bottom)
+    function addnegAddendumSet() {
+        console.log('addnegAddendumSet()');
+        var rand = parseFloat(getRandInt(0, 10) / 10, 10);
+        if (rand < addendumneg_pct) {
+            // avoid -0 which causes logic to fail
+            if (prob_asm[0][2] === 0) { prob_asm[0][2] = 1; }
             prob_asm[0][2] = prob_asm[0][2] * -1;
         } else {
+            // avoid -0 which causes logic to fail
+            if (prob_asm[1][2] === 0) { prob_asm[1][2] = 1; }
             prob_asm[1][2] = prob_asm[1][2] * -1;
         }
-        prob_asm[2][2] = prob_asm[0][2] + prob_asm[1][2];
     }
 
     // set the random
@@ -1855,8 +1877,8 @@ var RMM_ASM = (function() {
     // set 4 answer values in ASM grid using values from answers[level_done]
     function layoutAnswerButtons() {
         console.log('layoutAnswerButtons()');
-        console.log(answers, 'answers');
-        console.log(level_done, 'level_done');
+        ///////console.log(answers, 'answers');
+        ///////console.log(level_done, 'level_done');
         var i = 0;
         var len = answers[level_done].length;
         for (i=0; i<len; i++) {
@@ -1888,14 +1910,25 @@ var RMM_ASM = (function() {
         if (module != 'm2' && module != 'd3') {
             id1.setAttribute('y', 520);
         }
-        // negative number (will be single digit)
+        // negative number (need to handle -10 differntly)
         // only used by ASM never M2 or LD
         if (answer < 0) {
-            id1.setAttribute('x', xpos_double[index][0]);
-            id2.setAttribute('x', xpos_double[index][1]);
-            id1.setAttribute('y', 340);
-            id1.innerHTML = pathTransform(getSyms('minus'), 'asm_answer_neg_sign');
-            id2.innerHTML = pathTransform(getNums(Math.abs(ans2)), tform);
+            if (answer > -10) {
+                id1.setAttribute('x', xpos_double[index][0]);
+                id2.setAttribute('x', xpos_double[index][1]);
+                id1.setAttribute('y', 340);
+                id1.innerHTML = pathTransform(getSyms('minus'), 'asm_answer_neg_sign');
+                id2.innerHTML = pathTransform(getNums(Math.abs(ans2)), tform);
+            } else {
+                tform += '_triple';
+                id0.setAttribute('x', xpos_triple[index][0]+5);
+                id1.setAttribute('x', xpos_triple[index][0]+28);
+                id2.setAttribute('x', xpos_triple[index][1]+30);
+                id0.setAttribute('y', 340);
+                id0.innerHTML = pathTransform(getSyms('minus'), 'asm_answer_neg_sign_small');
+                id1.innerHTML = pathTransform(getNums(1), tform);
+                id2.innerHTML = pathTransform(getNums(Math.abs(ans2)), tform);
+            }
             return;
         }
         // 3-digit answer
@@ -2214,7 +2247,10 @@ var RMM_ASM = (function() {
         console.log('setProblem(pdata)');
         console.log(pdata, 'pdata');
         hideAll();
+        total_problems = 0;
         if (pdata.module === 'a') {
+            addneg_pct = parseFloat(pdata.addneg_pct / 10, 10);
+            addendumneg_pct = parseFloat(pdata.addendumneg_pct / 10, 10);
             if (pdata.digits === 1) { levelA1Init(); }
             if (pdata.digits === 2) { levelA2Init(); }
             if (pdata.digits === 3) { levelA3Init(); }
@@ -2225,9 +2261,7 @@ var RMM_ASM = (function() {
             if (pdata.digits === 1) { levelS1Init(); }
             if (pdata.digits === 2) { levelS2Init(); }
             if (pdata.digits === 3) { levelS3Init(); }
-            if (pdata.subneg_pct ) {
-                subneg_pct = parseFloat(pdata.subneg_pct / 10, 10);
-            }
+            subneg_pct = parseFloat(pdata.subneg_pct / 10, 10);
         }
         if (pdata.module === 'm') {
             m1_digit = pdata.m1_digit;
@@ -2332,6 +2366,14 @@ var RMM_ASM = (function() {
         console.log('getGuestActive()');
         return iduser === RMM_DB.getIDGUEST();
     }
+
+    //reset all the negative counters (needed after generating print sheet)
+    function resetNegativeCounters() {
+        console.log('resetNegativeCounters()');
+        s1_neg_problems = 0;
+        a1_neg_problems = 0;
+        total_problems = 0;
+    }
 //
 // >>> GETSET:end
 //
@@ -2395,6 +2437,7 @@ var RMM_ASM = (function() {
         setComplete : setComplete,
         getPrintmode : getPrintmode,
         setPrintmode : setPrintmode,
-        setSessionCount : setSessionCount
+        setSessionCount : setSessionCount,
+        resetNegativeCounters : resetNegativeCounters
     };
 })();

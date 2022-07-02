@@ -124,9 +124,9 @@ var RMM_DB = (function() {
         var pdata = {
             'module' : null,
             'digits' : null,
-            'subneg_pct' : null,
-            'addneg_pct' : null,
-            'addendumneg_pct' : null,
+            'subneg_pct' : 0,
+            'addneg_pct' : 0,
+            'addendumneg_pct' : 0,
             'subborrow' : null,
             'm1_digit' : null,
             'm1_order' : null,

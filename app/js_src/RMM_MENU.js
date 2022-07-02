@@ -154,6 +154,15 @@ var RMM_MENU = (function() {
     // show the menu for number of negative one-digit additions to show
     function showAddnegMenu() {
         console.log('showAddnegMenu()');
+        console.error(pdata, 'pdata');
+        var addneg = pdata.addneg_pct;
+        var addendumneg = pdata.addendumneg_pct;
+        var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
+        txt = txt.replace('REPLACE_number', addneg);
+        mydoc.getElementById('div_addneg_val').innerHTML = txt;
+        txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
+        txt = txt.replace('REPLACE_number', addendumneg);
+        mydoc.getElementById('div_addendumneg_val').innerHTML = txt;
         hideAll();
         mydoc.getElementById('div_menu_addneg').style.display = 'block';
     }
@@ -1233,6 +1242,7 @@ var RMM_MENU = (function() {
         hideAll();
         get_mode = '';
         if (id === 'b_print_exit') {
+            RMM_ASM.resetNegativeCounters();
             mydoc.getElementById('div_menu_main').style.display = 'block';
         }
         if (id === 'b_print_create') {
