@@ -139,7 +139,6 @@ var RMM_ASM = (function() {
             RMM_STATSLIVE.displayUserCounts(level, false);
             RMM_SYNC.setSyncKey(db_result.sync_key);
             console.warn(db_result);
-            console.warn(RMM_SYNC.getSyncKey(), 'RMM_SYNC.getSyncKey()');
         }
         if (!db_result || !db_result.pdata) {
             iduser = getStr('DAT_guest');
@@ -324,32 +323,26 @@ var RMM_ASM = (function() {
 
     // set the negative sign in rows 0 or 1 when level=a1 & negatives = true
     function setA1NegSigns() {
-        console.error('setA1NetSigns()');
-        console.error(prob_asm);
+        console.log('setA1NetSigns()');
         var neg_sign = pathTransform(getSyms('minus'), 'asm_a1_neg_sign');
         if (prob_asm[0][2] < 0) {
-           console.error('in _01');
            mydoc.getElementById('asm_num_01').innerHTML = neg_sign;
         }
         if (prob_asm[1][2] < 0) {
-           console.error('in _12');
            mydoc.getElementById('asm_num_11').innerHTML = neg_sign;
         }
-            //mydoc.getElementById('asm_num_01').innerHTML = neg_sign;
-            //mydoc.getElementById('asm_num_11').innerHTML = neg_sign;
     }
 
     // set each svg rect num innerHTML in the ASM grid to '' (blank)
     function setNumbers() {
-        console.error('setNumbers()');
-        console.error(level, 'level');
+        //console.log('setNumbers()');
+        //console.log(level, 'level');
         var i = 0;
         var j = 0;
         var id = '';
         for (i=0; i<3; i++) {
             for (j=0; j<3; j++) {
                 id = 'asm_num_' + i + j;
-                console.error(id, prob_asm[i][j]);
                 if (prob_asm[i][j] === null) {
                     mydoc.getElementById(id).innerHTML = '';
                     continue;
@@ -493,6 +486,7 @@ var RMM_ASM = (function() {
     // finds a valid col answer using correct global & existing in 4-ans array
     function answerGetValid(found, col, limit, ans_max) {
         //console.log('answerGetValid(found, col)');
+        //console.log(found, col, limit, ans_max);
         var myans = null;
         var tries = 0;
         var val = colAnswer(col);
@@ -505,7 +499,10 @@ var RMM_ASM = (function() {
             myans = getRandInt(minmax[0], minmax[1]);
             if (found.indexOf(myans) > -1) { myans = null; }
             tries += 1;
-            if (tries > 20) { myans = 76543; } // distinctive number = fail
+            if (tries > 20) {
+                console.error('ERR tries limit: answerGetValid() myans=76543'); //KEEPIN
+                myans = 76543;
+            } // distinctive number = fail
         }
         return myans;
     }
@@ -530,7 +527,15 @@ var RMM_ASM = (function() {
         //console.log('getMinMax(val, col, limit)');
         var minmax = [null, null]; // [0]=min, [1]=max
         if (opASM === '+') {
-            minmax[0] = val - limit < 1 ? 1 :  val - limit;
+            // need special handling of a1 problem with potential neg answers
+            if (prob_asm[0][2] < 0 || prob_asm[1][2] < 0) {
+                minmax[0] = val - limit;
+                if (minmax[0] < (ans_max * -1)) {
+                    mixmax[0] = (ans_max * -1);
+                }
+            } else {
+                minmax[0] = val - limit < 1 ? 1 :  val - limit;
+            }
             minmax[1] = val + limit > ans_max ? ans_max : val + limit;
         }
         if (opASM === '-') {
@@ -1274,16 +1279,35 @@ var RMM_ASM = (function() {
     // setup and finish a A1 problem
     function levelA1Problem() {
         console.log('levelA1Problem()');
+        var rand = getRandInt(0, 3);
         problemInit('a1', 1, '+', 'plus')
         probColumnSetRandValue(2, 0, 10);
+        if (rand < 6) { levelA1NegativeProblem(); }
         //prob_asm  = [ [null, null, 1], [null, null, 0], [null,null,1] ];
         //prob_asm  = [ [null, null, -8], [null, null, 2], [null,null,-6] ];
+        //prob_asm  = [ [null, null, -5], [null, null, 1], [null,null,-4] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
         correct = colAnswer(2);
         console.log(correct, '--------------------------------------------------correct');
     }
+
+    // change to a equation with negative addendums
+    function levelA1NegativeProblem() {
+        console.log('levelA1NegativeProblem()');
+        var rand = getRandInt(0, 3);
+        // avoid many complications from answer being > -9 (sorry)
+        if ((prob_asm[0][2]*-1) + (prob_asm[1][2]*-1) < -9) { return; };
+        if (rand < 1) {
+            prob_asm[0][2] = prob_asm[0][2] * -1;
+        } else {
+            prob_asm[1][2] = prob_asm[1][2] * -1;
+        }
+        prob_asm[2][2] = prob_asm[0][2] + prob_asm[1][2];
+    }
+
+    // set the random
 
     // converts the ASM grid into a str: row0|row1|row2|op where rows = int vals
     function reduceProblem() {
