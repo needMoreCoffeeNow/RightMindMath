@@ -28,7 +28,7 @@ div.statslive {
 }
 
 div.a1_neg_current {
-  margin-top:15px;
+  margin-top:5px;
   text-align:center;
   font-size:90%;
   color:#0000ff;
@@ -89,6 +89,25 @@ div.a1_neg_current {
     cursor:pointer;
 }
 .mbutton:hover{
+    background-color:#ccb3ff;
+}
+.mbutton_small {
+    min-width:150px;
+    background:#99ddff;
+    font-family:Sans-Serif;
+    border:none;
+    color:black;
+    padding:5px 5px 5px 5px;
+    text-align:center;
+    text-decoration:none;
+    display:inline-block;
+    font-size:0.8em;
+    margin:2px 5px;
+    border-radius:5px;
+    box-shadow:0 2px 4px 0 rgba(0,0,0,0.2), 0 3px 6px 0 rgba(0,0,0,0.19);
+    cursor:pointer;
+}
+.mbutton_small:hover{
     background-color:#ccb3ff;
 }
 .print_page_button{
