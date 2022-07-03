@@ -236,6 +236,7 @@
         div_menu_digits_text : 'Number of Digits in Problem',
         div_menu_subneg_text : 'Select how many negative answer problems you want for every 10 one-digit subtraction problems shown.',
         div_menu_addneg_text : 'Select how many problems with <u>negative addendums</u> you want for every 10 one-digit addition problems shown. The <span style="color:#0000ff;">Current Setting</span> is:',
+        div_menu_subneg_note : 'Start with equations with positive answers. When comfortable with positives watch <a target="_blank" href="https://www.youtube.com/watch?v=NQSN00zL5gg">This Video</a> and add negative addendums.',
         div_menu_addneg_note : 'Start with positive addendums. When comfortable with positives watch <a target="_blank" href="https://www.youtube.com/watch?v=NrVvu7cM8_o">This Video</a> and add negative addendums.',
         div_menu_addtopneg_text : 'Select how many times out of ten you want a negative <u>top addendum</u> to be shown. The <span style="color:#0000ff;">Current Setting</span> is:',
         div_menu_subborrow_text : 'Do you want some of the subtractions to require borrowing?',
