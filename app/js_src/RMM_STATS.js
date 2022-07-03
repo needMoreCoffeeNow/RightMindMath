@@ -51,7 +51,6 @@ var RMM_STATS = (function() {
         var result = RMM_DB.getDbResult();
         var i = 0;
         var len = result.length;
-        console.log(result);
         xref_id = {};
         for (i=0; i<len; i++) {
             xref_id[result[i].iduser] = result[i].name;
@@ -171,7 +170,6 @@ var RMM_STATS = (function() {
     // handle click on user name
     function userNameClick(ev) {
         console.log('userNameClick(ev)');
-        console.log(ev.target.id);
         var html = getStr('TXT_usage_stats_for') + ' ';
         var levels_count = parseInt(ev.target.id.split('_')[3], 10);
         idstats = parseInt(ev.target.id.split('_')[1], 10);
@@ -188,7 +186,6 @@ var RMM_STATS = (function() {
     // handle click on user name
     function statsChartClick(ev) {
         console.log('statsChartClick(ev)');
-        console.log(rollup);
         var levels = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2b', 'm2c', 'd3'];
         var html = '';
         var len = levels.length;
@@ -196,11 +193,8 @@ var RMM_STATS = (function() {
         var rec_str = getStr('TXT_Records');
         var myroll = {};
         namestats = xref_id[idstats];
-        console.log(idstats, 'idstats');
-        console.log(namestats, 'namestats');
         showMomentPlease('MSG_moment_please');
         myroll = rollup[idstats];
-        console.log(myroll, 'myroll');
         for (i=0; i<len; i++) {
             if (myroll[levels[i]] === undefined) { continue; }
             html += '<div style="margin-top:10px;">';
@@ -229,7 +223,6 @@ var RMM_STATS = (function() {
     function levelClick(ev) {
         console.log('levelClick(ev)');
         var id = ev.target.id;
-        console.log(ev.target.id, 'target.id');
         mydoc.getElementById('div_stats_container').style.display = 'none';
         showMomentPlease('MSG_moment_please');
         if (id === 'b_m1') {
@@ -264,10 +257,8 @@ var RMM_STATS = (function() {
             if (mylevel !== idlevel) { continue; }
             // handle m1 ordered/random & digit in 3rd position
             if (idlevel === 'm1') {
-                console.log(m1_ordered, m1_ordered !== sdata[i].ordered);
                 if (sdata[i].ordered !== m1_ordered) { continue; }
                 mydigit = sdata[i].idlevel.substr(2, 1);
-                console.log(mydigit, sdata[i].idlevel);
                 if (mydigit !== m1_digit) { continue; }
             }
             if (basic.indexOf(mylevel) > -1) {
@@ -282,8 +273,6 @@ var RMM_STATS = (function() {
         averaged = false;
         avg_len = times.length;
         if (times.length > 100) { averageTimes(); }
-        console.log(times, times.length, 'times');
-        console.log(tries, tries.length, 'tries');
         chartBuild();
     }
 
@@ -313,7 +302,6 @@ var RMM_STATS = (function() {
             txt += sdata[i].idsession.split('_')[0] + ',';
             txt += sdata[i].idsession.split('_')[1] + ',';
             date = new Date(parseInt( sdata[i].idsession.split('_')[0], 10));
-            console.error(ddmm_format ,'ddmm_format ');
             if (ddmm_format) {
                 txt += (date.getDate() + '/' + (date.getMonth()+1));
             } else {
@@ -414,10 +402,8 @@ var RMM_STATS = (function() {
         var vars = [];
         var ord = getStr('TXT_Ordered');
         var ran = getStr('TXT_Random');
-        console.log(mydict, 'mydict');
         mykeys.sort();
         for (i=0; i<len; i++) {
-            console.log(mykeys[i], mydict[mykeys[i]]);
             vars = mykeys[i].split('_');
             html += '<div style="margin-top:10px;">';
             html += '<button id="b_m1_' + mykeys[i] + '" class="stats_id" ';
@@ -447,7 +433,6 @@ var RMM_STATS = (function() {
         var vars = id.split('_');
         m1_digit = vars[2]; // keep value as str to speed comparison
         m1_ordered = vars[3] === 'O' ? true : false;
-        console.log(id, 'id', m1_digit, m1_ordered, idlevel);
         findUserLevelData();
     }
 
@@ -486,8 +471,6 @@ var RMM_STATS = (function() {
         var stroke = 1.5;
         var txt = mydoc.getElementById('div_chart_text').innerHTML;
         var tlen = times.length;
-        console.log(idlevel, 'idlevel');
-        console.log(basic, 'basic');
         chartAxisTriesSet();
         if (basic) {
             txt = getStr('TXT_chart_basic');
@@ -527,7 +510,6 @@ var RMM_STATS = (function() {
         times_ypos = [];
         ymax = mydoc.getElementById('x_axis').getAttribute('y2');
         ymax -= 10; // add a small buffer for very low times
-        console.log(ymax, 'ymax');
         for (i=0; i<len; i++) {
             if (times[i] > limit) {
                 times_ypos[i] = 0;
@@ -720,15 +702,12 @@ var RMM_STATS = (function() {
             'm2' : getStr('TXT_use_m2'), //07
             'd3' : getStr('TXT_use_d3')  //08
         }
-        console.log(detailed, 'detailed');
         showMomentPlease('MSG_moment_please');
         for (i=0; i<len; i++) {
-            console.log(sdata[i]);
             if (sdata[i].iduser !== idstats) { continue; }
             count += 1;
             keyvalue = Math.floor(sdata[i].days / 10);
             dkey = xref[sdata[i].idlevel.substr(0, 2)];
-            console.log(dkey);
             if (keyvalue in usage) {
                 usage[keyvalue] += 1;
             } else {
@@ -753,8 +732,6 @@ var RMM_STATS = (function() {
             mydoc.getElementById('div_stats_container').style.display = 'block';
             return;
         }
-        console.log(usage);
-        console.log(detail);
         statsUsageReveal(usage, detail, count);
     }
 
@@ -802,7 +779,6 @@ var RMM_STATS = (function() {
             row_count += 1;
         }
         html += '</table>';
-        console.log(html);
         mydoc.getElementById('div_stats_lifetime').innerHTML = lifetime;
         mydoc.getElementById('div_stats_usage_html').innerHTML = html;
         mydoc.getElementById('div_info').style.display = 'none';
@@ -814,7 +790,6 @@ var RMM_STATS = (function() {
     // build the usage details hmtl string
     function statsUsageDetails(details_in, color) {
         console.log('statsUsageDetails(details_in, color)');
-        console.log(details_in);
         var dkeys = Object.keys(details_in);
         var i = 0;
         var len = dkeys.length;
