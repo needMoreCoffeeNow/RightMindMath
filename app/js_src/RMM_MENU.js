@@ -147,6 +147,14 @@ var RMM_MENU = (function() {
     // show the menu for number of negative one-digit subtractions to show
     function showSubnegMenu() {
         console.log('showSubnegMenu()');
+        var subneg = pdata.subneg_pct;
+        var subtopneg = pdata.subtopneg_pct;
+        var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
+        txt = txt.replace('REPLACE_number', subneg);
+        mydoc.getElementById('div_subneg_val').innerHTML = txt;
+        txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
+        txt = txt.replace('REPLACE_number', subtopneg);
+        mydoc.getElementById('div_subtopneg_val').innerHTML = txt;
         hideAll();
         mydoc.getElementById('div_menu_subneg').style.display = 'block';
     }
@@ -1321,13 +1329,13 @@ var RMM_MENU = (function() {
         for (i=len-1; i>-1; i--) {
             id_str = timestampString(ids[i].idprint, false);
             mod = ids[i].module;
-            if (ids[i].module === 'a') { mod = '+' + ids[i].digits }
-            if (ids[i].module === 's') { mod = '&#150;' + ids[i].digits }
+            if (ids[i].module === 'a') { mod += '+' + ids[i].digits }
+            if (ids[i].module === 's') { mod += '&#150;' + ids[i].digits }
             if (ids[i].module === 'm') {
-                mod = 'x' + ids[i].digits + '.' + ids[i].m1_digit;
+                mod += 'x' + ids[i].digits + '.' + ids[i].m1_digit;
             }
-            if (ids[i].module === 'm2') { mod = 'x2' }
-            if (ids[i].module === 'd3') { mod = '/3' }
+            if (ids[i].module === 'm2') { mod += 'x2' }
+            if (ids[i].module === 'd3') { mod += '/3' }
             html += '<div id="prt_' + ids[i].idprint + '"';
             html += ' style="margin-top:5px;">';
             html += '<button id="' + ids[i].idprint + '" class="print_id" ';

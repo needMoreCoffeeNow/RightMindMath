@@ -43,6 +43,7 @@ var RMM_ASM = (function() {
     var info_fnc_finish = null;
     var s1_neg_problems = 0; // used to control pct of negative S1 problems
     var subneg_pct = 0.0; // used to control pct of negative S1 problems
+    var subtopneg_pct = 0.0; // control pct of negative top addendum A1 problems
     var subborrow = 0; // 1=yes_borrowing 0=no_borrowing
     var s3_doubleborrow_allow = true; // no double borrow problems if false
     var total_problems = 0; // counter of total problems when level is started
@@ -325,8 +326,8 @@ var RMM_ASM = (function() {
     }
 
     // set the negative sign in rows 0 or 1 when level=a1 & negatives = true
-    function setA1NegSigns() {
-        console.log('setA1NetSigns()');
+    function setAddendumNegSigns() {
+        console.log('setAddendumNegSigns()');
         var neg_sign = pathTransform(getSyms('minus'), 'asm_a1_neg_sign');
         if (prob_asm[0][2] < 0) {
            mydoc.getElementById('asm_num_01').innerHTML = neg_sign;
@@ -353,7 +354,7 @@ var RMM_ASM = (function() {
                 mydoc.getElementById(id).innerHTML = getNums(prob_asm[i][j]);
             }
         }
-        if (level === 'a1') { setA1NegSigns(); }
+        if (level === 'a1' || level === 's1') { setAddendumNegSigns(); }
     }
 
     // blank out every element in ASM (nums, carrys, answers, etc)
@@ -1196,22 +1197,34 @@ var RMM_ASM = (function() {
 
     // setup and finish a S1 problem
     function levelS1Problem() {
-        console.log('levelS1Problem()');
+        console.error('levelS1Problem()');
         var neg_prob = false;
         var pos_needed = true;
-        var myrand = 0;
+        var neg_needed = true;
+        var myrand = parseFloat(getRandInt(1, 11) / 10, 10);
+        console.error(myrand, 'myrand 01');
         problemInit('s1', 1, '-', 'minus');
         // use simple randomize for print negative problem, and
         // more sophisticated randomization across total problem for non-print
         if (printmode) {
-           myrand = getRandInt(1, 11);
-           neg_prob = myrand <= (subneg_pct * 10);
+            neg_prob = myrand <= subneg_pct;
         } else {
             neg_prob = (s1_neg_problems / total_problems) < subneg_pct;
         }
-        console.log(neg_prob, 'neg_prob');
+        console.error(neg_prob, '---------------neg_prob');
         if (neg_prob) {
-            probColumnSetRandValue(2, 0, 10);
+            while (neg_needed) {
+                probColumnSetRandValue(2, 0, 10);
+                if (colAnswer(2) < 0) { neg_needed = false; }
+            }
+            myrand = parseFloat(getRandInt(1, 11) / 10, 10);
+            console.error(myrand, subtopneg_pct, 'myrand, subtopneg_pct');
+            if (myrand <= subtopneg_pct && prob_asm[0][2] !== 0) {
+                console.error('-------setting subtopneg');
+                prob_asm[0][2] = prob_asm[0][2] * -1;
+                prob_asm[2][2] = prob_asm[0][2] - prob_asm[1][2];
+                console.error(prob_asm);
+            }
         } else {
             while (pos_needed) {
                 probColumnSetRandValue(2, 0, 10);
@@ -1220,6 +1233,7 @@ var RMM_ASM = (function() {
         }
         //prob_asm  = [ [null, null, 1], [null, null, 9], [null, null, -8] ];
         //prob_asm  = [ [null, null, 5], [null, null, 1], [null, null, 4] ];
+        prob_asm  = [ [null, null, -2], [null, null, 8], [null, null, -10] ];
         borrowsSetDict();
         if (colAnswer(2) < 0) { s1_neg_problems += 1; }
         //probColumnSetRandValue(2, 0, 10);
@@ -1227,6 +1241,24 @@ var RMM_ASM = (function() {
         finishProbSetup();
         correct = colAnswer(2);
         console.log(correct, '--------------------------------------------------correct');
+
+
+        //var rand = parseFloat(getRandInt(0, 10) / 10, 10);
+        //var pct_total = 0;
+        //// calc overall pct of add neg problems
+        //if (total_problems > 0) {
+        //    pct_total = parseFloat(a1_neg_problems / total_problems, 10);
+        //}
+        //// exit if too many addneg problems already unless in printmode
+        //if (!printmode && pct_total >= addneg_pct) { return; }
+        //// check if random percentage is below user set percentage
+        //if (addneg_pct < rand) { return;}
+        //addnegAddendumSet();
+        //// finally set a neg a1 problem using either top or bottom addendum
+        //prob_asm[2][2] = prob_asm[0][2] + prob_asm[1][2];
+        //a1_neg_problems += 1;
+
+
     }
 
     // setup and finish a A3 problem
@@ -1286,7 +1318,7 @@ var RMM_ASM = (function() {
         probColumnSetRandValue(2, 0, 10);
         levelA1NegativeProblem();
         //prob_asm  = [ [null, null, 1], [null, null, 0], [null,null,1] ];
-        //prob_asm  = [ [null, null, -8], [null, null, -2], [null,null,-10] ];
+        prob_asm  = [ [null, null, -8], [null, null, -2], [null,null,-10] ];
         //prob_asm  = [ [null, null, -5], [null, null, 1], [null,null,-4] ];
         carryforwardSet();
         probAnswerSet();
@@ -1298,7 +1330,7 @@ var RMM_ASM = (function() {
     // change to a equation with negative addendums
     function levelA1NegativeProblem() {
         console.log('levelA1NegativeProblem()');
-        var rand = parseFloat(getRandInt(0, 10) / 10, 10);
+        var rand = parseFloat(getRandInt(1, 11) / 10, 10);
         var pct_total = 0;
         // calc overall pct of add neg problems
         if (total_problems > 0) {
@@ -1307,7 +1339,7 @@ var RMM_ASM = (function() {
         // exit if too many addneg problems already unless in printmode
         if (!printmode && pct_total >= addneg_pct) { return; }
         // check if random percentage is below user set percentage
-        if (addneg_pct < rand) { return;}
+        if (addneg_pct <= rand) { return;}
         addnegAddendumSet();
         // finally set a neg a1 problem using either top or bottom addendum
         prob_asm[2][2] = prob_asm[0][2] + prob_asm[1][2];
@@ -1888,7 +1920,7 @@ var RMM_ASM = (function() {
 
     // set an answer svg path and x/y position (tricky) to the value arg
     function layoutAnswerNumber(answer, index) {
-        console.log('layoutAnswerNumber(answer, index)', answer, index);
+        console.error('layoutAnswerNumber(answer, index)', answer, index);
         // index in 0-base, left starting ref to answer box
         console.log(mod_lo, 'mod_lo');
         var id0 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_0');
@@ -1912,6 +1944,7 @@ var RMM_ASM = (function() {
         }
         // negative number (need to handle -10 differntly)
         // only used by ASM never M2 or LD
+        console.error(answer, 'answer');
         if (answer < 0) {
             if (answer > -10) {
                 id1.setAttribute('x', xpos_double[index][0]);
@@ -2262,6 +2295,7 @@ var RMM_ASM = (function() {
             if (pdata.digits === 2) { levelS2Init(); }
             if (pdata.digits === 3) { levelS3Init(); }
             subneg_pct = parseFloat(pdata.subneg_pct / 10, 10);
+            subtopneg_pct = parseFloat(pdata.subtopneg_pct / 10, 10);
         }
         if (pdata.module === 'm') {
             m1_digit = pdata.m1_digit;
