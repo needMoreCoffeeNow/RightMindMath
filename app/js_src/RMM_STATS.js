@@ -76,6 +76,7 @@ var RMM_STATS = (function() {
         var digit = -1;
         var m1_id = '';
         sdata = RMM_DB.getDbResult();
+        console.warn(sdata);
         console.log(sdata.length, 'sdata.length');
         len = sdata.length;
         if (len === 0) {
@@ -280,7 +281,7 @@ var RMM_STATS = (function() {
     function statsExportClick(ev) {
         console.log('statsExportClick()');
         var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
-        var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,ordered,chunked';
+        var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,equation,ordered,chunked';
         var date = null;
         var chunked = ''; // stores b/c for m2 else ''
         var i = 0;
@@ -322,6 +323,7 @@ var RMM_STATS = (function() {
             } else {
                 txt += ',';
             }
+            txt += sdata[i].equation;
             if (sdata[i].ordered) {
                 txt += 'True' + ',';
             } else {

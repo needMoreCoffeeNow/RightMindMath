@@ -408,6 +408,7 @@ var RMM_DB = (function() {
                    'idlevel' : data.idlevel,
                    'elapsed' : data.elapsed,
                    'time' : eq_time,
+                   'equation' : data.r_str.split('^')[1],
                    'days' : Math.floor((date_now - date_eq) / day_milli)
                    };
         // if m2 then we break out basic (m2b) & chunk (m2c)
@@ -462,6 +463,7 @@ var RMM_DB = (function() {
                     rec_last = rollupRec(data, id_last, eq_time, date_now);
                 }
                 data = cursor.value;
+                console.warn(data);
                 id_curr = data.idsession.split('_');
                 id_curr = id_curr[0] + '_' + id_curr[1];
                 // skip recs not matching iduser
