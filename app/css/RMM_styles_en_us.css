@@ -35,6 +35,21 @@ div.a1_neg_current {
   background:#fff;
 }
 
+div.addneg_note {
+  font-size:80%;
+  text-align:left;
+  padding-left:10px;
+  padding-right:10px;
+  background:#fff;
+}
+
+div.addneg_text {
+  font-size:80%;
+  text-align:left;
+  padding-left:10px;
+  padding-right:10px;
+}
+
 .chart {
   background:#ffe6e6;
   width:500px;

@@ -728,9 +728,22 @@ var RMM_MENU = (function() {
         }
 
     }
+
+    // handle exiting the s1 negative menu which sets the 2 related pdata vars
+    function subnegPdataUpdate(ev) {
+        console.error('subnegPdataUpdate(ev)');
+        var addneg_str = mydoc.getElementById('div_subneg_val').innerHTML;
+        var addtopneg_str = mydoc.getElementById('div_subtopneg_val').innerHTML;
+        var addneg = parseInt(addneg_str.substr(0, 1), 10);
+        var addtopneg = parseInt(addtopneg_str.substr(0, 1), 10);
+        pdata.subneg_pct = addneg;
+        pdata.subtopneg_pct = addtopneg;
+        checkProblemStart();
+    }
+
     // handle exiting the a1 negative menu which sets the 2 related pdata vars
     function addnegPdataUpdate(ev) {
-        console.log('clikAddNegExit(ev)');
+        console.log('addnegPdataUpdate(ev)');
         var addneg_str = mydoc.getElementById('div_addneg_val').innerHTML;
         var addtopneg_str = mydoc.getElementById('div_addtopneg_val').innerHTML;
         var addneg = parseInt(addneg_str.substr(0, 1), 10);
@@ -743,9 +756,17 @@ var RMM_MENU = (function() {
     // handle subneg number click
     function subnegSet(ev) {
         console.log('subnegSet(ev)');
-        var num_str = ev.target.id.split('_')[2];
-        pdata.subneg_pct = parseInt(num_str, 10);
-        checkProblemStart();
+        var id = (ev.target.id);
+        var parts = id.split('_');
+        var pct = parseInt(parts[2], 10);
+        var type = parts[1];
+        var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
+        txt = txt.replace('REPLACE_number', pct);
+        if (type === 'subneg') {
+            mydoc.getElementById('div_subneg_val').innerHTML = txt;
+        } else {
+            mydoc.getElementById('div_subtopneg_val').innerHTML = txt;
+        }
     }
     // handle subborrow yes/nor click
     function subborrowSet(ev) {
@@ -1540,6 +1561,7 @@ var RMM_MENU = (function() {
         console.log('levelsExit(ev)');
         id = ev.target.id;
         if (id == 'b_menu_addneg_save') { addnegPdataUpdate(); }
+        if (id == 'b_menu_subneg_save') { subnegPdataUpdate(); }
         hideAll();
         mydoc.getElementById('div_menu_main').style.display = 'block';
     }

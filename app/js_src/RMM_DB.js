@@ -125,6 +125,7 @@ var RMM_DB = (function() {
             'module' : null,
             'digits' : null,
             'subneg_pct' : 0,
+            'subtopneg_pct' : 0,
             'addneg_pct' : 0,
             'addtopneg_pct' : 0,
             'subborrow' : null,
