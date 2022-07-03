@@ -60,10 +60,6 @@ var RMM_DB = (function() {
         var req = null;
         if (old_version !== new_version) { db_upgrade = true; }
         db = ev.target.result;
-        console.log(db);
-        console.log(old_version, new_version, 'old_version, new_version');
-        console.log(db_upgrade, 'db_upgrade');
-        console.log(ev);
         if (old_version < 1) {
             db_session = db.createObjectStore('session', { keyPath: 'idsession' });
             db_session.createIndex('iduser', 'iduser', { unique: false });
@@ -200,7 +196,6 @@ var RMM_DB = (function() {
     // set the db_wait variables
     function dbSetWaitVars(tries, next_fnc) {
         console.log('dbSetWaitVars(tries, next_fnc)');
-        console.log(next_fnc);
         MAX_TRIES = tries;
         db_tries_count = 0;
         db_next_function = next_fnc;
@@ -261,7 +256,6 @@ var RMM_DB = (function() {
     // get the tstamp_max for each device for an iduser
     function sessionDeviceMaxTstamps(iduser_in) {
         console.log('sessionDeviceMaxTstamps(iduser_in)');
-        console.log(iduser_in);
         var obj = objectstoreGet('session', true);
         var req = null;
         var myindex = null;
@@ -304,7 +298,6 @@ var RMM_DB = (function() {
     // read table using an index filter
     function sessionDeviceUserGet(tstamp_in, ival) {
         console.log('sessionDeviceUserGet(tstamp_in, ival)');
-        console.log(tstamp_in, ival);
         var obj = objectstoreGet('session', true);
         var req = null;
         var myindex = null;
@@ -346,7 +339,6 @@ var RMM_DB = (function() {
     // read table using an index filter
     function getRecByIndex(table, iname, ival) {
         console.log('getRecByIndex(table, iname, ival)');
-        console.log(table, iname, ival);
         var obj = objectstoreGet(table, true);
         var req = null;
         var myindex = null;
@@ -435,7 +427,6 @@ var RMM_DB = (function() {
     // getAll recs for any tabler
     function sessionGetAllRollup(iduser, modnum, divmsg) {
         console.log('sessionGetAllRollup(iduser)');
-        console.log(iduser, 'iduser');
         var obj = objectstoreGet('session', true);
         var req = null;
         var cursor = null;
@@ -554,10 +545,8 @@ var RMM_DB = (function() {
     // add session record
     function addSessionRec(data) {
         console.log('addSessionRec(data)');
-        console.log(data);
         var obj = objectstoreGet('session', true);
         var req = null;
-        console.warn(data, 'data');
         if (!obj) { return; }
         transactionInit();
         req = obj.add(data);
@@ -576,7 +565,6 @@ var RMM_DB = (function() {
     // set pdata in setup table
     function setupPdataSet(my_iduser, pdata) {
         console.log('setupPdataSet(pdata)');
-        console.log(pdata);
         var obj = objectstoreGet('setup', true);
         var req = null;
         var data = null;
@@ -598,7 +586,6 @@ var RMM_DB = (function() {
     // set pdata for non-IDSETUP iduser in setup table
     function setupSnapshotPdataSet(my_iduser, pdata) {
         console.log('setupSnapshotPdataSet(my_iduser, pdata)');
-        console.log(pdata);
         var my_iduser = RMM_ASM.getIduser();
         var obj = objectstoreGet('setup', true);
         var req = null;
@@ -691,7 +678,6 @@ var RMM_DB = (function() {
     // delete recs using a cursor either all, or matching a key value
     function deleteRecs(table, key_name, key_value, store, modnum, divmsg) {
         console.log('deleteRecs(table, key_name, key_value)');
-        console.log(table, '<-table', key_name, '<-key_name', key_value, '<-key_value', store, '<-store');
         var obj = objectstoreGet(table, true);
         var req = null;
         var del_req = null;
@@ -718,8 +704,6 @@ var RMM_DB = (function() {
                     do_delete = true;
                 } else {
                     // check for key_name & key_value
-                    console.log(table, key_name, key_value);
-                    console.log(cursor.value[key_name] === key_value);
                     if (cursor.value[key_name] === key_value) {
                         do_delete = true;
                     }
@@ -731,7 +715,6 @@ var RMM_DB = (function() {
                 }
                 cursor.continue();
             } else {
-                console.log(count_delete, ' total count_delete------------------------------');
                 if (!store) { db_result = count_delete; }
                 db_complete = true;
             }
@@ -773,24 +756,18 @@ var RMM_DB = (function() {
         console.log('transErrorPass(ev)');
         if (ev.type === 'success') { return; }
         alert('transErrorPass() from: ' + pass_caller);
-        console.log(ev);
     }
 
     // set the sync_key value in the DB setup record
     function updateSyncKey(sync_key_in) {
         console.log('updateSyncKey()');
-        console.log('sync_key_in:', sync_key_in);
         var obj = objectstoreGet('setup', true);
-        console.log(obj);
         var req = null;
         var data = null;
         if (!obj) { console.error('no obj in updateSyncKey'); return; } //KEEPIN
-        console.warn(IDSETUP, 'IDSETUP');
         req = obj.get(IDSETUP);
         req.onsuccess = function(ev) {
-            console.log('req', req);
             data = req.result;
-            console.log('data', data);
             data['sync_key'] = sync_key_in;
             req = obj.put(data);
             req.onsuccess = function(ev) {
@@ -829,7 +806,6 @@ var RMM_DB = (function() {
     // getter for db_result
     function getDbResult() {
         console.log('getDbResult()');
-        //console.log(db_result);
         return db_result;
     }
 

@@ -53,7 +53,6 @@ var RMM_MENU = (function() {
     function initCharRange() {
         console.log('initCharRange()');
         var ranges = RMM_CFG.getCharRange();
-        console.log(ranges);
         var start = null;
         var end = null;
         var len = ranges.length;
@@ -81,14 +80,12 @@ var RMM_MENU = (function() {
         if (mod_str == 'a' || mod_str === 's' || mod_str === 'm') {
             mod_str = '' + mod_str + pdata.digits;
         }
-        console.log(mod_str, 'mod_str');
         return mod_str;
     }
 
     // get current level and user name for settings main menu
     function settingsUpdateCurrent() {
         console.log('settingsUpdateCurrent()');
-        console.log(pdata, 'pdata');
         var name = RMM_ASM.getName();
         var setup_needed = false;
         var level_str_id = 'TXT_level_' +  getFullModule();
@@ -117,11 +114,9 @@ var RMM_MENU = (function() {
     // handle settings icon click
     function settingsClick(ev) {
         console.log('settingsClick()');
-        console.log(pdata, 'pdata');
         var setup_needed = settingsUpdateCurrent();
         RMM_ASM.hideAll();
         hideAll();
-        console.log(pdata.module, 'pdata.module');
         if (!pdata.module) {
             mydoc.getElementById('div_menu_exit').style.display = 'none';
         } else {
@@ -130,7 +125,6 @@ var RMM_MENU = (function() {
         mydoc.getElementById('div_header').style.display = 'none';
         mydoc.getElementById('div_menu_container').style.display = 'block';
         mydoc.getElementById('div_menu_main').style.display = 'block';
-        console.log('done');
         if (setup_needed) {
             mydoc.getElementById('div_menu_info').innerHTML = getStr('MSG_level_not_set');
             mydoc.getElementById('div_menu_info').style.display = 'block';
@@ -184,7 +178,6 @@ var RMM_MENU = (function() {
     // show the options for multiplying one digit
     function showM1options() {
         console.log('showM1options()');
-        console.log(pdata);
         if (pdata.module === 'm') {
             mydoc.getElementById('m1_digit').value = pdata.m1_digit;
             mydoc.getElementById('m1_order').value = pdata.m1_order;
@@ -333,7 +326,6 @@ var RMM_MENU = (function() {
     function userMenuClick(ev) {
         console.log('userMenuClick(ev)');
         var id = ev.target.id;
-        console.log(id, 'id');
         hideAll();
         if (id === 'b_user_exit') {
             mydoc.getElementById('div_menu_main').style.display = 'block';
@@ -364,11 +356,9 @@ var RMM_MENU = (function() {
         var len = ids.length;
         var i = 0;
         var name_str = getStr('TXT_user_load_info');
-        console.log(get_mode, 'get_mode');
         user_iduser_name_xref = {};
         hideAll();
         // len = 1 means only default Guest exists (no added users)
-        console.log(ids, 'ids');
         if (len < 2) {
             mydoc.getElementById('div_user_menu').style.display = 'block';
             alert(getStr('MSG_no_user_recs'));
@@ -398,7 +388,6 @@ var RMM_MENU = (function() {
             html += ids[i].name + '</button>';
             html += '</div>';
         }
-        console.log(user_iduser_name_xref, 'xref');
         html += '<div style="margin-top:15px;">';
         html += '<button id="b_user_load_exit" class="mbutton" ';
         html += 'onclick="RMM_MENU.userLoadIdClick(event);">';
@@ -414,7 +403,6 @@ var RMM_MENU = (function() {
         var valid = null;
         var txt = '';
         iduserdelete = parseInt(ev.target.id, 10);
-        console.log(iduserdelete, 'iduserdelete');
         if (iduserdelete === IDGUEST) {
             alert(getStr('MSG_guest_no_delete'));
             return;
@@ -437,7 +425,6 @@ var RMM_MENU = (function() {
     // process user record delete
     function userDeleteUserRec() {
         console.log('userDeleteUserRec()');
-        console.log(iduserdelete, 'iduserdelete');
         RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserDelete);
         RMM_DB.deleteRecs('user', 'iduser', iduserdelete, true, 100, '');
     }
@@ -499,7 +486,6 @@ var RMM_MENU = (function() {
     // change the current user
     function changeUserCurrent(data) {
         console.log('changeUserCurrent(data)');
-        console.log(data);
         RMM_ASM.setIduser(data.iduser);
         RMM_ASM.setName(data.name);
         changeUserName();
@@ -512,7 +498,6 @@ var RMM_MENU = (function() {
         console.log('handleUserSnapshot()');
         var result = RMM_DB.getDbResult();
         var data = {};
-        console.log(result);
         if (result !== undefined) {
             pdata = result.pdata;
             changUserCurrentWrapup();
@@ -527,7 +512,6 @@ var RMM_MENU = (function() {
     // handle pdata change based on user snapshot
     function changUserCurrentWrapup() {
         console.log('changUserCurrentWrapup()');
-        console.log(pdata)
         RMM_ASM.showNotesSetValues(pdata);
         RMM_ASM.showNotesSetHtml();
         settingsUpdateCurrent();
@@ -597,10 +581,6 @@ var RMM_MENU = (function() {
     function handleUserCheckAdd() {
         console.log('handleUserCheckAdd()');
         var result = RMM_DB.getDbResult();
-        console.log(result, 'result');
-        console.log(RMM_DB.getDbComplete(), 'db_complete');
-        console.log(RMM_DB.getDbError(), 'db_error');
-        console.log(result === undefined);
         if (result === undefined) {
             addUserName();
             return;
@@ -618,7 +598,6 @@ var RMM_MENU = (function() {
         // leading digit cannot be a 1 to protect default guest id
         data.iduser += RMM_ASM.getRandInt(200, 1000) * 1000000;
         RMM_STATSLIVE.newUserAdd(data.iduser);
-        console.log(data);
         RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserAdd);
         RMM_DB.addRecord('user', data);
     }
@@ -629,7 +608,6 @@ var RMM_MENU = (function() {
         var data = RMM_DB.getDbResult();
         pdata = RMM_DB.pdataInit();
         data['pdata'] = pdata;
-        console.log(data, 'data');
         RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userAddFinish);
         RMM_DB.setupParametersUpdate(data);
     }
@@ -664,9 +642,7 @@ var RMM_MENU = (function() {
     // handle levels change
     function levelsSet(ev) {
         console.log('levelsSet(ev)');
-        console.log(pdata);
         var id = (ev.target.id);
-        console.log(id, 'id');
         if (id === 'b_menu_add') {
             pdata.module = 'a';
             showMenuDigits();
@@ -699,7 +675,6 @@ var RMM_MENU = (function() {
     function digitsSet(ev) {
         console.log('digitsSet(ev)');
         var id = (ev.target.id);
-        console.log(id, 'id');
         if (id === 'b_digits_1') { pdata.digits = 1; }
         if (id === 'b_digits_2') { pdata.digits = 2; }
         if (id === 'b_digits_3') { pdata.digits = 3; }
@@ -739,7 +714,7 @@ var RMM_MENU = (function() {
 
     // handle exiting the s1 negative menu which sets the 2 related pdata vars
     function subnegPdataUpdate(ev) {
-        console.error('subnegPdataUpdate(ev)');
+        console.log('subnegPdataUpdate(ev)');
         var addneg_str = mydoc.getElementById('div_subneg_val').innerHTML;
         var addtopneg_str = mydoc.getElementById('div_subtopneg_val').innerHTML;
         var addneg = parseInt(addneg_str.substr(0, 1), 10);
@@ -780,9 +755,6 @@ var RMM_MENU = (function() {
     function subborrowSet(ev) {
         console.log('subborrowSet(ev)');
         var num_str = ev.target.id.split('_')[2];
-        console.log(ev.target);
-        console.log(ev.target.id);
-        console.log(ev.target.value);
         pdata.subborrow = parseInt(num_str, 10);
         checkProblemStart();
     }
@@ -820,7 +792,6 @@ var RMM_MENU = (function() {
         mydoc.getElementById('div_m2_options').style.display = 'none';
         mydoc.getElementById('div_header').style.display = 'block';
         RMM_ASM.hideAll();
-        console.log(pdata);
         RMM_DB.setupPdataSet(IDSETUP, pdata);
         RMM_M2.setCounters();
         RMM_M2.nextM2Equation();
@@ -830,7 +801,6 @@ var RMM_MENU = (function() {
     function m1optionsStartChange(ev) {
         console.log('m1optionsStartChange(ev)');
         var start = parseInt(mydoc.getElementById('m1_start').value, 10);
-        console.log(start, 'start');
         if (start === 11) {
             mydoc.getElementById('m1_end').value = 20;
             mydoc.getElementById('m1_end').disabled = true;
@@ -847,7 +817,6 @@ var RMM_MENU = (function() {
         pdata.divisor_pct = parseInt(mydoc.getElementById('d3_divisor').value, 10);
         pdata.decimal_pct = parseInt(mydoc.getElementById('d3_decimal').value, 10);
         RMM_D3.setEquationVars(pdata);
-        console.warn(pdata);
         checkProblemStart();
     }
 
@@ -972,8 +941,16 @@ var RMM_MENU = (function() {
             }
             if (rows[i].length === 3) {
                 temp[3] = parseInt(rows[i].substr(2, 1), 10);
-                temp[2] = parseInt(rows[i].substr(1, 1), 10);
-                temp[1] = parseInt(rows[i].substr(0, 1), 10);
+                if (rows[i].substr(1, 1) === '-') {
+                    temp[2] = '-';
+                } else {
+                    temp[2] = parseInt(rows[i].substr(1, 1), 10);
+                }
+                if (rows[i].substr(0, 1) === '-') {
+                    temp[1] = '-';
+                } else {
+                    temp[1] = parseInt(rows[i].substr(0, 1), 10);
+                }
             }
             if (rows[i].length === 4) {
                 temp[3] = parseInt(rows[i].substr(3, 1), 10);
@@ -1012,8 +989,6 @@ var RMM_MENU = (function() {
         var dividend = vars[1];
         var quotient = vars[2].split('.')[0];
         var decimal = vars[3].length === 1 ? vars[3] : vars[3].slice(2, 3);
-        console.log(problem, 'problem');
-        console.log(divisor, 'divisor', dividend, 'dividend', quotient, 'quotient', decimal, 'decimal');
         // offset numbers using one nested svg minus 18 for 4th answer digit
         svg = '<svg x="' + (margins.page_left) + '" y="0">';
         path = RMM_ASM.pathTransform(getNums(8), 'printd3');
@@ -1146,8 +1121,6 @@ var RMM_MENU = (function() {
             svg_txt = '<svg width="110" height="70" viewBox="0 0 110 70" x="0" y="0" transform="translate(';
         }
         // seven lines of problems, 6 problems per line
-        console.log('problems');
-        console.log(problems);
         for (i=0; i<rows; i++) {
             html += div_top + i + '">';
             for (j=0; j<num_prob; j++) {
@@ -1172,7 +1145,6 @@ var RMM_MENU = (function() {
                 html += '&nbsp</div>';
             }
         }
-        //console.log(html);
         mydoc.getElementById('div_print_page').innerHTML = html;
     }
 
@@ -1187,10 +1159,7 @@ var RMM_MENU = (function() {
     // loop thru problem setup to build full array
     function printProblemsBuildArray() {
         console.log('printProblemsBuildArray()');
-        console.log(pdata);
         var module = pdata.module;
-        console.log(module, 'module');
-        console.log(pdata, 'pdata');
         var i = 0;
         var len = 42;
         problems = [];
@@ -1212,7 +1181,6 @@ var RMM_MENU = (function() {
             }
         }
         RMM_ASM.setPrintmode(false);
-        console.log(problems);
     }
 
     // create print problems, save to the db then print page display (onsuccess)
@@ -1262,7 +1230,6 @@ var RMM_MENU = (function() {
     function printMenuClick(ev) {
         console.log('printMenuClick(ev)');
         var id = ev.target.id;
-        console.log(id, 'id');
         hideAll();
         get_mode = '';
         if (id === 'b_print_exit') {
@@ -1359,7 +1326,6 @@ var RMM_MENU = (function() {
     function printPageIdClick(ev) {
         console.log('printPageIdClick(ev)');
         var my_idprint =ev.target.id;
-        console.log(my_idprint, 'my_idprint');
         if (my_idprint === 'b_print_load_exit') {
             hideAll();
             mydoc.getElementById('div_print_menu').style.display = 'block';
@@ -1464,7 +1430,6 @@ var RMM_MENU = (function() {
     function menuMainClick(ev) {
         console.log('menuMainClick()');
         var id = ev.target.id;
-        console.log(id, 'id');
         hideAll();
         switch(id) {
             case 'b_menu_sync':
@@ -1512,14 +1477,12 @@ var RMM_MENU = (function() {
     function togClick(ev) {
         console.log('togClick()');
         var id = (ev.target.id);
-        console.log(id, 'id');
         toggleNotes(id);
     }
 
     // toggle problem notes between off/on
     function toggleNotes(id) {
         console.log('toggleNotes(id)');
-        console.log(id, 'id');
         var span = id.replace('b_', 's_');
         var ele = mydoc.getElementById(span);
         var is_on = true;
@@ -1553,8 +1516,6 @@ var RMM_MENU = (function() {
     function notesExit(ev) {
         console.log('notesExit()');
         var id = (ev.target.id);
-        console.log(id, 'id');
-        console.log(pdata);
         hideAll();
         RMM_DB.setupPdataSet(IDSETUP, pdata);
         if (id === 'b_tog_exit') {
@@ -1577,7 +1538,6 @@ var RMM_MENU = (function() {
     // exit from msg options dialog
     function msgExit(ev) {
         console.log('msgExit(ev)');
-        console.log(msg_div_next, 'msg_div_next');
         input_active = false;
         mydoc.getElementById('txt_msg_textarea').value = '';
         mydoc.getElementById('txt_msg_textarea').style.display = 'none';

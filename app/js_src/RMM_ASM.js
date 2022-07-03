@@ -142,7 +142,6 @@ var RMM_ASM = (function() {
             if (level === 's') { level += db_result.pdata.digits; }
             RMM_STATSLIVE.displayUserCounts(level, false);
             RMM_SYNC.setSyncKey(db_result.sync_key);
-            console.warn(db_result);
         }
         if (!db_result || !db_result.pdata) {
             iduser = getStr('DAT_guest');
@@ -150,8 +149,6 @@ var RMM_ASM = (function() {
             RMM_MENU.settingsClick(null);
             return;
         }
-        console.log(iduser, 'iduser');
-        console.log(db_result.pdata, 'pdata');
         if (db_result.device === null) {
             RMM_MENU.inputDeviceName(null);
             return;
@@ -266,9 +263,7 @@ var RMM_ASM = (function() {
     // read the SymnNums transform string & add it to end of svg path string
     function pathTransform(path, id) {
         console.log('pathTransform(path, id)');
-        console.log(id, 'id');
         var tform = getTransforms(id);
-        //console.log(tform);
         return path.replace('/>', ' ' + tform + '/>');
     }
 
@@ -287,11 +282,9 @@ var RMM_ASM = (function() {
     // resets responses array: set each element = corresponding answer element
     function setResponsesAnswersActive() {
         console.log('setResponsesAnswersActive()');
-        console.log(answers, 'answers b/4');
         if (!answers[level_done]) { return; }
         responses = [];
         if (level_done > 3) {
-            ////////console.error(level_done, 'g.t 3 error in setResponsesAnswersActive()');
             return;
         }
         responses = [answers[level_done][0], 
@@ -299,7 +292,6 @@ var RMM_ASM = (function() {
                      answers[level_done][2], 
                      answers[level_done][3]];
         answer_active = [true, true, true, true];
-        console.log(answer_active, 'answer_active');
     }
 
     // read ASM operator path & transform then set ASM grid op innerHTML
@@ -339,16 +331,26 @@ var RMM_ASM = (function() {
 
     // set each svg rect num innerHTML in the ASM grid to '' (blank)
     function setNumbers() {
-        //console.log('setNumbers()');
-        //console.log(level, 'level');
+        console.log('setNumbers()');
         var i = 0;
         var j = 0;
         var id = '';
+        var temp_abs = 0; // store integer parts of prob_asm cell > 9
+        var temp = 0; // store integer parts of prob_asm cell > 9
         for (i=0; i<3; i++) {
             for (j=0; j<3; j++) {
                 id = 'asm_num_' + i + j;
                 if (prob_asm[i][j] === null) {
                     mydoc.getElementById(id).innerHTML = '';
+                    continue;
+                }
+                // handle S1 problem where ones abs(answer) may be > 9
+                if (Math.abs(prob_asm[i][j]) > 9) {
+                    temp_abs = Math.abs(prob_asm[i][j]);
+                    temp = temp_abs % 10;
+                    mydoc.getElementById(id).innerHTML = getNums(temp);
+                    temp = parseInt(temp_abs / 10, 10);
+                    mydoc.getElementById('asm_num_21').innerHTML = getNums(temp);
                     continue;
                 }
                 mydoc.getElementById(id).innerHTML = getNums(prob_asm[i][j]);
@@ -412,7 +414,7 @@ var RMM_ASM = (function() {
 
     // calc ASM col value including carries & borrows gives/gets
     function colAnswer(col) {
-        //console.log('colAnswer(col)');
+        console.log('colAnswer(col)', col, '=col', opASM, '=opASM');
         var val = 3579; // distinctive number to id nothing set
         if (opASM === '+') {
             val = prob_asm[0][col] + prob_asm[1][col] + carries[col];
@@ -430,7 +432,6 @@ var RMM_ASM = (function() {
 
     function answersRandomOptimize(myval, found) {
         console.log('answersRandomize(myval, myarr)');
-        console.log(myval, found, 'myval, found in optimize');
         var limit = 10;
         var i = 0;
         var count = 0;
@@ -484,17 +485,15 @@ var RMM_ASM = (function() {
             answers[i] = answersRandomOptimize(myval, found);
             found = [];
         }
-        console.log(answers, 'answers in SetValues');
     }
 
     // finds a valid col answer using correct global & existing in 4-ans array
     function answerGetValid(found, col, limit, ans_max) {
-        //console.log('answerGetValid(found, col)');
-        //console.log(found, col, limit, ans_max);
+        console.log('answerGetValid(found, col)');
         var myans = null;
         var tries = 0;
         var val = colAnswer(col);
-        var minmax = getMinMax(val, col, limit, ans_max); // [0]=min, [1]=max
+        var minmax = getMinMax(val, limit, ans_max); // [0]=min, [1]=max
         if (minmax[0] === null || minmax[1] === null) {
             return;
         }
@@ -527,8 +526,8 @@ var RMM_ASM = (function() {
     }
 
     // min & max changes to correct ans for calcing 4-ans array (op dependent)
-    function getMinMax(val, col, limit, ans_max) {
-        //console.log('getMinMax(val, col, limit)');
+    function getMinMax(val, limit, ans_max) {
+        console.log('getMinMax(val, limit)', val, limit);
         var minmax = [null, null]; // [0]=min, [1]=max
         if (opASM === '+') {
             // need special handling of a1 problem with potential neg answers
@@ -543,7 +542,7 @@ var RMM_ASM = (function() {
             minmax[1] = val + limit > ans_max ? ans_max : val + limit;
         }
         if (opASM === '-') {
-            minmax[0] = val - limit < -13 ? -13 :  val - limit;
+            minmax[0] = val - limit < -25 ? -25 :  val - limit;
             minmax[1] = val + limit > ans_max ? ans_max : val + limit;
         }
         if (opASM === 'x') { minmax = [limit, ans_max]; }
@@ -586,7 +585,7 @@ var RMM_ASM = (function() {
 
     // set prob_asm 3rd (answer) row using row0 opASM and row1
     function probAnswerSet() {
-        console.log('probAnswerSet()');
+        console.log('----------probAnswerSet()');
         var vals = probRowsAsIntegers();
         var ans = vals[0] + vals[1];
         if (opASM === '-') { ans = vals[0] - vals[1] };
@@ -623,8 +622,6 @@ var RMM_ASM = (function() {
     function nextProblemLevel() {
         console.log('nextProblemLevel()');
         // keep if (level_done === level_steps) as first check
-        console.log(level_done, level_steps, 'level_done, level_steps');
-        console.log(this_col, 'this_col');
         if (level_done === level_steps) { // start a new problem
             nextLevelWrapUp();
             next_problem_init();
@@ -644,16 +641,13 @@ var RMM_ASM = (function() {
         nextColumnHighlight();
         if (level_done === 0) { return; }
         // advance the column, and then check for borrows
-        console.log(this_col, 'this_col--------------------------------------------------b4');
         this_col -= 1;
-        console.log(this_col, 'this_col--------------------------------------------------after');
         if (level === 's2' || level === 's3') {
             borrowNoteCheck();
             borrowShowInfo();
         }
         if (level === 's3' && this_col === 1) { doubleborrowAlert(); }
         time_start = Date.now();
-        console.warn(time_start, 'time_start nextProblemLevel');
     }
 
     // set the highlight for the column
@@ -678,7 +672,6 @@ var RMM_ASM = (function() {
     // show the appropriate borrowInfo
     function borrowShowInfo() {
         console.log('borrowShowInfo()');
-        console.log(level, level_steps, level_done, '(level, level_steps, level_done');
         var note = '';
         var c_gets = this_col === 2 ? '1s' : '10s';
         var c_gives = this_col === 2 ? '10s' : '100s';
@@ -703,7 +696,7 @@ var RMM_ASM = (function() {
                     borrow_info_active = true; // set flag for display after bnote popup clears
                 }
             }
-            console.warn('EXIT: if (giver < 0 || giver > 2)');
+            console.warn('EXIT: if (giver < 0 || giver > 2)'); //KEEPIN
             return;
         }
         n_gives = prob_asm[0][giver] - borrows['gives'+giver];
@@ -838,7 +831,6 @@ var RMM_ASM = (function() {
     function borrowNeeded() {
         console.log('borrowNeeded');
         borrowsSetDict();
-        console.log(borrows.gets0 + borrows.gets1 + borrows.gets2 > 0);
         return borrows.gets0 + borrows.gets1 + borrows.gets2 > 0;
     }
     
@@ -976,9 +968,7 @@ var RMM_ASM = (function() {
         hideAll();
         level_done = 0;
         total_problems += 1;
-        console.log('prob_fnc()----------------------start');
         prob_fnc();
-        console.log('prob_fnc()----------------------end');
         layoutInitialGrid(col_layout_array);
     }
 
@@ -1065,10 +1055,6 @@ var RMM_ASM = (function() {
         console.log('levelM1Problem()');
         var pos_needed = true;
         var row1 = getRandInt(m1_row1_min, m1_row1_max);
-        console.log(m1_order, 'm1_order')
-        console.log(m1_row1_min, 'm1_row1_min');
-        console.log(m1_row1_max, 'm1_row1_max');
-        console.log(row1, 'row1');
         problemInit('m1', 1, 'x', 'multiply')
         if (!m1_order) { row1 = m1RandomPatternCheck(row1); }
         prob_asm[0][2] = m1_digit;
@@ -1138,14 +1124,12 @@ var RMM_ASM = (function() {
     // display chunk message after button click
     function chunkShow(ev) {
         console.log('chunkShow(ev)');
-        console.log(mydoc.getElementById('div_chunkit').innerHTML);
         mydoc.getElementById('div_chunkit').style.display = 'block';
     }
 
     // setup and finish a S3 problem
     function levelS3Problem() {
         console.log('levelS3Problem()');
-        console.log(subborrow, 'subborrow');
         var pos_needed = true;
         problemInit('s3', 3, '-', 'minus')
         while (pos_needed) {
@@ -1173,7 +1157,6 @@ var RMM_ASM = (function() {
         probAnswerSet();
         finishProbSetup();
         correct = colAnswer(2);
-        console.log(correct, '--------------------------------------------------correct');
     }
 
     // setup and finish a S2 problem
@@ -1192,17 +1175,15 @@ var RMM_ASM = (function() {
         probAnswerSet();
         finishProbSetup();
         correct = colAnswer(2);
-        console.log(correct, '--------------------------------------------------correct');
     }
 
     // setup and finish a S1 problem
     function levelS1Problem() {
-        console.error('levelS1Problem()');
+        console.log('levelS1Problem()');
         var neg_prob = false;
         var pos_needed = true;
         var neg_needed = true;
         var myrand = parseFloat(getRandInt(1, 11) / 10, 10);
-        console.error(myrand, 'myrand 01');
         problemInit('s1', 1, '-', 'minus');
         // use simple randomize for print negative problem, and
         // more sophisticated randomization across total problem for non-print
@@ -1211,19 +1192,14 @@ var RMM_ASM = (function() {
         } else {
             neg_prob = (s1_neg_problems / total_problems) < subneg_pct;
         }
-        console.error(neg_prob, '---------------neg_prob');
         if (neg_prob) {
             while (neg_needed) {
                 probColumnSetRandValue(2, 0, 10);
                 if (colAnswer(2) < 0) { neg_needed = false; }
             }
             myrand = parseFloat(getRandInt(1, 11) / 10, 10);
-            console.error(myrand, subtopneg_pct, 'myrand, subtopneg_pct');
             if (myrand <= subtopneg_pct && prob_asm[0][2] !== 0) {
-                console.error('-------setting subtopneg');
                 prob_asm[0][2] = prob_asm[0][2] * -1;
-                prob_asm[2][2] = prob_asm[0][2] - prob_asm[1][2];
-                console.error(prob_asm);
             }
         } else {
             while (pos_needed) {
@@ -1231,34 +1207,18 @@ var RMM_ASM = (function() {
                 if (colAnswer(2) > -1) { pos_needed = false; }
             }
         }
+        prob_asm[2][2] = prob_asm[0][2] - prob_asm[1][2];
         //prob_asm  = [ [null, null, 1], [null, null, 9], [null, null, -8] ];
         //prob_asm  = [ [null, null, 5], [null, null, 1], [null, null, 4] ];
-        prob_asm  = [ [null, null, -2], [null, null, 8], [null, null, -10] ];
+        //prob_asm  = [ [null, null, -2], [null, null, 8], [null, null, -10] ];
+        //prob_asm  = [ [null, null, 7], [null, null, 8], [null, null, -1] ];
+        //prob_asm  = [ [null, null, -6], [null, null, 9], [null, null, -15] ];
         borrowsSetDict();
         if (colAnswer(2) < 0) { s1_neg_problems += 1; }
         //probColumnSetRandValue(2, 0, 10);
-        probAnswerSet();
+        //probAnswerSet();
         finishProbSetup();
         correct = colAnswer(2);
-        console.log(correct, '--------------------------------------------------correct');
-
-
-        //var rand = parseFloat(getRandInt(0, 10) / 10, 10);
-        //var pct_total = 0;
-        //// calc overall pct of add neg problems
-        //if (total_problems > 0) {
-        //    pct_total = parseFloat(a1_neg_problems / total_problems, 10);
-        //}
-        //// exit if too many addneg problems already unless in printmode
-        //if (!printmode && pct_total >= addneg_pct) { return; }
-        //// check if random percentage is below user set percentage
-        //if (addneg_pct < rand) { return;}
-        //addnegAddendumSet();
-        //// finally set a neg a1 problem using either top or bottom addendum
-        //prob_asm[2][2] = prob_asm[0][2] + prob_asm[1][2];
-        //a1_neg_problems += 1;
-
-
     }
 
     // setup and finish a A3 problem
@@ -1291,7 +1251,6 @@ var RMM_ASM = (function() {
         finishProbSetup();
         layoutColumnHighlight(['', '_back', '_front']);
         correct = colAnswer(2);
-        console.log(correct, '--------------------------------------------------correct');
     }
 
     // setup and finish a A2 problem
@@ -1308,7 +1267,6 @@ var RMM_ASM = (function() {
         finishProbSetup();
         layoutColumnHighlight(['', '_back', '_front']);
         correct = colAnswer(2);
-        console.log(correct, '--------------------------------------------------correct');
     }
 
     // setup and finish a A1 problem
@@ -1324,7 +1282,6 @@ var RMM_ASM = (function() {
         probAnswerSet();
         finishProbSetup();
         correct = colAnswer(2);
-        console.log(correct, '--------------------------------------------------correct');
     }
 
     // change to a equation with negative addendums
@@ -1365,7 +1322,7 @@ var RMM_ASM = (function() {
 
     // converts the ASM grid into a str: row0|row1|row2|op where rows = int vals
     function reduceProblem() {
-        console.log('reduceProblem()');
+        console.log('---------------------reduceProblem()');
         var op1 = prob_asm[0].join('');
         var op2 = prob_asm[1].join('');
         var ans = prob_asm[2].join('');
@@ -1393,7 +1350,6 @@ var RMM_ASM = (function() {
     // apply the blur filter to svg id=asm & set timer to call blur remove fnc
     function blurBreakStart(milli) {
         console.log('blurBreakStart()');
-        console.log('milli', milli);
         mydoc.getElementById('asm').className.baseVal = 'f3';
         // we use rotate(0deg) to force Safari to redraw asm in blurBreakEnd
         // so must clear it here otherwise it only works first time 
@@ -1415,13 +1371,10 @@ var RMM_ASM = (function() {
         if (!borrow_note_active) {
             time_start = Date.now();
         }
-        console.log(level, 'level');
-        console.log(level_steps, 'level_steps');
         if (level_steps > 1 && level.substr(0, 1) === 's') {
             borrowNoteCheck();
         }
         chunkMessage(true);
-        console.log('baseVal', mydoc.getElementById('asm').className.baseVal);
         if (!borrow_note_active) {
             mydoc.getElementById('svg_gear').style.opacity = '1.0';
         }
@@ -1443,7 +1396,6 @@ var RMM_ASM = (function() {
         index = parseInt(bid.replace('b', '') , 10);
         answer_active[index] = false;
         complete = responses[index] === correct;
-        console.warn(complete, 'complete-------------------------------------');
         // add timestamp to int in responses if not yet clicked (still an int)
         if (typeof(responses[index]) !== 'string') {
             responses[index] = Date.now() + '_' + responses[index];
@@ -1451,7 +1403,6 @@ var RMM_ASM = (function() {
         }
         if (!complete) {
             layoutVerdict(index, 'multiply');
-            console.warn('EXIT answerClick !complete-------------------------');
             return;
         }
         if (module != 'm2' && module != 'd3') {
@@ -1460,15 +1411,11 @@ var RMM_ASM = (function() {
             recordAnswer();
         }
         correctAnswerHandler(index);
-        console.warn('FINISHED answerClick complete=true---------------------');
     }
 
     // steps for ASM correct answer click (problem level dependencies)
     function correctAnswerHandler(index) {
         console.log('correctAnswerHandler(index) ------------------------------------------------------------------------');
-        console.log(module, 'module');
-        ////////console.error(shnote_numpos, 'shnote_numpos');
-        ////////console.error(shnote_next, 'shnote_next');
         bnext_note_active = false;
         setCarryOverride();
         // answer buttons updates
@@ -1484,12 +1431,9 @@ var RMM_ASM = (function() {
             RMM_M2.correctAnswerHandler();
             return;
         }
-        ////////console.error(level, 'level-----------------------');
-        ////////console.error(level_steps, level_done, 'level_steps, level_done-------');
         // update answer line befor incrementing level_done
         answerLineReveal();
         // any level 1 problem either show Next Problem or goto next problem
-        ////////console.error('starting: if (level === a1 || level === s1 || level === m1) {');
         if (level === 'a1' || level === 's1' || level === 'm1') {
             RMM_STATSLIVE.displayUserCounts(level, true);
             if (shnote_next) {
@@ -1501,31 +1445,15 @@ var RMM_ASM = (function() {
             }
             return;
         }
-        ////////console.error('MULTI-STEP----------------------------------------------');
         // handle completed multi-step problem and next_problem popup false
-        ////////console.error('---------vars start----------');
-        ////////console.error('---------vars start----------');
-        ////////console.error(complete, 'complete');
-        ////////console.error(shnote_next, 'shnote_next');
-        ////////console.error(shnote_numpos, 'shnote_numpos');
-        ////////console.error(shnote_carry, 'shnote_carry');
-        ////////console.error(shnote_bpopup, 'shnote_bpopup');
-        ////////console.error(shnote_borrow, 'shnote_borrow');
-        ////////console.error(carry_override, 'carry_override');
-        ////////console.error(level_steps, level_done, 'level_steps, level_done-------');
-        ////////console.error(carries, 'carries');
-        ////////console.error('---------vars end----------');
-        ////////console.error('---------vars end----------');
         ////////// handle last step in multi-step
         // either go to next problem or show Next Problem popup
         if ( (level_done + 1) >= level_steps) {
-            ////////console.error('HANDLE LAST STEP------------------------------------');
             level_done += 1;
             RMM_STATSLIVE.displayUserCounts(level, true);
             if (!shnote_next) {
                 next_problem_init();
             } else {
-                ////////console.error('DO --- nextButtonText()');
                 nextButtonText();
                 activateSvgNext();
             }
@@ -1534,7 +1462,6 @@ var RMM_ASM = (function() {
         // handle multi-step problems where either b_next is shown with either
         // number position or next problem prompts are shown
         if (level_steps > 1) {
-            ////////console.error('if (level_steps > 1) {');
             // check number position prompt befor increment level_done
             numberPositionText();
             level_done += 1;
@@ -1546,23 +1473,14 @@ var RMM_ASM = (function() {
         }
         setResponsesAnswersActive();
         complete = false;
-        ////////console.error(shnote_numpos, 'shnote_numpos');
-        ////////console.error(shnote_next, 'shnote_next');
-        ////////console.error(carries, 'carries');
         if (shnote_next === false && shnote_numpos === false) {
-            console.log('-----1-----------------------start');
             nextProblemLevel();
-            console.log('-----1-----------------------end');
         }
         if (level.substr(0, 1) === 's') {
             if (bnext_note_active) {
-                console.log('-----2-----------------------start');
                 activateSvgNext();
-                console.log('-----2-----------------------end');
             } else {
-                console.log('-----3-----------------------start');
                 nextProblemLevel();
-                console.log('-----3-----------------------end');
             }
         }
         if (level.substr(0, 1) === 'a') {
@@ -1573,28 +1491,18 @@ var RMM_ASM = (function() {
                 }
             }
             if (shnote_numpos) {
-                console.log('-----4-----------------------start');
                 activateSvgNext();
-                console.log('-----4-----------------------end');
             } else {
                 if (!shnote_carry || !carry_override) {
-                    console.log('-----5-----------------------start');
                     nextProblemLevel();
-                    console.log('-----5-----------------------end');
                 } else {
-                    console.log('-----6-----------------------start');
                     activateSvgNext();
-                    console.log('-----6-----------------------end');
                 }
             }
         }
-        console.log(level, 'level');
         if (shnote_bpopup && level.substr(0,1) === 's') {
-            console.log('-----7-----------------------start');
             mydoc.getElementById('div_note').style.visibility = 'hidden';
-            console.log('-----7-----------------------end');
         }
-        console.log('correctAnswerHandler DONE ------------------------------------------------------------------------');
     }
 
     // show the blockAll and svg_next elements
@@ -1608,15 +1516,12 @@ var RMM_ASM = (function() {
 
     function setCarryOverride() {
         console.log('setCarryOverride()');
-        ////////console.error(level_done, 'level_done');
-        ////////console.error(carries, 'carries');
         var carry_ahead = 0;
         // check for a carry. Note carries[0] = hundreds, [1]=tens, [2]=ones
         // which is opposite how number cols work. Only check tens & 000s.
         if (level_done === 0) { carry_ahead = carries[1]; } // num col = 1s [2]
         if (level_done === 1) { carry_ahead = carries[0]; } // nom col = 10s [1]
         carry_override = carry_ahead !== 0;
-        ////////console.error(carry_override, '= carry_override at exit');
     }
 
     // show appropriate next button text based on levels & done
@@ -1626,11 +1531,9 @@ var RMM_ASM = (function() {
         setCarryOverride();
         bnext_note_active = false;
         if (shnote_numpos === false && !carry_override) {
-            ////////console.error('----exit 01');
             return;
         }
         if (level_steps === level_done) {
-            ////////console.error('----exit 02');
             return;
         }
         bnext_note_active = true;
@@ -1643,35 +1546,28 @@ var RMM_ASM = (function() {
             if (level_done === 1) { bnext.innerHTML = getStr('TXT_next_100'); }
             if (level_done === 2) { bnext.innerHTML = getStr('TXT_next_prob'); }
         }
-        console.log('numberPositionText Done');
     }
 
     // show appropriate next button text based on levels & done
     function nextButtonText() {
         console.log('nextButtonText()');
-        console.log(level_steps, 'level_steps', level_done, 'level_done', '--------------------------------------------------');
         var bnext = mydoc.getElementById('b_next');
         if (!shnote_next) {
-            ////////console.error('EXIT !shnote_next');
             return;
         }
         if (level_done < level_steps) {
-            ////////console.error('EXIT level_done < level_steps');
             return;
         }
         bnext_note_active = true;
         if (level_steps > level_done) {
-            ////////console.error('EXIT level_steps > level_done');
             return;
         }
         mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_prob');
-        ////////console.error(mydoc.getElementById('b_next').innerHTML, 'getElementById(b_next).innerHTML');
     }
 
     // answer line (row2): display the appropriate numbers
     function answerLineReveal() {
         console.log('answerLineReveal()');
-        console.log(level, 'level');
         if (level === 'm1') {
             layoutToggleRow2Visibility(true, [true, true, true]);
             return;
@@ -1716,7 +1612,6 @@ var RMM_ASM = (function() {
         var r_str = '';
         var tic = '^';
         var now = Date.now();
-        console.log(getGuestActive(), 'getGuestActive()');
         if (getGuestActive()) { return; }
         data['iduser'] = iduser;
         data['idlevel'] = level;
@@ -1724,7 +1619,6 @@ var RMM_ASM = (function() {
         data['time'] = now - time_start;
         data['tstamp'] = now;
         data['elapsed'] = now - time_enter;
-        console.log(data['time'], 'time');
         data['tries'] = tries;
         r_str += level + '.' + level_steps + '.' + level_done;
         r_str += tic + problem_str;
@@ -1733,14 +1627,12 @@ var RMM_ASM = (function() {
         }
         r_str += tic + responses.join('|');
         data['r_str'] = r_str;
-        console.log('%c' + r_str, 'color:#009933;');
         RMM_DB.addSessionRec(data);
     }
 
     // handle click on block (full window cover) presented after correct ans
     function blockAllClick(ev) {
         console.log('blockAllClick(ev)');
-        console.log( borrow_info_active, 'borrow_info_active');
         //alert('blockAllClick');
         mydoc.getElementById('blockAll').style.display = 'none';
         mydoc.getElementById('svg_gear').style.opacity = '1.0';
@@ -1815,13 +1707,11 @@ var RMM_ASM = (function() {
         answerButtonClassReset();
         layoutVerdict(null, '');
         showASM();
-        console.log('layoutInitialGrid()---------------------------------------end');
     }
 
     // set style.display for SINGLE row0 number slash
     function layoutNumslashSingle(col, show) {
         console.log('layoutNumslashSingle(col, show)');
-        console.log(col, 'col', show, 'show');
         var id = 'asm_bc_' + col + '_slash_num';
         var show = show ? 'block' : 'none'
         mydoc.getElementById(id).style.display = show;
@@ -1851,40 +1741,45 @@ var RMM_ASM = (function() {
 
     // show/hide row2 (answer) in ASM grid: if grid box has value show/hide it
     function layoutToggleRow2Visibility(show, columns) {
-        console.log('layoutToggleRow2Visibility(show)');
-        console.log(show, columns, 'show, columns');
-        console.log(prob_asm, 'prob_asm');
-        console.log(level, 'level');
+        console.log('layoutToggleRow2Visibility(show)', show, columns);
         if (!show) {
             mydoc.getElementById('asm_num_20').style.display = 'none';
             mydoc.getElementById('asm_num_21').style.display = 'none';
             mydoc.getElementById('asm_num_22').style.display = 'none';
             mydoc.getElementById('asm_num_22_neg').style.display = 'none';
-            console.log('NO SHOW EXit');
+            mydoc.getElementById('asm_num_DD_neg').style.display = 'none';
             return;
         }
-        console.log('-------------------1');
         if (columns[0] && prob_asm[2][0] !== null) {
             mydoc.getElementById('asm_num_20').style.display = 'block';
         }
-        console.log('-------------------2');
         if (columns[1] && prob_asm[2][1] !== null) {
             mydoc.getElementById('asm_num_21').style.display = 'block';
         }
-        console.log('-------------------3');
         if (columns[2] && prob_asm[2][2] !== null) {
             mydoc.getElementById('asm_num_22').style.display = 'block';
         }
-        console.log('-------------------4');
         mydoc.getElementById('asm_num_22_neg').style.display = 'none';
-        // special handling of negative sign for s1 problems
-        if (level !== 's1') { console.log('NO NEG'); return; }
-        console.log('-------------------5');
+        if (level !== 's1') { return; }
+        if (prob_asm[2][2] > -1) { return; }
+        // special handling of s1 problems
         if (prob_asm[2][2] < 0) {
-            console.log('YES NEG');
-            mydoc.getElementById('asm_num_22_neg').style.display = 'block';
+            // if answer is <= -10 then different from single digit answer
+            // and DD minus sign to left of tens column
+            if (prob_asm[2][2] <= -10) {
+                // display DD which is left of tens column
+                mydoc.getElementById('asm_num_DD_neg').style.display = 'block';
+                // display the tens answer block
+                mydoc.getElementById('asm_num_21').style.display = 'block';
+                // set and show the carry of 1 in carry value box
+                setBorrowCarry(1, 0, 1, false);
+                layoutBorrowCarry([1], true, false);
+                displayCarryNote(10);
+            } else {
+                // display 22 minus sign is to left of ones column
+                mydoc.getElementById('asm_num_22_neg').style.display = 'block';
+            }
         }
-        console.log('-------------------6');
     }
 
     // set ASM number column className & set placeholder to match (fnc call) 
@@ -1909,8 +1804,6 @@ var RMM_ASM = (function() {
     // set 4 answer values in ASM grid using values from answers[level_done]
     function layoutAnswerButtons() {
         console.log('layoutAnswerButtons()');
-        ///////console.log(answers, 'answers');
-        ///////console.log(level_done, 'level_done');
         var i = 0;
         var len = answers[level_done].length;
         for (i=0; i<len; i++) {
@@ -1920,9 +1813,8 @@ var RMM_ASM = (function() {
 
     // set an answer svg path and x/y position (tricky) to the value arg
     function layoutAnswerNumber(answer, index) {
-        console.error('layoutAnswerNumber(answer, index)', answer, index);
+        console.log('layoutAnswerNumber(answer, index)', answer, index);
         // index in 0-base, left starting ref to answer box
-        console.log(mod_lo, 'mod_lo');
         var id0 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_0');
         var id1 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_1');
         var id2 = mydoc.getElementById(mod_lo + '_answer_b' + index + '_2');
@@ -1944,7 +1836,6 @@ var RMM_ASM = (function() {
         }
         // negative number (need to handle -10 differntly)
         // only used by ASM never M2 or LD
-        console.error(answer, 'answer');
         if (answer < 0) {
             if (answer > -10) {
                 id1.setAttribute('x', xpos_double[index][0]);
@@ -2085,8 +1976,6 @@ var RMM_ASM = (function() {
     // for one (index) or all (index=null) answer box set num fill value
     function layoutAnswerNumFill(index, color) {
         console.log('layoutAnswerNumFill(index, color)');
-        console.log(index, 'index');
-        console.log(color, 'color');
         var i = 0;
         // if index is not an integer (0-3), then we process all
         if (index !== null) {
@@ -2155,7 +2044,6 @@ var RMM_ASM = (function() {
     // reset (off) answer box hover class when cursor enters answers svg rect
     function answerAreaEnter(ev) {
         //console.log('answerAreaEnter(ev)');
-        //console.log(answer_active);
         answerButtonClassReset();
     }
 //
@@ -2234,7 +2122,6 @@ var RMM_ASM = (function() {
         mydoc.getElementById('asm_answer').style.display = 'block';
         if (show_note) {
             mydoc.getElementById('div_note').style.visibility = 'visible';
-            console.log('hundreds in answer');
             mydoc.getElementById('b_next').innerHTML = getStr('TXT_next_10');
             mydoc.getElementById('svg_next').style.display = 'block';
         }
@@ -2278,7 +2165,6 @@ var RMM_ASM = (function() {
     // set problem using pdata input
     function setProblem(pdata) {
         console.log('setProblem(pdata)');
-        console.log(pdata, 'pdata');
         hideAll();
         total_problems = 0;
         if (pdata.module === 'a') {
