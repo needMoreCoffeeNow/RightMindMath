@@ -1276,7 +1276,7 @@ var RMM_ASM = (function() {
         probColumnSetRandValue(2, 0, 10);
         levelA1NegativeProblem();
         //prob_asm  = [ [null, null, 1], [null, null, 0], [null,null,1] ];
-        prob_asm  = [ [null, null, -8], [null, null, -2], [null,null,-10] ];
+        //prob_asm  = [ [null, null, -8], [null, null, -2], [null,null,-10] ];
         //prob_asm  = [ [null, null, -5], [null, null, 1], [null,null,-4] ];
         carryforwardSet();
         probAnswerSet();

@@ -1529,9 +1529,14 @@ var RMM_MENU = (function() {
     function levelsExit(ev) {
         console.log('levelsExit(ev)');
         id = ev.target.id;
-        if (id == 'b_menu_addneg_save') { addnegPdataUpdate(); }
-        if (id == 'b_menu_subneg_save') { subnegPdataUpdate(); }
+        if (id === 'b_menu_addneg_save') { addnegPdataUpdate(); }
+        if (id === 'b_menu_subneg_save') { subnegPdataUpdate(); }
         hideAll();
+        // open problem after either s1 or a1 exits
+        if (id === 'b_menu_addneg_exit'  || id == 'b_menu_subneg_exit') {
+            checkProblemStart();
+            return;
+        }
         mydoc.getElementById('div_menu_main').style.display = 'block';
     }
 
