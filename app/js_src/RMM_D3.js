@@ -125,7 +125,6 @@ var RMM_D3 = (function() {
         var r_str = '';
         var tic = '^';
         var iduser = RMM_ASM.getIduser();
-        console.log(RMM_ASM.getGuestActive());
         if (RMM_ASM.getGuestActive()) { return; }
         data['iduser'] = iduser;
         data['idlevel'] = module;
@@ -137,7 +136,6 @@ var RMM_D3 = (function() {
         r_str += tic + eqz.dividend + '/' + eqz.divisor;
         r_str += tic + chunk_counter;
         data['r_str'] = r_str;
-        console.log('%c' + r_str, 'color:#009933;');
         RMM_DB.addSessionRec(data);
         RMM_STATSLIVE.displayUserCounts('d3', true);
     }
@@ -174,7 +172,6 @@ var RMM_D3 = (function() {
         //eqz = {'divisor':5, 'dividend':291, 'quotient':58, 'decimal':2};
         //eqz = {'divisor':35, 'dividend':560, 'quotient':16, 'decimal':0};
         //eqz = {'divisor':8, 'dividend':492, 'quotient':61, 'decimal':5};
-        console.warn(eqz, 'eqz');
     }
 
     // start a long division problem
@@ -192,7 +189,6 @@ var RMM_D3 = (function() {
         time_start = Date.now();
         chunk_counter = 0;
         count_problem += 1;
-        console.log(time_start, 'time_start');
         step = 0;
         nextStep();
         //showAllD3();
@@ -287,20 +283,14 @@ var RMM_D3 = (function() {
 
     // check if chunk needed & generate chunk html with button and chunk text
     function chunkHtml(font_pct) {
-        console.log('-----------------------------------------------------------chunkHtml(col, font_pct)');
-        console.log('-----------------------------------------------------------chunkHtml(col, font_pct)');
-        console.log('-----------------------------------------------------------chunkHtml(col, font_pct)');
-        console.log('-----------------------------------------------------------chunkHtml(col, font_pct)');
-        console.log(eqz.divisor, correct, subval0);
+        console.log('chunkHtml(col, font_pct)');
         var tens = parseInt(eqz.divisor / 10, 10) * 10;
         var ones = eqz.divisor % 10;
         var txt = '';
         if (correct * eqz.divisor < 11 || step % 2 !== 0) {
-            console.log('no chunk');
             mydoc.getElementById('div_d3_chunk').style.visibility = 'hidden';
             return;
         }
-        console.log(ones, 'ones', tens, 'tens', correct, 'correct', eqz.divisor, 'divisor');
         txt = '<button class="chunk" '
         txt += 'onclick="RMM_D3.chunkShow(event);">'
         txt += getStr('TXT_chunk_it') + '</button>';
@@ -347,7 +337,6 @@ var RMM_D3 = (function() {
         var fnum = correct * eqz.divisor;
         var txt = getStr('D3_wrap_07');
         recordAnswer();
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         lo_setStyleDisplay('m2_answer', 'none');
         lo_divisorToggle('r2white');
         lo_bkgdNumsSet('', 'r2white');
@@ -361,9 +350,6 @@ var RMM_D3 = (function() {
     // step06 (only occurs when decimal answer)
     function step06() {
         console.log('step06()');
-        console.log('----------------------------------------------------------------step06()');
-        console.log('----------------------------------------------------------------step06()');
-        console.log('----------------------------------------------------------------step06()');
         console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         var bkgds = '';
         var txt = getStr('D3_06');
@@ -383,7 +369,6 @@ var RMM_D3 = (function() {
         subval0 = subval2 * 10;
         subval1 = eqz.decimal * eqz.divisor;
         subval2 = subval0 - subval1;
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         lo_bkgdNumsSet(bkgds, 'r2bkgd');
         // instruction text
         txt = txt.replace('REPLACE_step', ''+(step+1));
@@ -398,9 +383,6 @@ var RMM_D3 = (function() {
     // wrap05
     function wrap05() {
         console.log('wrap05()');
-        console.log('----------------------------------------------------------------wrap05()');
-        console.log('----------------------------------------------------------------wrap05()');
-        console.log('----------------------------------------------------------------wrap05()');
         var fnum = correct * eqz.divisor;
         var txt = getStr('D3_wrap');
         recordAnswer();
@@ -416,15 +398,12 @@ var RMM_D3 = (function() {
             lo_setInnerHtml('d3_num62', numPath(fnum, 1));
             lo_setInnerHtml('d3_num72', numPath(0, 1));
         }
-        console.log(eqz.decimal, eqz.quotient, 'check');
         if (eqz.decimal > 0 && eqz.quotient < 100) {
             lo_setInnerHtml('d3_num03', numPath(eqz.decimal, 1));
             lo_setInnerHtml('d3_num62', numPath(fnum, 10));
             lo_setInnerHtml('d3_num63', numPath(fnum, 1));
             lo_setInnerHtml('d3_num73', numPath(0, 1));
-            console.log('here', subval1, subval1 > 99)
             if (subval1 > 99) {
-                console.log('yep');
                 lo_setInnerHtml('d3_num61', numPath(subval1, 100));
             }
         }
@@ -433,10 +412,7 @@ var RMM_D3 = (function() {
 
     // step six
     function step05() {
-        console.log('----------------------------------------------------------------step05()');
-        console.log('----------------------------------------------------------------step05()');
-        console.log('----------------------------------------------------------------step05()');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
+        console.log('step05()');
         var bkgds = '';
         var txt = getStr('D3_05');
         var bkgds = '51.52.61.62';
@@ -450,7 +426,6 @@ var RMM_D3 = (function() {
         dynamicSubtract();
         lo_setInnerHtml('d3_num02', numPath(eqz.quotient, 1));
         correct = subval2;
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         lo_bkgdNumsSet(bkgds, 'r2bkgd');
         // instruction text
         txt = txt.replace('REPLACE_step', ''+(step+1));
@@ -464,10 +439,6 @@ var RMM_D3 = (function() {
     // step five need to handle equation where this is decimal step
     function step04d() {
         console.log('step04d()');
-        console.log('----------------------------------------------------------------step04d()');
-        console.log('----------------------------------------------------------------step04d()');
-        console.log('----------------------------------------------------------------step04d()');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         var bkgds = '';
         var txt = getStr('D3_04d');
         var bkgds = '52.53.03';
@@ -486,8 +457,6 @@ var RMM_D3 = (function() {
         subval2 = subval0 - subval1;
         lo_bkgdNumsSet(bkgds, 'r2bkgd');
         // instruction text
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
-        console.log(eqz);
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+eqz.divisor);
         txt = txt.replace('REPLACE_num1', ''+subval0);
@@ -499,10 +468,7 @@ var RMM_D3 = (function() {
 
     // step five
     function step04() {
-        console.log('----------------------------------------------------------------step04()');
-        console.log('----------------------------------------------------------------step04()');
-        console.log('----------------------------------------------------------------step04()');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
+        console.log('step04()');
         var bkgds = '';
         var txt = getStr('D3_04');
         var bkgds = '51.52';
@@ -521,7 +487,6 @@ var RMM_D3 = (function() {
         subval1 = correct * eqz.divisor;
         subval2 = subval0 - subval1;
         lo_bkgdNumsSet(bkgds, 'r2bkgd');
-        console.log(correct, 'correct', subval0, 'subval0', subval1, 'subval1', subval2, 'subval2')
         // instruction text
         txt = txt.replace('REPLACE_step', ''+(step+1));
         txt = txt.replace('REPLACE_num0', ''+down);
@@ -534,14 +499,7 @@ var RMM_D3 = (function() {
     }
 
     function dynamicSubtract() {
-        console.log('----------------------------------------------------------------dynamicSubtract()');
-        console.log('----------------------------------------------------------------dynamicSubtract()');
-        console.log('----------------------------------------------------------------dynamicSubtract()');
-        //console.warn(correct, 'correct');
-        //console.warn(subval0, 'subval0');
-        //console.warn(subval1, 'subval1');
-        //console.warn(subval2, 'subval2');
-        console.log(eqz);
+        console.log('dynamicSubtract()');
         var bkgds = '';
         var path = '';
         var id = '';
@@ -550,31 +508,19 @@ var RMM_D3 = (function() {
         var len = 0;
         mydoc.getElementById('div_d3_chunk').style.visibility = 'hidden';
         colsActiveSet();
-        //console.warn(cols_active, 'cols_active');
         len = cols_active.length;
         lo_divisorToggle('r2white');
         for (i=0; i<len; i++) {
-            console.log('---', i, '---');
             if (bkgds.length > 0) { bkgds += '.'; }
             bkgds += '' + row + cols_active[i] + '.';
-            console.log(bkgds);
             bkgds += '' + (row + 1) + cols_active[i] + '.';
-            console.log(bkgds);
             bkgds += '' + (row + 2) + cols_active[i];
-            console.log(bkgds);
         }
-        console.log('---');
-        console.log('---');
-        console.log('---');
-        console.log('---');
-        console.log('---');
         // avoid repeating single digit number in tens spot when subval0 >= 10
         // which happens because 10s spot is still highlighted to match rows
         if (subval1 < 10) { len = 1; }
         for (i=0; i<len; i++) {
-            console.log('---', i, '---');
             id = 'd3_num' + (row + 1) + cols_active[i];
-            console.log(id, 'id', row, i, 'i');
             path = numPath(subval1, (Math.pow(10, i)));
             lo_setInnerHtml(id, path);
         }
@@ -587,7 +533,6 @@ var RMM_D3 = (function() {
         var fnum = correct * eqz.divisor;
         var txt = getStr('D3_wrap');
         recordAnswer();
-        console.log(eqz);
         lo_setStyleDisplay('m2_answer', 'none');
         lo_divisorToggle('r2white');
         lo_bkgdNumsSet('', 'r2white');
@@ -615,9 +560,7 @@ var RMM_D3 = (function() {
 
     // step four
     function step03() {
-        console.log('----------------------------------------------------------------step03()');
-        console.log('----------------------------------------------------------------step03()');
-        console.log('----------------------------------------------------------------step03()');
+        console.log('step03()');
         var bkgds = '';
         var txt = getStr('D3_03');
         var bkgds = '30.31.41';
@@ -649,9 +592,7 @@ var RMM_D3 = (function() {
 
     // step three
     function step02() {
-        console.log('----------------------------------------------------------------step02()');
-        console.log('----------------------------------------------------------------step02()');
-        console.log('----------------------------------------------------------------step02()');
+        console.log('step02()');
         var txt = getStr('D3_02');
         var down = -1;
         lo_divisorToggle('r2bkgd');
@@ -716,9 +657,7 @@ var RMM_D3 = (function() {
 
     // step two
     function step01() {
-        console.log('----------------------------------------------------------------step01()');
-        console.log('----------------------------------------------------------------step01()');
-        console.log('----------------------------------------------------------------step01()');
+        console.log('step01()');
         var txt = getStr('D3_01');
         lo_divisorToggle('r2white');
         lo_setStyleDisplay('d3_line_1', 'block');
@@ -803,9 +742,8 @@ var RMM_D3 = (function() {
 
     // step one
     function step00() {
-        console.log('----------------------------------------------------------------step00()');
+        console.log('step00()');
         var txt = getStr('D3_00');
-        console.log(eqz);
         if (eqz.quotient > 99) {
             correct = parseInt(eqz.quotient / 100, 10);
             subval0 = parseInt(eqz.dividend / 100, 10);
@@ -848,10 +786,6 @@ var RMM_D3 = (function() {
         console.log('nextStep()');
         var tic = step < 10 ? '0' : '';
         var pid = ('step_' + tic + step);
-        console.log(tic, 'tic');
-        console.log(step, 'step');
-        console.log(step, step_max, 'step, step_max');
-        console.log(pid, 'pid');
         if (step > step_max) {
             finalMessage();
         } else {
@@ -967,7 +901,6 @@ var RMM_D3 = (function() {
     function setCounters() {
         console.log('setCounters()');
         session = Date.now();
-        console.error(session, 'session');
         count_problem = 1;
         chunk_counter = 0;
         time_start = -1;
@@ -1001,7 +934,6 @@ var RMM_D3 = (function() {
                     if (parseInt(val, 10) !== val) { continue; }
                     var check = decimalStrip(val, 10) * 10;
                     if (decimalStrip(check, 10) !== 0) { continue; }
-                    console.log(i, j, k, val,' ', fact, ' --- ', total);
                     total += 1;
                 }
             }
