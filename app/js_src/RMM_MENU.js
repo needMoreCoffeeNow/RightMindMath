@@ -1539,7 +1539,7 @@ var RMM_MENU = (function() {
     function levelsExit(ev) {
         console.log('levelsExit(ev)');
         id = ev.target.id;
-        if (id == 'b_menu_addneg_exit') { addnegPdataUpdate(); }
+        if (id == 'b_menu_addneg_save') { addnegPdataUpdate(); }
         hideAll();
         mydoc.getElementById('div_menu_main').style.display = 'block';
     }
