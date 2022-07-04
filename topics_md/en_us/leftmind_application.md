@@ -2,7 +2,7 @@
 
 <p><span style="background-color:#ffffcc">If you focus your child&#039;s effort on answering correctly first time, you can effectively use RMM the same as all other left-minded math apps.</span></p>
 
-<p>The only real difference when using RMM in this mode versus other apps is that there is a much smaller penalty for being wrong for single-digit equations.</p>
+<p>The only real difference when using RMM in this mode versus other apps is that there is a much smaller penalty for being wrong.</p>
 
 <p>Most other apps reviewed by <i>The Software Author</i> (TSA) of RMM only allow one answer before marking your child wrong, and moving on. RMM allows additional clicks until the right answer is found.</p>
 
