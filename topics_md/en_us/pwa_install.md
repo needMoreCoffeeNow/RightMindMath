@@ -10,14 +10,15 @@
 
 <p>Browsers are very aggressive about clearing out web site local storage. If you do not visit an app website for just a few days, it is very likely the next time visit the site your local storage will be gone &#151; disappeared forever. YIKES.</p>
 
-<p>Two things happen when you tell your web browser to install RMM as a PWA:</p>
+<p>Three things happen when you tell your web browser to install RMM as a PWA:</p>
 
 <ol>
-<li>The app data &amp; files are stored in a different location</li>
-<li><span style="background-color:#ffffcc">No automatic local storage deletion</span></li>
+<li>The html, script & styling files are downloaded</li>
+<li>App storage is separated from broswer storage</li>
+<li><span style="background-color:#ffffcc">No automatic app storage deletion</span></li>
 </ol>
 
-<p>When installed as a PWA the browser that opens &amp; runs RMM <span style="font-size:85%">(just like accessing the web site)</span> starts up faster.  It also will work when you are off-line. And, most importantly, your data will not be deleted.</p>
+<p>When installed as a PWA the browser that opens &amp; runs RMM <span style="font-size:85%">(just like accessing the web site)</span> starts up faster using the downloaded files.  It also will work when you are off-line again because of the downloads. And, most importantly, your data will not be deleted.</p>
 
 <p>Finally it is important to mention that RMM is a relatively tiny app with respect to local storage used. It takes only a few megabytes of device resources.</p>
 
