@@ -656,17 +656,18 @@ var RMM_M2 = (function() {
 
     // setup the equation numbers
     function equationSetup() {
-        console.log('equationSetup()');
+        console.error('equationSetup()');
         resetEqNums();
         nums.n03 = getRandInt(0,9);
         nums.n02 = getRandInt(1,9);
         nums.n13 = getRandInt(0,9);
         nums.n12 = getRandInt(1,9);
 
-////////////        nums.n03 = 3;
-////////////        nums.n02 = 7;
-////////////        nums.n13 = 4;
-////////////        nums.n12 = 7;
+        //////nums.n03 = 4;
+        //////nums.n02 = 8;
+        //////nums.n13 = 5;
+        //////nums.n12 = 1;
+        //////console.error(nums);
 
         rows.r0 = (nums.n02 * 10) + nums.n03;
         rows.r1 = (nums.n12 * 10) + nums.n13;
@@ -688,7 +689,7 @@ var RMM_M2 = (function() {
 
     // set up next M2 equation
     function nextM2Equation(ev) {
-        console.log('nextM2Equation(ev)');
+        console.error('nextM2Equation(ev)');
         console.log(module, 'module in nextM2Equation');
         chunk_counter = 0;
         mydoc.getElementById('div_m2_chunk').style.visibility = 'visible';
@@ -919,7 +920,7 @@ var RMM_M2 = (function() {
     function setCounters() {
         console.log('setCounters()');
         session = Date.now();
-        console.error(session, 'session');
+        console.warn(session, 'session');
         count_problem = 1;
         chunk_counter = 0;
         time_start = -1;
