@@ -44,7 +44,7 @@ var RMM_M2 = (function() {
 
     // chunk step two (index 01)
     function chunk_step01() {
-        console.log('------------------------------------------------------------chunk_step01()');
+        console.log('chunk_step01()');
         var txt = '';
         var bkgds = '03.02.12.32.31';
         if (nums.n30) { bkgds += '.30'; }
@@ -61,7 +61,7 @@ var RMM_M2 = (function() {
 
     // chunk step one (index 00)
     function chunk_step00() {
-        console.log('------------------------------------------------------------chunk_step00()');
+        console.log('chunk_step00()');
         var txt = '';
         var bkgds = '03.02.13.23.22';
         if (nums.n21) { bkgds += '.21'; }
@@ -121,13 +121,11 @@ var RMM_M2 = (function() {
     // create concatenated str with user/prob/ans data & push() it is testing
     function recordAnswer() {
         console.log('recordAnswer()');
-        console.log(nums);
         var time_stop = Date.now();
         var data = {'idsession' : '' + session + '_' + count_problem};
         var r_str = '';
         var tic = '^';
         var iduser = RMM_ASM.getIduser();
-        console.log(RMM_ASM.getGuestActive());
         if (RMM_ASM.getGuestActive()) { return; }
         count_problem += 1;
         data['iduser'] = iduser;
@@ -140,14 +138,13 @@ var RMM_M2 = (function() {
         r_str += tic + nums.n02 + nums.n03 + 'x' + nums.n12 + nums.n13;
         r_str += tic + chunk_counter;
         data['r_str'] = r_str;
-        console.log('%c' + r_str, 'color:#009933;');
         RMM_DB.addSessionRec(data);
         RMM_STATSLIVE.displayUserCounts('m2', true);
     }
 
     // basic step seven (index 06)
     function basic_step06() {
-        console.log('------------------------------------------------------------basic_step06()');
+        console.log('basic_step06()');
         var txt = '';
         var bkgds = '30.40';
         recordAnswer();
@@ -185,7 +182,7 @@ var RMM_M2 = (function() {
 
     // basic step six is final when answer is only 3 digits
     function basic_step05c() {
-        console.log('------------------------------------------------------------basic_step05c()');
+        console.log('basic_step05c()');
         var txt = '';
         var bkgds = '31.41';
         if (nums.n21) { bkgds += '.21'; }
@@ -214,7 +211,7 @@ var RMM_M2 = (function() {
 
     // basic step six (index 05)
     function basic_step05() {
-        console.log('------------------------------------------------------------basic_step05()');
+        console.log('basic_step05()');
         var txt = '';
         var bkgds = '21.31.41';
         correct = nums.n21 + nums.n31;
@@ -258,7 +255,7 @@ var RMM_M2 = (function() {
 
     // basic step five (index 04)
     function basic_step04() {
-        console.log('------------------------------------------------------------basic_step04()');
+        console.log('basic_step04()');
         var txt = '';
         var bkgds = '22.32.42';
         correct = nums.n22 + nums.n32;
@@ -275,7 +272,7 @@ var RMM_M2 = (function() {
 
     // basic step four (index 03)
     function basic_step03() {
-        console.log('------------------------------------------------------------basic_step03()');
+        console.log('basic_step03()');
         var txt = '';
         var bkgds = '02.12.31';
         correct = nums.n02 * nums.n12;
@@ -291,7 +288,7 @@ var RMM_M2 = (function() {
 
     // basic step three (index 02)
     function basic_step02() {
-        console.log('------------------------------------------------------------basic_step02()');
+        console.log('basic_step02()');
         var txt = '';
         var bkgds = '03.12.32';
         correct = nums.n03 * nums.n12;
@@ -304,7 +301,7 @@ var RMM_M2 = (function() {
 
     // basic step two (index 01)
     function basic_step01() {
-        console.log('------------------------------------------------------------basic_step01()');
+        console.log('basic_step01()');
         var txt = '';
         var bkgds = '02.13.22';
         correct = nums.n02 * nums.n13;
@@ -320,7 +317,7 @@ var RMM_M2 = (function() {
 
     // basic step one (index 00)
     function basic_step00() {
-        console.log('------------------------------------------------------------basic_step00()');
+        console.log('basic_step00()');
         var txt = '';
         var bkgds = '03.13.23';
         correct = nums.n03 * nums.n13;
@@ -656,7 +653,7 @@ var RMM_M2 = (function() {
 
     // setup the equation numbers
     function equationSetup() {
-        console.error('equationSetup()');
+        console.log('equationSetup()');
         resetEqNums();
         nums.n03 = getRandInt(0,9);
         nums.n02 = getRandInt(1,9);
@@ -684,13 +681,11 @@ var RMM_M2 = (function() {
         nums.n42 = numAtIndex(rows.r4, 10);
         nums.n41 = numAtIndex(rows.r4, 100);
         if (rows.r4 > 999) { nums.n40 = numAtIndex(rows.r4, 1000); }
-        console.warn(nums, 'nums (problem setup)');
     }
 
     // set up next M2 equation
     function nextM2Equation(ev) {
-        console.error('nextM2Equation(ev)');
-        console.log(module, 'module in nextM2Equation');
+        console.log('nextM2Equation(ev)');
         chunk_counter = 0;
         mydoc.getElementById('div_m2_chunk').style.visibility = 'visible';
         finalstep = false;
@@ -761,7 +756,6 @@ var RMM_M2 = (function() {
         equationSetup();
         problem_str = '' + rows.r0 + '|';
         problem_str += rows.r1 + '|' + rows.r4 + '|x';
-        console.log(problem_str);
     }
 //
 // >>> EQUATION:end
@@ -920,7 +914,6 @@ var RMM_M2 = (function() {
     function setCounters() {
         console.log('setCounters()');
         session = Date.now();
-        console.warn(session, 'session');
         count_problem = 1;
         chunk_counter = 0;
         time_start = -1;

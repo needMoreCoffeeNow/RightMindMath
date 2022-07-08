@@ -463,7 +463,6 @@ var RMM_DB = (function() {
                     rec_last = rollupRec(data, id_last, eq_time, date_now);
                 }
                 data = cursor.value;
-                console.warn(data);
                 id_curr = data.idsession.split('_');
                 id_curr = id_curr[0] + '_' + id_curr[1];
                 // skip recs not matching iduser
