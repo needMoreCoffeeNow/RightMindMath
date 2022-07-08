@@ -501,7 +501,7 @@ var RMM_SYNC = (function() {
         var min = 33;
         var max = 126 + 1; //getRandInt includes min val but is < max so add 1
         var newchar = '';
-        var disallowed = '<>"&#;';
+        var disallowed = '<>"&#;$+,/:=?@ []{}|\^%';
         while (mykey.length < 60) {
             newchar = String.fromCharCode(RMM_ASM.getRandInt(min, max));
             if (disallowed.indexOf(newchar) > -1) { continue; }

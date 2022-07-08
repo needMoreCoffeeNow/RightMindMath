@@ -298,6 +298,7 @@ function validSyncKey(sync_key_in) {
     var cntl_sheet = null;
     var c_err = null;
     var range = null;
+    var my_key = '';
     try {
         cntl_sheet = g_s.getDoc().getSheetByName('control');
     } catch(c_err) {
@@ -309,7 +310,9 @@ function validSyncKey(sync_key_in) {
         return false;
     }
     range = cntl_sheet.getRange(4, 1);
-    if (range.getValue() !== sync_key_in) {
+    my_key = range.getValue();
+    if (my_key !== sync_key_in) {
+        //g_s.setResult('ERR', 'sync_key_hidden', 'syncKey');
         g_s.setResult('ERR', 'sync_key_hidden', 'syncKey');
         return false;
     }

@@ -772,7 +772,7 @@ var RMM_DB = (function() {
             data['sync_key'] = sync_key_in;
             req = obj.put(data);
             req.onsuccess = function(ev) {
-                console.warn(data['sync_key'], ' setup[sync_key] updated');
+                console.warn(data['sync_key'], data['sync_key'].length, ' setup[sync_key] updated');
             }
             req.onerror = function(ev) {
                 alert(getStr('MSG_sync_key_update_failed') + ' [obj.put]');
