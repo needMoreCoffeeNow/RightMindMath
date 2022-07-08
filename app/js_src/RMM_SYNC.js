@@ -382,6 +382,7 @@ var RMM_SYNC = (function() {
             }
         }
         script.src = url; // onerror triggers here when offline
+        console.warn(script);
         head.appendChild(script);
         console.log('done');
     }
@@ -413,7 +414,21 @@ var RMM_SYNC = (function() {
     function linkAddCheck() {
         console.log('linkAddCheck()');
         var url = mydoc.getElementById('sync_input_url').value.trim();
+        console.warn(url, 'url1');
         var pwd = mydoc.getElementById('sync_input_pwd').value.trim();
+        if (sync_key.length !== 60) {
+            alert(getStr('SYNC_sync_key_empty'));
+            return;
+        }
+        if (url.length === 0) {
+            alert(getStr('SYNC_sheet_url_empty'));
+            return;
+        }
+        console.log(pwd, 'pwd');
+        if (pwd.length === 0) {
+            alert(getStr('SYNC_sheet_pwd_empty'));
+            return;
+        }
         showMomentPlease('MSG_moment_please');
         sync_confirm_tstamp = Date.now();
         url += '?idtype=linkTest';
@@ -421,7 +436,7 @@ var RMM_SYNC = (function() {
         url += '&sheet=' + sync_iduser;
         url += '&pwd=' + pwd;
         url += '&tstamp=' + sync_confirm_tstamp;
-        console.log(url);
+        console.warn(url, 'url2');
         sync_callback = RMM_SYNC.handleLinkAddTest;
         sync_caller = 'linkAddCheck';
         gsDoGet(url);
@@ -694,8 +709,10 @@ var RMM_SYNC = (function() {
 
     function handleDeviceMaxTstamps() {
         console.log('handleDeviceMaxTstamps()');
+        console.error(RMM_DB.getDbResult());
+        console.error(encodeURI(JSON.stringify(RMM_DB.getDbResult())));
         tstamps_str = encodeURI(JSON.stringify(RMM_DB.getDbResult()));
-        console.log(tstamps_str); // max tstamp currently in DB for download process
+        console.error(tstamps_str); // max tstamp currently in DB for download process
         procUpGetDeviceTstamp();
     }
 
@@ -716,21 +733,21 @@ var RMM_SYNC = (function() {
         console.log('handleProcUpGetDeviceTstamp()');
         var element = document.getElementById('googlesheet');
         var response = syncResponseGS();
-        console.log('-----response-----');
-        console.log(response);
+        console.error('-----response-----');
+        console.error(response);
         element.parentNode.removeChild(element);
         if (response.result !== 'OK') {
             console.log('-----error-----');
             processResponseError(response, 'div_menu_sync_main');
             return;
         }
-        console.log(response.value);
+        console.error(response.value);
         if (response.value.length === 0) {
             sync_device_tstamp = 0;
         } else {
             sync_device_tstamp = parseInt(response.value, 10);
         }
-        console.log(sync_device_tstamp, 'sync_device_tstamp');
+        console.error(sync_device_tstamp, 'sync_device_tstamp');
         procUpGetSessionData();
     }
 
@@ -832,6 +849,7 @@ var RMM_SYNC = (function() {
         url += '&pwd=' + sync_user_pwd;
         url += '&device=' +  RMM_DB.getDevice();
         url += '&tstamps_max=' +  tstamps_str;
+        console.error(url);
         sync_callback = RMM_SYNC.handleDownload;
         showMomentPlease('MSG_sync_process_step6');
         sync_caller = 'procdnStartDownload';
@@ -843,7 +861,7 @@ var RMM_SYNC = (function() {
         var element = document.getElementById('googlesheet');
         var response = syncResponseGS();
         console.log('-----response-----');
-        console.log(response);
+        console.error(response);
         element.parentNode.removeChild(element);
         if (response.result !== 'OK') {
             console.log('-----error-----');
@@ -854,7 +872,7 @@ var RMM_SYNC = (function() {
         sync_procdn_i = -1; // set to -1 as first recursive step is i++
         sync_procdn_len = sync_procdn_data.length;
         sync_procdn_msg = getStr('MSG_sync_process_step3');
-        console.log(sync_procdn_data);
+        console.error(sync_procdn_data);
         procdnRecursiveAdds();
     }
 

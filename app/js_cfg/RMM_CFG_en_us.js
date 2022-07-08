@@ -163,6 +163,9 @@
         CHUNK_M2_01 : 'Step REPLACE_step: Multiply <span style="color:blue;">REPLACE_num0 x REPLACE_num1</span>.',
         CM2_multiply : '<span style="color:blue;">Note:&nbsp</span>The REPLACE_place value from <span style="color:blue;">REPLACE_correct</span> (<span style="color:blue;">REPLACE_carryint</span>) is a carry forward. It is added to the next product.',
         // need double quotes here as SYNC_link_saved is shown in an alert()
+        SYNC_sheet_url_empty : 'You need to put the passcode for this user sheet (cell A1) into the box.',
+        SYNC_sheet_pwd_empty : 'You need to put the Google Sheet URL into the box.',
+        SYNC_sync_key_empty : 'You must first set up the Sync Key on this device.',
         SYNC_link_saved : "REPLACE_sync_user's sync URL and password were validated and saved.",
         SYNC_test_error_404 : 'The Google Sheet URL is incorrect, or you are not on-line. The link test failed, so the user link was not saved.',
         SYNC_src_error_404 : 'You are not on-line, or the Google Sheet URL is no longer available. Please investigate, and try again later.',
