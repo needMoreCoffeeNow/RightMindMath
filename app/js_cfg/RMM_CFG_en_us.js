@@ -173,7 +173,8 @@
         SYNC_error_sheetNF : 'The Google Sheet does not have a sheet named: REPLACE_sync_iduser (the user ID). The link test failed, so the user link was not saved.',
         SYNC_error_other : 'Something is wrong with the Google Sheet (REPLACE_error). The link test failed, so the user link was not saved.',
         SYNC_info_no_existing_key : 'There is no current app key. Either <ol><li>Create a new key, or</li><li style="padding-top:10px;">Copy/paste a key you already setup &amp; Update the Existing Key. <span style="font-size:90%;">(Review the Sync Setup Instruction page for more info.)</span></li></ol>',
-        SYNC_info_yes_existing_key : 'There is an existing current app key. To change it copy/paste the new key into the update text box, and update the key.'
+        SYNC_info_yes_existing_key : 'There is an existing current app key. To change it copy/paste the new key into the update text box, and update the key.',
+        SYNC_control_set_to_off : 'If all Sync tasks are complete remember to set cell A1 in the Control sheet to 0 (zero = off)'
         };
     // innerHtml is used to localize buttons, divs, etc.
     var innerHtml = {

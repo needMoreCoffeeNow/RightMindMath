@@ -484,6 +484,8 @@ var RMM_SYNC = (function() {
         msg = msg.replace('REPLACE_sync_user', sync_user);
         alert(msg);
         linkAddClick(null);
+        msg = getStr('SYNC_control_set_to_off');
+        alert(msg);
     }
 
 //
@@ -890,6 +892,8 @@ var RMM_SYNC = (function() {
         hideAll();
         alert(msg);
         mydoc.getElementById('div_sync_link').style.display = 'block';
+        msg = getStr('SYNC_control_set_to_off');
+        alert(msg);
     }
 
 //
