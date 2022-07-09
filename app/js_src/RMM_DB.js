@@ -19,7 +19,7 @@ var RMM_DB = (function() {
     var DB_MILLI_STD = 10; // standard wait time to check for db_result
     var DB_MILLI_LONG = 50; // standard wait time to check for db_result
     var db_next_function = null; //next function once db_complete = true
-    var db_wait_tries_std = 100; // std arg to set MAX_TRIES in dbSetWaitVars
+    var db_wait_tries_std = 800; // std arg to set MAX_TRIES in dbSetWaitVars
     var db_tries_count = 0;
     var count_delete = 0; // counts the number of cursor deletes
     var device = null; // set to the current device
@@ -209,9 +209,9 @@ var RMM_DB = (function() {
 
     // create an objectStore variable for DB transactions
     function objectstoreGet(store, readwrite) {
-        console.log('---------------objectstoreGet(store) + store = ' + store);
+        //////console.log('----objectstoreGet(store) + store = ' + store); //KEEPIN
         if (!db_active) {
-            console.log('DB NOT ACTIVE');
+            console.warn('DB NOT ACTIVE');
             return null;
         }
         if (readwrite) {
@@ -223,7 +223,7 @@ var RMM_DB = (function() {
 
     // initialize db transaction fields
     function transactionInit() {
-        console.log('transactionInit()');
+        //////console.log('transactionInit()');  //KEEPIN
         db_complete = false;
         db_error = false;
         db_result = null;
@@ -265,6 +265,8 @@ var RMM_DB = (function() {
         var data = {};
         var my_device = '';
         var tstamps = {};
+        var start = Date.now();
+        var i = 0;
         if (!obj) { return; }
         timervar = window.setTimeout(dbWait, DB_MILLI_STD);
         transactionInit();
@@ -274,6 +276,7 @@ var RMM_DB = (function() {
         cursor_req.onsuccess = function(ev) {
             cursor = ev.target.result;
             if (cursor) {
+                i += 1;
                 data = cursor.value;
                 my_device = data['device_iduser'].split('_')[0];
                 if (tstamps[my_device]) {
@@ -284,15 +287,20 @@ var RMM_DB = (function() {
                     tstamps[my_device] = data['tstamp'];
                 }
                 cursor.continue();
+            } else {
+                console.warn(tstamps, i);
+                console.warn(Date.now() - start, ' = time to process');
+                db_result = tstamps;
+                db_complete = true;
+                db_next_function();
             }
-            db_result = tstamps;
-            db_complete = true;
         }
         cursor_req.onerror = function(ev) {
             alert('ERR: sessionDeviceMaxTstamps:' + table + ' : ' + 'ival=' + ival);
             db_result = {};
             db_error = true;
         }
+        console.warn('DONE');
     }
 
     // read table using an index filter
@@ -524,7 +532,7 @@ var RMM_DB = (function() {
 
     // add session record for recursive adds
     function addSessionRecRecursive(data, my_callback) {
-        console.log('addSessionRecRecursive(data, my_callback)');
+        //////console.log('addSessionRecRecursive(data, my_callback)'); //KEEPIN
         var obj = objectstoreGet('session', true);
         var req = null;
         if (!obj) {
@@ -820,6 +828,11 @@ var RMM_DB = (function() {
         device = device_in;
     }
 
+    // set db_next_function
+    function setDbNextFunction(func_in) {
+        db_next_function = func_in;
+    }
+
     // return device
     function getDevice() {
         return device;
@@ -838,6 +851,7 @@ var RMM_DB = (function() {
         getIDGUEST : getIDGUEST,
         setDevice : setDevice,
         getDevice : getDevice,
+        setDbNextFunction : setDbNextFunction,
         // transactions
         addSessionRec : addSessionRec,
         addSessionRecRecursive : addSessionRecRecursive,
