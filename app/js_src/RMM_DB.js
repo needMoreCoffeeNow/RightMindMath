@@ -265,7 +265,7 @@ var RMM_DB = (function() {
         var data = {};
         var my_device = '';
         var tstamps = {};
-        var start = Date.now();
+        var date_now = Date.now();
         var i = 0;
         if (!obj) { return; }
         timervar = window.setTimeout(dbWait, DB_MILLI_STD);
@@ -289,7 +289,7 @@ var RMM_DB = (function() {
                 cursor.continue();
             } else {
                 console.warn(tstamps, i);
-                console.warn(Date.now() - start, ' = time to process');
+                console.warn(Date.now() - date_now, 'milliseconds to run');
                 db_result = tstamps;
                 db_complete = true;
                 db_next_function();
