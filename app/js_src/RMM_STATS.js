@@ -76,7 +76,6 @@ var RMM_STATS = (function() {
         var digit = -1;
         var m1_id = '';
         sdata = RMM_DB.getDbResult();
-        console.warn(sdata);
         console.log(sdata.length, 'sdata.length');
         len = sdata.length;
         if (len === 0) {
@@ -94,7 +93,6 @@ var RMM_STATS = (function() {
         }
         // add the rollup counts by level with m2b & m2c sub-totals for m2
         for (i=0; i<len; i++) {
-            console.warn(sdata[i]);
             iduser = sdata[i].iduser;
             idlevel = sdata[i].idlevel;
             // remove the digit identifier from m1 recs
@@ -290,7 +288,6 @@ var RMM_STATS = (function() {
         var anchor = null; // used to create csv file download anchor link
         showMomentPlease('MSG_moment_please');
         for (i=0; i<len; i++) {
-            console.error(sdata[i]);
             chunked = '';
             txt += '\n';
             txt += idname + ',';

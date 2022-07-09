@@ -534,7 +534,7 @@ var RMM_ASM = (function() {
             if (prob_asm[0][2] < 0 || prob_asm[1][2] < 0) {
                 minmax[0] = val - limit;
                 if (minmax[0] < (ans_max * -1)) {
-                    mixmax[0] = (ans_max * -1);
+                    minmax[0] = (ans_max * -1);
                 }
             } else {
                 minmax[0] = val - limit < 1 ? 1 :  val - limit;
@@ -1212,7 +1212,7 @@ var RMM_ASM = (function() {
         //prob_asm  = [ [null, null, 5], [null, null, 1], [null, null, 4] ];
         //prob_asm  = [ [null, null, -2], [null, null, 8], [null, null, -10] ];
         //prob_asm  = [ [null, null, 7], [null, null, 8], [null, null, -1] ];
-        //prob_asm  = [ [null, null, -6], [null, null, 9], [null, null, -15] ];
+        prob_asm  = [ [null, null, -6], [null, null, 9], [null, null, -15] ];
         borrowsSetDict();
         if (colAnswer(2) < 0) { s1_neg_problems += 1; }
         //probColumnSetRandValue(2, 0, 10);
@@ -1277,7 +1277,12 @@ var RMM_ASM = (function() {
         levelA1NegativeProblem();
         //prob_asm  = [ [null, null, 1], [null, null, 0], [null,null,1] ];
         //prob_asm  = [ [null, null, -8], [null, null, -2], [null,null,-10] ];
+        //prob_asm  = [ [null, null, -8], [null, null, -3], [null,null,-11] ];
+        //prob_asm  = [ [null, null, -9], [null, null, -9], [null,null,-18] ];
+        //prob_asm  = [ [null, null, 8], [null, null, 3], [null,null,11] ];
         //prob_asm  = [ [null, null, -5], [null, null, 1], [null,null,-4] ];
+        //prob_asm  = [ [null, null, -1], [null, null, 5], [null,null,4] ];
+        //prob_asm  = [ [null, null, -9], [null, null, 0], [null,null,-9] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
@@ -1326,8 +1331,17 @@ var RMM_ASM = (function() {
         var op1 = prob_asm[0].join('');
         var op2 = prob_asm[1].join('');
         var ans = prob_asm[2].join('');
-        problem_str = op1 + '|' + op2 + '|' + ans;
+        var a1_ans = prob_asm[0][2] + prob_asm[1][2];
+        var carry = '';
+        var sign = '';
+        if (level === 'a1' && a1_ans < -9) {
+            sign = '-';
+            carry = '1';
+            ans = ans.replace('-', '');
+        }
+        problem_str = op1 + '|' + op2 + '|' + sign + carry + ans;
         problem_str += '|' + opASM;
+        console.warn(problem_str, 'problem_str');
     }
 
     // setup a print problem such that the problem_str is available

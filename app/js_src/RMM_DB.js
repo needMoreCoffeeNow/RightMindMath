@@ -314,7 +314,8 @@ var RMM_DB = (function() {
         var cursor = null;
         var recs = [];
         var data = {};
-        var date_now = Date.now();
+        var date_start = Date.now();
+        var total_recs = 0;
         if (!obj) { return; }
         //timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 100);
         transactionInit();
@@ -322,6 +323,7 @@ var RMM_DB = (function() {
         myrange = IDBKeyRange.only(ival);
         cursor_req = myindex.openCursor(myrange);
         cursor_req.onsuccess = function(ev) {
+            total_recs += 1;
             cursor = ev.target.result;
             if (cursor) {
                 data = cursor.value;
@@ -331,7 +333,7 @@ var RMM_DB = (function() {
                 cursor.continue();
             } else {
                 console.warn('sessionDeviceUserGet finished');
-                console.warn(Date.now() - date_now, 'milliseconds to run');
+                console.warn(total_recs, Date.now() - date_start, 'total_recs, milliseconds to run');
                 db_result = recs;
                 db_complete = true;
                 db_next_function();
@@ -452,6 +454,7 @@ var RMM_DB = (function() {
         var write_active = false;
         var data = null;
         var date_now = Date.now();
+        var total_recs = 0;
         if (!obj) { return; }
         transactionInit();
         //timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 10);
@@ -459,6 +462,7 @@ var RMM_DB = (function() {
         obj.openCursor().onsuccess = function(ev) {
             cursor = ev.target.result;
             if (cursor) {
+                total_recs += 1;
                 write_active = true;
                 // handle info msg update fist
                 count_read += 1;
@@ -519,7 +523,7 @@ var RMM_DB = (function() {
                 }
                 db_complete = true;
                 console.warn('sessionGetAllRollup finished');
-                console.warn(Date.now() - date_now, 'milliseconds to run');
+                console.warn(total_recs, Date.now() - date_now, 'total_recs, milliseconds to run');
                 db_next_function();
             }
         }
@@ -553,7 +557,7 @@ var RMM_DB = (function() {
 
     // add session record
     function addSessionRec(data) {
-        console.log('addSessionRec(data)');
+        console.error('addSessionRec(data)');
         var obj = objectstoreGet('session', true);
         var req = null;
         if (!obj) { return; }
@@ -561,11 +565,12 @@ var RMM_DB = (function() {
         req = obj.add(data);
         req.onsuccess = function(ev) {
             console.log('addSessionRec idsession=' + data.idsession);
+            console.warn(data, 'data');
             db_complete = true;
         }
         req.onerror = function(ev) {
-            console.log('ERROR: addSessionRec idsession=' + data.idsession);
-            console.log(ev);
+            console.error('ERROR: addSessionRec idsession=' + data.idsession); //KEEPIN
+            console.error(ev); //KEEPIN
             alert('ERR: addSessionRec idsession=' + data.idsession);
             db_error = true;
         }
