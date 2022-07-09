@@ -7,4 +7,4 @@
 
 <p>The download will include all levels of use in one file. RMM also provides a Python script that will allow you to pretty easily use the CSV even if you are not technically inclined.</p>
 
-<p>To find out more about both installing Python &amp; running the script <a target="_blank" href="./python/RMM_csv_analysis.py">Click Here</a> <span style="font-size:75%;">(opens a new window)</span>
+<p>To find out more about both installing Python &amp; running the script <a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python/RMM_csv_analysis.py">Click Here</a> <span style="font-size:75%;">(opens a new window)</span>
