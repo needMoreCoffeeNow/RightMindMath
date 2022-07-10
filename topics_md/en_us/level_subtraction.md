@@ -4,7 +4,7 @@
 
 <hr>
 
-<p>The starting place for subtraction is 1-digit problems which have answers that are not negative (e.g. 8-7=1). There will also be problems with zero as the answer (8-8=0).
+<p>The starting place for subtraction is 1-digit problems which have answers that are not negative (e.g. 8-7=1). There will also be problems with zero as the answer (8-8=0).</p>
 
 <p>Before starting 1-digit subtraction <a target="_blank" href="https://www.youtube.com/watch?v=ug0gs8kLE48">Watch This Video</a></p>
 
