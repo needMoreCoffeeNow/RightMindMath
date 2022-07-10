@@ -1,4 +1,4 @@
-<p><span style="background-color:#ffffcc"><b>Chunking:</b> The mental process of using grouping to simplify multi-digit multiplications.</span></p>
+<p><span style="background-color:#ffffcc"><b>Chunking:</b> The mental process of using grouping to simplify multi-digit multiplications.</span> You child is no longer <b>imagining</b> answers. Instead they are training the left &amp; left minds to work together very quickly &#151; automatically. It&#039;s a very close, quick partnership.</p>
 
 <p><u>ChunkIt</u> is introduced with M2 (two-digit multiplication) problems. Please consider using it. Learning to chunk is very useful &#151; it really is a good life skill.</p>
 
