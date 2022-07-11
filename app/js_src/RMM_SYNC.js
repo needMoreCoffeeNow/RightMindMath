@@ -499,7 +499,9 @@ var RMM_SYNC = (function() {
         var min = 33;
         var max = 126 + 1; //getRandInt includes min val but is < max so add 1
         var newchar = '';
-        var disallowed = '<>"&#;$+,/:=?@ []{}|\^%';
+        var disallowed = '<>"&#;$+,/:=?@ []{}|\^%`';
+        // add single quote to diallowed
+        disallowed += "'";
         while (mykey.length < 60) {
             newchar = String.fromCharCode(RMM_ASM.getRandInt(min, max));
             if (disallowed.indexOf(newchar) > -1) { continue; }
@@ -515,11 +517,9 @@ var RMM_SYNC = (function() {
         var info = mydoc.getElementById('div_txt_sync_key_info')
         if (sync_key.length === 0) {
             info.innerHTML = getStr('SYNC_info_no_existing_key');
-            mydoc.getElementById('div_key_create_button').style.display = 'block';
         } else {
             info.innerHTML = getStr('SYNC_info_yes_existing_key');
             mydoc.getElementById('txt_sync_key_existing').innerHTML = sync_key;
-            mydoc.getElementById('div_key_create_button').style.display = 'none';
         }
         mydoc.getElementById('div_menu_sync_main').style.display = 'none';
         mydoc.getElementById('div_sync_key').style.display = 'block';
@@ -535,16 +535,10 @@ var RMM_SYNC = (function() {
     //create a new key if there is no existing key
     function keyCreate(ev) {
         console.log('keyCreate(ev)');
-        var info = mydoc.getElementById('div_txt_sync_key_info')
-        if (sync_key.length > 0) {
-            alert(getStr('MSG_sync_key_already_exists'));
-            return;
-        }
+        mydoc.getElementById('txt_sync_key_update').value = '';
         sync_key = syncKeyCodeCreate();
-        RMM_DB.updateSyncKey(sync_key);
-        info.innerHTML = getStr('SYNC_info_yes_existing_key');
-        mydoc.getElementById('txt_sync_key_existing').value = sync_key;
-        mydoc.getElementById('div_key_create_button').style.display = 'none';
+        mydoc.getElementById('txt_sync_key_update').value = sync_key;
+        alert(getStr('MSG_sync_save_needed'));
     }
 
     //update after validation new sync_key
@@ -557,12 +551,14 @@ var RMM_SYNC = (function() {
         var i = 0;
         var len = new_key.length;
         var msg = '';
-        var disallowed = '<>"&#;';
         var invalids = '';
         var char_str = null;
         var char_val = null;
+        var disallowed = '<>"&#;$+,/:=?@ []{}|\^%`';
+        // add single quote to diallowed
+        disallowed += "'";
         if (len != 60) {
-            msg = getStr('MSG_sync_key_not_valid');
+            msg = getStr('MSG_sync_key_not_60_char');
             msg = msg.replace('REPLACE_len', len);
             alert(msg);
             return;
@@ -590,7 +586,6 @@ var RMM_SYNC = (function() {
         info.innerHTML = getStr('SYNC_info_yes_existing_key');
         mydoc.getElementById('txt_sync_key_existing').value = sync_key;
         mydoc.getElementById('txt_sync_key_update').value = '';
-        mydoc.getElementById('div_key_create_button').style.display = 'none';
         alert(getStr('MSG_sync_key_updated'));
     }
 
