@@ -31,6 +31,6 @@
 
 Once your child is has instant recall with all the one digit multiplication tables, move on to two-digit multiplication. <span style="background-color:#ffffcc">Get Ready for the Second AHA!! Moment.</span></p>
 
-<p>Solving 2-digit multiplication is a series of one-digit multiplications, then one-digit addtions. Lots of <b>super-easy steps</b> since your child has instant recall for each one. The video below does is fantastic explaining all this. <p><span style="font-size:90%;">(Note: RMM&#039;s process for showing the m2 process is nearly identical to the video.)</span></p>
+<p>Solving 2-digit multiplication is a series of one-digit multiplications, then one-digit additions. Lots of <b>super-easy steps</b> since your child has instant recall for each one. The video below does is fantastic explaining all this. <p><span style="font-size:90%;">(Note: RMM&#039;s process for showing the m2 process is nearly identical to the video.)</span></p>
 
 <p>Before starting 2-digit multiplication <a target="_blank" href="https://www.youtube.com/watch?v=RVYwunbpMHA">Watch This Excellent Video</a></p>
