@@ -6,7 +6,7 @@
 
 <hr>
 
-Once your child is comfortable adding two positive numbers, change the options for using negative numbers. <span style="font-size:90%;">(Change 0/10 to 1-5.)</span> Initially set the top option to a 1-5 value and leave the bottom option at 0/10. This setting always presents the negative number in the lower position in the equation.</p>
+Once your child is comfortable adding two positive numbers, change the options for using negative numbers. Initially set the top option to a 1-5 value and leave the bottom option at 0/10. This setting always presents the negative number in the lower position in the equation.</p>
 
 <p>Once your child is comfortable with negatives in the lower position, change the second 0/10 option to a value of 1-3. This will cause negative to appear at the top number in the equation for 10-30% of equations using a negative number.</p>
 
