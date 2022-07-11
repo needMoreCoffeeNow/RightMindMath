@@ -12,7 +12,7 @@
 
 <p>The next step is to set the top subtraction option to a value from 1-5. This results in 10-50% of the problems having negative answers (7-8=-1).</p>
 
-<p>Finally, when you child is comfortable with negative answers with the settings above, change the second subtraction option to 1-3.</p>
+<p>Finally, when you child is comfortable with negative answers using the settings above, change the second subtraction option to 1-3.</p>
 
 <p>This will result in negative answer problems where BOTH upper &amp; lower numbers are negatives (-8-7=-15) 10-30% of the time negative problems are shown.</p>
 
