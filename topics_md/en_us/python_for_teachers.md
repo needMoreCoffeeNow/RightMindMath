@@ -6,6 +6,6 @@
 
 <p>Each child works individually on their Chromebook, computer, phone, or pad. Each device uses the RMM <u>Sync Menu</u> to upload its usage data.</p>
 
-<p>A second RMM Python script is then used by the mentor to automate the process of downloading &amp; analyzing the CSV files for the group.</p>
+<p>The mentor&#039;s Python script then automates the process of downloading &amp; analyzing the CSV files for the group.</p>
 
 <p>To find out more about both the mentor Python &amp; script <a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python/RMM_mentors.py">Click Here</a> <span style="font-size:75%;">(opens a new window)</span>
