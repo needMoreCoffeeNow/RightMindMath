@@ -10,7 +10,7 @@
 
 <hr>
 
-<p>The next step is to set the top subtraction option to value from 1-5. This results in 10-50% of the problems having negative answers (7-8=-1).</p>
+<p>The next step is to set the top subtraction option to a value from 1-5. This results in 10-50% of the problems having negative answers (7-8=-1).</p>
 
 <p>Finally, when you child is comfortable with negative answers with the settings above, change the second subtraction option to 1-3.</p>
 

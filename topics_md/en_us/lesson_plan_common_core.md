@@ -14,4 +14,4 @@
 
 <p><span style="background-color:#ffffcc">Remember, though, that each child is unique. You may want to use a different approach because of this.</span> If you stay engaged &amp; interested you will undoubtedly get feedback from your child to guide your decisions.</p>
 
-<p>Finally a quick note about <span style="background-color:#ffffcc">using charts to measure single-digit learning.</span> When stating out an average of more than 10-15 seconds &amp; more than one try is expected. Remember at this point the right-mind has not learned the pattern. Once the RMM responds instantaneously you will see an average of a few seconds &amp; one try to find the correct answer. At this point move on to the next step.</p>
+<p>Finally a quick note about <span style="background-color:#ffffcc">using charts to measure single-digit learning.</span> When starting out an average of more than 10-15 seconds &amp; more than one try is expected. Remember at this point the right-mind has not learned the pattern. Once your child responds instantaneously you will see an average of a few seconds &amp; one try to find the correct answer. At this point move on to the next step.</p>
