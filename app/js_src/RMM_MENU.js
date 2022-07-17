@@ -1341,7 +1341,9 @@ var RMM_MENU = (function() {
             RMM_DB.deleteRecs('print',
                                 'idprint', 
                                 parseInt(my_idprint, 10),
-                                false);
+                                false,
+                                2,
+                                'div_info_text');
         }
     }
 
@@ -1388,6 +1390,12 @@ var RMM_MENU = (function() {
         showMomentPlease('MSG_moment_please');
         RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printDeleteAllDone);
         RMM_DB.deleteRecs('print', null, null, false);
+        RMM_DB.deleteRecs('print',
+                            null,
+                            null,
+                            false,
+                            2,
+                            'div_info_text');
     }
 
     // print delete all done handler

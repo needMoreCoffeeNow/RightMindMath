@@ -691,7 +691,8 @@ var RMM_DB = (function() {
     
     // delete recs using a cursor either all, or matching a key value
     function deleteRecs(table, key_name, key_value, store, modnum, divmsg) {
-        console.log('deleteRecs(table, key_name, key_value)');
+        console.log('deleteRecs(table, key_name, key_value, store, modnum, divmsg)');
+        console.log(table, key_name, key_value, store, modnum, divmsg, 'table, key_name, key_value, store, modnum, divmsg');
         var obj = objectstoreGet(table, true);
         var req = null;
         var del_req = null;
