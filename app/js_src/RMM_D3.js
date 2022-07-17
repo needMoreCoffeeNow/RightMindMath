@@ -923,7 +923,6 @@ var RMM_D3 = (function() {
         var total = 0;
         var start = Date.now();
         var eq = findDecimalEq(10);
-        return;
         for (var i=70; i<81; i++) {
             for (var j=10; j<101; j++) {
                 for (var k=1; k<10; k++) {

@@ -712,7 +712,7 @@ var RMM_DB = (function() {
                     txt_count = txt.replace('REPLACE_count', count_read);
                     mydoc.getElementById(divmsg).innerHTML = txt_count;
                 }
-                do_delelete = false;
+                do_delete = false;
                 // key_value is null means a delete all call
                 if (key_name === null) {
                     do_delete = true;

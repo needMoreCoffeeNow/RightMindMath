@@ -444,7 +444,7 @@ var RMM_MENU = (function() {
     // final steps after user delete
     function userDeleteWrapup() {
         console.log('userDeleteWrapup()');
-        return;
+        changUserCurrentWrapup();
         hideAll();
         mydoc.getElementById('div_menu_main').style.display = 'block';
     }
