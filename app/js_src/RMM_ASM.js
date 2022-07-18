@@ -92,6 +92,11 @@ var RMM_ASM = (function() {
 //
     // processes run before fully functional main page displays
     function init() {
+       
+       console.warn('init bypass ASM');
+       RMM_SYNC.validDummyData();
+       return;
+       
         console.log('init()');
         var slash_num_0 = mydoc.getElementById('asm_bc_0_slash_num');
         var slash_num_1 = mydoc.getElementById('asm_bc_1_slash_num');
@@ -1212,7 +1217,7 @@ var RMM_ASM = (function() {
         //prob_asm  = [ [null, null, 5], [null, null, 1], [null, null, 4] ];
         //prob_asm  = [ [null, null, -2], [null, null, 8], [null, null, -10] ];
         //prob_asm  = [ [null, null, 7], [null, null, 8], [null, null, -1] ];
-        prob_asm  = [ [null, null, -6], [null, null, 9], [null, null, -15] ];
+        //prob_asm  = [ [null, null, -6], [null, null, 9], [null, null, -15] ];
         borrowsSetDict();
         if (colAnswer(2) < 0) { s1_neg_problems += 1; }
         //probColumnSetRandValue(2, 0, 10);
