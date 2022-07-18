@@ -873,6 +873,7 @@ var RMM_SYNC = (function() {
 // >>> VALIDATE:start
 //
 
+    // validate specific m2 or d3 string (differnt r_str vs ASM)
     function validM2D3String(val_in) {
         //////console.log('validM2D3String(val_in)', val_in);
         var parts = val_in.split('^');
@@ -890,6 +891,7 @@ var RMM_SYNC = (function() {
         return true;
     }
 
+    // validate ASM r_str
     function validASMString(val_in) {
         //////console.log('validASMString(val_in)', val_in);
         var parts = val_in.split('^');
@@ -926,6 +928,7 @@ var RMM_SYNC = (function() {
         return true;
     }
 
+    // initial handling of r_str essentially breaking out m2/d3 vs. ASM steps
     function validRstring(val_in) {
         //////console.log('validRstring(val_in)', val_in);
         var parts = val_in.split('^');
@@ -939,6 +942,7 @@ var RMM_SYNC = (function() {
         return validASMString(val_in);
     }
 
+    // make sure arg is an int without any changes eg. parseInt(12b34,  10) = 12
     function validINT(num_in) {
         //////console.log('validINT(num_in)', num_in);
         var my_int = parseInt(num_in, 10);
@@ -949,6 +953,7 @@ var RMM_SYNC = (function() {
         return true;
     }
 
+    // validate device (30 chars or less) and iduser combination)
     function validDeviceIduser(val_in) {
         //////console.log('validDeviceIduser(val_in)', val_in);
         var temp = [];
@@ -963,6 +968,7 @@ var RMM_SYNC = (function() {
         return true;
     }
 
+    // validate idsession which is two or three ints separated by _
     function validIdsession(val_in) {
         //////console.log('validIdsession(val_in)', val_in);
         var temp = [];
@@ -976,6 +982,7 @@ var RMM_SYNC = (function() {
         return true;
     }
 
+    // walk thru each of the possible idlevels to verify
     function validIdlevel(val_in) {
         //////console.log('validIdlevel(val_in)', val_in);
         if (val_in === 'a1') { return true; }
