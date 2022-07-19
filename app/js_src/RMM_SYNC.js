@@ -21,7 +21,7 @@ var RMM_SYNC = (function() {
     var sync_procdn_msg = ''; // stores recursive add message
     var sync_key = ''; // 60 character sync key token to verify all calls to GSheet
     // db
-    var DB_TRIES_STD = 1000; // std arg to set db_max_tries in dbSetWaitVars
+    ////////////var DB_TRIES_STD = 1000; // std arg to set db_max_tries in dbSetWaitVars
     var IDGUEST = 10884293110550;
 
     // RMM_CFG shortcuts start
@@ -61,7 +61,8 @@ var RMM_SYNC = (function() {
     function userGetAll() {
         console.log('userGetAll()');
         showMomentPlease('MSG_moment_please');
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleUserGetAll);
+        /////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleUserGetAll);
+        RMM_DB.setDbNextFunction(RMM_SYNC.handleUserGetAll);
         RMM_DB.tableGetAll('user');
     }
 
@@ -222,7 +223,8 @@ var RMM_SYNC = (function() {
         // finally convert valid iduser to int
         iduser_to_add = parseInt(iduser_to_add, 10);
         // now check for existing iduser
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleReadIduser);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleReadIduser);
+        RMM_DB.setDbNextFunction(RMM_SYNC.handleReadIduser);
         RMM_DB.readIduser(iduser_to_add);
     }
 
@@ -235,7 +237,8 @@ var RMM_SYNC = (function() {
             return;
         }
         data = { 'iduser':iduser_to_add, 'name':name_to_add };
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleUserAdd);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleUserAdd);
+        RMM_DB.setDbNextFunction(RMM_SYNC.handleUserAdd);
         RMM_DB.addRecord('user', data);
     }
 
@@ -476,7 +479,8 @@ var RMM_SYNC = (function() {
         var url = mydoc.getElementById('sync_input_url').value.trim();
         var pwd = mydoc.getElementById('sync_input_pwd').value.trim();
         var data = { 'sync_url' : url, 'sync_pwd' : pwd };
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleLinkAddSave);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleLinkAddSave);
+        RMM_DB.setDbNextFunction(RMM_SYNC.handleLinkAddSave);
         RMM_DB.updateRecord('user', sync_iduser, data);
     }
 
@@ -608,7 +612,8 @@ var RMM_SYNC = (function() {
     function processStartClick(ev) {
         console.log('processStartClick(ev)');
         showMomentPlease('MSG_moment_please');
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleProcessStart);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_SYNC.handleProcessStart);
+        RMM_DB.setDbNextFunction(RMM_SYNC.handleProcessStart);
         RMM_DB.tableGetAll('user');
     }
 

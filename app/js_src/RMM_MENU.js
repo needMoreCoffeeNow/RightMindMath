@@ -16,7 +16,7 @@ var RMM_MENU = (function() {
     var user_iduser_name_xref = {}; // stores names indexed by iduser
     var iduserdelete = 0; // store the iduser being deleted
     // db
-    var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
+    ////////////var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
     var IDGUEST = 10884293110550;
     var IDSETUP = 1;
     // RMM_CFG shortcuts start
@@ -336,13 +336,15 @@ var RMM_MENU = (function() {
         if (id === 'b_user_load') {
             get_mode = 'user_load';
             showMomentPlease('MSG_moment_please');
-            RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserGetAll);
+            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserGetAll);
+            RMM_DB.setDbNextFunction(RMM_MENU.handleUserGetAll);
             RMM_DB.tableGetAll('user');
         }
         if (id === 'b_user_delete') {
             get_mode = 'user_delete';
             showMomentPlease('MSG_moment_please');
-            RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserGetAll);
+            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserGetAll);
+            RMM_DB.setDbNextFunction(RMM_MENU.handleUserGetAll);
             RMM_DB.tableGetAll('user');
         }
     }
@@ -413,7 +415,8 @@ var RMM_MENU = (function() {
         if (!valid) { return; }
         hideAll();
         showMomentPlease('TXT_data_deleting');
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userDeleteUserRec);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userDeleteUserRec);
+        RMM_DB.setDbNextFunction(RMM_MENU.userDeleteUserRec);
         RMM_DB.deleteRecs('session', 
                             'iduser', 
                             iduserdelete, 
@@ -425,7 +428,8 @@ var RMM_MENU = (function() {
     // process user record delete
     function userDeleteUserRec() {
         console.log('userDeleteUserRec()');
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserDelete);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserDelete);
+        RMM_DB.setDbNextFunction(RMM_MENU.handleUserDelete);
         RMM_DB.deleteRecs('user', 'iduser', iduserdelete, true, 100, '');
     }
 
@@ -436,7 +440,8 @@ var RMM_MENU = (function() {
         var data = {'iduser':IDGUEST, 'name':getStr('DAT_guest')};
         changeUserCurrent(data);
         txt = txt.replace('REPLACE_name', user_iduser_name_xref[iduserdelete]);
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userDeleteWrapup);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userDeleteWrapup);
+        RMM_DB.setDbNextFunction(RMM_MENU.userDeleteWrapup);
         RMM_DB.setupParametersUpdate(data);
         alert(txt)
     }
@@ -469,8 +474,9 @@ var RMM_MENU = (function() {
             data.name = ids[i].name;
         }
         showMomentPlease('MSG_moment_please');
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserUpdate);
         console.log(data, 'data');
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserUpdate);
+        RMM_DB.setDbNextFunction(RMM_MENU.handleUserUpdate);
         RMM_DB.setupParametersUpdate(data);
     }
 
@@ -489,7 +495,8 @@ var RMM_MENU = (function() {
         RMM_ASM.setIduser(data.iduser);
         RMM_ASM.setName(data.name);
         changeUserName();
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserSnapshot);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserSnapshot);
+        RMM_DB.setDbNextFunction(RMM_MENU.handleUserSnapshot);
         RMM_DB.readSetup(data.iduser);
     }
 
@@ -505,7 +512,8 @@ var RMM_MENU = (function() {
         }
         data = { 'idkey' : RMM_ASM.getIduser(),
                  'pdata' : pdata}
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.changUserCurrentWrapup);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.changUserCurrentWrapup);
+        RMM_DB.setDbNextFunction(RMM_MENU.changUserCurrentWrapup);
         RMM_DB.addRecord('setup', data);
     }
 
@@ -530,9 +538,9 @@ var RMM_MENU = (function() {
     // handle input1 continue click
     function input1Continue(ev) {
         console.log('input1Continue()');
-        var start = mydoc.getElementById('input_1').value;
-        var end = '';
-        var len = start.length;
+        var dev_start = mydoc.getElementById('input_1').value;
+        var dev_end = '';
+        var len = dev_start.length;
         var i = 0;
         if (input1_type === 'print_delete_all') {
             printDeleteAllRecs();
@@ -543,40 +551,48 @@ var RMM_MENU = (function() {
             return;
         }
         for (i=0; i<len; i++) {
-            if (!char_range[start.charCodeAt(i)]) { continue; }
-            end += start.charAt(i)
+            if (!char_range[dev_start.charCodeAt(i)]) { continue; }
+            dev_end += dev_start.charAt(i)
         }
-        if (start !== end) {
-            mydoc.getElementById('input_1').value = end;
+        if (dev_start !== dev_end) {
+            mydoc.getElementById('input_1').value = dev_end;
             alert(getStr('MSG_invalid_chars'));
             return;
         }
         if (input1_type === 'device_name') {
             // add a random 3-digit number to device name to ensure unique
-            end += '.' + (Math.floor(Math.random() * (1000 - 100) ) + 100);
-            RMM_DB.setDevice(end);
-            RMM_DB.setupParametersUpdate({device : end});
-            hideAll();
-            msg_div_next = 'div_menu_main';
-            // restore the exit button area
-            mydoc.getElementById('div_input1_exit_area').style.display = 'block';
-            mydoc.getElementById('div_msg_text').innerHTML = getStr('MSG_device_entry_done');
-            mydoc.getElementById('div_msg').style.display = 'block';
+            dev_end += '.' + (Math.floor(Math.random() * (1000 - 100) ) + 100);
+            RMM_DB.setDevice(dev_end);
+            ////////////RMM_DB.setDbNextFunction(RMM_MENU.handleDeviceUpdate);
+            RMM_DB.setDbNextFunction(RMM_MENU.handleDeviceUpdate);
+            RMM_DB.setupParametersUpdate({device : dev_end});
             return;
         }
         if (input1_type === 'user_name') {
-            if (end === getStr('DAT_guest')) {
+            if (dev_end === getStr('DAT_guest')) {
                 alert(getStr('MSG_name_not_guest'));
                 return;
             }
-            user_name_temp = end;
+            user_name_temp = dev_end;
             showMomentPlease('MSG_moment_please');
-            RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserCheckAdd);
+            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserCheckAdd);
+            RMM_DB.setDbNextFunction(RMM_MENU.handleUserCheckAdd);
             RMM_DB.getRecByIndex('user', 'name', user_name_temp);
             return;
         }
     }
     
+    // handle logic after adding device name
+    function handleDeviceUpdate() {
+        console.log('handleDeviceUpdate()');
+        hideAll();
+        msg_div_next = 'div_menu_main';
+        // restore the exit button area
+        mydoc.getElementById('div_input1_exit_area').style.display = 'block';
+        mydoc.getElementById('div_msg_text').innerHTML = getStr('MSG_device_entry_done');
+        mydoc.getElementById('div_msg').style.display = 'block';
+    }
+
     // checks to see if new user name exists
     function handleUserCheckAdd() {
         console.log('handleUserCheckAdd()');
@@ -598,7 +614,8 @@ var RMM_MENU = (function() {
         // leading digit cannot be a 1 to protect default guest id
         data.iduser += RMM_ASM.getRandInt(200, 1000) * 1000000;
         RMM_STATSLIVE.newUserAdd(data.iduser);
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserAdd);
+        ///////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserAdd);
+        RMM_DB.setDbNextFunction(RMM_MENU.handleUserAdd);
         RMM_DB.addRecord('user', data);
     }
 
@@ -608,7 +625,8 @@ var RMM_MENU = (function() {
         var data = RMM_DB.getDbResult();
         pdata = RMM_DB.pdataInit();
         data['pdata'] = pdata;
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userAddFinish);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userAddFinish);
+        RMM_DB.setDbNextFunction(RMM_MENU.userAddFinish);
         RMM_DB.setupParametersUpdate(data);
     }
 
@@ -1201,7 +1219,8 @@ var RMM_MENU = (function() {
                  'digits' : pdata.digits,
                  'm1_digit' : pdata.m1_digit};
         cb_print_listing = false;
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printPageShow);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printPageShow);
+        RMM_DB.setDbNextFunction(RMM_MENU.printPageShow);
         RMM_DB.addRecord('print', data);
         //problems = ["888|888|888|x", "881|827|054|-", "398|175|223|-", "653|235|418|-", "470|200|270|-", "438|258|180|-", "824|219|605|-", "566|531|035|-", "827|218|609|-", "943|388|555|-", "332|192|140|-", "777|294|483|-", "851|269|582|-", "726|363|363|-", "628|218|410|-", "483|313|170|-", "837|513|324|-", "689|646|043|-", "898|362|536|-", "817|356|461|-", "865|756|109|-", "979|559|420|-", "441|222|219|-", "585|377|208|-", "772|140|632|-", "621|237|384|-", "548|399|149|-", "920|260|660|-", "896|399|497|-", "914|748|166|-", "722|706|016|-", "908|230|678|-", "502|138|364|-", "923|732|191|-", "507|497|010|-", "226|165|061|-", "514|344|170|-", "960|575|385|-", "923|562|361|-", "829|787|042|-", "974|557|417|-", "844|324|520|-"];
         }
@@ -1244,14 +1263,16 @@ var RMM_MENU = (function() {
             get_mode = 'print_load';
             print_created = false;
             showMomentPlease('MSG_moment_please');
-            RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
+            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
+            RMM_DB.setDbNextFunction(RMM_MENU.handlePrintGetAll);
             RMM_DB.tableGetAll('print');
         }
         if (id === 'b_print_delete') {
             get_mode = 'print_delete';
             print_created = false;
             showMomentPlease('MSG_moment_please');
-            RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
+            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
+            RMM_DB.setDbNextFunction(RMM_MENU.handlePrintGetAll);
             RMM_DB.tableGetAll('print');
             alert(getStr('MSG_print_delete_warning'));
         }
@@ -1337,7 +1358,8 @@ var RMM_MENU = (function() {
             mydoc.getElementById('prt_' + my_idprint).remove();
             hideAll();
             showMomentPlease('MSG_moment_please');
-            RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printDeleteOneDone);
+            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printDeleteOneDone);
+            RMM_DB.setDbNextFunction(RMM_MENU.printDeleteOneDone);
             RMM_DB.deleteRecs('print',
                                 'idprint', 
                                 parseInt(my_idprint, 10),
@@ -1350,7 +1372,8 @@ var RMM_MENU = (function() {
     // process following delete of one print record
     function printDeleteOneDone() {
         console.log('printDeleteOneDone()');
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
+        RMM_DB.setDbNextFunction(RMM_MENU.handlePrintGetAll);
         RMM_DB.tableGetAll('print');
     }
 
@@ -1388,8 +1411,9 @@ var RMM_MENU = (function() {
     function printDeleteAllRecs() {
         console.log('printDeleteAllRecs()');
         showMomentPlease('MSG_moment_please');
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printDeleteAllDone);
-        RMM_DB.deleteRecs('print', null, null, false);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printDeleteAllDone);
+        RMM_DB.setDbNextFunction(RMM_MENU.printDeleteAllDone);
+        ////////////RMM_DB.deleteRecs('print', null, null, false);
         RMM_DB.deleteRecs('print',
                             null,
                             null,
@@ -1596,6 +1620,7 @@ var RMM_MENU = (function() {
         printDeleteOneDone: printDeleteOneDone,
         handleUserUpdate : handleUserUpdate,
         handleUserCheckAdd : handleUserCheckAdd,
+        handleDeviceUpdate : handleDeviceUpdate,
         userAddFinish : userAddFinish,
         userDeleteUserRec : userDeleteUserRec,
         handleUserDelete : handleUserDelete,

@@ -18,7 +18,7 @@ var RMM_STATS = (function() {
     var averaged = false; // flag set to true when charts times.length > 100
     var avg_len = 0; // stores times array length before averaging
     // db
-    var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
+    ////////////var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
     var IDGUEST = 10884293110550;
 
     // RMM_CFG shortcuts start
@@ -34,7 +34,8 @@ var RMM_STATS = (function() {
         txt = txt.replace('REPLACE_count', '1');
         mydoc.getElementById('div_info_text').innerHTML = txt;
         mydoc.getElementById('div_info').style.display = 'block';
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_STATS.idXrefSetup);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_STATS.idXrefSetup);
+        RMM_DB.setDbNextFunction(RMM_STATS.idXrefSetup);
         RMM_DB.tableGetAll('user');
     }
 
@@ -62,7 +63,8 @@ var RMM_STATS = (function() {
     function loadSessionData() {
         console.log('loadSessionData()');
         sdata = [];
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_STATS.statsHandleReadData);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_STATS.statsHandleReadData);
+        RMM_DB.setDbNextFunction(RMM_STATS.statsHandleReadData);
         RMM_DB.sessionGetAllRollup(null, 50, 'div_info_text');
     }
 

@@ -123,7 +123,8 @@ var RMM_ASM = (function() {
     // called from RMM_STATSLIVE after loadSessionData is finished
     function initReadUserLast() {
         console.log('initReadUserLast()');
-        RMM_DB.dbSetWaitVars(db_wait_tries_std, RMM_ASM.initSetupDBSet)
+        ////////////RMM_DB.dbSetWaitVars(db_wait_tries_std, RMM_ASM.initSetupDBSet)
+        RMM_DB.setDbNextFunction(RMM_ASM.initSetupDBSet);
         RMM_DB.readSetup(1);
     }
 

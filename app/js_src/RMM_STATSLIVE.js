@@ -4,7 +4,7 @@ var RMM_STATSLIVE = (function() {
     // statslive used to show problem type session:lifetime & grand totals
     var statslive = {};
     var grand_start = {}; // store iduser lifetime total from session start
-    var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
+    ////////////var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
     var IDGUEST = 10884293110550;
 
     // RMM_CFG shortcuts start
@@ -19,7 +19,8 @@ var RMM_STATSLIVE = (function() {
         mydoc.getElementById('div_info').style.display = 'block';
         statslive = {};
         newUserAdd(IDGUEST);
-        RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_STATSLIVE.handleReadData);
+        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_STATSLIVE.handleReadData);
+        RMM_DB.setDbNextFunction(RMM_STATSLIVE.handleReadData);
         RMM_DB.sessionGetAllRollup(null, 50, 'div_info_text');
     }
 
