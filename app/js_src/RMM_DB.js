@@ -255,7 +255,7 @@ var RMM_DB = (function() {
 
     // get the tstamp_max for each device for an iduser
     function sessionDeviceMaxTstamps(iduser_in) {
-        console.log('sessionDeviceMaxTstamps(iduser_in)');
+        console.error('sessionDeviceMaxTstamps(iduser_in)');
         var obj = objectstoreGet('session', true);
         var req = null;
         var myindex = null;
@@ -268,7 +268,7 @@ var RMM_DB = (function() {
         var date_now = Date.now();
         var i = 0;
         if (!obj) { return; }
-        timervar = window.setTimeout(dbWait, DB_MILLI_STD);
+        /////////////timervar = window.setTimeout(dbWait, DB_MILLI_STD);
         transactionInit();
         myindex = obj.index('iduser');
         myrange = IDBKeyRange.only(iduser_in);
@@ -276,6 +276,7 @@ var RMM_DB = (function() {
         cursor_req.onsuccess = function(ev) {
             cursor = ev.target.result;
             if (cursor) {
+                console.warn('---------------if (cursor)');
                 i += 1;
                 data = cursor.value;
                 my_device = data['device_iduser'].split('_')[0];
@@ -288,11 +289,14 @@ var RMM_DB = (function() {
                 }
                 cursor.continue();
             } else {
+                console.warn('---------------if (cursor) ELSE');
                 console.warn(tstamps, i);
                 console.warn(Date.now() - date_now, 'milliseconds to run');
                 db_result = tstamps;
                 db_complete = true;
+                console.error('-------exiting sessionDeviceMaxTstamps');
                 db_next_function();
+                return;
             }
         }
         cursor_req.onerror = function(ev) {
@@ -305,7 +309,7 @@ var RMM_DB = (function() {
 
     // read table using an index filter
     function sessionDeviceUserGet(tstamp_in, ival) {
-        console.log('sessionDeviceUserGet(tstamp_in, ival)');
+        console.error('sessionDeviceUserGet(tstamp_in, ival)');
         var obj = objectstoreGet('session', true);
         var req = null;
         var myindex = null;
@@ -317,7 +321,7 @@ var RMM_DB = (function() {
         var date_start = Date.now();
         var total_recs = 0;
         if (!obj) { return; }
-        //timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 100);
+        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 100);
         transactionInit();
         myindex = obj.index('device_iduser');
         myrange = IDBKeyRange.only(ival);
@@ -333,7 +337,7 @@ var RMM_DB = (function() {
                 cursor.continue();
             } else {
                 console.warn('sessionDeviceUserGet finished');
-                console.warn(total_recs, Date.now() - date_start, 'total_recs, milliseconds to run');
+                console.warn(total_recs, Date.now() - date_start, '--------------------------------total_recs, milliseconds to run');
                 db_result = recs;
                 db_complete = true;
                 db_next_function();
@@ -836,6 +840,7 @@ var RMM_DB = (function() {
 
     // set db_next_function
     function setDbNextFunction(func_in) {
+        console.error('setDbnextFunction', func_in);
         db_next_function = func_in;
     }
 
