@@ -9,7 +9,7 @@ function aa_setup() {
 }
 
 // validate data functions
-var validData = (function() {
+var g_v = (function() {
     //
     // validate specific m2 or d3 string (differnt r_str vs ASM)
     function validM2D3String(val_in) {
@@ -152,13 +152,12 @@ var validData = (function() {
         var len = 0;
         var err = null;
         try {
-            td = JSON.parse(decodeURI(data_in));
+            recs = data_in.split('####');
+            len = recs.length;
         } catch (err) {
-            my_e = 'ERR00';
+            my_e = 'ERR00:try0';
             len = -1; // skip upcoming loop
         }
-        recs = td.split('####');
-        len = recs.length;
         for (i=0; i<len; i++) {
             if (my_e.length > 0) { break; }
             data = recs[i].split('^^^^');
@@ -166,7 +165,7 @@ var validData = (function() {
             try {
                 td = JSON.parse(decodeURI(data[1]));
             } catch (err) {
-                my_e = 'ERR00';
+                my_e = 'ERR00:try1';
                 break;
             }
             // ERR01: device_iduser = mac.952_442135493
@@ -606,6 +605,7 @@ function doPost(e) {
     var sheet = e.parameter['sheet'];
     var device = e.parameter['device'];
     var datastr = e.parameter['datastr'];
+    var valid = false;
     // tstamp is the Date.now() variable used to check post completes OK
     var tstamp = e.parameter['tstamp'];
     //tstamp_max is the largest tstamp for all the session recs read
@@ -645,6 +645,11 @@ function doPost(e) {
     if (!g_s.setSheet(sheet)) { return g_s.returnResultStr(); }
     if (!g_v.validDevice(device)) {
         g_s.setResult('ERR', '', 'deviceInvalid')
+        return g_s.returnResultStr();
+    }
+    valid = g_v.validDataArray(datastr);
+    if (!valid[0]) {
+        g_s.setResult('ERR', '', 'datastr:' + valid[1]);
         return g_s.returnResultStr();
     }
     g_s.addDataRows(device, datastr);
