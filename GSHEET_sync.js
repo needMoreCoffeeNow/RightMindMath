@@ -8,6 +8,221 @@ function aa_setup() {
     Logger.log(doc.getId());
 }
 
+// validate data functions
+var validData = (function() {
+    //
+    // validate specific m2 or d3 string (differnt r_str vs ASM)
+    function validM2D3String(val_in) {
+        //////console.log('validM2D3String(val_in)', val_in);
+        var parts = val_in.split('^');
+        // samples   d3^937/10^0   m2b^76x42^0   m2c^21x68^0
+        if (parts.length !== 3) { return false; }
+        if (!validINT(parts[2])) { return false; } // chunkit counter
+        if (parts[0] === 'd3') {
+            parts = parts[1].split('/');
+        } else {
+            parts = parts[1].split('x');
+        }
+        if (parts.length !== 2) { return false; }
+        if (!validINT(parts[0])) { return false; }
+        if (!validINT(parts[1])) { return false; }
+        return true;
+    }
+
+    // validate ASM r_str
+    function validASMString(val_in) {
+        //////console.log('validASMString(val_in)', val_in);
+        var parts = val_in.split('^');
+        var header = parts[0].split('.');  // split idlevel.levelsCount.levelsTotal
+        var eq = []; // split of equation e.g. 1|3|4|+
+        var ans = []; // split answers
+        var tries = []; // split an answer: intAnswer or tstamp_intAnswer (clicked)
+        var i = 0;
+        if (header.length !== 3) { return false; }
+        if (!validINT(header[1]) || !validINT(header[2])) { return false; }
+        if (header[0] === 'm1') {
+            if (parts.length !== 4) { return false; }
+            // ordered in slot 3 (index 2) must be either false
+            if (['false', 'true'].indexOf(parts[2]) === -1) { return false; }
+            ans = parts[3].split('|'); // m1 answers in slot 4 (index 3)
+        } else {
+            if (parts.length !== 3) { return false; }
+            ans = parts[2].split('|'); //answers in slot 3 (index 2)
+        }
+        if (ans.length !== 4) {return false; }
+        eq = parts[1].split('|');
+        if (!validINT(eq[0])) { return false; }
+        if (!validINT(eq[1])) { return false; }
+        if (!validINT(eq[2])) { return false; }
+        if (eq[3].length > 1) { return false; }
+        if ('+-x'.indexOf(eq[3]) === -1) { return false; }
+        for (i=0; i<4; i++) {
+            tries = ans[i].split('_');
+            if (tries.length > 2) { return false; }
+            if (!validINT(tries[0])) { return false; }
+            if (tries.length === 1) { continue; }
+            if (!validINT(tries[1])) { return false; }
+        }
+        return true;
+    }
+
+    // initial handling of r_str essentially breaking out m2/d3 vs. ASM steps
+    function validRstring(val_in) {
+        //////console.log('validRstring(val_in)', val_in);
+        var parts = val_in.split('^');
+        var sub2 = val_in.substr(0, 2);
+        var sub3 = val_in.substr(0, 3);
+        var asm_levels = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1'];
+        if (sub2 === 'm2b' || sub2 === 'm2c' || sub3 === 'd3') {
+            return validM2D3String(val_in);
+        }
+        if (asm_levels.indexOf(sub2) === -1) { return false; }
+        return validASMString(val_in);
+    }
+
+    // make sure arg is an int without any changes eg. parseInt(12b34,  10) = 12
+    function validINT(num_in) {
+        //////console.log('validINT(num_in)', num_in);
+        var my_int = parseInt(num_in, 10);
+        var my_int_str = '' + my_int;
+        var num_in_str = '' + num_in;
+        if (isNaN(my_int)) { return false; }
+        if (num_in_str !== my_int_str) { return false; }
+        return true;
+    }
+
+    // validate iddevice
+    function validDeviceIduser(val_in) {
+        //////console.log('validDeviceIduser(val_in)', val_in);
+        var temp = [];
+        // structure = mac.952
+        temp = val_in.split('.');
+        if (temp.length !== 2) { return false; }
+        if(temp[0].length > 30) { return false; }
+        if (!validINT(temp[1])) { return false; }
+        return true;
+    }
+
+    // validate device (30 chars or less) and iduser combination)
+    function validDeviceIduser(val_in) {
+        //////console.log('validDeviceIduser(val_in)', val_in);
+        var temp = [];
+        // structure = mac.952_442135493
+        temp = val_in.split('_');
+        if (temp.length !== 2) { return false; }
+        if (!validINT(temp[1])) { return false; }
+        temp = temp[0].split('.');
+        if (temp.length !== 2) { return false; }
+        if(temp[0].length > 30) { return false; }
+        if (!validINT(temp[1])) { return false; }
+        return true;
+    }
+
+    // validate idsession which is two or three ints separated by _
+    function validIdsession(val_in) {
+        //////console.log('validIdsession(val_in)', val_in);
+        var temp = [];
+        // structure = m2+d3i: 1658157789752_2 or ASM1-3: 1658157755851_1_1
+        temp = val_in.split('_');
+        if (temp.length < 2 || temp.length > 3) { return false; }
+        if (!validINT(temp[0])) { return false; }
+        if (!validINT(temp[1])) { return false; }
+        if (temp.length === 2) { return true; }
+        if (!validINT(temp[2])) { return false; }
+        return true;
+    }
+
+    // walk thru each of the possible idlevels to verify
+    function validIdlevel(val_in) {
+        //////console.log('validIdlevel(val_in)', val_in);
+        if (val_in === 'a1') { return true; }
+        if (val_in === 'a2') { return true; }
+        if (val_in === 'a3') { return true; }
+        if (val_in === 's1') { return true; }
+        if (val_in === 's2') { return true; }
+        if (val_in === 's3') { return true; }
+        if (val_in === 'm1') { return true; }
+        if (val_in === 'm2b') { return true; }
+        if (val_in === 'm2c') { return true; }
+        if (val_in === 'd3') { return true; }
+        return false;
+    }
+
+    // validate all session recs in array returned by Google Sheet
+    function validDataArray(data_in) {
+        console.log('validDataArray(data_in)');
+        var start = Date.now();
+        var td = {}; //temp dict parsed from each data_in rec
+        var devs_ids = {}; // stored valid device_iduser
+        var my_e = ''; // error string
+        var my_v = null; // temporary dict value
+        var i = 0;
+        var len = data_in.length;
+        var err = null;
+        console.log(len, 'len');
+        for (i=0; i<len; i++) {
+            if (my_e.length > 0) { break; }
+            try {
+                td = JSON.parse(decodeURI(data_in[i]));
+            } catch (err) {
+                my_e = 'ERR00';
+                break;
+            }
+            // ERR01: device_iduser = mac.952_442135493
+            my_v = td.device_iduser;
+            if (!my_v) { my_e = 'ERR01'; continue; } // does not exist
+            if (!devs_ids[my_v]) { // not previously proofed
+                if (!validDeviceIduser(my_v)) { my_e = 'ERR01'; continue; }
+                devs_ids[td.device_iduser] = true; // save proof
+            }
+            // ERR02: idsession = 1653751651154_2 or 1658157755851_1_1
+            my_v = td.idsession;
+            if (!my_v) { my_e = 'ERR02'; continue; }
+            if (!validIdsession(my_v)) { my_e = 'ERR02'; continue; }
+            // ERR03: iduser = 243184381
+            my_v = td.iduser;
+            if (!my_v) { my_e = 'ERR03'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR03'; continue; }
+            // ERR04: elapsed = 1431
+            my_v = td.elapsed;
+            if (!my_v) { my_e = 'ERR04'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR04'; continue; }
+            // ERR05: time = 2431
+            my_v = td.time;
+            if (!my_v) { my_e = 'ERR05'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR05'; continue; }
+            // ERR06: tries = 4
+            my_v = td.tries;
+            if (!my_v) { my_e = 'ERR06'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR06'; continue; }
+            // ERR07: tstamp =  1658157757460
+            my_v = td.tstamp;
+            if (!my_v) { my_e = 'ERR07'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR07'; continue; }
+            // ERR08: idlevel =  a1, a2, a3, s1, s2, s3, m1, m2, d3
+            my_v = td.idlevel;
+            if (!my_v) { my_e = 'ERR08'; continue; }
+            if (!validIdlevel(my_v)) { my_e = 'ERR08'; continue; }
+            // ERR09: r_str
+            my_v = td.r_str;
+            if (!my_v) { my_e = 'ERR09'; continue; }
+            if (!validRstring(my_v)) { my_e = 'ERR09'; continue; }
+        }
+        console.warn(Date.now() - start, len, ' = milli to complete, data.length');
+        console.warn([my_e.length === 0, my_e]);
+        return [my_e.length === 0, my_e];
+    }
+
+//
+// >>> VALIDATE:end
+    return {
+        validDataArray: validDataArray,
+        validDeviceIduser, validDeviceIduser
+    };
+})();
+
+
+
 // g_s = provide common tool for  lock, doc, sheet, returns, and updates
 var g_s = (function() {
     var lock = null; // public lock

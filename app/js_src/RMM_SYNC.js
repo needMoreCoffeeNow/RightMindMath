@@ -765,6 +765,8 @@ var RMM_SYNC = (function() {
         data['tstamp'] = sync_confirm_tstamp;
         data['tstamp_max'] = tstamp_max;
         data['datastr'] = a_recs.join('####');
+        console.warn(data);
+        console.warn(JSON.stringify(data));
         showMomentPlease('MSG_sync_process_step4');
         fetch(sync_user_url, {
             method: 'post',
@@ -829,13 +831,21 @@ var RMM_SYNC = (function() {
         var element = document.getElementById('googlesheet');
         var response = syncResponseGS();
         var valid_result = []; // [true/false, ''/'ERRcode'] return value
+        var err = null;
         element.parentNode.removeChild(element);
         if (response.result !== 'OK') {
             console.log('-----error-----');
             postProcessWrapup('MSG_sync_process_final_err');
             return;
         }
-        sync_procdn_data = JSON.parse(decodeURI(response.value));
+        try {
+            sync_procdn_data = JSON.parse(decodeURI(response.value));
+        } catch (err) {
+            valid_result = [false, 'ERRSPD'];
+            console.log(valid_result[1], 'handleDownload ERR'); //KEEPIN
+            postProcessWrapup('MSG_sync_process_data_err');
+            return;
+        }
         valid_result = validDataArray(sync_procdn_data);
         if (!valid_result[0]) {
             console.log(valid_result[1], 'validDataArray ERR'); //KEEPIN
