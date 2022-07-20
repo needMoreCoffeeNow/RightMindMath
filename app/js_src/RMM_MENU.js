@@ -378,6 +378,11 @@ var RMM_MENU = (function() {
         mydoc.getElementById('div_menu_load_text').innerHTML = html;
         html = '';
         for (i=len-1; i>-1; i--) {
+            if (get_mode === 'user_delete') {
+                if (ids[i].name === getStr('DAT_guest')) {
+                    continue;
+                }
+            }
             user_iduser_name_xref[ids[i].iduser] = ids[i].name;
             html += '<div style="margin-top:5px;">';
             html += '<button id="' + ids[i].iduser + '" class="print_id" ';
@@ -590,6 +595,7 @@ var RMM_MENU = (function() {
         // restore the exit button area
         mydoc.getElementById('div_input1_exit_area').style.display = 'block';
         mydoc.getElementById('div_msg_text').innerHTML = getStr('MSG_device_entry_done');
+        mydoc.getElementById('txt_msg_textarea').style.display = 'none';
         mydoc.getElementById('div_msg').style.display = 'block';
     }
 

@@ -92,9 +92,6 @@ var RMM_ASM = (function() {
 //
     // processes run before fully functional main page displays
     function init() {
-        ////////////console.warn('init bypass ASM');
-        ////////////RMM_SYNC.validDummyData();
-        ////////////return;
         console.log('init()');
         var slash_num_0 = mydoc.getElementById('asm_bc_0_slash_num');
         var slash_num_1 = mydoc.getElementById('asm_bc_1_slash_num');

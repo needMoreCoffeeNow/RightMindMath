@@ -1018,16 +1018,6 @@ var RMM_SYNC = (function() {
         return false;
     }
 
-    function validDummyData() {
-        console.log('validDummyData()');
-        var dummy_data = [
-        '%7B%22idsession%22:%221653175530544_2_1%22,%22iduser%22:439164423,%22idlevel%22:%22a1%22,%22device_iduser%22:%22mac.952_439164423%22,%22time%22:4221,%22tstamp%22:1653175550219,%22elapsed%22:4221,%22tries%22:4,%22r_str%22:%22a1.1.0%5E2%7C7%7C9%7C+%5E1653175549409_7%7C1653175548902_8%7C1653175548328_11%7C1653175550218_9%22%7D',
-        '%7B%22idsession%22:%221653660577200_1_1%22,%22iduser%22:439164423,%22idlevel%22:%22s3%22,%22device_iduser%22:%22mac.952_439164423%22,%22time%22:3789,%22tstamp%22:1653660583119,%22elapsed%22:5471,%22tries%22:4,%22r_str%22:%22s3.3.0%5E860%7C375%7C485%7C-%5E1653660583118_5%7C1653660581251_6%7C1653660581802_8%7C1653660582331_1%22%7D',
-        '%7B%22idsession%22:%221654440675605_38_1%22,%22iduser%22:439164423,%22idlevel%22:%22m1%22,%22device_iduser%22:%22mac.952_439164423%22,%22time%22:6301,%22tstamp%22:1654440891456,%22elapsed%22:6301,%22tries%22:4,%22r_str%22:%22m1.1.0%5E2%7C2%7C4%7Cx%5Etrue%5E1654440887832_7%7C1654440890532_0%7C1654440891455_4%7C1654440889002_1%22%7D'
-        ];
-        validDataArray(dummy_data);
-    }
-
     // validate all session recs in array returned by Google Sheet
     function validDataArray(data_in) {
         console.log('validDataArray(data_in)');
@@ -1134,8 +1124,6 @@ var RMM_SYNC = (function() {
         handleConfirmationTstamp : handleConfirmationTstamp,
         handleDeviceMaxTstamps : handleDeviceMaxTstamps,
         handleDownload : handleDownload,
-        //validate
-        validDummyData : validDummyData,
         //key
         syncKeyCodeCreate : syncKeyCodeCreate,
         keyClickOpenMenu : keyClickOpenMenu,
