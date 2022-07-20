@@ -760,6 +760,7 @@ var RMM_SYNC = (function() {
         }
         sync_confirm_tstamp = Date.now(); // confirms write after fetch return
         data['sync_key'] = sync_key;
+        data['pwd'] = sync_user_pwd;
         data['device'] = d_device;
         data['sheet'] = sync_iduser;
         data['tstamp'] = sync_confirm_tstamp;

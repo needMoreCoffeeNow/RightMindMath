@@ -440,8 +440,7 @@ function writeTimeStamp(e) {
 // validates pwd against B1 setting 
 // sets g_s.resultDict to ERR does not set OK
 // returns true/false NOT g_s.returnSrcJS
-function pwdValid(e) {
-    var e_pwd = e.parameter['pwd'];
+function pwdValid(e_pwd) {
     var range = g_s.getSheet().getRange(1, 1);
     var values = range.getValues();
     var pwd = values[0][0];
@@ -480,7 +479,8 @@ function handleGetConfirmationTstamp() {
 // sets g_s.resultDict to ERR does not set OK
 // returns g_s.returnSrcJS
 function handleLinkTest(e) {
-    if (!pwdValid(e)) { return g_s.returnSrcJS(); }
+    var e_pwd = e.parameter['pwd'];
+    if (!pwdValid(e_pwd)) { return g_s.returnSrcJS(); }
     if (!writeTimeStamp(e)) { return g_s.returnSrcJS(); }
     g_s.setResult('OK', 'handleLinkTest', '');
     return g_s.returnSrcJS();
@@ -536,11 +536,12 @@ function handleGetDownload(e) {
     var tstamps = {};
     var c_err = null;
     var device = e.parameter['device'];
+    var e_pwd = e.parameter['pwd'];
     if (!device) {
         g_s.setResult('ERR', '', 'deviceNF')
         return g_s.returnSrcJS();
     }
-    if (!pwdValid(e)) { return g_s.returnSrcJS(); }
+    if (!pwdValid(e_pwd)) { return g_s.returnSrcJS(); }
     try {
         tstamps = JSON.parse(decodeURI(e.parameter['tstamps_max']));
     } catch(c_err) {
@@ -555,6 +556,7 @@ function doGet(e) {
     var sync_key = e.parameter['sync_key'];
     var idtype = e.parameter['idtype'];
     var sheet = e.parameter['sheet'];
+    var e_pwd = e.parameter['pwd'];
     // check for must-have params else exit
     if (!sync_key) {
         g_s.setResult('ERR', '', 'sync_keyNF')
@@ -605,6 +607,7 @@ function doPost(e) {
     var sheet = e.parameter['sheet'];
     var device = e.parameter['device'];
     var datastr = e.parameter['datastr'];
+    var e_pwd = e.parameter['pwd'];
     var valid = false;
     // tstamp is the Date.now() variable used to check post completes OK
     var tstamp = e.parameter['tstamp'];
@@ -643,6 +646,7 @@ function doPost(e) {
     if (!validSyncKey(sync_key)) { return g_s.returnSrcJS(); }
     // finally get sheet
     if (!g_s.setSheet(sheet)) { return g_s.returnResultStr(); }
+    if (!pwdValid(e_pwd)) { return g_s.returnSrcJS(); }
     if (!g_v.validDevice(device)) {
         g_s.setResult('ERR', '', 'deviceInvalid')
         return g_s.returnResultStr();
