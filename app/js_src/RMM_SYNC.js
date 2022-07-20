@@ -841,7 +841,7 @@ var RMM_SYNC = (function() {
         try {
             sync_procdn_data = JSON.parse(decodeURI(response.value));
         } catch (err) {
-            valid_result = [false, 'ERRSPD'];
+            valid_result = [false, 'ERR00'];
             console.log(valid_result[1], 'handleDownload ERR'); //KEEPIN
             postProcessWrapup('MSG_sync_process_data_err');
             return;

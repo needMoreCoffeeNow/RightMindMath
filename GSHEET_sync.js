@@ -13,7 +13,6 @@ var validData = (function() {
     //
     // validate specific m2 or d3 string (differnt r_str vs ASM)
     function validM2D3String(val_in) {
-        //////console.log('validM2D3String(val_in)', val_in);
         var parts = val_in.split('^');
         // samples   d3^937/10^0   m2b^76x42^0   m2c^21x68^0
         if (parts.length !== 3) { return false; }
@@ -31,7 +30,6 @@ var validData = (function() {
 
     // validate ASM r_str
     function validASMString(val_in) {
-        //////console.log('validASMString(val_in)', val_in);
         var parts = val_in.split('^');
         var header = parts[0].split('.');  // split idlevel.levelsCount.levelsTotal
         var eq = []; // split of equation e.g. 1|3|4|+
@@ -68,7 +66,6 @@ var validData = (function() {
 
     // initial handling of r_str essentially breaking out m2/d3 vs. ASM steps
     function validRstring(val_in) {
-        //////console.log('validRstring(val_in)', val_in);
         var parts = val_in.split('^');
         var sub2 = val_in.substr(0, 2);
         var sub3 = val_in.substr(0, 3);
@@ -82,7 +79,6 @@ var validData = (function() {
 
     // make sure arg is an int without any changes eg. parseInt(12b34,  10) = 12
     function validINT(num_in) {
-        //////console.log('validINT(num_in)', num_in);
         var my_int = parseInt(num_in, 10);
         var my_int_str = '' + my_int;
         var num_in_str = '' + num_in;
@@ -91,9 +87,8 @@ var validData = (function() {
         return true;
     }
 
-    // validate iddevice
-    function validDeviceIduser(val_in) {
-        //////console.log('validDeviceIduser(val_in)', val_in);
+    // validate device
+    function validDevice(val_in) {
         var temp = [];
         // structure = mac.952
         temp = val_in.split('.');
@@ -105,7 +100,6 @@ var validData = (function() {
 
     // validate device (30 chars or less) and iduser combination)
     function validDeviceIduser(val_in) {
-        //////console.log('validDeviceIduser(val_in)', val_in);
         var temp = [];
         // structure = mac.952_442135493
         temp = val_in.split('_');
@@ -120,7 +114,6 @@ var validData = (function() {
 
     // validate idsession which is two or three ints separated by _
     function validIdsession(val_in) {
-        //////console.log('validIdsession(val_in)', val_in);
         var temp = [];
         // structure = m2+d3i: 1658157789752_2 or ASM1-3: 1658157755851_1_1
         temp = val_in.split('_');
@@ -134,7 +127,6 @@ var validData = (function() {
 
     // walk thru each of the possible idlevels to verify
     function validIdlevel(val_in) {
-        //////console.log('validIdlevel(val_in)', val_in);
         if (val_in === 'a1') { return true; }
         if (val_in === 'a2') { return true; }
         if (val_in === 'a3') { return true; }
@@ -150,20 +142,29 @@ var validData = (function() {
 
     // validate all session recs in array returned by Google Sheet
     function validDataArray(data_in) {
-        console.log('validDataArray(data_in)');
-        var start = Date.now();
         var td = {}; //temp dict parsed from each data_in rec
         var devs_ids = {}; // stored valid device_iduser
         var my_e = ''; // error string
         var my_v = null; // temporary dict value
+        var recs = []; // store the #### delimited recs from data_in
+        var data = []; // store the tstamp^^^^dict split for each data_in rec
         var i = 0;
-        var len = data_in.length;
+        var len = 0;
         var err = null;
-        console.log(len, 'len');
+        try {
+            td = JSON.parse(decodeURI(data_in));
+        } catch (err) {
+            my_e = 'ERR00';
+            len = -1; // skip upcoming loop
+        }
+        recs = td.split('####');
+        len = recs.length;
         for (i=0; i<len; i++) {
             if (my_e.length > 0) { break; }
+            data = recs[i].split('^^^^');
+            if (!validINT(data[0])) { my_e = 'ERR00'; continue; }
             try {
-                td = JSON.parse(decodeURI(data_in[i]));
+                td = JSON.parse(decodeURI(data[1]));
             } catch (err) {
                 my_e = 'ERR00';
                 break;
@@ -208,8 +209,6 @@ var validData = (function() {
             if (!my_v) { my_e = 'ERR09'; continue; }
             if (!validRstring(my_v)) { my_e = 'ERR09'; continue; }
         }
-        console.warn(Date.now() - start, len, ' = milli to complete, data.length');
-        console.warn([my_e.length === 0, my_e]);
         return [my_e.length === 0, my_e];
     }
 
@@ -217,7 +216,7 @@ var validData = (function() {
 // >>> VALIDATE:end
     return {
         validDataArray: validDataArray,
-        validDeviceIduser, validDeviceIduser
+        validDevice, validDevice
     };
 })();
 
@@ -644,6 +643,10 @@ function doPost(e) {
     if (!validSyncKey(sync_key)) { return g_s.returnSrcJS(); }
     // finally get sheet
     if (!g_s.setSheet(sheet)) { return g_s.returnResultStr(); }
+    if (!g_v.validDevice(device)) {
+        g_s.setResult('ERR', '', 'deviceInvalid')
+        return g_s.returnResultStr();
+    }
     g_s.addDataRows(device, datastr);
     g_s.updateDeviceTstampMax(device, tstamp_max);
     if (!writeTimeStamp(e)) { return g_s.returnResultStr(); }
