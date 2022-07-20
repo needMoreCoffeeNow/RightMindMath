@@ -257,7 +257,7 @@ var RMM_DB = (function() {
 
     // get the tstamp_max for each device for an iduser
     function sessionDeviceMaxTstamps(iduser_in) {
-        console.error('sessionDeviceMaxTstamps(iduser_in)');
+        //console.log('sessionDeviceMaxTstamps(iduser_in)');
         var obj = objectstoreGet('session', true);
         var req = null;
         var myindex = null;
@@ -278,7 +278,6 @@ var RMM_DB = (function() {
         cursor_req.onsuccess = function(ev) {
             cursor = ev.target.result;
             if (cursor) {
-                console.warn('---------------if (cursor)');
                 i += 1;
                 data = cursor.value;
                 my_device = data['device_iduser'].split('_')[0];
@@ -291,12 +290,10 @@ var RMM_DB = (function() {
                 }
                 cursor.continue();
             } else {
-                console.warn('---------------if (cursor) ELSE');
                 console.warn(tstamps, i);
                 console.warn(Date.now() - date_now, 'milliseconds to run');
                 db_result = tstamps;
                 db_complete = true;
-                console.error('-------exiting sessionDeviceMaxTstamps');
                 db_next_function();
                 return;
             }
@@ -312,7 +309,7 @@ var RMM_DB = (function() {
 
     // read table using an index filter
     function sessionDeviceUserGet(tstamp_in, ival) {
-        console.error('sessionDeviceUserGet(tstamp_in, ival)');
+        console.log('sessionDeviceUserGet(tstamp_in, ival)');
         var obj = objectstoreGet('session', true);
         var req = null;
         var myindex = null;
@@ -573,7 +570,7 @@ var RMM_DB = (function() {
 
     // add session record
     function addSessionRec(data) {
-        console.error('addSessionRec(data)');
+        console.log('addSessionRec(data)');
         var obj = objectstoreGet('session', true);
         var req = null;
         if (!obj) { return; }
@@ -827,7 +824,7 @@ var RMM_DB = (function() {
             }
         }
         req.onerror = function(ev) {
-            req.onerror = console.error('sync_key NOT SET : req.onerror'); //KEEPING
+            req.onerror = console.error('sync_key NOT SET : req.onerror'); //KEEPIN
         }
     }
 //
@@ -870,7 +867,7 @@ var RMM_DB = (function() {
 
     // set db_next_function
     function setDbNextFunction(func_in) {
-        console.error('setDbnextFunction', func_in);
+        //console.log('setDbnextFunction', func_in);
         db_next_function = func_in;
     }
 
