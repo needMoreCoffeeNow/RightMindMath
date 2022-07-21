@@ -353,7 +353,7 @@ var RMM_SYNC = (function() {
     }
 
     function gsDoGet(url) {
-        console.warn('gsDoGet(url)');
+        console.log('gsDoGet(url)');
         var head = document.getElementsByTagName('head')[0];
         var script = document.createElement('script');
         var err = false;
@@ -430,7 +430,6 @@ var RMM_SYNC = (function() {
         url += '&tstamp=' + sync_confirm_tstamp;
         sync_callback = RMM_SYNC.handleLinkAddTest;
         sync_caller = 'linkAddCheck';
-        console.warn('gsDoGet -------------------------- from LinkAddCheck');
         gsDoGet(url);
     }
     
@@ -516,7 +515,6 @@ var RMM_SYNC = (function() {
             if (disallowed.indexOf(newchar) > -1) { continue; }
             mykey += newchar;
         }
-        console.warn(mykey, mykey.length, 'mykey from syncKeyCodeCreate()');
         return mykey
     }
 
@@ -670,7 +668,7 @@ var RMM_SYNC = (function() {
 
     // handle user record update completion
     function procUpGetHistory(ev) {
-        console.warn('procUpGetHistory(ev)');
+        console.log('procUpGetHistory(ev)');
         var parms = ev.target.id.split('_');
         var url = '';
         sync_iduser = parseInt(parms[3], 10);
@@ -691,7 +689,6 @@ var RMM_SYNC = (function() {
     function handleDeviceMaxTstamps() {
         console.log('handleDeviceMaxTstamps()');
         tstamps_str = encodeURI(JSON.stringify(RMM_DB.getDbResult()));
-        console.warn(tstamps_str , 'tstamps_str ');
         procUpGetDeviceTstamp();
     }
 
@@ -705,7 +702,6 @@ var RMM_SYNC = (function() {
         sync_callback = RMM_SYNC.handleProcUpGetDeviceTstamp;
         showMomentPlease('MSG_sync_process_step2');
         sync_caller = 'procUpGetDeviceTstamp';
-        console.warn('gsDoGet -------------------------- from procUpGetDeviceTstamp');
         gsDoGet(url);
     }
 
@@ -766,8 +762,6 @@ var RMM_SYNC = (function() {
         data['tstamp'] = sync_confirm_tstamp;
         data['tstamp_max'] = tstamp_max;
         data['datastr'] = a_recs.join('####');
-        console.warn(data);
-        console.warn(JSON.stringify(data));
         showMomentPlease('MSG_sync_process_step4');
         fetch(sync_user_url, {
             method: 'post',
@@ -791,7 +785,6 @@ var RMM_SYNC = (function() {
         sync_callback = RMM_SYNC.handleConfirmationTstamp;
         showMomentPlease('MSG_sync_process_step5');
         sync_caller = 'confirmSessionUpPost';
-        console.warn('gsDoGet -------------------------- from confirmSessionUpPost');
         gsDoGet(url);
     }
 
@@ -823,7 +816,6 @@ var RMM_SYNC = (function() {
         sync_callback = RMM_SYNC.handleDownload;
         showMomentPlease('MSG_sync_process_step6');
         sync_caller = 'procdnStartDownload';
-        console.warn('gsDoGet -------------------------- from procdnStartDownload');
         gsDoGet(url);
     }
 
