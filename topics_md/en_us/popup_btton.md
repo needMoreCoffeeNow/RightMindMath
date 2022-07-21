@@ -1,4 +1,4 @@
-<p>Popups are little text notes presented designed to pause the flow. They can and at some point should all be shut off because <span style="background-color:#ffffcc">once you child understands the point, or has begun to really master the problem set, an uninterrupted flow is a very good thing.</span> The flow is both relaxing, and important for right-mind learning</p>
+<p>Popups are little text notes designed to pause the flow. They can and at some point should all be shut off because <span style="background-color:#ffffcc">once you child understands the point, or has begun to really master the problem set, an uninterrupted flow is a very good thing.</span> The flow is both relaxing, and important for right-mind learning</p>
 
 <p>The three types of popups are:
 <ul>

@@ -18,7 +18,7 @@
 <li><span style="background-color:#ffffcc">No automatic app storage deletion</span></li>
 </ol>
 
-<p>When installed as a PWA the browser that opens &amp; runs RMM <span style="font-size:85%">(just like accessing the web site)</span> starts up faster using the downloaded files.  It also will work when you are off-line again because of the downloads. And, most importantly, your data will not be deleted.</p>
+<p>When installed as a PWA the browser that opens &amp; runs RMM will start up up faster using the downloaded files.  It also will work when you are off-line again because of the downloads. And, most importantly, your data will not be deleted.</p>
 
 <p>Finally it is important to mention that RMM is a relatively tiny app with respect to local storage used. It takes only a few megabytes of device resources.</p>
 

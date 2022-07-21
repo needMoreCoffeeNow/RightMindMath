@@ -8,7 +8,7 @@
 
 <p>RMM&#039;s softer approach might assist, or might detract from left-mind learning. Since it is free &amp; easy to install, <b>Please evaluate it yourself</b></p>
 
-<p><span style="background-color:#ffffcc">One point in RMM&#039;s favor, though, is how effectively it helps your child learn the processes by which multi-digit problems &amp; long division are solved.</span> These processes are always left-minded. Despite its name RMM is a fantastic tool for learning them.</p>
+<p><span style="background-color:#ffffcc">One point in RMM&#039;s favor, though, is how effectively it helps your child learn the process of solving multi-digit &amp; long division problems.</span> These processes are always left-minded. Despite its name RMM is a fantastic tool for learning them.</p>
 
 <p>Before you make your decision please walk-thru all the different multi-digit solution processes. Trying to be objective, TSA feels that RMM is better than in this area than any other apps reviewed by TSA. <span style="font-size:90%;">(A large but not exhaustive list.)</span></p>
 
