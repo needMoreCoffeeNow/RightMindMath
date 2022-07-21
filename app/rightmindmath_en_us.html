@@ -381,7 +381,6 @@
             <a id="b_menu_subborrow_exit" href="#" class="mbutton" onclick="RMM_MENU.levelsExit(event);">IHNEEDED</a>
         </div>
         <div id="div_menu_subneg" class="menu_items">
-            <div id="div_menu_subneg_note" class="addneg_note">IHNEEDED</div>
             <hr>
             <div id="div_menu_subneg_text" class="addneg_text">IHNEEDED</div>
             <div id = "div_subneg_val" class="a1_neg_current">0 / 10</div>
@@ -422,42 +421,49 @@
             <!-- exit -->
             <hr>
             <a id="b_menu_subneg_save" href="#" class="mbutton" onclick="RMM_MENU.levelsExit(event);">IHNEEDED</a>
-            <br>
-            <a id="b_menu_subneg_exit" href="#" class="mbutton" onclick="RMM_MENU.levelsExit(event);">IHNEEDED</a>
         </div>
         <div id="div_menu_addneg" class="menu_items">
-            <div id="div_menu_addneg_note" class="addneg_note">IHNEEDED</div>
             <hr>
             <div id="div_menu_addneg_text" class="addneg_text">IHNEEDED</div>
             <div id = "div_addneg_val" class="a1_neg_current">0 / 10</div>
             <!-- negative problem percentaeg -->
-            <a id="b_addneg_0" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">0</a>
-            <br>
-            <a id="b_addneg_1" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">1</a>
-            <br>
-            <a id="b_addneg_2" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">2</a>
-            <br>
-            <a id="b_addneg_3" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">3</a>
-            <br>
-            <a id="b_addneg_4" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">4</a>
-            <br>
-            <a id="b_addneg_5" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">5</a>
+            <div style="margin-top:20px;">
+                <select id="addneg_digit" style="font-size:1.1em;" onchange="RMM_MENU.addnegSet(event);">
+                  <option value="0" selected>0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+            </div>
             <hr>
-            <!-- addtop addendum percentage -->
+            <!-- subtop addendum percentage -->
             <div id="div_menu_addtopneg_text" style="font-size:80%;text-align:left;padding-right:10px;">IHNEEDED</div>
             <div id = "div_addtopneg_val" class="a1_neg_current">0 / 10</div>
-            <a id="b_addtopneg_0" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">0</a>
-            <br>
-            <a id="b_addtopneg_1" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">1</a>
-            <br>
-            <a id="b_addtopneg_2" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">2</a>
-            <br>
-            <a id="b_addtopneg_3" href="#" class="mbutton_small" onclick="RMM_MENU.addnegSet(event);">3</a>
+            <div style="margin-top:20px;">
+                <select id="addtopneg_digit" style="font-size:1.1em;" onchange="RMM_MENU.addnegSet(event);">
+                  <option value="0" selected>0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+            </div>
             <!-- exit -->
             <hr>
             <a id="b_menu_addneg_save" href="#" class="mbutton" onclick="RMM_MENU.levelsExit(event);">IHNEEDED</a>
-            <br>
-            <a id="b_menu_addneg_exit" href="#" class="mbutton" onclick="RMM_MENU.levelsExit(event);">IHNEEDED</a>
         </div>
         <div id="div_m2_options" class="menu_items" style="display:none;">
             <a id="b_m2_type_basic" href="#" class="mbutton" onclick="RMM_MENU.m2optionsType(event);"></a>

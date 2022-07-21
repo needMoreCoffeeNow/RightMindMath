@@ -28,11 +28,13 @@ div.statslive {
 }
 
 div.a1_neg_current {
-  margin-top:5px;
   text-align:center;
+  width:60%;
   font-size:90%;
   color:#0000ff;
   background:#ccc;
+  margin:0px auto;
+  margin-top:15px;
 }
 
 div.addneg_note {
