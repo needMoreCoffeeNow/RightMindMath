@@ -16,7 +16,6 @@ var RMM_MENU = (function() {
     var user_iduser_name_xref = {}; // stores names indexed by iduser
     var iduserdelete = 0; // store the iduser being deleted
     // db
-    ////////////var DB_TRIES_STD = 100; // std arg to set db_max_tries in dbSetWaitVars
     var IDGUEST = 10884293110550;
     var IDSETUP = 1;
     // RMM_CFG shortcuts start
@@ -340,14 +339,12 @@ var RMM_MENU = (function() {
         if (id === 'b_user_load') {
             get_mode = 'user_load';
             showMomentPlease('MSG_moment_please');
-            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserGetAll);
             RMM_DB.setDbNextFunction(RMM_MENU.handleUserGetAll);
             RMM_DB.tableGetAll('user');
         }
         if (id === 'b_user_delete') {
             get_mode = 'user_delete';
             showMomentPlease('MSG_moment_please');
-            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserGetAll);
             RMM_DB.setDbNextFunction(RMM_MENU.handleUserGetAll);
             RMM_DB.tableGetAll('user');
         }
@@ -424,7 +421,6 @@ var RMM_MENU = (function() {
         if (!valid) { return; }
         hideAll();
         showMomentPlease('TXT_data_deleting');
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userDeleteUserRec);
         RMM_DB.setDbNextFunction(RMM_MENU.userDeleteUserRec);
         RMM_DB.deleteRecs('session', 
                             'iduser', 
@@ -437,7 +433,6 @@ var RMM_MENU = (function() {
     // process user record delete
     function userDeleteUserRec() {
         console.log('userDeleteUserRec()');
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserDelete);
         RMM_DB.setDbNextFunction(RMM_MENU.handleUserDelete);
         RMM_DB.deleteRecs('user', 'iduser', iduserdelete, true, 100, '');
     }
@@ -449,7 +444,6 @@ var RMM_MENU = (function() {
         var data = {'iduser':IDGUEST, 'name':getStr('DAT_guest')};
         changeUserCurrent(data);
         txt = txt.replace('REPLACE_name', user_iduser_name_xref[iduserdelete]);
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userDeleteWrapup);
         RMM_DB.setDbNextFunction(RMM_MENU.userDeleteWrapup);
         RMM_DB.setupParametersUpdate(data);
         alert(txt)
@@ -484,7 +478,6 @@ var RMM_MENU = (function() {
         }
         showMomentPlease('MSG_moment_please');
         console.log(data, 'data');
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserUpdate);
         RMM_DB.setDbNextFunction(RMM_MENU.handleUserUpdate);
         RMM_DB.setupParametersUpdate(data);
     }
@@ -504,7 +497,6 @@ var RMM_MENU = (function() {
         RMM_ASM.setIduser(data.iduser);
         RMM_ASM.setName(data.name);
         changeUserName();
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserSnapshot);
         RMM_DB.setDbNextFunction(RMM_MENU.handleUserSnapshot);
         RMM_DB.readSetup(data.iduser);
     }
@@ -521,7 +513,6 @@ var RMM_MENU = (function() {
         }
         data = { 'idkey' : RMM_ASM.getIduser(),
                  'pdata' : pdata}
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.changUserCurrentWrapup);
         RMM_DB.setDbNextFunction(RMM_MENU.changUserCurrentWrapup);
         RMM_DB.addRecord('setup', data);
     }
@@ -572,7 +563,6 @@ var RMM_MENU = (function() {
             // add a random 3-digit number to device name to ensure unique
             dev_end += '.' + (Math.floor(Math.random() * (1000 - 100) ) + 100);
             RMM_DB.setDevice(dev_end);
-            ////////////RMM_DB.setDbNextFunction(RMM_MENU.handleDeviceUpdate);
             RMM_DB.setDbNextFunction(RMM_MENU.handleDeviceUpdate);
             RMM_DB.setupParametersUpdate({device : dev_end});
             return;
@@ -584,7 +574,6 @@ var RMM_MENU = (function() {
             }
             user_name_temp = dev_end;
             showMomentPlease('MSG_moment_please');
-            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserCheckAdd);
             RMM_DB.setDbNextFunction(RMM_MENU.handleUserCheckAdd);
             RMM_DB.getRecByIndex('user', 'name', user_name_temp);
             return;
@@ -624,7 +613,6 @@ var RMM_MENU = (function() {
         // leading digit cannot be a 1 to protect default guest id
         data.iduser += RMM_ASM.getRandInt(200, 1000) * 1000000;
         RMM_STATSLIVE.newUserAdd(data.iduser);
-        ///////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handleUserAdd);
         RMM_DB.setDbNextFunction(RMM_MENU.handleUserAdd);
         RMM_DB.addRecord('user', data);
     }
@@ -635,7 +623,6 @@ var RMM_MENU = (function() {
         var data = RMM_DB.getDbResult();
         pdata = RMM_DB.pdataInit();
         data['pdata'] = pdata;
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.userAddFinish);
         RMM_DB.setDbNextFunction(RMM_MENU.userAddFinish);
         RMM_DB.setupParametersUpdate(data);
     }
@@ -747,8 +734,6 @@ var RMM_MENU = (function() {
         var addneg_num = addneg_str.split(' ')[0];
         var addtopneg_str = mydoc.getElementById('div_subtopneg_val').innerHTML;
         var addtopneg_num = addtopneg_str.split(' ')[0];
-        ///////////var addneg = parseInt(addneg_str.substr(0, 1), 10);
-        ///////////var addtopneg = parseInt(addtopneg_str.substr(0, 1), 10);
         var addneg = parseInt(addneg_num, 10);
         var addtopneg = parseInt(addtopneg_num, 10);
         pdata.subneg_pct = addneg;
@@ -770,14 +755,10 @@ var RMM_MENU = (function() {
 
     // handle subneg number click
     function subnegSet(ev) {
-        console.warn('subnegSet(ev)');
-        console.warn(ev)
+        console.log('subnegSet(ev)');
         var id = (ev.target.id);
         var val = mydoc.getElementById(id).value;
-        console.warn(id);
-        console.warn(mydoc.getElementById(id).value);
         var parts = id.split('_');
-        ////////////var pct = parseInt(parts[2], 10);
         var num_val = parseInt(val, 10);
         var pct = num_val * 10;
         var type = parts[0];
@@ -1240,9 +1221,9 @@ var RMM_MENU = (function() {
                  'digits' : pdata.digits,
                  'm1_digit' : pdata.m1_digit};
         cb_print_listing = false;
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printPageShow);
         RMM_DB.setDbNextFunction(RMM_MENU.printPageShow);
         RMM_DB.addRecord('print', data);
+        // leave next line in to test layout of a "full page" of equations
         //problems = ["888|888|888|x", "881|827|054|-", "398|175|223|-", "653|235|418|-", "470|200|270|-", "438|258|180|-", "824|219|605|-", "566|531|035|-", "827|218|609|-", "943|388|555|-", "332|192|140|-", "777|294|483|-", "851|269|582|-", "726|363|363|-", "628|218|410|-", "483|313|170|-", "837|513|324|-", "689|646|043|-", "898|362|536|-", "817|356|461|-", "865|756|109|-", "979|559|420|-", "441|222|219|-", "585|377|208|-", "772|140|632|-", "621|237|384|-", "548|399|149|-", "920|260|660|-", "896|399|497|-", "914|748|166|-", "722|706|016|-", "908|230|678|-", "502|138|364|-", "923|732|191|-", "507|497|010|-", "226|165|061|-", "514|344|170|-", "960|575|385|-", "923|562|361|-", "829|787|042|-", "974|557|417|-", "844|324|520|-"];
         }
 
@@ -1284,7 +1265,6 @@ var RMM_MENU = (function() {
             get_mode = 'print_load';
             print_created = false;
             showMomentPlease('MSG_moment_please');
-            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
             RMM_DB.setDbNextFunction(RMM_MENU.handlePrintGetAll);
             RMM_DB.tableGetAll('print');
         }
@@ -1292,7 +1272,6 @@ var RMM_MENU = (function() {
             get_mode = 'print_delete';
             print_created = false;
             showMomentPlease('MSG_moment_please');
-            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
             RMM_DB.setDbNextFunction(RMM_MENU.handlePrintGetAll);
             RMM_DB.tableGetAll('print');
             alert(getStr('MSG_print_delete_warning'));
@@ -1317,6 +1296,9 @@ var RMM_MENU = (function() {
         }
         if (get_mode === 'print_delete') {
             html += getStr('TXT_print_delete_info');
+        }
+        if (len === 0) {
+            html += '<br><br>' + getStr('MSG_no_print_recs');
         }
         html += '<div style="text-align:center;">';
         html += '<br><input type="checkbox" id="cb_print_listing" ';
@@ -1374,7 +1356,6 @@ var RMM_MENU = (function() {
             mydoc.getElementById('prt_' + my_idprint).remove();
             hideAll();
             showMomentPlease('MSG_moment_please');
-            ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printDeleteOneDone);
             RMM_DB.setDbNextFunction(RMM_MENU.printDeleteOneDone);
             RMM_DB.deleteRecs('print',
                                 'idprint', 
@@ -1388,7 +1369,6 @@ var RMM_MENU = (function() {
     // process following delete of one print record
     function printDeleteOneDone() {
         console.log('printDeleteOneDone()');
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.handlePrintGetAll);
         RMM_DB.setDbNextFunction(RMM_MENU.handlePrintGetAll);
         RMM_DB.tableGetAll('print');
     }
@@ -1427,9 +1407,7 @@ var RMM_MENU = (function() {
     function printDeleteAllRecs() {
         console.log('printDeleteAllRecs()');
         showMomentPlease('MSG_moment_please');
-        ////////////RMM_DB.dbSetWaitVars(DB_TRIES_STD, RMM_MENU.printDeleteAllDone);
         RMM_DB.setDbNextFunction(RMM_MENU.printDeleteAllDone);
-        ////////////RMM_DB.deleteRecs('print', null, null, false);
         RMM_DB.deleteRecs('print',
                             null,
                             null,
