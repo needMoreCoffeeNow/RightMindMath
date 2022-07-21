@@ -385,28 +385,40 @@
             <hr>
             <div id="div_menu_subneg_text" class="addneg_text">IHNEEDED</div>
             <div id = "div_subneg_val" class="a1_neg_current">0 / 10</div>
-            <a id="b_subneg_0" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">0</a>
-            <br>
-            <a id="b_subneg_1" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">1</a>
-            <br>
-            <a id="b_subneg_2" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">2</a>
-            <br>
-            <a id="b_subneg_3" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">3</a>
-            <br>
-            <a id="b_subneg_4" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">4</a>
-            <br>
-            <a id="b_subneg_5" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">5</a>
+            <div style="margin-top:20px;">
+                <select id="subneg_digit" style="font-size:1.1em;" onchange="RMM_MENU.subnegSet(event);">
+                  <option value="0" selected>0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+            </div>
             <hr>
             <!-- subtop addendum percentage -->
             <div id="div_menu_subtopneg_text" class="addneg_text">IHNEEDED</div>
             <div id = "div_subtopneg_val" class="a1_neg_current">0 / 10</div>
-            <a id="b_subtopneg_0" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">0</a>
-            <br>
-            <a id="b_subtopneg_1" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">1</a>
-            <br>
-            <a id="b_subtopneg_2" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">2</a>
-            <br>
-            <a id="b_subtopneg_3" href="#" class="mbutton_small" onclick="RMM_MENU.subnegSet(event);">3</a>
+            <div style="margin-top:20px;">
+                <select id="subtopneg_digit" style="font-size:1.1em;" onchange="RMM_MENU.subnegSet(event);">
+                  <option value="0" selected>0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+            </div>
             <!-- exit -->
             <hr>
             <a id="b_menu_subneg_save" href="#" class="mbutton" onclick="RMM_MENU.levelsExit(event);">IHNEEDED</a>

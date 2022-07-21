@@ -142,12 +142,16 @@ var RMM_MENU = (function() {
     function showSubnegMenu() {
         console.log('showSubnegMenu()');
         var subneg = pdata.subneg_pct;
+        var subneg_pct = subneg * 10;
         var subtopneg = pdata.subtopneg_pct;
+        var subtopneg_pct = subtopneg * 10;
         var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
         txt = txt.replace('REPLACE_number', subneg);
+        txt += '  (' + subneg_pct + '%)';
         mydoc.getElementById('div_subneg_val').innerHTML = txt;
         txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
         txt = txt.replace('REPLACE_number', subtopneg);
+        txt += '  (' + subtopneg_pct + '%)';
         mydoc.getElementById('div_subtopneg_val').innerHTML = txt;
         hideAll();
         mydoc.getElementById('div_menu_subneg').style.display = 'block';
@@ -740,9 +744,13 @@ var RMM_MENU = (function() {
     function subnegPdataUpdate(ev) {
         console.log('subnegPdataUpdate(ev)');
         var addneg_str = mydoc.getElementById('div_subneg_val').innerHTML;
+        var addneg_num = addneg_str.split(' ')[0];
         var addtopneg_str = mydoc.getElementById('div_subtopneg_val').innerHTML;
-        var addneg = parseInt(addneg_str.substr(0, 1), 10);
-        var addtopneg = parseInt(addtopneg_str.substr(0, 1), 10);
+        var addtopneg_num = addtopneg_str.split(' ')[0];
+        ///////////var addneg = parseInt(addneg_str.substr(0, 1), 10);
+        ///////////var addtopneg = parseInt(addtopneg_str.substr(0, 1), 10);
+        var addneg = parseInt(addneg_num, 10);
+        var addtopneg = parseInt(addtopneg_num, 10);
         pdata.subneg_pct = addneg;
         pdata.subtopneg_pct = addtopneg;
         checkProblemStart();
@@ -762,13 +770,20 @@ var RMM_MENU = (function() {
 
     // handle subneg number click
     function subnegSet(ev) {
-        console.log('subnegSet(ev)');
+        console.warn('subnegSet(ev)');
+        console.warn(ev)
         var id = (ev.target.id);
+        var val = mydoc.getElementById(id).value;
+        console.warn(id);
+        console.warn(mydoc.getElementById(id).value);
         var parts = id.split('_');
-        var pct = parseInt(parts[2], 10);
-        var type = parts[1];
+        ////////////var pct = parseInt(parts[2], 10);
+        var num_val = parseInt(val, 10);
+        var pct = num_val * 10;
+        var type = parts[0];
         var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
-        txt = txt.replace('REPLACE_number', pct);
+        txt = txt.replace('REPLACE_number', num_val);
+        txt += '  (' + pct + '%)';
         if (type === 'subneg') {
             mydoc.getElementById('div_subneg_val').innerHTML = txt;
         } else {
@@ -1295,11 +1310,6 @@ var RMM_MENU = (function() {
         var i = 0;
         mydoc.getElementById('div_menu_load_buttons').innerHTML = '';
         hideAll();
-        if (len === 0) {
-            mydoc.getElementById('div_print_menu').style.display = 'block';
-            alert(getStr('MSG_no_print_recs'));
-            return;
-        }
         cb_print_listing = false;        
         html = '<div>';
         if (get_mode === 'print_load') {
