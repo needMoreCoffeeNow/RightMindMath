@@ -93,7 +93,7 @@ var g_v = (function() {
         // structure = mac.952
         temp = val_in.split('.');
         if (temp.length !== 2) { return false; }
-        if(temp[0].length > 30) { return false; }
+        if(temp[0].length > 20) { return false; }
         if (!validINT(temp[1])) { return false; }
         return true;
     }
@@ -107,7 +107,7 @@ var g_v = (function() {
         if (!validINT(temp[1])) { return false; }
         temp = temp[0].split('.');
         if (temp.length !== 2) { return false; }
-        if(temp[0].length > 30) { return false; }
+        if(temp[0].length > 20) { return false; }
         if (!validINT(temp[1])) { return false; }
         return true;
     }

@@ -986,7 +986,7 @@ var RMM_SYNC = (function() {
         if (!validINT(temp[1])) { return false; }
         temp = temp[0].split('.');
         if (temp.length !== 2) { return false; }
-        if(temp[0].length > 30) { return false; }
+        if(temp[0].length > 20) { return false; }
         if (!validINT(temp[1])) { return false; }
         return true;
     }
