@@ -215,7 +215,8 @@ var g_v = (function() {
 // >>> VALIDATE:end
     return {
         validDataArray: validDataArray,
-        validDevice, validDevice
+        validDevice, validDevice,
+        validINT : validINT
     };
 })();
 
@@ -649,6 +650,14 @@ function doPost(e) {
     if (!pwdValid(e_pwd)) { return g_s.returnSrcJS(); }
     if (!g_v.validDevice(device)) {
         g_s.setResult('ERR', '', 'deviceInvalid')
+        return g_s.returnResultStr();
+    }
+    if (!g_v.validINT(tstamp)) {
+        g_s.setResult('ERR', '', 'tstampInvalid')
+        return g_s.returnResultStr();
+    }
+    if (!g_v.validINT(tstamp_max)) {
+        g_s.setResult('ERR', '', 'tstampmaxInvalid')
         return g_s.returnResultStr();
     }
     valid = g_v.validDataArray(datastr);
