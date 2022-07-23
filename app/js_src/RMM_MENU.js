@@ -554,9 +554,9 @@ var RMM_MENU = (function() {
     // handle input1 continue click
     function input1Continue(ev) {
         console.log('input1Continue()');
-        var dev_start = mydoc.getElementById('input_1').value;
-        var dev_end = '';
-        var len = dev_start.length;
+        var input_start = mydoc.getElementById('input_1').value;
+        var input_end = '';
+        var len = input_start.length;
         var i = 0;
         if (input1_type === 'print_delete_all') {
             printDeleteAllRecs();
@@ -567,28 +567,28 @@ var RMM_MENU = (function() {
             return;
         }
         for (i=0; i<len; i++) {
-            if (!char_range[dev_start.charCodeAt(i)]) { continue; }
-            dev_end += dev_start.charAt(i)
+            if (!char_range[input_start.charCodeAt(i)]) { continue; }
+            input_end += input_start.charAt(i)
         }
-        if (dev_start !== dev_end) {
-            mydoc.getElementById('input_1').value = dev_end;
+        if (input_start !== input_end) {
+            mydoc.getElementById('input_1').value = input_end;
             alert(getStr('MSG_invalid_chars'));
             return;
         }
         if (input1_type === 'device_name') {
             // add a random 3-digit number to device name to ensure unique
-            dev_end += '.' + (Math.floor(Math.random() * (1000 - 100) ) + 100);
-            RMM_DB.setDevice(dev_end);
+            input_end += '.' + (Math.floor(Math.random() * (1000 - 100) ) + 100);
+            RMM_DB.setDevice(input_end);
             RMM_DB.setDbNextFunction(RMM_MENU.handleDeviceUpdate);
-            RMM_DB.setupParametersUpdate({device : dev_end});
+            RMM_DB.setupParametersUpdate({device : input_end});
             return;
         }
         if (input1_type === 'user_name') {
-            if (dev_end === getStr('DAT_guest')) {
+            if (input_end === getStr('DAT_guest')) {
                 alert(getStr('MSG_name_not_guest'));
                 return;
             }
-            user_name_temp = dev_end;
+            user_name_temp = input_end;
             showMomentPlease('MSG_moment_please');
             RMM_DB.setDbNextFunction(RMM_MENU.handleUserCheckAdd);
             RMM_DB.getRecByIndex('user', 'name', user_name_temp);
