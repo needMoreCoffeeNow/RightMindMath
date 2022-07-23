@@ -100,6 +100,7 @@
         MSG_db_setup_nf : 'Sorry the database setup record was not found. Guest will be the user.',
         MSG_m1_startend_mismatch : 'Sorry when start is 10 end must be 20.',
         MSG_input_needed : 'Please make an entry.',
+        MSG_input_too_long : 'Sorry input is limited to 20 characters for your security.',
         MSG_user_needed : 'Please enter the user name.',
         MSG_iduser_needed : 'Please enter the 9-digit User ID.',
         MSG_9digits_needed : 'User ID must be exactly 9 digits (no spaces, letters, or leading zeros).',

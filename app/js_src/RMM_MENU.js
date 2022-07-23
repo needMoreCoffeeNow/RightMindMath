@@ -566,6 +566,10 @@ var RMM_MENU = (function() {
             alert(getStr('MSG_input_needed'));
             return;
         }
+        if (len > 20) {
+            alert(getStr('MSG_input_too_long'));
+            return;
+        }
         for (i=0; i<len; i++) {
             if (!char_range[input_start.charCodeAt(i)]) { continue; }
             input_end += input_start.charAt(i)
