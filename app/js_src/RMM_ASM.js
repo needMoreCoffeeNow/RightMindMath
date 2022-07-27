@@ -1154,6 +1154,7 @@ var RMM_ASM = (function() {
         //prob_asm  = [ [7,2,3], [3,7,0], [3,5,3] ];
         //prob_asm  = [ [9,7,2], [7,6,0], [2,1,2] ];
         //prob_asm  = [ [8,8,1], [8,2,7], [0,5,2] ];
+        //prob_asm  = [ [9,9,9], [9,9,8], [0,0,1] ];
         borrowsSetDict();
         probAnswerSet();
         finishProbSetup();

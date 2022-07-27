@@ -352,6 +352,43 @@ var RMM_STATS = (function() {
         mydoc.getElementById('div_stats_type').style.display = 'block';
     }
 
+    function statsExportRecords(ev) {
+        console.log('statsExportRecords(ev)');
+        var txt = getStr('TXT_data_loading');
+        RMM_MENU.hideAll();
+        txt = txt.replace('REPLACE_count', '1');
+        mydoc.getElementById('div_info_text').innerHTML = txt;
+        mydoc.getElementById('div_stats_container').style.display = 'none';
+        mydoc.getElementById('div_info').style.display = 'block';
+        RMM_DB.setDbNextFunction(RMM_STATS.statsWriteJson);
+        RMM_DB.tableGetAll('session');
+    }
+
+    function statsWriteJson() {
+        console.log('statsWriteJson()');
+        var result = RMM_DB.getDbResult();
+        var txt = '';
+        var i = 0;
+        var len = result.length;
+        for (i=0; i<len; i++) {
+            if (result[i].iduser !== idstats) { continue; }
+            txt += JSON.stringify(result[i]);
+            if (i+1 < len) { txt += '\n'; };
+        }
+        RMM_MENU.hideAll();
+        mydoc.getElementById('div_info').style.display = 'none';
+        try {
+            anchor = document.createElement('a');
+            anchor.id = 'a_stats_export_csv';
+            anchor.href = window.URL.createObjectURL(new Blob([txt], {type: 'text/plain'}));
+            anchor.download = 'RMM_' + idname + '_JSON.txt';
+            anchor.click();
+        } catch(err) {
+            alert(getStr('MSG_export_not_supported'));
+        }
+        mydoc.getElementById('div_stats_container').style.display = 'block';
+    }
+
     // fit more than 100 times into 100 buckets
     function averageTimes() {
         console.log('averageTimes()');
@@ -847,6 +884,8 @@ var RMM_STATS = (function() {
         statsTypeExit : statsTypeExit,
         statsUsageExit : statsUsageExit,
         statsChartClick : statsChartClick,
+        statsExportRecords : statsExportRecords,
+        statsWriteJson : statsWriteJson,
         statsExportClick : statsExportClick,
         statsExportExit : statsExportExit,
         statsUsageClick : statsUsageClick
