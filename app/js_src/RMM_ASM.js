@@ -2181,6 +2181,8 @@ var RMM_ASM = (function() {
     // set problem using pdata input
     function setProblem(pdata) {
         console.log('setProblem(pdata)');
+        //////RMM_DB.developerResetSessionDevice();
+        //////return;
         hideAll();
         total_problems = 0;
         if (pdata.module === 'a') {

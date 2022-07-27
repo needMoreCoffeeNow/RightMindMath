@@ -309,7 +309,7 @@ var RMM_DB = (function() {
 
     // read table using an index filter
     function sessionDeviceUserGet(tstamp_in, ival) {
-        console.log('sessionDeviceUserGet(tstamp_in, ival)');
+        console.log('sessionDeviceUserGet(tstamp_in, ival)', tstamp_in, ival);
         var obj = objectstoreGet('session', true);
         var req = null;
         var myindex = null;
@@ -879,6 +879,62 @@ var RMM_DB = (function() {
 //
 // >>> GETSET:end
 //
+//
+// >>> DEVELOPER: start
+//
+
+    // use to reset device_iduser when you want to download
+    // very large datasets generated on other devices
+    // and treat them (e.g. test Sync Upload) as if from 
+    // current device
+    function developerResetSessionDevice() {
+        console.log('developerResetSessionDevice()');
+        var obj = objectstoreGet('session', true);
+        var req = null;
+        var data = null;
+        var cursor = null;
+        var data = null;
+        var res = null; // response from cursor.update()
+        var found = 0;
+        var updated = 0;
+        var failed = 0;
+        var skipped = 0;
+        //
+        // variables below must be set befor running
+        //
+        var my_iduser = 439164423;
+        var my_device_iduser = 'mac.992_439164423';
+        if (!obj) { console.error('!obj'); return; }
+        total_recs = 0;
+        obj.openCursor().onsuccess = function(ev) {
+            cursor = ev.target.result;
+            if (cursor) {
+                data = cursor.value;
+                if (data.iduser === my_iduser) {
+                    found += 1;
+                    data.device_iduser = my_device_iduser;
+                    res = cursor.update(data);
+                    res.onsuccess = function(e){
+                        updated += 1;
+                    }
+                     res.onerror = function(e){
+                        failed += 1;
+                    }
+                } else {
+                    skipped += 1;
+                }
+                cursor.continue();
+            } else {
+                console.warn(found + ' = found')
+                console.warn(updated + ' = updated')
+                console.warn(failed + ' = failed')
+                console.warn(skipped + ' = skipped')
+            }
+        }
+    }
+//
+// >>> DEVOPER: end
+//
     return {
         init : init,
         // getters & setters
@@ -911,6 +967,8 @@ var RMM_DB = (function() {
         readIduser : readIduser,
         // sync
         sessionDeviceUserGet : sessionDeviceUserGet,
-        sessionDeviceMaxTstamps : sessionDeviceMaxTstamps
+        sessionDeviceMaxTstamps : sessionDeviceMaxTstamps,
+        // developer
+        developerResetSessionDevice : developerResetSessionDevice
     };
 })();
