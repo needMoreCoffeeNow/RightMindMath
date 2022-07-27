@@ -1,4 +1,4 @@
-<p><span style="background:#fff;color:#cc0052;">Step 1</span><br>Use Safari to open this link on your iOS device:<br>
+<p><span style="background:#fff;color:#cc0052;">Step 1</span><br>Use <b>Safari</b> to open this link on your iOS device:<br>
  <a target="_blank" href="https://rightmindmath.com/app/rightmindmath_en_us.html">Open RightMindMath Browser Window</a> <span style="font-size:75%;">(opens a new window)</span>
 </p>
 
