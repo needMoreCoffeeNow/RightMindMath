@@ -1,5 +1,5 @@
 <p>When you have multiple devices, you will need to follow a sequential process when syncing them.</p>
-<p>The reason is that each sync both uploads records from the device, and download records previously uploaded.</p>
+<p>The reason is that each sync both uploads records from the device, and downloads records previously uploaded.</p>
 <p>So devices that sync first will not have records from later device syncs. They must be synced a second time.</p>
 <p>The example below explains this. Assume we have three devices:
 <ul>
