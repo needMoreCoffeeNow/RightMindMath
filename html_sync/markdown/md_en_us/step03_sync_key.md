@@ -3,7 +3,7 @@
 
 <p>If you have not yet installed RMM as a PWA, follow the instructions at this link:</p>
 
-<p><a target="_blank" href=" ">LINK NEEDED</a></p>
+<p><a target="_blank" href="../html_pwa/instruct_pwa_install_en_us.html">PWA Install Instructions</a></p>
 
 <p>You should also have your RightMindMath Google sheet open in another window.</p>
 
