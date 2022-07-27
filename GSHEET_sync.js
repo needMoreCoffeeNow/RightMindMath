@@ -47,7 +47,7 @@ var g_v = (function() {
             if (parts.length !== 3) { return false; }
             ans = parts[2].split('|'); //answers in slot 3 (index 2)
         }
-        if (ans.length !== 4) {return false; }
+        if (ans.length !== 4) { return false; }
         eq = parts[1].split('|');
         if (!validINT(eq[0])) { return false; }
         if (!validINT(eq[1])) { return false; }
@@ -70,7 +70,7 @@ var g_v = (function() {
         var sub2 = val_in.substr(0, 2);
         var sub3 = val_in.substr(0, 3);
         var asm_levels = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1'];
-        if (sub2 === 'm2b' || sub2 === 'm2c' || sub3 === 'd3') {
+        if (sub2 === 'm2' || sub2 === 'd3') {
             return validM2D3String(val_in);
         }
         if (asm_levels.indexOf(sub2) === -1) { return false; }
@@ -79,11 +79,41 @@ var g_v = (function() {
 
     // make sure arg is an int without any changes eg. parseInt(12b34,  10) = 12
     function validINT(num_in) {
+        //////console.log('validINT(num_in)', num_in);
         var my_int = parseInt(num_in, 10);
         var my_int_str = '' + my_int;
         var num_in_str = '' + num_in;
         if (isNaN(my_int)) { return false; }
-        if (num_in_str !== my_int_str) { return false; }
+        if (num_in_str !== my_int_str) {
+            // need to handle leading zeros eg 01 or 001 or 038
+            if (num_in.length < 4) {
+                if (num_in.length === 3) {
+                    // check for 001
+                    if (num_in.substr(0, 2) === '00') {
+                        if (num_in.substr(2, 1) === my_int_str) {
+                            return true;
+                        }
+                    } else {
+                        //check for 038
+                        if (num_in.substr(0, 1) === '0') {
+                            if (num_in.substr(1, 2) === my_int_str) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                // check for 01
+                if (num_in.length === 2) {
+                    if (num_in.substr(0, 1) === '0') {
+                        if (num_in.substr(1, 1) === my_int_str) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            // no leading zeros so not valid
+            return false;
+        }
         return true;
     }
 
@@ -134,8 +164,7 @@ var g_v = (function() {
         if (val_in === 's2') { return true; }
         if (val_in === 's3') { return true; }
         if (val_in === 'm1') { return true; }
-        if (val_in === 'm2b') { return true; }
-        if (val_in === 'm2c') { return true; }
+        if (val_in === 'm2') { return true; }
         if (val_in === 'd3') { return true; }
         return false;
     }
@@ -170,43 +199,45 @@ var g_v = (function() {
             }
             // ERR01: device_iduser = mac.952_442135493
             my_v = td.device_iduser;
-            if (!my_v) { my_e = 'ERR01'; continue; } // does not exist
+            if (!my_v) { my_e = 'ERR01a'; continue; } // does not exist
             if (!devs_ids[my_v]) { // not previously proofed
-                if (!validDeviceIduser(my_v)) { my_e = 'ERR01'; continue; }
+                if (!validDeviceIduser(my_v)) { my_e = 'ERR01b'; continue; }
                 devs_ids[td.device_iduser] = true; // save proof
             }
             // ERR02: idsession = 1653751651154_2 or 1658157755851_1_1
             my_v = td.idsession;
-            if (!my_v) { my_e = 'ERR02'; continue; }
-            if (!validIdsession(my_v)) { my_e = 'ERR02'; continue; }
+            if (!my_v) { my_e = 'ERR02a'; continue; }
+            if (!validIdsession(my_v)) { my_e = 'ERR02b'; continue; }
             // ERR03: iduser = 243184381
             my_v = td.iduser;
-            if (!my_v) { my_e = 'ERR03'; continue; }
-            if (!validINT(my_v)) { my_e = 'ERR03'; continue; }
+            if (!my_v) { my_e = 'ERR03a'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR03b'; continue; }
             // ERR04: elapsed = 1431
             my_v = td.elapsed;
-            if (!my_v) { my_e = 'ERR04'; continue; }
-            if (!validINT(my_v)) { my_e = 'ERR04'; continue; }
+            if (!my_v) { my_e = 'ERR04a'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR04b'; continue; }
             // ERR05: time = 2431
             my_v = td.time;
-            if (!my_v) { my_e = 'ERR05'; continue; }
-            if (!validINT(my_v)) { my_e = 'ERR05'; continue; }
-            // ERR06: tries = 4
-            my_v = td.tries;
-            if (!my_v) { my_e = 'ERR06'; continue; }
-            if (!validINT(my_v)) { my_e = 'ERR06'; continue; }
+            if (!my_v) { my_e = 'ERR05a'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR05b'; continue; }
+            // ERR06: idlevel =  a1, a2, a3, s1, s2, s3, m1, m2, d3
+            my_v = td.idlevel;
+            if (!my_v) { my_e = 'ERR06a'; console.warn(td); continue; }
+            if (!validIdlevel(my_v)) { my_e = 'ERR06b'; console.warn(td); continue; }
             // ERR07: tstamp =  1658157757460
             my_v = td.tstamp;
-            if (!my_v) { my_e = 'ERR07'; continue; }
-            if (!validINT(my_v)) { my_e = 'ERR07'; continue; }
-            // ERR08: idlevel =  a1, a2, a3, s1, s2, s3, m1, m2, d3
-            my_v = td.idlevel;
-            if (!my_v) { my_e = 'ERR08'; continue; }
-            if (!validIdlevel(my_v)) { my_e = 'ERR08'; continue; }
+            if (!my_v) { my_e = 'ERR07a'; continue; }
+            if (!validINT(my_v)) { my_e = 'ERR07b'; continue; }
+            // ERR08: tries = 4 only for a1, s1, m1
+            if (td.idlevel === 'a1' || td.idlevel === 's1' || td.idlevel === 'm1') {
+                my_v = td.tries;
+                if (!my_v) { my_e = 'ERR08a'; console.warn(td); continue; }
+                if (!validINT(my_v)) { my_e = 'ERR08b'; console.warn(td); continue; }
+            }
             // ERR09: r_str
             my_v = td.r_str;
-            if (!my_v) { my_e = 'ERR09'; continue; }
-            if (!validRstring(my_v)) { my_e = 'ERR09'; continue; }
+            if (!my_v) { my_e = 'ERR09a'; console.warn(td); continue; }
+            if (!validRstring(my_v)) { my_e = 'ERR09b'; console.warn(td); continue; }
         }
         return [my_e.length === 0, my_e];
     }
