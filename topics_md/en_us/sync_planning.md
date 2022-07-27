@@ -12,4 +12,4 @@
 
 <p>Once the Google Sync Sheet has been setup, it is easy to install RMM on devices &amp; use the Sheet for setting up Syncing on each device.</p>
 
-<p>The complete instructions for setting up your 100% private Google Sheet are here: <a target="_blank" href="./app/sync/sync_instructions_en_us.html">Sync Setup Instructions</a> <span style="font-size:75%;">(opens a new window)</span>.</p>
+<p>The complete instructions for setting up your 100% private Google Sheet are here: <a target="_blank" href="./html_sync/instruct_sync_setup_en_us.html">Sync Setup Instructions</a> <span style="font-size:75%;">(opens a new window)</span>.</p>

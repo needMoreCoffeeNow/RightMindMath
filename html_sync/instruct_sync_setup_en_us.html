@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+        <meta name="keywords" content="arithmetic" >
+        <meta name="description" content="Dedicated success with arithmetic." >
+        <title>RMMSyncSetup</title>
+        <style type="text/css">
+            body {
+                font-size:1.0em;
+                font-weight:normal;
+                font-family:sans-serif;
+                color:#000000;
+                max-width:700px;
+                text-align:center;
+                padding-left:5%;
+                padding-right:5%;
+                margin:0px auto;
+                background-color:#eee;
+            }
+            img.logo {
+                width:150px;
+            }
+            .img_responsive {
+                max-width: 100%;
+                height: auto;
+                border: 5px solid #555;
+            }
+            @media screen and (max-width: 1000px) {
+                img.logo {
+                    width:200px;
+                }
+            }
+            table, th, td {
+                border:1px solid black;
+                border-collapse:collapse;
+                padding:10px;
+            }
+            div.topic_header {
+                font-size: 2em;
+                color:#333;
+            }
+            div.b_close {
+                font-size:1.0em;
+                color:#000066;
+                background:#cce6ff;
+                border:1px solid #000099;
+                text-align:center;
+                margin-left:20%;
+                margin-right:20%;
+            }
+            div.b_close:hover { 
+                background-color: #ffffcc;
+                cursor: pointer;
+            }
+            div.topic_text{
+                font-size:1.3em;
+                font-weight:normal;
+                font-family:sans-serif;
+                color:#000000;
+                max-width:800px;
+                text-align:center;
+                padding:10px;
+                margin:0px auto;
+                background-color:#eee;
+            }
+            .step {
+                color: #cc0052;
+                background:#ccc;
+                font-size:110%;
+            }
+            button.topic_header {
+                font-size:1.0em;
+                width:90%;
+                color:#000066;
+                background:#cce6ff;
+                background:rgba(204, 230, 255, 0.3);
+                border:1px solid #000099;
+                text-align:center;
+                margin-top:20px;
+                padding:5px;
+            }
+            button.topic_header:hover { 
+                background:rgba(255, 255, 204, 1.0);
+                cursor: pointer;
+            }
+            ul {
+                font-size:95%;
+            }
+            ol {
+                font-size:95%;
+            }
+            a:link { color:#0040ff; }
+            a:visited { color:#0040ff; }
+        </style>
+        <script>
+            var mydoc = window.document;
+            var scroll_top = 0;
+//topic text array start-->
+            var topic_text_array_1 = [
+                [
+                '1) Copy the Google Sheet for Syncing',
+                '<hr><hr><div class="step">Step 1</div><p>Be sure you are logged into your Google Sheets account. Click the link below to open the Google Sheets main page. If you are prompted to log in, you will need to do that first, or create an account if you do not already have one.</p><p><a target="_blank" href="https://docs.google.com/spreadsheets/d/1rvGuj6SkLtarqv6KIiZruUKnf3WAug2sIUIyRcpHBEM/edit?usp=sharing">Open Your Google Sheets Main Page</a></p><hr><hr><div class="step">Step 2 (optional)</div><p>Once you have reached your Google Sheets main page, you can close the window. In the next step you will open a copy of an existing Sheet named RightMindMath. It also opens in a new Google Sheets window, so have two open at the same time may be confusing.</p><hr><hr><div class="step">Step 3</div><p>Click the link below to open the Google Sheet named <u>RightMindMath</u> in a separate window.</p><p><a target="_blank" href="https://docs.google.com/spreadsheets/d/1rvGuj6SkLtarqv6KIiZruUKnf3WAug2sIUIyRcpHBEM/edit?usp=sharing">RightMindMath Google Sheet Link</a></p><hr><hr><div class="step">Step 4</div><p>Click the <u>File</u> menu button</p><p><img src="./images/img_en_us/01_01a_click_file.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 5</div><p>Select the <u>Make a copy</u> File menu option</p><p><img src="./images/img_en_us/01_02a_click_make_copy.jpg" class="img_responsive"></p><hr><hr><div class="step">Step 6</div><p>You will see the dialog below after clicking the link above. Change the text in the <u>Name</u> box to <b>RightMindMath</b> (delete the &#039;Copy of&#039; text). Leave everything else unchanged. Then click the green <u>Make a copy</u> button</p><p><img src="./images/img_en_us/01_03a_copy_rmm_dialog.jpg" class="img_responsive"></p>'
+                ],
+                [
+                '2) Setup &amp; Run the Sheet API',
+                '<hr><p>After you have saved your copy of <u>RightMindMath</u> you need to setup and run the Appliction Program Interface (API) that the RMM app will use to sync. There are a number of steps below, but most simply involve clicking dialog buttons.<br><br>One reason for all the clicks is that Google wants to be sure that you acknowledge that creating an API can create a security risk. This is a good warning. RMM&#039;s API has been very carefully programmed to avoid these issues so you can feel safe.</p><hr><hr><div class="step">Step 1</div><p>Once you saved RightMindMath a windows opens with <b>your own RightMindMath</b> sheet.</p><p>Click on the sheet&#039;s <u>Extensions</u> menu and select <u>Apps Script</u> option. This will open the Apps Script editor in a new tab.<span style="font-size:90%;"> Note: The extensions load slowly after the sheet itself is open.  If the tab does not open, wait a minute and try again.</span></p><p><img src="./images/img_en_us/02_01a_click_apps_script.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 2</div><p>Change to the <u>Apps Script</u> tab, and click the blue <u>Deploy</u> button and select <u>New deployment</u>.</p><p><img src="./images/img_en_us/02_02a_click_deploy.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 3</div><p>After clicking <u>New deployment</u> you will be presented with the dialog box shown below. Note: initially the <u>New description</u> box will be empty.</p><p>Type <b>RMMSync</b> into this description box.</p><p>Leave the <u>Execute as</u> option as &#039;Me&#039; (or select this option if another is shown). Also leave the <u>Who has access</u> option to &#039;Anyone&#039; (or select this option if another is shown).</p><p>Once these options have all been set, click the big blue <u>Deploy</u> button at the bottom-right.</p><p><img src="./images/img_en_us/02_03a_describe_deploy.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 4</div><p>After clicking <u>Deploy</u> you will be presented with the dialog box shown below. Click the big blue <u>Authorize access</u> button.</p><p><img src="./images/img_en_us/02_04a_authorize_access.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 5</div><p>After clicking <u>Authorize access</u> you will be presented with the account sign-in dialog box shown below. The account listed should be the same account you use to access your Google Sheets. Click on this account to continue.</p><p><img src="./images/img_en_us/02_05a_authorize_access_sign_in.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 6</div><p>When you click your account name, the dialog inside the current dialog box will change to the one shown below. Ignore the big blue <u>BACK TO SAFETY</u> button. Click on the tiny, not-all-caps link that says <u>Advanced</u>.</p><p><img src="./images/img_en_us/02_06a_advanced_click.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 7</div><p>When you click <u>Advanced</u> the Google dialog adds a sentence about risks & trust, and another link. Click this new <u>Go to sync2_v2 (unsafe)</u> link. As noted above, the sync API has been carefully coded to be safe.</p><p><img src="./images/img_en_us/02_07a_click_goto_sync_v2.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 8</div><p>Finally you have clicked thru enough warnings &amp; confirmations to be ready to setup the sync_v2 API to run with your RightMindMath sheet.</p><p>Click the <u>Allow</u> button.</p><p><img src="./images/img_en_us/02_08a_click_allow_sync_v2.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 9</div><p>After clicking <u>Allow</u> in the previous step, you go back the the original Authorize dialog which will change into the <u>New deployment</u> dialog below. Ignore the long string at the top with the ID.</p><p>Click the <u>copy</u> button that is below the long URL in the <u>Web app</u> section.</p><p>After you have made sure you clicked copy (no penalty for multiple clicks), click the big blue <u>Done</u> button in the bottom-right. This will close the dialog, and leave the <u>Apps Script</u> window open.</p><p><img src="./images/img_en_us/02_09a_click_copy_url.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 10</div><p>Navigate back the the RightMindMath sheet window from the Apps Script window.</p><p>Once you are back to the RightMindMath window, paste the URL copied in the last step into cell <b>A8</b>.</p><p>Cell A8 is the first blue-background cell just above the text in cell A9 that starts out &#039;Copy/Paste into cell A8...&#039;. In the image below cell A8 starts out with <b>https&#058;//script.google.com</b> Your URL will start the same way, but change from that point.</p><p><img src="./images/img_en_us/02_10a_copy_paste_url.jpg"  class="img_responsive"></p><hr><hr><div class="step">Step 11</div><p>Navigate back to the <u>Apps Script</u> window (e.g. click its tab). You are now going to start your API. If you do not start it, it will not be active.</p><p>Locate the <u>Run</u> button. The button to the right if <u>Run</u> is <u>Debug</u>. Ignore Debug.</p><p>Immediately to the right of Debug is a drop-down selector. This selector may already show <u>aa_setup</u>. If <u>aa_setup</u> is not shown, click the selector and choose <u>aa_setup</u>.</p><p>Once <u>aa_setup</u> is showing, click the <u>Run</u> button.</p><p>You RMMSync API is now active, and will stay active even when you close the RightMindMath sheet.</p><p>You can now close the <u>Apps Script</u> window.</p><p><img src="./images/img_en_us/02_11a_run_aa_setup.jpg"  class="img_responsive"></p><hr><hr><div class="step">Accessing the URL at a later date</div><p>If at some later date you need the API URL string, you can access the copy dialog again. To do so, click the <u>Extensions >> Apps Script</u> menu choice. When that Apps Script window opens, click the big blue <u>Deploy</u> button and select <u>Manage deployments</u> (image one below).</p><p>Once <u>Manage deployments</u> is clicked, you get a dialog showing your API deployments. Click on <b>RMMSync</b> (which should already be selected). You can then copy the URL string using the <u>copy</u> button (image two below).</p><p>Be sure to <b><u>Cancel</u></b> the deployments dialog box &amp; close the <u>Apps Script</u> window once your copy/paste process is complete</p><p><img src="./images/img_en_us/02_12a_manage_deploy.jpg"  class="img_responsive"></p><p><img src="./images/img_en_us/02_12b_manage_deploy_detail.jpg"  class="img_responsive"></p>'
+                ],
+                [
+                '3) Create or Update the Sync Key',
+                '<hr><p>For the next step you must have RMM installed as a PWA. It is easiest to do this at the same time &amp; on the same computer used to setup the RightMindMath sheet &amp; API.</p><p>If you have not yet installed RMM as a PWA, follow the instructions at this link:</p><p><a target="_blank" href=" ">LINK NEEDED</a></p><p>You should also have your RightMindMath Google sheet open in another window.</p><hr><hr><div class="step">Step 1</div><p>Open the RMM app you installed as a PWA. Enter a device name. You will then be at the settings menu.</p><p>Click on the green <u>Sync</u> button. <span style="font-size:90%;">Note: all Sync buttons are green. All other buttons are blue.<//span></p><p><img src="./images/img_en_us/03_01a_click_sync.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 2</div><p>When the Sync menu is open click on the <u>Sync Key: Create / Update</u> button.</p><p><img src="./images/img_en_us/03_02a_click_create_update.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 3</div><p>You are now looking at the Sync Key Create / Update dialog. Since you have not yet set a Sync Key for this device the message notes this, and the <u>Current Sync Key</u> text box is empty.</p><p>Click the <u>Create New Key</u> button.</p><p>When you do this a new Sync Key will be put into the <u>New Key</u> text box. Please note: <b>this key has not yet been saved.</b></p><p><b>THIS IS IMPORTANT:</b> Only one Sync Key can be used for one Google Sheet. Most families/mentors will only need to use one Google Sheet.</p><p>This means that <b>you only do the create key once.</b></p><p>For every other device after the first device you will copy/paste the Sync Key from the Google sheet into the <u>New Key</u> box &amp; then do the update.</p><p><img src="./images/img_en_us/03_03a_create_update_init.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 4</div><p>After you click the <u>Create New Key</u> button, a new Sync Key will appear in the <u>New Key</u> text box. This key has not yet been saved.</p><p>If you <b>are setting up a second, third, ... device</b> you will copy/paste the existing Sync Key from the Google sheet into the <u>New Key</u> box.</p><p><img src="./images/img_en_us/03_04a_new_key_created.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 5</div><p>Click the <u>Update Current Key</u> button to save the <u>New Key</u> as the device&#039;s <u>Current Sync Key</u>.</p><p>Note how the Sync Key has moved from the <u>New Key</u> text box to the <u>Current Sync Key</u> text box. This shows it has been saved.</p><p><img src="./images/img_en_us/03_05a_update_click.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 6</div><p>Copy the entire 60 character string from the <u>New Key</u> text box.</p><p><img src="./images/img_en_us/03_06a_copy_key_string.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 7</div><p>Navigate to the browser window where your RightMindMath sheet is open.</p><p>Place your cursor in cell <b>A4</b>. Paste the Sync Key 60 character string into cell A4.</p><p>It is <b>very, very important</b> that you paste this into cell A4.</p><p>When you do this, the value in cell A5 will equal 60. If it does not, you did not paste to the right cell, or you did not copy the entire Sync Key from the <u>Current Sync Key</u> text box in RMM.</p><p><img src="./images/img_en_us/03_06a_key_pasted_into_sheet.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Always Copy/Paste for Other Devices</div><p>As noted above: Once you do the initial Sync Key setup, you <b>Do Not Create Any New Keys</b> on other devices you setup.</p><p>For every device you setup after the first, <b>always copy/paste</b> the Sync Key from cell A4 in the RightMindMath sheet into the <u>New Key</u> text box. Then click the <u>Update Current Key</u> button to save it to the new device.</p><p>The end result of doing this is that all your devices will have the same Sync Key.</p>'
+                ]
+            ];
+            var topic_text_array_2 = [
+                [
+                '1) User IDs Overview',
+                '<p>This topic does not have any steps. It is purely informational. However, you should read it. The Topics that follow require actions that will make a lot more sense if you read this.</p><p>The intent is to provide you a good understanding of how user IDs work across devices in RMM. Here is <b>an important TRUTH:</b> You can only set up a child (user) once.</p><p>The reason for this is that when you create a new user, RMM will assign a new, unique 9-digit ID (<b>Iduser</b>) for each new user added with the <u>Create New user</u> button (shown below).</p><p>If you try to create the same user (blue button) on another device YOU CANNOT DO IT. The 9-digit <b>Iduser</b> from the second setup will be different. Even if you use the exact same user name, the <b>Iduser</b> will be different.</p><p>RMM tracks everything your child does using the <b>Iduser</b>. When you add a user &amp; type in the user name, RMM creates a cross-reference between the <b>Iduser</b> &amp; the name. This allows RMM to show you the more meaningful (to you) user name in the user interface.</p><p>Also you will use the 9-digit <b>Iduser</b> as the title for the "ply" (new sheet) in your RightMindMath Google Sheet that stores all the sync data. Given this, using the same <b>Iduser</b> across multiple devices is critical.</p><p>There are two ways to setup a user on a device. The first creates the unique ID (<b>Iduser</b>). The second uses the original <b>Iduser</b> to create the same set of records on a second, third, etc. device.</p><p>Look at the two buttons in the image below. The first (blue) button is the create button. It will create  a unique 9-digit <b>Iduser</b>. The second (green &#151; all Sync buttons are green) lets you use the 9-digit <b>Iduser</b> from the create process to setup the same <b>Iduser</b> on other devices.</p><p>The addition of an existing user was put into the Sync process to make it 100% distinct to the process of creating a new user. Also it is likely you will grab the existing <b>Iduser</b> from your Sync Sheet, so it does make some sense to put it here.</p><p>The Topics that follow will walk you thru how to setup you child as a user. Hopefully given the info above you will be well informed about the process.</p><hr><hr><div class="step">Create vs. Sync User Buttons</div><p><img src="./images/img_en_us/04_00_create_vs_sync_user_buttons.jpg" class="img_responsive"></p>',
+                ],
+                [
+                '2) Create a New User',
+                '<hr><p>For the next step you must both RMM &amp; your RightMindMath sheet open at the same time.</p><hr><hr><div class="step">Step 1</div><p>If RMM Settings are not shown, click the <u>Gear Icon</u> at the top-right of the screen to open Settings.</p><p>Click on the <u>User Setup</u> button.</p><p><img src="./images/img_en_us/05_01_click_into_user_menu.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 2</div><p>Click on the <u>Create New User</u> button in the User Setup menu.</p><p><img src="./images/img_en_us/05_02_click_new_user.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 3</div><p>Type your user&#039; name or nick-name into the text box.</p><p>In this example <b>Maria</b> <span style="font-size:80%;">(she/her)</span> is the name of the child.</p><p>Click the <u>Continue</u> button after you have entered the name.</p><p><img src="./images/img_en_us/05_03_add_maria.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 4</div><p>After you click <u>Continue</u> in the previous step you will see this dialog.</p><p>Before you click <u>OK</u> select all the text inside the text box.</p><p>Note: this text string is setup to paste as three separate cell values in the next step. Be copy the entire string.</p><p><img src="./images/img_en_us/05_04_copy_maria_string.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 5</div><p>Navigate to the browser window with your RightMindMath Sheet.</p><p>Click the first empty cell in <b>column A</b> in the table with the light-blue background. Note: be sure you are in <b>column A</b>.</p><p>Paste the string you just copied into this cell.</p><p>The result of the past should be columns A, B, &amp; C having the information from RMM.</p><p><img src="./images/img_en_us/05_05_paste_maria_string.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 6</div><p>First: Click colum B to select the cell with the 9-digit <b>Iduser</b> value.</p><p>Copy the 9-digit <b>Iduser</b> value.</p><p>Second: Click the "+" (plus) button at the bottom-left of your sheet.</p><p>When you click this Add Sheet button a new "sheet" (or "ply") will be added to RightMindMath.</p><p><img src="./images/img_en_us/05_06_click_add_sheet.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 7</div><p>Immediately after you click <u>Add Sheet</u> in the previous step, you will be viewing a new, blank sheet.</p><p>At this point, the title of the sheet will be something like "Sheet1".</p><p>First: Double click the "Sheet1" title, and past the 9-digit <b>Iduser</b> as the sheet title.</p><p>Note: in the image below, we are showing the sheet AFTER the <b>Iduser</b> value has been pasted into the title.</p><p>Second: Click cell <b>A1</b>. It is <b>very, very important</b> that you are in cell <b>A1</b>.</p><p>Type an easy to remember <b>passcode</b> into this cell. You do not need to make it super-long, and super difficult. There are many layers of security prior to this <b>passcode</b>.</p><p>An easy way to create a good <b>passcode</b> is to combine two common four or five letter words with a number between them. This has been done for Maria&#039;s sheet</p><p>You may want to change the color of the background of cell <b>A1</b> &amp; increase the font size. Use the buttons highlighted by the orange boxes to do this.</p><p>Please note: Cell <b>A1</b> is the ONLY CELL you should ever change in this sheet. As you start syncing, RMM will fill up other cells & rows with texts. Never alter these values</p><p><img src="./images/img_en_us/05_07_setup_iduser_sheet.jpg"  class="img_responsive"></p></p>'
+                ],
+                [
+                '3) Setup User Sheet Links',
+                '<hr><p>For the next step you must both RMM &amp; your RightMindMath sheet open at the same time.</p><hr><hr><div class="step">Step 1</div><p>Navigate to the <u>Control</u> sheet in your RightMindMath browser window.</p><p>Click into cell <b>A1</b> and change the value to 1 (one) from 0 (zero).</p><p>Note: When cell A1 is zero you API is effectively closed. You should only change it to a one when you are doing sync activities.</p><p>In the next few steps RMM will check the sync inputs for Maria. So cell A1 needs to be one.</p><p><img src="./images/img_en_us/06_01_rmm_a1_to_one.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 2</div><p>Return to RMM and click the <u>Add / Edit User Google Sheet Links</u> button inside the Sync Setting menu.</p><p><img src="./images/img_en_us/06_02_click_sheet_links.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 3</div><p>A dialog appears that allows you to click to <u>Add Link</u> for your new user (Maria in this case).</p><p>Note: Since this is the first setup for Maria the button is green.</p><p>Click the <u>Add Link</u> button.</p><p><img src="./images/img_en_us/06_03_click_maria.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 4</div><p>A dialog appears with two text boxes you need to fill from the RightMindMath sheet.</p><p>Navigate to the <u>Control</u> sheet of RightMindMath.</p><p>Copy the long string value from cell A8 (the sheet URL).</p><p>Return to RMM and paste the URL string into the lower text box.</p><p>Again navigate to RightMindMath, and open the sheet whose title is equal to your user&#039;s 9-digit <b>Iduser</b>.</p><p>Copy the pass code from cell A1.</p><p>Return to RMM and paste the pass code into the top text box.</p><p>Note: The image below shows the dialog after both text boxes have been filled for Maria.</p><p>Click the <u>Save</u> button.</p><p>The links inut dialog is replaced by a notification that RMM is testing the link setup.</p><p><img src="./images/img_en_us/06_04_save_maria_links.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 4</div><p>Once the links test is done, you should see the alert message below.</p><p>If you get an alert that starts out "Something is wrong with the Google Sheet..." then either the URL string is wrong, or your sheet API is not running. Carefully check the sheet URL. If it is good, then revisit the Topic titled "2) Setup & Run the Sheet API" and repeat the steps for starting the API.</p><p>There are also alerts for the device key being wrong/missing, or the value in <u>Control</u> cell <b>A1</b> not being zero. Revisit the appropriate topics to correct these.</p><p>If you corrected an error, simply try the <u>Save</u> button again to re-check the links setup.</p><p><img src="./images/img_en_us/06_05_test_ok_alert.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 5</div><p>After every process in which RMM talks to your Google Sheet you will get the alert below remining you to lock your API.</p><p>In the current case, you have no more Sync tasks so you can navigate to the <u>Control</u> sheet of RightMindMath and set cell <b>A1</b> back to zero.</p><p>Your sheet API is once again safely locked.</p><p><img src="./images/img_en_us/06_06_change_to_zero_alert.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">A new Add/Edit Dialog Look</div><p>Since you now have your user links setup, the button and presentaion of the user link info is different</p><p>For users with good, active links the <u>Edit Link</u> button is smaller, and blue.</p><p>The small text box to the right of the user name has the URL string (it is all there, just not all showing).</p><p><img src="./images/img_en_us/06_07_maria_new_edit_button_dialog.jpg"  class="img_responsive"></p></p>'
+                ],
+                ['<>', '<div style="margin-top:30px;"><hr style="width:50%;border:1px solid #000;"></div>'],
+                [
+                'Alternate Way to get User ID',
+                '<p>If you did not copy/paste the user information into your sheet (Step 5), do not worry.</p><p>You can find the information you need to setup the RightMindMath <b>Iduser</b> sheet using the Setting&#039;s <u>Sync</u> menu.</p><p>After clicking the green <u>Sync</u> button, click the <u>Show User IDs set up on this device</u> button.<p><p>When you click this button, you will see a dialog like the second image below, but with your child&#039;s information.</p><p><img src="./images/img_en_us/05_99a_show_user_IDs_button.jpg"  class="img_responsive"></p></p><p><img src="./images/img_en_us/05_99b_user_IDs_dialong.jpg"  class="img_responsive"></p></p>'
+                ],
+                [
+                'Congratulations !!!!!!!!!!',
+                '<p>You are done setting up your RightMindMath sheet (unless you are adding more children).</p><p>If you do add more children simply follow the steps above for each child. There really is no practical limit. A mentor/teacher may have a sheet with 20+ Iduser tabs. This will be no problem given the massive power Google gives you as a sheet owner.</p><p>From this point, you will only use the RightMindMath sheet as a means to copy/paste all the values needed when you setup additional devices such as your child&#039;s pad or phone.</p><p>All the values you will need for additional device setups are contained in your <u>Control</u> sheet.</p>'
+                ]
+            ];
+            var topic_text_array_3 = [
+                [
+                '1) Preparing to Set Up a New Device',
+                '<p>When you install RMM on another device you need access to the information now stored in your RightMindMath Google sheet.</p><p>Be sure you have installed RMM as a PWA on the new device before working thru this Topic.</p><p>If you can open your Google Sheet on the device, then open it now. You can skip the email suggestion below.</p><p>If you cannot open your Google Sheet on the device, then you need to get the information from the sheet to the device.</p><p>The easiest way to do this will likely be by copying/pasting the information you need into an email, and send it to an account used on the device</p><p>Copy the following fields into the email from your RightMindMath sheet:<ol><li>The 60 character Sync Key (Control sheet cell <b>A4</b>)</li><li>The URL String (Control sheet cell <b>A8</b>)</li><li>The 9-digit <b>Iduser</b> from the table with user data)</li><li>The <b>Pass Code</b> from cell <b>A1</b> in the Iduser sheet</li></ol></p><p>The location of these items is shown in the image below</p><p><img src="./images/img_en_us/07_01_text_items.jpg"  class="img_responsive"></p></p>'
+                ],
+                [
+                '2) Setting Up Your New Device',
+                '<hr><hr><div class="step">Step 1</div><p>After entering a name for the new device you will see the Settings menu.</p><p>Click on the green <u>Sync</u> button. <span style="font-size:90%;">Note: all Sync buttons are green. All other buttons are blue.<//span></p><p><img src="./images/img_en_us/03_01a_click_sync.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 2</div><p>Click on the green <u>Sync Key : Create / Update</u> button.</p><p><img src="./images/img_en_us/03_02a_click_create_update.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 3</div><p>Copy/paste the existing Sync Key either from the email, or the RightMindMath sheet (Control sheet cell <b>A4</b>).</p><p>Click the <u>Update Current Key</u> button after pasting the Sync Key into the <u>New Key</u> (lower) text box.</p><p>When you do this, the Sync Key will now show up in the <u>Current Sync Key</u> text box. (The image below shows the result after click the update key).</p><p>Click <u>Exit</u> to go back the the Sync Menu.</p><p><img src="./images/img_en_us/03_05a_update_click.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 4</div><p>Click the <u>Add User IDs from another device</u> button.</p><p><img src="./images/img_en_us/07_04_click_add_user.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 5</div><p>Copy/paste the 9-digit Iduser into the lower text box, and type the user name in the upper text box. (Image one below).</p><p>Then click the <u>Add</u> button.</p><p>After RMM adds the user, you will see an alert saying a "+" was added to the name to mark it as sync-added (versus new) user (second image).</p><p><img src="./images/img_en_us/07_05_add_user_info.jpg"  class="img_responsive"></p></p><p><img src="./images/img_en_us/07_05b_add_name_plus_alert.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 6</div><p>You now must Setup the user sheet links for the user you just added (Maria+ in this example).</p><p>Rather then repeat this process here, please revisit Topic <u>3) Setup User Sheet Links</u> under the <b>Setup a New Uses</b> section above.<p><p>The process is identical except you are likely to copy/paste the information from an email.</p><b>IMPORTANT:</b> Remember that your RightMindMath API is likely locked. You cannot setup the user sheet links until you have access to RightMindMath, and are able to toggle cell <b>A1</b> in the <u>Control</u> sheet from zero to one when adding the links, then back to zero when done.</p><p>ALSO: Be sure to delete the email with the Google Sheet info. You want to keep this info private.</p>'
+                ]
+            ];
+            var topic_text_array_4 = [
+                [
+                'Syncing Process Explained',
+                '<p>When you have multiple devices, you will need to follow a sequential process when syncing them.</p><p>The reason is that each sync both uploads records from the device, and download records previously uploaded.</p><p>So devices that sync first will not have records from later device syncs. They must be synced a second time.</p><p>The example below explains this. Assume we have three devices:<ul><li>d_A</li><li>d_B</li><li>d_C</li></ul>Each device has its own records set:<ul><li>rs_A</li><li>rs_B</li><li>rs_C</li></ul></p><div style="margin-top:10px;"><hr></div><p>Here is the initial state before any syncing is done.</p><table><tr><th>Device</th><th>Recs</th><th>Gives</th><th>Gets</th><th>Cloud</th></tr><tr><td>d_A</td><td>rs_A</td><td></td><td></td><td></td></tr><tr><td>d_B</td><td>rs_B</td><td></td><td></td><td></td></tr><tr><td>d_C</td><td>rs_C</td><td></td><td></td><td></td></tr></table><div style="margin-top:25px;"><hr></div><p>When Device A first syncs it gives its records to the cloud. It gets nothing from the cloud.</p><table><tr><th>Device</th><th>Recs</th><th>Gives</th><th>Gets</th><th>Cloud</th></tr><tr><td>d_A</td><td>rs_A</td><td>rs_A</td><td></td><td>rs_A</td></tr><tr><td>d_B</td><td>rs_B</td><td></td><td></td><td></td></tr><tr><td>d_C</td><td>rs_C</td><td></td><td></td><td></td></tr></table><div style="margin-top:25px;"><hr></div><p>When Device B first syncs, it gives its records to the cloud, and gets Device A&#039;s records.</p><table><tr><th>Device</th><th>Recs</th><th>Gives</th><th>Gets</th><th>Cloud</th></tr><tr><td>d_A</td><td></td><td></td><td></td><td></td></tr><tr><td>d_B</td><td>rs_A<br>rs_B</td><td>rs_B</td><td>rs_A</td><td>rs_A<br>rs_B</td></tr><tr><td>d_C</td><td>rs_C</td><td></td><td></td><td></td></tr></table><div style="margin-top:25px;"><hr></div><p>When Device C syncs, it gives its records to the cloud. It gets the records from both Device A & B. <u>Device C is 100% synced.</u></p><table><tr><th>Device</th><th>Recs</th><th>Gives</th><th>Gets</th><th>Cloud</th></tr><tr><td>d_A</td><td>rs_A</td><td></td><td></td><td></td></tr><tr><td>d_B</td><td>rs_A<br>rs_B</td><td></td><td></td><td></td></tr><tr><td>d_C</td><td>rs_A<br>rs_B<br>rs_C</td><td>rs_C</td><td>rs_A<br>rs_B</td><td>rs_A<br>rs_B<br>rs_C</td></tr></table><div style="margin-top:25px;"><hr></div><p>Device B must sync a second time to get the records from Device C which synced after B. <u>Device B is now 100% synced.</u></p><table><tr><th>Device</th><th>Recs</th><th>Gives</th><th>Gets</th><th>Cloud</th></tr><tr><td>d_A</td><td>rs_A</td><td></td><td></td><td></td></tr><tr><td>d_B</td><td>rs_A<br>rs_B<br>rs_C</td><td></td><td>rs_C</td><td>rs_A<br>rs_B<br>rs_C</td></tr><tr><td>d_C</td><td>rs_A<br>rs_B<br>rs_C</td><td></td><td></td><td></td></tr></table><div style="margin-top:25px;"><hr></div><p>Device A must sync a second time to get the records from Device B &amp; C which both synced after A. <u>Device A is now 100% synced.</u></p><table><tr><th>Device</th><th>Recs</th><th>Gives</th><th>Gets</th><th>Cloud</th></tr><tr><td>d_A</td><td>rs_A<br>rs_B<br>rs_C</td><td></td><td>rs_B<br>rs_C</td><td>rs_A<br>rs_B<br>rs_C</td></tr><tr><td>d_B</td><td>rs_A<br>rs_B<br>rs_C</td><td></td><td></td><td></td></tr><tr><td>d_C</td><td>rs_A<br>rs_B<br>rs_C</td><td></td><td></td><td></td></tr></table>'
+                ],
+                [
+                'How to Sync Your Devices',
+                '<hr><hr><div class="step">Step 1</div><p>Click on the green <u>Sync</u> button. <span style="font-size:90%;">Note: all Sync buttons are green. All other buttons are blue.<//span></p><p><img src="./images/img_en_us/08_01_click_sync.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 2</div><p>Click on the green <u>Sync this Device</u> button.</p><p><img src="./images/img_en_us/08_02_click_sync_device.jpg"  class="img_responsive"></p></p><hr><hr><div class="step">Step 3</div><p>Click on the user name you want to sync.</p><p>Note: It takes a few moments for all the uploads &amp; downloads to finsih. You will get an alert when syncing id done.</p><p><img src="./images/img_en_us/08_03_click_sync_maria.jpg"  class="img_responsive"></p></p>'
+                ]
+            ];
+//topic text array end-->
+            function buildTopics() {
+                topicBuildButtons(topic_text_array_1, 'div_topics_headers_1');
+                topicBuildButtons(topic_text_array_2, 'div_topics_headers_2');
+                topicBuildButtons(topic_text_array_3, 'div_topics_headers_3');
+                topicBuildButtons(topic_text_array_4, 'div_topics_headers_4');
+            }
+
+            function topicBuildButtons(array_in, div_in) {
+                console.log('topicBuildButtons()');
+                var new_div = null;
+                var content = null;
+                var html = '';
+                var array_num = div_in.split('_')[3];
+                var receiver = mydoc.getElementById(div_in);
+                var i = 0;
+                var len = array_in.length;
+                for (i=0; i<len; i++) {
+                    if (array_in[i][0] === '<>') {
+                        html += array_in[i][1];
+                        continue;
+                    }
+                    html += '<button id="div_topic_' + array_num + '_' + i + '" ';
+                    html += 'class="topic_header" ';
+                    html += 'onclick="clickTopicHeader(event);" >';
+                    html += array_in[i][0];
+                    html += '</button>';
+                }
+                receiver.innerHTML = html;
+                mydoc.getElementById('div_moment').style.display = 'none';
+                mydoc.getElementById('div_main').style.display = 'block';
+            }
+            function clickTopicHeader(ev) {
+                console.log('clickTopicHeader(ev)');
+                var id = ev.target['id'];
+                var idarray = parseInt(id.split('_')[2], 10);
+                var idnum = parseInt(id.split('_')[3], 10);
+                var my_array = [];
+                var mytext = '';
+                var html = '';
+                var elem = document.scrollingElement;
+                if (idarray === 1) { my_array = topic_text_array_1; }
+                if (idarray === 2) { my_array = topic_text_array_2; }
+                if (idarray === 3) { my_array = topic_text_array_3; }
+                if (idarray === 4) { my_array = topic_text_array_4; }
+                mytext = my_array[idnum];
+                scroll_top = window.pageYOffset;
+                html += '<div style="color:#888;font-size:80%;text-align:left;">';
+                html += mytext[0];
+                html += '</div>';
+                html += '<hr>';
+                html += '<div style="font-size:90%;text-align:left;">';
+                html += mytext[1];
+                html += '</div>';
+                mydoc.getElementById('div_topic_text').innerHTML = html;
+                mydoc.getElementById('div_intro').style.display = 'none';
+                mydoc.getElementById('div_topic_detail').style.display = 'block';
+                elem.scrollTop = 0;
+            }
+            function closeTopicText(ev) {
+                console.log('closeTopicText(ev)');
+                var elem = document.scrollingElement;
+                mydoc.getElementById('div_topic_detail').style.display = 'none';
+                mydoc.getElementById('div_intro').style.display = 'block';
+                elem.scrollTop = scroll_top;
+            }
+        </script>
+        <script>
+            function makeDoubleDelegate(function1, function2) {
+                return function() {
+                    if (function1)
+                        function1();
+                    if (function2)
+                        function2();
+                };
+            }
+            window.onload = makeDoubleDelegate(window.onload, buildTopics);
+        </script>
+    </head>
+    <body style="background-color:#eeeeee;">
+    <!--main page intro-->
+        <div id="div_main">
+            <div id="div_intro">
+                <img id="logo" src="../html_assets/rmm_logo.svg" alt="Mathflash App Logo" class="logo">
+                <div id="div_main_text" style="text-align:left;">
+                    <hr style="border: 1px solid #000;">
+                    <p>Please work through the Topics below to setup your 100% private RMM syncing process.</p>
+                    <p>The process below assumes you are working on a computer. It has three main parts:
+                        <ol>
+                            <li>Setting up the Google Sheet on your computer</li>
+                            <li>Setting up a new user on your computer</li>
+                            <li>Setting up a second Device</li>
+                        </ol>
+                    </p>
+                    <p>Please remember:</p>
+                    <ul>
+                        <li>It is not hard</li>
+                        <li>You need to follow each step <b>Carefully</b></li>
+                        <li>Sync Setup is likely easier using a computer</li>
+                        <li>You must already have a Google Sheet account</li>
+                        <li>You will need to have RMM installed as a PWA</li>
+                    </ul>
+                    <div>The Topics below have been written with the assumption that you will initially setup RMM Sync using a computer. Additional device setups would follow the computer install.</div>
+                </div>
+                <!--SHEET start-->
+                <hr style="border:1px solid #000;">
+                <div class="step">Setup Your Google Sheet</div>
+                <div style="text-align:left;width:100%;margin-top:15px;padding:5px;">
+                    <span style="background-color:#fff;"><b>Topics</b> <span style="font-size:85%;">(click each Topic for more info. Use the <u>Close Button</u> not the browser Back button to return to this page.)</span></span>
+                </div>
+                <div id="div_topics_headers_1"></div>
+                <!--USER start-->
+                <div style="margin-top:30px;">&nbsp;</div>
+                <div class="step">Setup A New User</div>
+                <div style="text-align:left;width:100%;margin-top:15px;padding:5px;">
+                    <span style="background-color:#fff;"><b>Topics</b> <span style="font-size:85%;">(click each Topic for more info. Use the <u>Close Button</u> not the browser Back button to return to this page.)</span></span>
+                </div>
+                <div id="div_topics_headers_2"></div>
+                <!--DEVICE start-->
+                <div style="margin-top:30px;">&nbsp;</div>
+                <div class="step">Setup an Additional Device</div>
+                <div style="text-align:left;width:100%;margin-top:15px;padding:5px;">
+                    <span style="background-color:#fff;"><b>Topics</b> <span style="font-size:85%;">(click each Topic for more info. Use the <u>Close Button</u> not the browser Back button to return to this page.)</span></span>
+                </div>
+                <div id="div_topics_headers_3"></div>
+                <!--SYNCPROCESS start-->
+                <div style="margin-top:30px;">&nbsp;</div>
+                <div class="step">Syncing Your Devices</div>
+                <div style="text-align:left;width:100%;margin-top:15px;padding:5px;">
+                    <span style="background-color:#fff;"><b>Topics</b> <span style="font-size:85%;">(click each Topic for more info. Use the <u>Close Button</u> not the browser Back button to return to this page.)</span></span>
+                </div>
+                <div id="div_topics_headers_4"></div>
+                <!--THE END start-->
+                <div style="margin-top:40px;">
+                    <hr style="border: 5px solid #444;">
+                    <div style="color:#444;font-size:60%;margin-top:-5px;">The End</div>
+                </div>
+            </div>
+    <!--topic text-->
+            <div id="div_topic_detail" style="display:none;">
+                <div id="div_topic_text" class="topic_text"></div>
+                <button id="b_topic_detail_close" class="topic_header" style="margin-top:15px;" onclick="closeTopicText(event);">Close</button>
+            </div>
+            <div style="margin-top:20px;">&nbsp;</div>
+        </div>
+        <div id="div_moment" class="topic_header" style="padding:20px;display:block;">Moment Please</div>
+    </body>
+</html>
