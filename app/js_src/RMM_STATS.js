@@ -372,6 +372,7 @@ var RMM_STATS = (function() {
         var len = result.length;
         for (i=0; i<len; i++) {
             if (result[i].iduser !== idstats) { continue; }
+            result[i]['idname'] = idname;
             txt += JSON.stringify(result[i]);
             if (i+1 < len) { txt += '\n'; };
         }
