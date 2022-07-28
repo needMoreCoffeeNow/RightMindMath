@@ -247,9 +247,10 @@ var g_v = (function() {
     }
 
     function validNotes(notes) {
-        ok = ['t', 'f', '.'];
-        i = 0;
-        len = notes.length;
+        var ok = ['t', 'f', '.'];
+        var i = 0;
+        var len = notes.length;
+        if (len !== 11) { return false; }
         for (i=0; i<len; i++) {
             if (ok.indexOf(notes.substr(i, 1)) === -1) { return false; }
         }
