@@ -197,6 +197,24 @@ var RMM_ASM = (function() {
         showNotesToggle('s_tog_bpopup', shnote_bpopup);
     }
 
+    //return string representing nshote settings for session record
+    function getNotesString() {
+        console.log('getNotesString()');
+        var txt = '';
+        txt += shnote_borrow ? 't' : 'f';
+        txt += '.';
+        txt += shnote_bpopup ? 't' : 'f';
+        txt += '.';
+        txt += shnote_carry ? 't' : 'f';
+        txt += '.';
+        txt += shnote_chunk ? 't' : 'f';
+        txt += '.';
+        txt += shnote_next ? 't' : 'f';
+        txt += '.';
+        txt += shnote_numpos ? 't' : 'f';
+        return txt;
+    }
+
     // toggle the show notes span values and class
     function showNotesToggle(id, turn_on) {
         console.log('showNotesToggle(id, is_on)', id, turn_on);
@@ -1636,6 +1654,7 @@ var RMM_ASM = (function() {
         data['tstamp'] = now;
         data['elapsed'] = now - time_enter;
         data['tries'] = tries;
+        data['notes'] = getNotesString();
         r_str += level + '.' + level_steps + '.' + level_done;
         r_str += tic + problem_str;
         if (level === 'm1') { // add whether problem was ordered

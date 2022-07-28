@@ -794,12 +794,14 @@ var RMM_SYNC = (function() {
         var response = syncResponseGS();
         element.parentNode.removeChild(element);
         if (response.result !== 'OK') {
+            console.error(response.result, 'response.result'); // KEEPIN
             postProcessWrapup('MSG_sync_process_final_err');
             return;
         }
         if (sync_confirm_tstamp === response.value) {
             procdnStartDownload();
         } else {
+            console.error('timestamp error'); // KEEPIN
             postProcessWrapup('MSG_sync_process_final_err');
         }
     }
@@ -1062,7 +1064,7 @@ var RMM_SYNC = (function() {
         var err = null;
         console.log(len, 'len');
         for (i=0; i<len; i++) {
-            if (my_e.length > 0) { break; }
+            if (my_e.length > 0) { console.error(my_e); break; }
             try {
                 td = JSON.parse(decodeURI(data_in[i]));
             } catch (err) {
@@ -1094,8 +1096,8 @@ var RMM_SYNC = (function() {
             if (!validINT(my_v)) { my_e = 'ERR05b'; continue; }
             // ERR06: idlevel =  a1, a2, a3, s1, s2, s3, m1, m2, d3
             my_v = td.idlevel;
-            if (!my_v) { my_e = 'ERR06a'; console.warn(td); continue; }
-            if (!validIdlevel(my_v)) { my_e = 'ERR06b'; console.warn(td); continue; }
+            if (!my_v) { my_e = 'ERR06a'; continue; }
+            if (!validIdlevel(my_v)) { my_e = 'ERR06b'; continue; }
             // ERR07: tstamp =  1658157757460
             my_v = td.tstamp;
             if (!my_v) { my_e = 'ERR07a'; continue; }
@@ -1103,17 +1105,31 @@ var RMM_SYNC = (function() {
             // ERR08: tries = 4 only for a1, s1, m1
             if (td.idlevel === 'a1' || td.idlevel === 's1' || td.idlevel === 'm1') {
                 my_v = td.tries;
-                if (!my_v) { my_e = 'ERR08a'; console.warn(td); continue; }
-                if (!validINT(my_v)) { my_e = 'ERR08b'; console.warn(td); continue; }
+                if (!my_v) { my_e = 'ERR08a'; continue; }
+                if (!validINT(my_v)) { my_e = 'ERR08b'; continue; }
             }
             // ERR09: r_str
             my_v = td.r_str;
-            if (!my_v) { my_e = 'ERR09a'; console.warn(td); continue; }
-            if (!validRstring(my_v)) { my_e = 'ERR09b'; console.warn(td); continue; }
+            if (!my_v) { my_e = 'ERR09a'; continue; }
+            if (!validRstring(my_v)) { my_e = 'ERR09b'; continue; }
+            // ERR10: notes
+            my_v = td.notes;
+            if (!my_v) { my_e = 'ERR10a'; continue; }
+            if (!validNotes(my_v)) { my_e = 'ERR10b'; continue; }
         }
         console.warn(Date.now() - start, len, ' = milli to complete, data.length');
         console.warn([my_e.length === 0, my_e]);
         return [my_e.length === 0, my_e];
+    }
+
+    function validNotes(notes) {
+        ok = ['t', 'f', '.'];
+        i = 0;
+        len = notes.length;
+        for (i=0; i<len; i++) {
+            if (ok.indexOf(notes.substr(i, 1)) === -1) { return false; }
+        }
+        return true;
     }
 
 //

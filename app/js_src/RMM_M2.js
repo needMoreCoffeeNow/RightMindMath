@@ -134,6 +134,7 @@ var RMM_M2 = (function() {
         data['tstamp'] = time_stop;
         data['time'] = time_stop - time_start;
         data['elapsed'] = time_stop - time_start;
+        data['notes'] = '';
         r_str += level;
         r_str += tic + nums.n02 + nums.n03 + 'x' + nums.n12 + nums.n13;
         r_str += tic + chunk_counter;

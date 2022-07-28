@@ -132,6 +132,7 @@ var RMM_D3 = (function() {
         data['tstamp'] = time_stop;
         data['time'] = time_stop - time_start;
         data['elapsed'] = time_stop - time_start;
+        data['notes'] = '';
         r_str += module;
         r_str += tic + eqz.dividend + '/' + eqz.divisor;
         r_str += tic + chunk_counter;
