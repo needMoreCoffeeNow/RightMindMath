@@ -60,6 +60,7 @@ class ProcessJsonFile():
             'session_multi' : None,
             'session_problem' : None,
             'idlevel' : None,
+            'idproblem' : None,
             'time' : None,
             'tries' : None,
             'elapsed' : None,
@@ -163,10 +164,12 @@ class ProcessJsonFile():
             if id_this != id_last: #reset multi accumulators
                 time_last = 0
                 tries_last = 0
-            print('-'*100)
-            print(rec['idsession'], rec['r_str'])
-            print('-'*100)
+            ######print('-'*100)
+            ######print(rec['idsession'], rec['r_str'])
+            ######print('-'*100)
+            # run parseRstr() first to get a copy() of this.dframe_dict
             my_fr = self.parseRstr(rec['r_str'], rec['tstamp'], rec['time'])
+            rec['idproblem'] = '%s_%s' % (vars[0], vars[1])
             for key, val in rec.items():
                 if key in my_fr:
                     my_fr[key] = val
@@ -175,28 +178,29 @@ class ProcessJsonFile():
                 my_fr['session_multi'] = True
                 my_fr['session_problem'] = id_this
                 if id_this != id_last: # start of multi problem
-                    print('---first')
+                    ######print('---first')
                     my_fr['total_time'] = rec['time']
                     my_fr['total_tries'] = rec['tries']
                 else:
-                    print('---next')
+                    ######print('---next')
                     my_fr['total_time'] = rec['time'] + time_last
                     my_fr['total_tries'] = rec['tries'] + tries_last
                 time_last += rec['time']
                 tries_last += rec['tries']
-                print(rec['time'], rec['tries'], "rec['time']", "rec['tries']")
-                print(time_last, tries_last, 'time_last', 'tries_last')
-                print(my_fr['total_time'], my_fr['total_tries'], "my_fr['total_time']", "my_fr['total_tries']")
+                ######print(rec['time'], rec['tries'], "rec['time']", "rec['tries']")
+                ######print(time_last, tries_last, 'time_last', 'tries_last')
+                ######print(my_fr['total_time'], my_fr['total_tries'], "my_fr['total_time']", "my_fr['total_tries']")
             id_last = '%s_%s' % (vars[0], vars[1])
             # accumulate multi idsession times / tries -- end
-            print('-'*100)
+            ######print('-'*100)
             for key, val in sorted(my_fr.items()):
                 if val is None: continue
-                print(key, '---', val)
-            print('-'*100)
+                ######print(key, '---', val)
+            ######print('-'*100)
             for key, val in sorted(my_fr.items()):
                 if not val is None: continue
-                #print(key, '---', val)
+                ######print(key, '---', val)
+        return my_fr
 
     def readFile(self):
         uniques = {}
@@ -294,4 +298,4 @@ if __name__ == '__main__':
     pjf.readFile()
     pjf.processLines()
     pjf.printLinesStats()
-    pjf.buildDataFrame()
+    my_fr = pjf.buildDataFrame()
