@@ -29,14 +29,14 @@ class ProcessJsonFile():
         self.incomplete = {'a2':[0], 'a3':[0,0], 's2':[0], 's3':[0,0]}
         self.p_multi = ['s2', 's3', 'a2', 'a3'] # idsession will have 3 parts
         # p_count['m1'] is unique with [0,0] array to sum [ordered,random]
-        self.p_count = {'a1':0, 'a2':0, 'a3':0, 
+        self.p_count = {'a1':0, 'a2':0, 'a3':0,
                         's1':0, 's2':0, 's3':0,
                         'm1':[0,0], 'm2':0, 'm3':0,
                         'd3':0}
         self.dframe_dict = {
             # r_str vars start
             'idlevel_rstr' : None,
-            'steps_total' : None, 
+            'steps_total' : None,
             'steps_count' : None,
             'session_problem' : None,
             'op1' : None,
@@ -197,7 +197,7 @@ class ProcessJsonFile():
             for key, val in sorted(my_fr.items()):
                 if not val is None: continue
                 #print(key, '---', val)
-    
+
     def readFile(self):
         uniques = {}
         with open(self.file_input) as f:
