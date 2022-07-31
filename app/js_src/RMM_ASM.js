@@ -64,6 +64,7 @@ var RMM_ASM = (function() {
     // toggles end
     var next_problem_init = null; // reference to next problem init function
     var carries = {0:0, 1:0, 2:0 }; // key=2 just for symmetry
+    var chunk_count = 0; // r_str flag set to one if chunk button clicked for m1
     // in borrows only gives0, gives2, gets2, gets1 will get non-zero values
     // others keys are there to support building key reference with col value
     var borrows = {'gives0':0, 'gets0':0,
@@ -979,6 +980,7 @@ var RMM_ASM = (function() {
         setResponsesAnswersActive();
         complete = false;
         this_col = 2;
+        chunk_count = 0;
     }
 
     // common steps to init a new problem - prob_fnc is the problem setup fnc
@@ -1143,6 +1145,7 @@ var RMM_ASM = (function() {
     // display chunk message after button click
     function chunkShow(ev) {
         console.log('chunkShow(ev)');
+        chunk_count = 1;
         mydoc.getElementById('div_chunkit').style.display = 'block';
     }
 
@@ -1661,6 +1664,7 @@ var RMM_ASM = (function() {
             r_str += tic + m1_order;
         }
         r_str += tic + responses.join('|');
+        r_str += tic + chunk_count;
         data['r_str'] = r_str;
         RMM_DB.addSessionRec(data);
     }
