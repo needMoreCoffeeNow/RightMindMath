@@ -290,8 +290,6 @@ class ProcessJsonFile():
             print('%s%d step 2 of %s completed' % (tic, 
                                                    self.incomplete[key][1],
                                                    steps))
-            
-
 
 if __name__ == '__main__':
     pjf = ProcessJsonFile('RMM_shp+_JSON_notes_chunk.txt')
