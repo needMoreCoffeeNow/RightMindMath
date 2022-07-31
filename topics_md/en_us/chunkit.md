@@ -2,7 +2,9 @@
 
 <p><u>ChunkIt</u> is introduced with M1 as a note that you can turn on/off. It is also always available in M2 (two-digit multiplication) problems in the solution explanation. Please consider using it. Learning to chunk is very useful &#151; it really is a good life skill.</p>
 
-<p>When selecting M2 problems you have the option of using the basic or the chunkit approach. Basic walks through each step. So if problem is 84x15, RMM will walk thru step one of the process:
+<p>Here is an example of chunking it with an M2 problem. M2 has two modes: Basic &amp; Chunking. (M1 chunking is similar to M2.)</p>
+
+<p>Basic walks through each step. So if problem is 84x15, RMM will walk thru step one of the process:
 <ol>
 <li>4x5=20</li>
 <li>Record 0 (4x5) in the ones column</li>
