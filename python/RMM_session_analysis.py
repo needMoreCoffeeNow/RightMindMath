@@ -58,9 +58,11 @@ class ProcessJsonFile():
             # r_str vars end
             'idsession' : None,
             'session_multi' : None,
+            'session_m2d3' : None,
             'session_problem' : None,
             'idlevel' : None,
             'idproblem' : None,
+            'idproblem_count' : None,
             'time' : None,
             'tries' : None,
             'elapsed' : None,
@@ -82,7 +84,7 @@ class ProcessJsonFile():
 
 
     def parseRstr(self, r_str, tstamp, time):
-        multi = {'d3':True, 'm2':True}
+        not_asm = {'d3':True, 'm2':True}
         my_fr = self.dframe_dict.copy()
         parts = r_str.split('^')
         vars = parts[0].split('.')
@@ -91,7 +93,7 @@ class ProcessJsonFile():
         idlevel = vars[0][0:2]
         if (idlevel == 'm2'):
             my_fr['m2_basic'] = vars[0][2:3] == 'b'
-        if not idlevel in multi:
+        if not idlevel in not_asm:
             my_fr['steps_total'] = int(vars[1])
             my_fr['steps_count'] = int(vars[2]) + 1 # change to 1=start index
             vars = parts[1].split('|')
@@ -104,7 +106,6 @@ class ProcessJsonFile():
             else:
                 my_fr['chunk_count'] = int(parts[3])
         else:
-            my_fr['session_multi'] = True
             if idlevel == 'd3':
                 vars = parts[1].split('/')
                 my_fr['op1'] = int(vars[0])
@@ -119,10 +120,10 @@ class ProcessJsonFile():
                 my_fr['op'] = 'x'
         if idlevel == 'm':
             my_fr['ordered'] = parts[2] == 'true'
-        if my_fr['op1'] < 0: my_fr['neg_op1'] = True
-        if my_fr['op2'] < 0: my_fr['neg_op2'] = True
-        if my_fr['answer'] < 0: my_fr['neg_ans'] = True
-        if idlevel in multi:
+        if my_fr['op1'] < 0: my_fr['neg_op1'] = 1
+        if my_fr['op2'] < 0: my_fr['neg_op2'] = 1
+        if my_fr['answer'] < 0: my_fr['neg_ans'] = 1
+        if idlevel in not_asm:
             my_fr['chunk_count'] = int(parts[2])
             return my_fr # no answers for multi-digit problems
         # break out the answers for 1-digit problems
@@ -148,11 +149,11 @@ class ProcessJsonFile():
         if idlevel == 's2' or idlevel == 's3':
             sop1 = my_fr['op1']
             sop2 = my_fr['op2']
-            if (sop1 % 10) < (sop2 % 10): my_fr['borrow_01'] = True
+            if (sop1 % 10) < (sop2 % 10): my_fr['borrow_01'] = 1
             if idlevel == 's3':
                 sop1 = int(sop1 / 10)
                 sop2 = int(sop2 / 10)
-                if (sop1 % 10) < (sop2 % 10): my_fr['borrow_10'] = True
+                if (sop1 % 10) < (sop2 % 10): my_fr['borrow_10'] = 1
         return my_fr
 
     def buildDataFrame(self):
@@ -160,22 +161,31 @@ class ProcessJsonFile():
         output = []
         for key, rec in sorted(self.problems_d.items()):
             vars = rec['idsession'].split('_')
+            idlevel = rec['idlevel']
             id_this = '%s_%s' % (vars[0], vars[1])
             if id_this != id_last: #reset multi accumulators
                 time_last = 0
                 tries_last = 0
             ######print('-'*100)
+            ######print(rec)
             ######print(rec['idsession'], rec['r_str'])
-            ######print('-'*100)
+            print('-'*100)
+            print(rec['idsession'])
+            print(rec['r_str'])
             # run parseRstr() first to get a copy() of this.dframe_dict
             my_fr = self.parseRstr(rec['r_str'], rec['tstamp'], rec['time'])
             rec['idproblem'] = '%s_%s' % (vars[0], vars[1])
+            if len(vars) == 2:
+                rec['idproblem_count'] = 1
+            else: 
+                rec['idproblem_count'] = 1 if int(vars[2]) == 1 else 0
             for key, val in rec.items():
                 if key in my_fr:
                     my_fr[key] = val
+            if idlevel == 'm2' or idlevel == 'd3': my_fr['session_m2d3'] = 1
             # accumulate multi idsession times / tries -- start
-            if rec['idlevel'] in self.p_multi:
-                my_fr['session_multi'] = True
+            if idlevel in self.p_multi:
+                my_fr['session_multi'] = 1
                 my_fr['session_problem'] = id_this
                 if id_this != id_last: # start of multi problem
                     ######print('---first')
@@ -192,11 +202,11 @@ class ProcessJsonFile():
                 ######print(my_fr['total_time'], my_fr['total_tries'], "my_fr['total_time']", "my_fr['total_tries']")
             id_last = '%s_%s' % (vars[0], vars[1])
             # accumulate multi idsession times / tries -- end
-            ######print('-'*100)
+            print('-'*100)
             for key, val in sorted(my_fr.items()):
                 if val is None: continue
-                ######print(key, '---', val)
-            ######print('-'*100)
+                print(key, '---', val)
+            print('-'*100)
             for key, val in sorted(my_fr.items()):
                 if not val is None: continue
                 ######print(key, '---', val)
