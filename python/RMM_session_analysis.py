@@ -1,6 +1,7 @@
 import json
 import urllib.parse
 from random import randint
+import datetime
 
 def randomizedNotes():
     limit_1 = 7
@@ -74,6 +75,9 @@ class ProcessJsonFile():
             'input_max' : None,
             'input_std' : None,
             'tstamp' : None,
+            'date_date' : None,
+            'date_week' : None,
+            'date_weekday' : None,
             'note_borrow' : None,
             'note_bpopup' : None,
             'note_carry' : None,
@@ -160,6 +164,7 @@ class ProcessJsonFile():
     def buildDataFrame(self):
         id_last = '0_0'
         output = []
+        date_now = datetime.date.today()
         for key, rec in sorted(self.problems_d.items()):
             vars = rec['idsession'].split('_')
             idlevel = rec['idlevel']
@@ -176,7 +181,14 @@ class ProcessJsonFile():
             # run parseRstr() first to get a copy() of this.dframe_dict
             my_fr = self.parseRstr(rec['r_str'], rec['tstamp'], rec['time'])
             my_fr['idproblem'] = id_this
-            my_fr['idsession_tstamp'] = int(vars[0])
+            # idsession tstamp is basis for date inputs
+            ids_tstamp = int(vars[0])
+            my_fr['idsession_tstamp'] = ids_tstamp
+            dt = datetime.date.fromtimestamp(int(ids_tstamp/1000))
+            my_fr['date_date'] = dt.strftime('%Y%m%d')
+            my_fr['date_weekday'] = dt.strftime('%A')[0:3] #Mon, Tue, Wed, etc.
+            delta = date_now - dt
+            my_fr['date_days'] = delta.days
             if len(vars) == 2:
                 my_fr['idproblem_count'] = 1
             else:
@@ -215,6 +227,13 @@ class ProcessJsonFile():
             for key, val in sorted(my_fr.items()):
                 if val is None: continue
                 print(key, '---', val)
+                if key == 'idsession_tstamp':
+                    dt = datetime.date.fromtimestamp(int(val/1000))
+                    my_fr['date_date'] = dt.strftime('%Y%m%d')
+                    my_fr['date_weekday'] = dt.strftime('%A')
+                    delta = date_now - dt
+                    my_fr['date_days'] = delta.days
+                    print(delta.days)
             print('-'*100)
             for key, val in sorted(my_fr.items()):
                 if not val is None: continue
