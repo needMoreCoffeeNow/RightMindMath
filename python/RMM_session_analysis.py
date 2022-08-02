@@ -227,13 +227,6 @@ class ProcessJsonFile():
             for key, val in sorted(my_fr.items()):
                 if val is None: continue
                 print(key, '---', val)
-                if key == 'idsession_tstamp':
-                    dt = datetime.date.fromtimestamp(int(val/1000))
-                    my_fr['date_date'] = dt.strftime('%Y%m%d')
-                    my_fr['date_weekday'] = dt.strftime('%A')
-                    delta = date_now - dt
-                    my_fr['date_days'] = delta.days
-                    print(delta.days)
             print('-'*100)
             for key, val in sorted(my_fr.items()):
                 if not val is None: continue
