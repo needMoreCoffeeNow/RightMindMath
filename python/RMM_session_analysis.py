@@ -2,7 +2,9 @@ import json
 import urllib.parse
 from random import randint
 import datetime
-#import matplotlib.pyplot as plt
+
+import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import pandas as pd
 
 def randomizedNotes():
@@ -37,7 +39,7 @@ class ProcessJsonFile():
                         'm1':[0,0], 'm2':0, 'm3':0,
                         'd3':0}
         self.dframe = {} # pandas dataframe built as file is read using df_rec
-        self.df_rec = {
+        self.rec_df = {
             # r_str vars start
             'idlevel_rstr' : None,
             'steps_total' : None,
@@ -92,47 +94,48 @@ class ProcessJsonFile():
 
 
     def parseRstr(self, r_str, tstamp, time):
+        my_df = self.rec_df.copy()
         not_asm = {'d3':True, 'm2':True}
         parts = r_str.split('^')
         vars = parts[0].split('.')
         # strip the b/c from M2b M2c
-        self.df_rec['idlevel_rstr'] = vars[0]
+        my_df['idlevel_rstr'] = vars[0]
         idlevel = vars[0][0:2]
         if (idlevel == 'm2'):
-            self.df_rec['m2_basic'] = vars[0][2:3] == 'b'
+            my_df['m2_basic'] = vars[0][2:3] == 'b'
         if not idlevel in not_asm:
-            self.df_rec['steps_total'] = int(vars[1])
-            self.df_rec['steps_count'] = int(vars[2]) + 1 # change to 1=start index
+            my_df['steps_total'] = int(vars[1])
+            my_df['steps_count'] = int(vars[2]) + 1 # change to 1=start index
             vars = parts[1].split('|')
-            self.df_rec['op1'] = int(vars[0])
-            self.df_rec['op2'] = int(vars[1])
-            self.df_rec['answer'] = int(vars[2])
-            self.df_rec['op'] = vars[3]
+            my_df['op1'] = int(vars[0])
+            my_df['op2'] = int(vars[1])
+            my_df['answer'] = int(vars[2])
+            my_df['op'] = vars[3]
             if idlevel == 'm1':
-                self.df_rec['chunk_count'] = int(parts[4])
+                my_df['chunk_count'] = int(parts[4])
             else:
-                self.df_rec['chunk_count'] = int(parts[3])
+                my_df['chunk_count'] = int(parts[3])
         else:
             if idlevel == 'd3':
                 vars = parts[1].split('/')
-                self.df_rec['op1'] = int(vars[0])
-                self.df_rec['op2'] = int(vars[1])
-                self.df_rec['answer'] = float(self.df_rec['op1']) / float(self.df_rec['op2'])
-                self.df_rec['op'] = '/'
+                my_df['op1'] = int(vars[0])
+                my_df['op2'] = int(vars[1])
+                my_df['answer'] = float(my_df['op1']) / float(my_df['op2'])
+                my_df['op'] = '/'
             else:
                 vars = parts[1].split('x')
-                self.df_rec['op1'] = int(vars[0])
-                self.df_rec['op2'] = int(vars[1])
-                self.df_rec['answer'] = self.df_rec['op1'] * self.df_rec['op2']
-                self.df_rec['op'] = 'x'
+                my_df['op1'] = int(vars[0])
+                my_df['op2'] = int(vars[1])
+                my_df['answer'] = my_df['op1'] * my_df['op2']
+                my_df['op'] = 'x'
         if idlevel == 'm':
-            self.df_rec['ordered'] = parts[2] == 'true'
-        if self.df_rec['op1'] < 0: self.df_rec['neg_op1'] = 1
-        if self.df_rec['op2'] < 0: self.df_rec['neg_op2'] = 1
-        if self.df_rec['answer'] < 0: self.df_rec['neg_ans'] = 1
+            my_df['ordered'] = parts[2] == 'true'
+        if my_df['op1'] < 0: my_df['neg_op1'] = 1
+        if my_df['op2'] < 0: my_df['neg_op2'] = 1
+        if my_df['answer'] < 0: my_df['neg_ans'] = 1
         if idlevel in not_asm:
-            self.df_rec['chunk_count'] = int(parts[2])
-            return self.df_rec # no answers for multi-digit problems
+            my_df['chunk_count'] = int(parts[2])
+            return my_df # no answers for multi-digit problems
         # break out the answers for 1-digit problems
         if not idlevel ==  'm1':
             answers = parts[2].split('|')
@@ -142,31 +145,37 @@ class ProcessJsonFile():
         # timet = time problem was entered - tstamp
         # so to get tstamp of time problem was entered we do this math...
         ts_last = tstamp - time
-        self.df_rec['problem_start'] = ts_last
+        my_df['problem_start'] = ts_last
         i = 0
+        print('-'*100)
+        print(r_str)
         for answer in sorted(answers):
             vars = answer.split('_')
             if len(vars) == 1: continue
             ts_ans = int(vars[0])
             delta = ts_ans - ts_last
             vname = 'ans_elapsed_%d%d' % (i, (i+1))
-            self.df_rec[vname] = delta
+            my_df[vname] = delta
+            print(vname, delta)
             ts_last = ts_ans
             i += 1
         if idlevel == 's2' or idlevel == 's3':
-            sop1 = self.df_rec['op1']
-            sop2 = self.df_rec['op2']
-            if (sop1 % 10) < (sop2 % 10): self.df_rec['borrow_01'] = 1
+            sop1 = my_df['op1']
+            sop2 = my_df['op2']
+            if (sop1 % 10) < (sop2 % 10): my_df['borrow_01'] = 1
             if idlevel == 's3':
                 sop1 = int(sop1 / 10)
                 sop2 = int(sop2 / 10)
-                if (sop1 % 10) < (sop2 % 10): self.df_rec['borrow_10'] = 1
+                if (sop1 % 10) < (sop2 % 10): my_df['borrow_10'] = 1
+        return my_df
 
     def buildDataFrame(self):
         id_last = '0_0'
         output = []
         date_now = datetime.date.today()
         for key, rec in sorted(self.problems_d.items()):
+            # fist process step must be parseRstr() to get copy() of rec_df
+            my_df = self.parseRstr(rec['r_str'], rec['tstamp'], rec['time'])
             vars = rec['idsession'].split('_')
             idlevel = rec['idlevel']
             id_this = '%s_%s' % (vars[0], vars[1])
@@ -179,63 +188,66 @@ class ProcessJsonFile():
             ######print('-'*100)
             ######print(rec['idsession'])
             ######print(rec['r_str'])
-            self.parseRstr(rec['r_str'], rec['tstamp'], rec['time'])
-            self.df_rec['idproblem'] = id_this
+            my_df['idproblem'] = id_this
             # idsession tstamp is basis for date inputs
             ids_tstamp = int(vars[0])
-            self.df_rec['idsession_tstamp'] = ids_tstamp
+            my_df['idsession_tstamp'] = ids_tstamp
             dt = datetime.date.fromtimestamp(int(ids_tstamp/1000))
-            self.df_rec['date_date'] = dt.strftime('%Y%m%d')
-            self.df_rec['date_weekday'] = dt.strftime('%A')[0:3] #Mon, Tue, Wed, etc.
+            my_df['date_date'] = dt.strftime('%Y%m%d')
+            my_df['date_weekday'] = dt.strftime('%A')[0:3] #Mon, Tue, Wed, etc.
             delta = date_now - dt
-            self.df_rec['date_days'] = delta.days
+            my_df['date_days'] = delta.days
+            my_df['date_week'] = int(delta.days/7) + 1
             if len(vars) == 2:
-                self.df_rec['idproblem_count'] = 1
+                my_df['idproblem_count'] = 1
             else:
                 # record idproblem_count for first rec in multi step problem
                 if int(vars[2]) == 1:
-                    self.df_rec['idproblem_count'] = 1
+                    my_df['idproblem_count'] = 1
             for key, val in rec.items():
-                if key in self.df_rec:
-                    self.df_rec[key] = val
+                if key in my_df:
+                    my_df[key] = val
             if idlevel == 'm2' or idlevel == 'd3':
-                self.df_rec['problem_m2d3'] = 1
-                self.df_rec['idsession_count'] = int(vars[1])
+                my_df['problem_m2d3'] = 1
+                my_df['idsession_count'] = int(vars[1])
             if idlevel == 'a1' or idlevel == 's1' or idlevel == 'm1':
-                self.df_rec['problem_1digit'] = 1
-                self.df_rec['idsession_count'] = int(vars[1])
+                my_df['problem_1digit'] = 1
+                my_df['idsession_count'] = int(vars[1])
             # accumulate multi idsession times / tries -- start
             if idlevel in self.p_multi:
-                self.df_rec['problem_multi'] = 1
+                my_df['problem_multi'] = 1
                 if id_this != id_last: # start of multi problem
                     ######print('---first')
-                    self.df_rec['total_time'] = rec['time']
-                    self.df_rec['total_tries'] = rec['tries']
-                    self.df_rec['idsession_count'] = int(vars[1])
+                    my_df['total_time'] = rec['time']
+                    my_df['total_tries'] = rec['tries']
+                    my_df['idsession_count'] = int(vars[1])
                 else:
                     ######print('---next')
-                    self.df_rec['total_time'] = rec['time'] + time_last
-                    self.df_rec['total_tries'] = rec['tries'] + tries_last
+                    my_df['total_time'] = rec['time'] + time_last
+                    my_df['total_tries'] = rec['tries'] + tries_last
                 time_last += rec['time']
                 tries_last += rec['tries']
                 ######print(rec['time'], rec['tries'], "rec['time']", "rec['tries']")
                 ######print(time_last, tries_last, 'time_last', 'tries_last')
-                ######print(self.df_rec['total_time'], self.df_rec['total_tries'], "self.df_rec['total_time']", "self.df_rec['total_tries']")
+                ######print(my_df['total_time'], my_df['total_tries'], "my_df['total_time']", "my_df['total_tries']")
             id_last = id_this
             # accumulate multi idsession times / tries -- end
             ######print('-'*100)
-            ######for key, val in sorted(self.df_rec.items()):
+            ######for key, val in sorted(my_df.items()):
             ######    if val is None: continue
             ######    print(key, '---', val)
             ######print('-'*100)
-            ######for key, val in sorted(self.df_rec.items()):
+            ######for key, val in sorted(my_df.items()):
             ######    if not val is None: continue
             ######    ######print(key, '---', val)
-            ######print(len(self.df_rec))
-            self.dframeAddRec()
+            ######print(len(my_df))
+            for k, v in sorted(my_df.items()):
+                if k == 'ans_elapsed_34': print(k, '---', v)
+            print('-'*100)
+            self.dframeAddRec(my_df)
 
-    def dframeAddRec(self):
-        for key, val in sorted(self.df_rec.items()):
+    def dframeAddRec(self, my_df):
+        for key, val in sorted(my_df.items()):
             array = self.dframe.setdefault(key, [])
             array.append(val)
             self.dframe[key] = array
@@ -335,4 +347,15 @@ if __name__ == '__main__':
     pjf.processLines()
     pjf.printLinesStats()
     pjf.buildDataFrame()
-    dataframe = pd.DataFrame(pjf.dframe)
+    df = pd.DataFrame(pjf.dframe)
+    myplot = df.groupby('date_weekday').date_weekday.count()
+    myplot.plot.bar()
+    #plt.show()
+    myplot = df[df['date_week']==2].groupby('date_weekday').date_weekday.count()
+    myplot.plot.bar()
+    #plt.show()
+    for i in range(1,20):
+        myplot = df[df['date_week']==i].groupby('date_weekday').date_weekday.count()
+        print(i, myplot.empty)
+    print(df.ans_elapsed_34[0:23])
+    print('done')
