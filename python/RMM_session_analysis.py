@@ -147,8 +147,8 @@ class ProcessJsonFile():
         ts_last = tstamp - time
         my_df['problem_start'] = ts_last
         i = 0
-        print('-'*100)
-        print(r_str)
+        ######print('-'*100)
+        ######print(r_str)
         for answer in sorted(answers):
             vars = answer.split('_')
             if len(vars) == 1: continue
@@ -156,7 +156,6 @@ class ProcessJsonFile():
             delta = ts_ans - ts_last
             vname = 'ans_elapsed_%d%d' % (i, (i+1))
             my_df[vname] = delta
-            print(vname, delta)
             ts_last = ts_ans
             i += 1
         if idlevel == 's2' or idlevel == 's3':
@@ -241,9 +240,9 @@ class ProcessJsonFile():
             ######    if not val is None: continue
             ######    ######print(key, '---', val)
             ######print(len(my_df))
-            for k, v in sorted(my_df.items()):
-                if k == 'ans_elapsed_34': print(k, '---', v)
-            print('-'*100)
+            ######for k, v in sorted(my_df.items()):
+            ######    if k == 'ans_elapsed_34': print(k, '---', v)
+            ######print('-'*100)
             self.dframeAddRec(my_df)
 
     def dframeAddRec(self, my_df):
@@ -358,4 +357,5 @@ if __name__ == '__main__':
         myplot = df[df['date_week']==i].groupby('date_weekday').date_weekday.count()
         print(i, myplot.empty)
     print(df.ans_elapsed_34[0:23])
+    print(df[df.ans_elapsed_34.notnull()]['ans_elapsed_34'])
     print('done')
