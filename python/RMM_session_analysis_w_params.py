@@ -26,10 +26,8 @@ def randomizedNotes():
     return my_n
 
 class ProcessJsonFile():
-    def __init__(self, input_file):
-        self.filepath = './inputs/%s' % (input_file)
-        self.week_first = 999999
-        self.week_last = -1
+    def __init__(self, file_input):
+        self.file_input = file_input
         self.problems_d = {}
         self.expected = {}
         self.prob_level = {}
@@ -197,10 +195,6 @@ class ProcessJsonFile():
             delta = date_now - dt
             my_df['date_days'] = delta.days
             my_df['date_week'] = int(delta.days/7) + 1
-            if my_df['date_week'] < self.week_first:
-                self.week_first = my_df['date_week']
-            if my_df['date_week'] > self.week_last:
-                self.week_last = my_df['date_week']
             if len(vars) == 2:
                 my_df['idproblem_count'] = 1
             else:
@@ -239,10 +233,10 @@ class ProcessJsonFile():
 
     def readFile(self):
         uniques = {}
-        with open(self.filepath) as f:
+        with open(self.file_input) as f:
             lines = f.readlines()
         print('-'*50)
-        print('%s FILE-STATS' % (self.filepath.split('/')[-1]))
+        print('%s FILE-STATS' % (self.file_input))
         print('-'*50)
         print(len(lines), 'records loaded')
         for line in lines:
@@ -330,23 +324,10 @@ class ProcessJsonFile():
         print('-'*30)
 
 class ChartAnalysis():
-    def __init__(self, dfc, year):
+    def __init__(self, dfc):
         self.dfc = dfc;
-        self.wsplits = self.setWeekSplits(year)
         self.show = True #show plot on screen
         self.savePlt = False # save plt to a file
-
-    def setWeekSplits(self, year):
-        splits = {}
-        if year == 1:
-            splits = {'start1':1, 'end1':27, 'start2':27, 'end2':53}
-        if year == 2:
-            splits = {'start1':53, 'end1':79, 'start2':79, 'end2':105}
-        if year == 3:
-            splits = {'start1':157, 'end1':183, 'start2':183, 'end2':209}
-        if year == 4:
-            splits = {'start1':209, 'end1':235, 'start2':235, 'end2':261}
-        return splits
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def totalProblemsStackedBar(self):
@@ -367,8 +348,8 @@ class ChartAnalysis():
         sb_index = pd.RangeIndex(1, 27, name='week')
         # ax1 graph
         sb_data = {}
-        start = self.wsplits['start1']
-        end = self.wsplits['end1']
+        start = 1
+        end = 27
         sb_data['a1'] =  self.weekStackBarData('a1', start, end)
         sb_data['a2'] =  self.weekStackBarData('a2', start, end)
         sb_data['a3'] =  self.weekStackBarData('a3', start, end)
@@ -387,8 +368,8 @@ class ChartAnalysis():
         ax1.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
 #        # ax2 graph
         sb_data = {}
-        start = self.wsplits['start2']
-        end = self.wsplits['end2']
+        start = 27
+        end = 52
         sb_data['a1'] =  self.weekStackBarData('a1', start, end)
         sb_data['a2'] =  self.weekStackBarData('a2', start, end)
         sb_data['a3'] =  self.weekStackBarData('a3', start, end)
@@ -423,14 +404,29 @@ class ChartAnalysis():
         # return the 26 slot series with the problem counts
         return temp_all['idproblem_count']
 
-def getInputFile():
-    files = glob.glob('./inputs/*.txt')
-    if len(files) == 0:
-        print('\nError: No downloaded .txt files were found')
-        print('Please use the RightMindMath app to export a file.')
-        print('Be sure you save it in the inputs folder located in')
-        print('the same folder as this Python (.py) file.')
-        return('')
+def readParameters():
+    with open(PARAMS_FILE) as f:
+        lines = f.readlines()
+    params = {}
+    dnext = False
+    for line in lines:
+        line = line.rstrip().replace(' ','')
+        if dnext:
+            try:
+                params[name] = line
+                dnext = False
+            except:
+                print('ERROR: %s' % name)
+                return({})
+        if line[0:5] == '-----':
+            vars = line.split('-----')
+            name = vars[1]
+            dnext = True
+    return params
+
+def getInputFile(params):
+    fpath = '%s/*.txt' % (params['input_folder_path'])
+    files = glob.glob(fpath)
     sorted(files)
     myfiles = []
     for filepath in files:
@@ -460,73 +456,24 @@ def getInputFile():
         if choice in ok: return myfiles[choice-1]
         err_str = 'Please limit entry to numbers shown'
 
-def getYear(week_last):
-    ok = [1, 2, 3, 4]
-    # exit loop by entering number or Return to exit
-    err_str = ''
-    while True:
-        print('-'*50)
-        print('1) Year 1 (1-52 weeks previous)')
-        if week_last > 52: print('2) Year 2 (53-104 weeks previous)')
-        if week_last > 104: print('3) Year 3 (105-156 weeks previous)')
-        if week_last > 156: print('4) Year  (157-208 weeks previous)')
-        print('[Return to Exit]')
-        if len(err_str) > 0:
-            print('-'*50)
-            print(err_str)
-            err_str = ''
-        choice = input('Enter the year number to analyze (1, 2, or 3):')
-        try:
-            choice = int(choice)
-        except:
-            return ''
-        if choice in ok: return choice
-        err_str = 'Please limit entry to numbers shown'
-
-def validInputsOutputs():
-    flist = glob.glob('*')
-    count = 0
-    for name in flist:
-        if name == 'inputs': count += 1
-        if name == 'outputs': count += 1
-    if count != 2:
-        print('%s%s' % ('\n', '-'*40))
-        print('The required sub-folders are missing.')
-        print('Please create two sub-folders in')
-        print('the same folder as the Python (.py) file.')
-        print('(note: names must be lower case)')
-        print('-'*40)
-        print('Name one folder: inputs')
-        print('Name one folder: outputs')
-        print('-'*40)
-        print('\nGoodbye')
-        return False
-    return True
-
 def processAnalysis():    
-    if not validInputsOutputs(): return
-    input_file = getInputFile()
-    if len(input_file) == 0:
-        print('\nGoodbye')
+    params = readParameters()
+    if len(params) == 0:
+        print('There was an error in the %s file.' % (PARAMS_FILE))
+        print('Please re-run after correcting %s.' % (PARAMS_FILE))
         return
+    input_file = getInputFile(params)
+    if len(input_file) == 0:
+        print('Goodbye')
+        return
+    print(input_file, 'input_file')
     pjf = ProcessJsonFile(input_file)
     pjf.readFile()
     pjf.processLines()
     pjf.printLinesStats()
     pjf.buildDataFrame()
-    if pjf.week_last == -1:
-        print('\nSorry no records were loaded. Please check your download.')
-        return
-    year = 1
-    if pjf.week_last > 52:
-        year = getYear(pjf.week_last)
-        if len(str(year)) == 0:
-            print('\nGoodbye')
-            return
-    print('Year %d being analyzed' % (year))
-    print('-'*50)
     df = pd.DataFrame(pjf.dframe)
-    ca = ChartAnalysis(df, year)
+    ca = ChartAnalysis(df)
     ca.totalProblemsStackedBar()
     print('done')
 
