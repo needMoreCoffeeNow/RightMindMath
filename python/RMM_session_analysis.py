@@ -9,22 +9,6 @@ import pandas as pd
 
 PARAMS_FILE = 'parameters_analysis.txt'
 
-def randomizedNotes():
-    limit_1 = 7
-    my_n = ''
-    my_n += 't' if randint(1, 10) < limit_1 else 'f'
-    my_n += '.'
-    my_n += 't' if randint(1, 10) < limit_1 else 'f'
-    my_n += '.'
-    my_n += 't' if randint(1, 10) < limit_1 else 'f'
-    my_n += '.'
-    my_n += 't' if randint(1, 10) < limit_1 else 'f'
-    my_n += '.'
-    my_n += 't' if randint(1, 10) < limit_1 else 'f'
-    my_n += '.'
-    my_n += 't' if randint(1, 10) < limit_1 else 'f'
-    return my_n
-
 class ProcessJsonFile():
     def __init__(self, input_file):
         self.filepath = './inputs/%s' % (input_file)
