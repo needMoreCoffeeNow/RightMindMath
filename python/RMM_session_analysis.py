@@ -24,8 +24,7 @@ class ProcessJsonFile():
         # p_count['m1'] is unique with [0,0] array to sum [ordered,random]
         self.p_count = {'a1':0, 'a2':0, 'a3':0,
                         's1':0, 's2':0, 's3':0,
-                        'm1':[0,0], 'm2':0, 'm3':0,
-                        'd3':0}
+                        'm1':[0,0], 'm2':0, 'd3':0}
         self.dframe = {} # pandas dataframe built as file is read using df_rec
         self.rec_df = {
             # r_str vars start
@@ -279,7 +278,7 @@ class ProcessJsonFile():
 
     def printLinesStats(self):
         self.findIncompletes()
-        order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'm3', 'd3']
+        order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         for key in order:
             print('-'*30)
             if key == 'm1':
