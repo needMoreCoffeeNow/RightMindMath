@@ -8,8 +8,6 @@ import sys
 import matplotlib.pyplot as plt
 import pandas as pd
 
-PARAMS_FILE = 'parameters_analysis.txt'
-
 class ProcessJsonFile():
     def __init__(self, input_file):
         self.filepath = './inputs/%s' % (input_file)
@@ -19,6 +17,7 @@ class ProcessJsonFile():
         self.expected = {}
         self.prob_level = {}
         self.steps_done = {}
+        self.file_stats = { 'lines' : 0, 'problems' : 0 }
         self.complete = {'a2':0, 'a3':0, 's2':0, 's3':0}
         self.incomplete = {'a2':[0], 'a3':[0,0], 's2':[0], 's3':[0,0]}
         self.p_multi = ['s2', 's3', 'a2', 'a3'] # idsession will have 3 parts
@@ -214,6 +213,7 @@ class ProcessJsonFile():
                 tries_last += rec['tries']
             id_last = id_this
             self.dframeAddRec(my_df)
+        self.dframe = pd.DataFrame.from_dict(self.dframe)
 
     def dframeAddRec(self, my_df):
         for key, val in sorted(my_df.items()):
@@ -225,10 +225,7 @@ class ProcessJsonFile():
         uniques = {}
         with open(self.filepath) as f:
             lines = f.readlines()
-        print('-'*50)
-        print('%s FILE-STATS' % (self.filepath.split('/')[-1]))
-        print('-'*50)
-        print(len(lines), 'records loaded')
+        self.file_stats['lines'] = len(lines)
         for line in lines:
             dict = json.loads(line.rstrip())
             self.problems_d[dict['idsession']] = dict
@@ -237,7 +234,7 @@ class ProcessJsonFile():
             idsession = parts[0] + '_' + parts[1]
             if not idsession in uniques:
                 uniques[idsession] = True
-        print('%s total problems' % (len(uniques)))
+        self.file_stats['problems'] = len(uniques)
 
     def processLines(self):
         for key, dict in sorted(self.problems_d.items()):
@@ -280,43 +277,55 @@ class ProcessJsonFile():
     def printLinesStats(self):
         self.findIncompletes()
         order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
+        lines = []
+        lines.append('%s lines in file' % (self.file_stats['lines']))
+        lines.append('%s unique problems' % (self.file_stats['problems']))
         for key in order:
-            print('-'*30)
+            lines.append('-'*50)
             if key == 'm1':
                 val = self.p_count[key][0]
                 mtot = val
-                print('%d %s ordered problems' % (val, key)) 
+                lines.append('%d %s ordered problems' % (val, key)) 
                 val = self.p_count[key][1]
                 mtot += val
-                print('%d %s random problems' % (val, key)) 
-                print('%d %s total problems' % (mtot, key))
+                lines.append('%d %s random problems' % (val, key)) 
+                lines.append('%d %s total problems' % (mtot, key))
             else:
                 val = self.p_count[key]
-                print('%d %s problems' % (val, key))
+                lines.append('%d %s problems' % (val, key))
             # 1-digit problems will never have incompletes
             if not key in self.p_multi: continue
             steps = int(key[1:2])
             tic = ' ' * (len(str(val)) - len(str(self.complete[key])))
-            print('%s%d completed %d of %d steps' % (tic, 
+            lines.append('%s%d completed %d of %d steps' % (tic, 
                                                      self.complete[key],
                                                      steps,
                                                      steps))
             if val == self.complete[key]: continue
             tic = ' ' * (len(str(val)) - len(str(self.incomplete[key][0])))
-            print('%s%d step 1 of %s completed' % (tic,
+            lines.append('%s%d step 1 of %s completed' % (tic,
                                                    self.incomplete[key][0],
                                                    steps))
             if len(self.incomplete[key]) < 2: continue
             tic = ' ' * (len(str(val)) - len(str(self.incomplete[key][1])))
-            print('%s%d step 2 of %s completed' % (tic, 
+            lines.append('%s%d step 2 of %s completed' % (tic, 
                                                    self.incomplete[key][1],
                                                    steps))
-        print('-'*30)
+        lines.append('-'*50)
+        vars = self.filepath.split('/')
+        mypath = './outputs/STATS_%s' % (vars[-1])
+        f = open(mypath, 'w')
+        f.write('\n'.join(lines))
+        f.close()
+        print('-'*50)
+        print('OUTPUT: Summary Statistics: %s' % (mypath.replace('./', '/')))
+        print('-'*50)
 
 class ChartAnalysis():
-    def __init__(self, dfc, year):
-        self.dfc = dfc;
+    def __init__(self, dframe_in, year):
+        self.dfc = dframe_in;
         self.wsplits = self.setWeekSplits(year)
+        self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
         self.savePlt = False # save plt to a file
 
@@ -349,46 +358,33 @@ class ChartAnalysis():
         ax2 = axes[1]
         # need a 26 week index to match series returned by weeStackBarData()
         sb_index = pd.RangeIndex(1, 27, name='week')
-        # ax1 graph
+        # ax1 data
         sb_data = {}
         start = self.wsplits['start1']
         end = self.wsplits['end1']
-        sb_data['a1'] =  self.weekStackBarData('a1', start, end)
-        sb_data['a2'] =  self.weekStackBarData('a2', start, end)
-        sb_data['a3'] =  self.weekStackBarData('a3', start, end)
-        sb_data['s1'] =  self.weekStackBarData('s1', start, end)
-        sb_data['s2'] =  self.weekStackBarData('s2', start, end)
-        sb_data['s3'] =  self.weekStackBarData('s3', start, end)
-        sb_data['m1'] =  self.weekStackBarData('m1', start, end)
-        sb_data['m2'] =  self.weekStackBarData('m2', start, end)
-        sb_data['d3'] =  self.weekStackBarData('d3', start, end)
-        # stacked bar plot
+        for lvl in self.order:
+            sb_data[lvl] = self.weekStackBarData(lvl, start, end)
+        # ax1 stacked bar plot
         df_sb = pd.DataFrame(sb_data, index=sb_index)
         ax1 = df_sb.plot(kind='bar', stacked=True, ax=ax1)
         ax1.set_ylabel('problems')
-        ax1.set_title('Weekly Problems Month 1-6')
+        ax1.set_title('Weekly Problems Month 1-26')
         ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
         ax1.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
-#        # ax2 graph
+        # ax2 data
         sb_data = {}
         start = self.wsplits['start2']
         end = self.wsplits['end2']
-        sb_data['a1'] =  self.weekStackBarData('a1', start, end)
-        sb_data['a2'] =  self.weekStackBarData('a2', start, end)
-        sb_data['a3'] =  self.weekStackBarData('a3', start, end)
-        sb_data['s1'] =  self.weekStackBarData('s1', start, end)
-        sb_data['s2'] =  self.weekStackBarData('s2', start, end)
-        sb_data['s3'] =  self.weekStackBarData('s3', start, end)
-        sb_data['m1'] =  self.weekStackBarData('m1', start, end)
-        sb_data['m2'] =  self.weekStackBarData('m2', start, end)
-        sb_data['d3'] =  self.weekStackBarData('d3', start, end)
-        # stacked bar plot
+        for lvl in self.order:
+            sb_data[lvl] = self.weekStackBarData(lvl, start, end)
+        # ax2 stacked bar plot
         df_sb = pd.DataFrame(sb_data, index=sb_index)
         ax2 = df_sb.plot(kind='bar', stacked=True, ax=ax2)
         ax2.set_ylabel('problems')
         ax2.set_title('Weekly Problems Month 27-52')
         ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
         ax2.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
+        # adjust white space & show()
         fig.subplots_adjust(hspace=0.4)
         plt.show()
 
@@ -419,7 +415,6 @@ def getInputFile():
     myfiles = []
     for filepath in files:
         file = filepath.split('/')[-1]
-        if file == PARAMS_FILE: continue
         myfiles.append(file)
     # exit loop by entering number or Return to exit
     err_str = ''
@@ -444,32 +439,6 @@ def getInputFile():
         if choice in ok: return myfiles[choice-1]
         err_str = 'Please limit entry to numbers shown'
 
-def getYear(week_last):
-    ok = [1, 2, 3, 4]
-    # exit loop by entering number or Return to exit
-    err_str = ''
-    while True:
-        print('-'*50)
-        print('1) Year 1 (1-52 weeks previous)')
-        if week_last > 1: print('2) Year 2 (53-104 weeks previous)')
-        if week_last > 104: print('3) Year 3 (105-156 weeks previous)')
-        if week_last > 156: print('4) Year  (157-208 weeks previous)')
-        print('[Return to Exit, Q to quit]')
-        if len(err_str) > 0:
-            print('-'*50)
-            print(err_str)
-            err_str = ''
-        choice = input('Enter the year number to analyze (1, 2, or 3):')
-        if choice.lower()[0:1] == 'q':
-            print('%s%s' % ('\n', 'Goodbye'))
-            sys.exit(0)
-        try:
-            choice = int(choice)
-        except:
-            return ''
-        if choice in ok: return choice
-        err_str = 'Please limit entry to numbers shown'
-
 def validInputsOutputs():
     flist = glob.glob('*')
     count = 0
@@ -490,9 +459,70 @@ def validInputsOutputs():
         return False
     return True
 
+class AnalysisMenus():
+    def __init__(self, dframe_in, week_last):
+        self.dfm = dframe_in;
+        self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
+        self.week_last = week_last
+        self.year = 1
+        self.levels = {} # initialized & updated using year idelevel/problems
+
+    def getLevelsCount(self):
+        for idlevel in self.order:
+            self.levels[idlevel] = 0
+        dftemp = self.dfm.groupby('idlevel')['idproblem_count'].sum()
+        for idlevel, count in dftemp.iteritems():
+            self.levels[idlevel] = count
+
+    def getYear(self):
+        self.year = 1
+        if self.week_last < 53: return
+        ok = [1, 2, 3, 4]
+        err_str = ''
+        while True:
+            # exit by entering valid number or Return/Q to exit/quit
+            print('-'*50)
+            print('1) Year 1 (1-52 weeks previous)')
+            if self.week_last > 52: print('2) Year 2 (53-104 weeks previous)')
+            if self.week_last > 104: print('3) Year 3 (105-156 weeks previous)')
+            if self.week_last > 156: print('4) Year  (157-208 weeks previous)')
+            print('[Return to Exit, Q to quit]')
+            if len(err_str) > 0:
+                print('-'*50)
+                print(err_str)
+                err_str = ''
+            choice = input('Enter the year number to analyze (1, 2, 3, 4):')
+            if choice.lower()[0:1] == 'q':
+                print('\nGoodbye')
+                sys.exit(0)
+            if len(choice) == 0:
+                self.year =  -1
+                return
+            try:
+                choice = int(choice)
+            except:
+                err_str = 'Please enter integer number only'
+                continue
+            if not choice in ok:
+                err_str = 'Please limit entry to numbers shown'
+                continue
+            self.year = choice
+            return
+
 def processAnalysis():    
     if not validInputsOutputs(): return
+    first = True
     while True:
+        if not first:
+            print('-'*50)
+            choice = input('To Continue enter y (return=exit):')
+            if len(choice) == 0:
+                print('\nGoodbye')
+                return
+            if choice.lower()[0:1] != 'y':
+                print('\nGoodbye')
+                return
+        first = False
         input_file = getInputFile()
         if len(input_file) == 0:
             print('\nGoodbye')
@@ -507,17 +537,16 @@ def processAnalysis():
             print('Please check your download.')
             print('\nGoodbye')
             return
-        year = 1
-        if pjf.week_last > 1:
-            year = getYear(pjf.week_last)
-            if len(str(year)) == 0:
-                continue
-        print('Year %d being analyzed' % (year))
-        print('-'*50)
-        df = pd.DataFrame(pjf.dframe)
-        ca = ChartAnalysis(df, year)
+        am = AnalysisMenus(pjf.dframe, pjf.week_last)
+        am.getYear()
+        print('Year %d being analyzed' % (am.year))
+        am.getLevelsCount()
+        
+        #return
+
+        ca = ChartAnalysis(pjf.dframe, am.year)
         ca.totalProblemsStackedBar()
-    print('done')
+    print('\nAnalysis Complete')
 
 if __name__ == '__main__':
     processAnalysis()
