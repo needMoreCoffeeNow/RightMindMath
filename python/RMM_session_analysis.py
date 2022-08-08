@@ -3,6 +3,7 @@ import urllib.parse
 from random import randint
 import datetime
 import glob
+import sys
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -434,7 +435,7 @@ def getInputFile():
             print('%d) %s' % (i, file))
             ok.append(i)
             i += 1
-        print('[Return to Exit]')
+        print('[Return to Quit]')
         choice = input('Enter the number of the file to use (1-%d):' % (i-1))
         try:
             choice = int(choice)
@@ -450,15 +451,18 @@ def getYear(week_last):
     while True:
         print('-'*50)
         print('1) Year 1 (1-52 weeks previous)')
-        if week_last > 52: print('2) Year 2 (53-104 weeks previous)')
+        if week_last > 1: print('2) Year 2 (53-104 weeks previous)')
         if week_last > 104: print('3) Year 3 (105-156 weeks previous)')
         if week_last > 156: print('4) Year  (157-208 weeks previous)')
-        print('[Return to Exit]')
+        print('[Return to Exit, Q to quit]')
         if len(err_str) > 0:
             print('-'*50)
             print(err_str)
             err_str = ''
         choice = input('Enter the year number to analyze (1, 2, or 3):')
+        if choice.lower()[0:1] == 'q':
+            print('%s%s' % ('\n', 'Goodbye'))
+            sys.exit(0)
         try:
             choice = int(choice)
         except:
@@ -488,29 +492,31 @@ def validInputsOutputs():
 
 def processAnalysis():    
     if not validInputsOutputs(): return
-    input_file = getInputFile()
-    if len(input_file) == 0:
-        print('\nGoodbye')
-        return
-    pjf = ProcessJsonFile(input_file)
-    pjf.readFile()
-    pjf.processLines()
-    pjf.printLinesStats()
-    pjf.buildDataFrame()
-    if pjf.week_last == -1:
-        print('\nSorry no records were loaded. Please check your download.')
-        return
-    year = 1
-    if pjf.week_last > 52:
-        year = getYear(pjf.week_last)
-        if len(str(year)) == 0:
+    while True:
+        input_file = getInputFile()
+        if len(input_file) == 0:
             print('\nGoodbye')
             return
-    print('Year %d being analyzed' % (year))
-    print('-'*50)
-    df = pd.DataFrame(pjf.dframe)
-    ca = ChartAnalysis(df, year)
-    ca.totalProblemsStackedBar()
+        pjf = ProcessJsonFile(input_file)
+        pjf.readFile()
+        pjf.processLines()
+        pjf.printLinesStats()
+        pjf.buildDataFrame()
+        if pjf.week_last == -1:
+            print('\nSorry no records were loaded.')
+            print('Please check your download.')
+            print('\nGoodbye')
+            return
+        year = 1
+        if pjf.week_last > 1:
+            year = getYear(pjf.week_last)
+            if len(str(year)) == 0:
+                continue
+        print('Year %d being analyzed' % (year))
+        print('-'*50)
+        df = pd.DataFrame(pjf.dframe)
+        ca = ChartAnalysis(df, year)
+        ca.totalProblemsStackedBar()
     print('done')
 
 if __name__ == '__main__':
