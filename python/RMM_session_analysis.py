@@ -357,11 +357,11 @@ class ChartAnalysis():
         ax1 = axes[0]
         ax2 = axes[1]
         # need a 26 week index to match series returned by weeStackBarData()
-        sb_index = pd.RangeIndex(1, 27, name='week')
         # ax1 data
         sb_data = {}
         start = self.wsplits['start1']
         end = self.wsplits['end1']
+        sb_index = pd.RangeIndex(start, end, name='week')
         for lvl in self.order:
             sb_data[lvl] = self.weekStackBarData(lvl, start, end)
         # ax1 stacked bar plot
@@ -375,6 +375,7 @@ class ChartAnalysis():
         sb_data = {}
         start = self.wsplits['start2']
         end = self.wsplits['end2']
+        sb_index = pd.RangeIndex(start, end, name='week')
         for lvl in self.order:
             sb_data[lvl] = self.weekStackBarData(lvl, start, end)
         # ax2 stacked bar plot
@@ -390,16 +391,19 @@ class ChartAnalysis():
 
     def weekStackBarData(self, idlevel, wk_start, wk_end):
         # create a dict for making a df that has 26 weeks (no gaps)
-        week_dict = {'date_week':list(range(1,27)), 'idproblem_count':[0]*26}
-        sb_index = pd.RangeIndex(1, 27, name='date_week')
+        week_dict = {
+            'date_week':list(range(wk_start, wk_end)),
+            'idproblem_count':[0]*26
+        }
+        sb_index = pd.RangeIndex(wk_start, wk_end, name='date_week')
         qstr = '(date_week >= %d & date_week < %d)' % (wk_start, wk_end)
-        qstr += 'and (idlevel in [ "%s" ])' % (idlevel)
+        qstr += ' and (idlevel in [ "%s" ])' % (idlevel)
         # get the session week total for the idlevel - note my have gaps
-        temp_idl = self.dfc.query(qstr).groupby('date_week')['idproblem_count'].sum()
+        temp = self.dfc.query(qstr).groupby('date_week')['idproblem_count'].sum()
         # create 26 week frame with all zeros then update with session data
         temp_all = pd.DataFrame(week_dict)
         temp_all.index = sb_index
-        temp_all.update(temp_idl)
+        temp_all.update(temp)
         # return the 26 slot series with the problem counts
         return temp_all['idproblem_count']
 
