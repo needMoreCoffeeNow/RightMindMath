@@ -172,8 +172,8 @@ class ProcessJsonFile():
             ids_tstamp = int(vars[0])
             my_df['idsession_tstamp'] = ids_tstamp
             dt = datetime.date.fromtimestamp(int(ids_tstamp/1000))
-            my_df['date_date'] = dt.strftime('%Y%m%d')
-            my_df['date_yyyymm'] = int(my_df['date_date'][0:6])
+            my_df['date_date'] = int(dt.strftime('%Y%m%d'))
+            my_df['date_yyyymm'] = int(my_df['date_date']/100)
             my_wd = dt.strftime('%A')[0:3] #Mon, Tue, Wed, etc.
             my_wd = '%d.%s' % (wd_ord[my_wd], my_wd)
             my_df['date_weekday'] = my_wd
