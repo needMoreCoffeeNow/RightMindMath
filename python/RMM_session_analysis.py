@@ -275,7 +275,7 @@ class ProcessJsonFile():
             if skipped == 2:
                 self.incomplete[idlevel][1] += 1
 
-    def printLinesStats(self):
+    def writeLinesStats(self):
         self.findIncompletes()
         order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         lines = []
@@ -325,12 +325,12 @@ class ProcessJsonFile():
 class ChartAnalysis():
     def __init__(self, dframe_in, year):
         self.dfc = dframe_in;
-        self.wsplits = self.setWeekSplits(year)
+        self.wsplits = self.getWeekSplits(year)
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
         self.savePlt = False # save plt to a file
 
-    def setWeekSplits(self, year):
+    def getWeekSplits(self, year):
         splits = {}
         if year == 1:
             splits = {'start1':1, 'end1':27, 'start2':27, 'end2':53}
@@ -341,6 +341,21 @@ class ChartAnalysis():
         if year == 4:
             splits = {'start1':209, 'end1':235, 'start2':235, 'end2':261}
         return splits
+
+    def processChartChoice(self, type, num):
+        print('%s%s' % ('\n', '-'*50))
+        print('NOTE: After viewing the chart, you MUST ')
+        print('close the window showing the chart, and ')
+        print('then click back into the window running ')
+        print('your Python script. If you do not do this ')
+        print('nothing (no menus) will show in your ')
+        print('teminal window. If this happens, simply ')
+        print('to the chart window and close it')
+        print('%s%s' % ('-'*50, '\n'))
+        dummy = input('Read the Note above then\nPress Return to view the chart\n(allow a moment for processing)')
+        print('\n...processing\n')
+        if type == 'tot':
+            if num == 1: self.totalProblemsStackedBar()
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def totalProblemsStackedBar(self):
@@ -389,6 +404,7 @@ class ChartAnalysis():
         # adjust white space & show()
         fig.subplots_adjust(hspace=0.4)
         plt.show()
+        print('chart completed & closed')
 
     def weekStackBarData(self, idlevel, wk_start, wk_end):
         # create a dict for making a df that has 26 weeks (no gaps)
@@ -411,7 +427,7 @@ class ChartAnalysis():
 def getInputFile():
     files = glob.glob('./inputs/*.txt')
     if len(files) == 0:
-        print('\nError: No downloaded .txt files were found')
+        print('\n\nError: No downloaded .txt files were found')
         print('Please use the RightMindMath app to export a file.')
         print('Be sure you save it in the inputs folder located in')
         print('the same folder as this Python (.py) file.')
@@ -422,15 +438,10 @@ def getInputFile():
         file = filepath.split('/')[-1]
         myfiles.append(file)
     # exit loop by entering number or Return to exit
-    err_str = ''
     while True:
         ok = []
         i = 1
-        print('-'*50)
-        if len(err_str) > 0:
-            print(err_str)
-            err_str = ''
-        print('-'*50)
+        print('\n\n%sCHOOSE INPUT FILE%s' % ('-'*10, '-'*10))
         for file in myfiles:
             print('%d) %s' % (i, file))
             ok.append(i)
@@ -442,7 +453,9 @@ def getInputFile():
         except:
             return ''
         if choice in ok: return myfiles[choice-1]
-        err_str = 'Please limit entry to numbers shown'
+        print('%s%s' % ('\n', '-'*50))
+        print('Please limit entry to numbers shown')
+        print('-'*50)
 
 class AnalysisMenus():
     def __init__(self, dframe_in, week_last):
@@ -458,6 +471,106 @@ class AnalysisMenus():
         dftemp = self.dfm.groupby('idlevel')['idproblem_count'].sum()
         for idlevel, count in dftemp.iteritems():
             self.levels[idlevel] = count
+
+    def choiceLevelChart(self, idchoice):
+        titles = {2:'ADDITION', 3:'SUBTRACTION', 4:'MULTIPLY 1-Digit',
+                  5:'MULTIPLY 2-Digits', 6:'LONG DIVISION'}
+        choices = {
+            2:'1) 1-Digit Times & Tries\n2) 2-Digit Problems Analysis\n3) 3-Digit Problems Analysis',
+            3:'1) 1-Digit Times & Tries\n2) 2-Digit Problems Analysis\n3) 3-Digit Problems Analysis'
+        }
+        ok_list = {
+            2:[1, 2, 3],
+            3:[1, 2, 3],
+            4:[],
+            5:[],
+            6:[]}
+        ok = ok_list[idchoice]
+        err_str = ''
+        while True:
+            print('-'*50)
+            print('\n\n%s%s%s' % ('-'*10, titles[idchoice], '-'*10))
+            print(choices[idchoice])
+            print('[Return to Exit, Q to quit]')
+            print('-'*50)
+            if len(err_str) > 0:
+                print('-'*50)
+                print(err_str)
+                err_str = ''
+            ok_str = ', '.join([str(i) for i in ok_list[idchoice]])
+            choice = input('Please enter your choice (%s):' % (ok_str))
+            if len(choice) == 0:
+                return 0
+            if choice.lower()[0:1] == 'q':
+                print('\nGoodbye')
+                sys.exit(0)
+            try:
+                choice = int(choice)
+            except:
+                err_str = 'Please enter integer number only'
+                continue
+            if not choice in ok:
+                err_str = 'Please limit entry to numbers shown'
+                continue
+            print('NEED CHART HERE')
+
+    def choiceTopMenu(self):
+        counts = {'total':0, 'add':0, 'sub':0, 'm1':0, 'm2':0, 'div':0}
+        for k, v in self.levels.items():
+            counts['total'] += v
+            if k[0:1] == 'a': counts['add'] += v
+            if k[0:1] == 's': counts['sub'] += v
+            if k[0:1] == 'd': counts['div'] += v
+            if k[0:1] == 'm':
+                if k[1:2] == '1': counts['m1'] += v
+                if k[1:2] == '2': counts['m2'] += v
+
+        counts['div'] = 0
+
+        ok = [1, 2, 3, 4, 5, 6]
+        err_str = ''
+        while True:
+            print('-'*50)
+            lto = len(str(counts['total']))
+            print('\n\n%s%s :: Year %d%s' % ('-'*10, 'MAIN MENU', self.year, '-'*10))
+            print('1) Total Problems Done Chart%s%d problems' % (' '*5, counts['total']))
+            pad = ' '*(lto - len(str(counts['add'])))
+            print('2) Addition Menu%s%s%d problems' % (' '*17, pad, counts['add']))
+            pad = ' '*(lto - len(str(counts['sub'])))
+            print('3) Subtraction Menu%s%s%d problems' % (' '*14, pad, counts['sub']))
+            pad = ' '*(lto - len(str(counts['m1'])))
+            print('4) Multiply 1-digit Menu%s%s%d problems' % (' '*9, pad, counts['m1']))
+            pad = ' '*(lto - len(str(counts['m2'])))
+            print('5) Multiply 2-digits Menu%s%s%d problems' % (' '*8, pad, counts['m2']))
+            pad = ' '*(lto - len(str(counts['div'])))
+            print('6) Long Division Menu%s%s%d problems' % (' '*10, pad, counts['div']))
+            print('[Return to Exit, Q to quit]')
+            print('-'*50)
+            if len(err_str) > 0:
+                print('-'*50)
+                print(err_str)
+                err_str = ''
+            choice = input('Please enter your choice (1, 2, 3, 4, 5, 6):')
+            if len(choice) == 0:
+                return 0
+            if choice.lower()[0:1] == 'q':
+                print('\nGoodbye')
+                sys.exit(0)
+            try:
+                choice = int(choice)
+            except:
+                err_str = 'Please enter integer number only'
+                continue
+            if not choice in ok:
+                err_str = 'Please limit entry to numbers shown'
+                continue
+            if choice == 2 and counts['add'] == 0: err_str = 'Sorry no problems'
+            if choice == 3 and counts['sub'] == 0: err_str = 'Sorry no problems'
+            if choice == 4 and counts['m1'] == 0: err_str = 'Sorry no problems'
+            if choice == 5 and counts['m2'] == 0: err_str = 'Sorry no problems'
+            if choice == 6 and counts['div'] == 0: err_str = 'Sorry no problems'
+            if len(err_str) > 0: continue
+            return choice
 
     def getYear(self):
         self.year = 1
@@ -514,10 +627,11 @@ def processAnalysis():
         print('OUTPUT: Created the outputs sub-folder.')
         print('-'*50)
     first = True
+    top_codes = {1:'tot', 2:'add', 3:'sub', 4:'m1', 5:'m2', 6:'div'}
     while True:
         if not first:
             print('-'*50)
-            choice = input('To Continue enter y (return=exit):')
+            choice = input('\n\nTo Load Another File enter y (return=exit):')
             if len(choice) == 0:
                 print('\nGoodbye')
                 return
@@ -532,7 +646,7 @@ def processAnalysis():
         pjf = ProcessJsonFile(input_file)
         pjf.readFile()
         pjf.processLines()
-        pjf.printLinesStats()
+        pjf.writeLinesStats()
         pjf.buildDataFrame()
         if pjf.week_last == -1:
             print('\nSorry no records were loaded.')
@@ -540,14 +654,23 @@ def processAnalysis():
             print('\nGoodbye')
             return
         am = AnalysisMenus(pjf.dframe, pjf.week_last)
-        am.getYear()
+        am.getYear() # year choice if week_last > 52
         print('Year %d being analyzed' % (am.year))
-        am.getLevelsCount()
-        
-        #return
-
+        am.getLevelsCount() # allows hiding menu levels when problem count = 0
         ca = ChartAnalysis(pjf.dframe, am.year)
-        ca.totalProblemsStackedBar()
+        menus_active = True
+        while menus_active:
+            c_top = am.choiceTopMenu()
+            if c_top == 0:
+                menus_active = False
+                continue
+            if c_top == 1:
+                ca.processChartChoice(top_codes[c_top], 1)
+                #ca.totalProblemsStackedBar()
+                continue
+            c_chart = am.choiceLevelChart(c_top)
+            if c_chart == 0: continue
+            #ca.chartFromLevelMenu(c_top, c_chart)
     print('\nAnalysis Complete')
 
 if __name__ == '__main__':
