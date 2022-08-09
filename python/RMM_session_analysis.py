@@ -4,6 +4,7 @@ from random import randint
 import datetime
 import glob
 import sys
+import os
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -443,26 +444,6 @@ def getInputFile():
         if choice in ok: return myfiles[choice-1]
         err_str = 'Please limit entry to numbers shown'
 
-def validInputsOutputs():
-    flist = glob.glob('*')
-    count = 0
-    for name in flist:
-        if name == 'inputs': count += 1
-        if name == 'outputs': count += 1
-    if count != 2:
-        print('%s%s' % ('\n', '-'*40))
-        print('The required sub-folders are missing.')
-        print('Please create two sub-folders in')
-        print('the same folder as the Python (.py) file.')
-        print('(note: names must be lower case)')
-        print('-'*40)
-        print('Name one folder: inputs')
-        print('Name one folder: outputs')
-        print('-'*40)
-        print('\nGoodbye')
-        return False
-    return True
-
 class AnalysisMenus():
     def __init__(self, dframe_in, week_last):
         self.dfm = dframe_in;
@@ -514,7 +495,24 @@ class AnalysisMenus():
             return
 
 def processAnalysis():    
-    if not validInputsOutputs(): return
+    mypath = os.getcwd()
+    if not os.path.isdir('%s/inputs' % (mypath)):
+        print('%s%s' % ('\n', '-'*50))
+        print('The required sub-folder is missing.')
+        print('Please create a sub-folder in')
+        print('the same folder as the Python (.py) file:')
+        print(mypath)
+        print('-'*50)
+        print('Name the folder: inputs')
+        print('-'*50)
+        print('(note: inputs must be lower case)')
+        print('\nGoodbye')
+        return
+    if not os.path.isdir('%s/outputs' % (mypath)):
+        os.makedirs('%s/outputs' % (mypath))
+        print('-'*50)
+        print('OUTPUT: Created the outputs sub-folder.')
+        print('-'*50)
     first = True
     while True:
         if not first:
