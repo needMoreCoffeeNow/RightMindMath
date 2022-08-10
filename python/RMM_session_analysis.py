@@ -329,6 +329,7 @@ class ChartAnalysis():
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
         self.savePlt = False # save plt to a file
+        ######self.chart_note = False # show or skip chart prelim note (set by user)
         self.limits_time = {'a1':45, 's1':45, 'm1':45,
                             'a2':80, 's2':80,
                             'a3':100, 's3':100,
@@ -366,8 +367,8 @@ class ChartAnalysis():
             splits = {'start1':209, 'end1':235, 'start2':235, 'end2':261}
         return splits
 
-    def processChartChoice(self, type, num):
-        print('%s%s' % ('\n', '-'*50))
+    def showChartPrelimNote(self, skip_input):
+        if not skip_input: print('%s%s' % ('\n\n', '-'*50))
         print('NOTE: After viewing the chart, you MUST ')
         print('close the window showing the chart, and ')
         print('then click back into the window running ')
@@ -375,8 +376,25 @@ class ChartAnalysis():
         print('nothing (no menus) will show in your ')
         print('teminal window. If this happens, simply ')
         print('to the chart window and close it')
+        if skip_input:
+            return
         print('%s%s' % ('-'*50, '\n'))
         dummy = input('Read the Note above then\nPress Return to view the chart\n(allow a moment for processing)')
+        print('\n...processing\n')
+
+######    def setChartPrelimNotePref(self):
+######        print('\n\n%s%s%s' % ('-'*16, 'CHART NOTE DEFAULT', '-'*16))
+######        ######self.showChartPrelimNote(True)
+######        print('-'*50)
+######        print('The note above will show each time you view a chart')
+######        print('You can turn this note off if you already understand it')
+######        print('-'*50)
+######        choice = input('Enter n to turn note off [Return to keep it on]:')
+######        if len(choice) == 1 and choice.lower() == 'n':
+######            self.chart_note = False
+
+    def processChartChoice(self, type, num):
+        ######if self.chart_note: self.showChartPrelimNote(False)
         print('\n...processing\n')
         if type == 'tot':
             if num == 1: self.totalProblemsStackedBar()
@@ -427,7 +445,7 @@ class ChartAnalysis():
         ax2.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
         # adjust white space & show()
         fig.subplots_adjust(hspace=0.4)
-        plt.show()
+        plt.show(block=False)
         print('chart completed & closed')
 
     def weekStackBarData(self, idlevel, wk_start, wk_end):
@@ -683,6 +701,7 @@ def processAnalysis():
         am.getLevelsCount() # allows hiding menu levels when problem count = 0
         ca = ChartAnalysis(pjf.dframe, am.year)
         ca.changeTimeLimits()
+        ######ca.setChartPrelimNotePref()
         menus_active = True
         while menus_active:
             c_top = am.choiceTopMenu()
