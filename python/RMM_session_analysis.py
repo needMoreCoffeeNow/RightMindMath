@@ -399,7 +399,8 @@ class ChartAnalysis():
                   'ytick.major.size' : 8
                   }
         plt.rcParams.update(params)
-        fig, axes = plt.subplots(2, 1, figsize=(7,7), sharey=False)
+        fig, axes = plt.subplots(2, 1, figsize=(6,4), sharey=False)
+        fig.set_dpi(150)
         ax1 = axes[0]
         ax2 = axes[1]
         # need a 26 week index to match series returned by weeStackBarData()
@@ -456,7 +457,6 @@ class ChartAnalysis():
 
 def getInputFile(path_inputs):
     files = list(path_inputs.glob('*.txt'))
-    print(files)
     if len(files) == 0:
         print('\n\nError: No downloaded .txt files were found')
         print('Please use the RightMindMath app to export a file.')
@@ -709,10 +709,7 @@ def processAnalysis():
     print('\nAnalysis Complete')
 
 if __name__ == '__main__':
-    mypath = Path(os.getcwd())
-    print(Path().resolve())
-    root = Path(Path().resolve())
-    print(root.as_uri().replace('file://', ''))
+    print(sys.platform)
     processAnalysis()
 
 
