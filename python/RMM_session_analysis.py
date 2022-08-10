@@ -329,6 +329,30 @@ class ChartAnalysis():
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
         self.savePlt = False # save plt to a file
+        self.limits_time = {'a1':45, 's1':45, 'm1':45,
+                            'a2':80, 's2':80,
+                            'a3':100, 's3':100,
+                            'm2':140, 'd3':150}
+
+    def changeTimeLimits(self):
+        order_tl = ['a1', 's1', 'm1', 'a2', 's2', 'a3', 's3', 'm2', 'd3']
+        print('\n\n%s%s%s' % ('-'*19, 'TIME LIMITS', '-'*19))
+        for k in order_tl:
+            print('%d=%s' % (self.limits_time[k], k))
+        print('-'*50)
+        print('The numbers above are used to ignore problems')
+        print('whose response times inidicate you child was')
+        print('distracted before answering. For example, the')
+        print('for 1-digit addition, subtraction & multiplication')
+        print('the value is 45. If your child took longer than 45')
+        print('seconds to respond the problem is ignored when')
+        print('analyzing response times.')
+        print('While not recommended, you can change these limits.')
+        print('Refer to the "readme.txt" file for more information.')
+        print('-'*50)
+        choice = input('Press Return for defaults or enter your changes:')
+        if len(choice) == 0: return
+        print('ToDo: limits_time changes')
 
     def getWeekSplits(self, year):
         splits = {}
@@ -658,6 +682,7 @@ def processAnalysis():
         print('Year %d being analyzed' % (am.year))
         am.getLevelsCount() # allows hiding menu levels when problem count = 0
         ca = ChartAnalysis(pjf.dframe, am.year)
+        ca.changeTimeLimits()
         menus_active = True
         while menus_active:
             c_top = am.choiceTopMenu()
