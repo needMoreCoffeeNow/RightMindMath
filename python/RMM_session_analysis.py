@@ -5,13 +5,15 @@ import datetime
 import glob
 import sys
 import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
 class ProcessJsonFile():
-    def __init__(self, input_file):
-        self.filepath = './inputs/%s' % (input_file)
+    def __init__(self, root, input_file):
+        self.root = root
+        self.input_file = input_file
         self.week_first = 999999
         self.week_last = -1
         self.problems_d = {}
@@ -224,7 +226,7 @@ class ProcessJsonFile():
 
     def readFile(self):
         uniques = {}
-        with open(self.filepath) as f:
+        with self.input_file.open() as f:
             lines = f.readlines()
         self.file_stats['lines'] = len(lines)
         for line in lines:
@@ -313,13 +315,12 @@ class ProcessJsonFile():
                                                    self.incomplete[key][1],
                                                    steps))
         lines.append('-'*50)
-        vars = self.filepath.split('/')
-        mypath = './outputs/STATS_%s' % (vars[-1])
-        f = open(mypath, 'w')
-        f.write('\n'.join(lines))
-        f.close()
+        fname = self.input_file.name
+        mypath = self.root / 'outputs' / fname
+        mypath.write_text('\n'.join(lines))
         print('-'*50)
-        print('OUTPUT: Summary Statistics: %s' % (mypath.replace('./', '/')))
+        path_out = mypath.as_uri().replace('file://', '')
+        print('OUTPUT: Summary Statistics: %s' % (path_out))
         print('-'*50)
 
 class ChartAnalysis():
@@ -329,7 +330,6 @@ class ChartAnalysis():
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
         self.savePlt = False # save plt to a file
-        ######self.chart_note = False # show or skip chart prelim note (set by user)
         self.limits_time = {'a1':45, 's1':45, 'm1':45,
                             'a2':80, 's2':80,
                             'a3':100, 's3':100,
@@ -382,19 +382,7 @@ class ChartAnalysis():
         dummy = input('Read the Note above then\nPress Return to view the chart\n(allow a moment for processing)')
         print('\n...processing\n')
 
-######    def setChartPrelimNotePref(self):
-######        print('\n\n%s%s%s' % ('-'*16, 'CHART NOTE DEFAULT', '-'*16))
-######        ######self.showChartPrelimNote(True)
-######        print('-'*50)
-######        print('The note above will show each time you view a chart')
-######        print('You can turn this note off if you already understand it')
-######        print('-'*50)
-######        choice = input('Enter n to turn note off [Return to keep it on]:')
-######        if len(choice) == 1 and choice.lower() == 'n':
-######            self.chart_note = False
-
     def processChartChoice(self, type, num):
-        ######if self.chart_note: self.showChartPrelimNote(False)
         print('\n...processing\n')
         if type == 'tot':
             if num == 1: self.totalProblemsStackedBar()
@@ -466,8 +454,9 @@ class ChartAnalysis():
         # return the 26 slot series with the problem counts
         return temp_all['idproblem_count']
 
-def getInputFile():
-    files = glob.glob('./inputs/*.txt')
+def getInputFile(path_inputs):
+    files = list(path_inputs.glob('*.txt'))
+    print(files)
     if len(files) == 0:
         print('\n\nError: No downloaded .txt files were found')
         print('Please use the RightMindMath app to export a file.')
@@ -476,9 +465,9 @@ def getInputFile():
         return('')
     sorted(files)
     myfiles = []
-    for filepath in files:
-        file = filepath.split('/')[-1]
-        myfiles.append(file)
+    for file in files:
+        #file = filepath.split('/')[-1]
+        myfiles.append(file.name)
     # exit loop by entering number or Return to exit
     while True:
         ok = []
@@ -493,8 +482,9 @@ def getInputFile():
         try:
             choice = int(choice)
         except:
-            return ''
-        if choice in ok: return myfiles[choice-1]
+            return True, None
+        if choice in ok:
+            return False, files[choice-1]
         print('%s%s' % ('\n', '-'*50))
         print('Please limit entry to numbers shown')
         print('-'*50)
@@ -650,21 +640,23 @@ class AnalysisMenus():
             return
 
 def processAnalysis():    
-    mypath = os.getcwd()
-    if not os.path.isdir('%s/inputs' % (mypath)):
+    root = Path(Path().resolve())
+    path_inputs = root / 'inputs'
+    if not path_inputs.exists():
         print('%s%s' % ('\n', '-'*50))
         print('The required sub-folder is missing.')
         print('Please create a sub-folder in')
         print('the same folder as the Python (.py) file:')
-        print(mypath)
         print('-'*50)
         print('Name the folder: inputs')
+        print('%s' % (path_inputs.as_uri().replace('file://', '')))
         print('-'*50)
         print('(note: inputs must be lower case)')
         print('\nGoodbye')
         return
-    if not os.path.isdir('%s/outputs' % (mypath)):
-        os.makedirs('%s/outputs' % (mypath))
+    output = root / 'outputs'
+    if not output.exists():
+        output.mkdir()
         print('-'*50)
         print('OUTPUT: Created the outputs sub-folder.')
         print('-'*50)
@@ -681,11 +673,11 @@ def processAnalysis():
                 print('\nGoodbye')
                 return
         first = False
-        input_file = getInputFile()
-        if len(input_file) == 0:
+        exit, input_file = getInputFile(path_inputs)
+        if exit:
             print('\nGoodbye')
             return
-        pjf = ProcessJsonFile(input_file)
+        pjf = ProcessJsonFile(root, input_file)
         pjf.readFile()
         pjf.processLines()
         pjf.writeLinesStats()
@@ -701,7 +693,6 @@ def processAnalysis():
         am.getLevelsCount() # allows hiding menu levels when problem count = 0
         ca = ChartAnalysis(pjf.dframe, am.year)
         ca.changeTimeLimits()
-        ######ca.setChartPrelimNotePref()
         menus_active = True
         while menus_active:
             c_top = am.choiceTopMenu()
@@ -718,6 +709,10 @@ def processAnalysis():
     print('\nAnalysis Complete')
 
 if __name__ == '__main__':
+    mypath = Path(os.getcwd())
+    print(Path().resolve())
+    root = Path(Path().resolve())
+    print(root.as_uri().replace('file://', ''))
     processAnalysis()
 
 
