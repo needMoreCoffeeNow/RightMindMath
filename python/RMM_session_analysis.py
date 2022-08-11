@@ -674,11 +674,12 @@ def processAnalysis():
         print('\nGoodbye')
         return
     output = root / 'outputs'
-    output.mkdir(exist_ok=True)
-    print('%s%s' % ('\n\n', '-'*50))
-    print('OUTPUT: outputs folder path:')
-    print(str(output))
-    print('-'*50)
+    if not output.exists():
+        output.mkdir()
+        print('%s%s' % ('\n\n', '-'*50))
+        print('OUTPUT: Created the outputs sub-folder:')
+        print(str(output))
+        print('-'*50)
     first = True
     top_codes = {1:'tot', 2:'add', 3:'sub', 4:'m1', 5:'m2', 6:'div'}
     while True:
