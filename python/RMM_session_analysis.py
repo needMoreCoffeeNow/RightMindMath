@@ -328,9 +328,9 @@ class ProcessJsonFile():
         lines.append('-'*50)
         mypath = self.output_path / 'File_Statistics.txt'
         mypath.write_text('\n'.join(lines))
-        print('-'*50)
+        print('%s%s' % ('\n\n', '-'*50))
         path_out = str(mypath)
-        print('OUTPUT: Summary Statistics: %s' % (path_out))
+        print('OUTPUT: Summary Statistics:\n%s' % (path_out))
         print('-'*50)
 
 class ChartAnalysis():
@@ -674,11 +674,11 @@ def processAnalysis():
         print('\nGoodbye')
         return
     output = root / 'outputs'
-    if not output.exists():
-        output.mkdir()
-        print('-'*50)
-        print('OUTPUT: Created the outputs sub-folder.')
-        print('-'*50)
+    output.mkdir(exist_ok=True)
+    print('%s%s' % ('\n\n', '-'*50))
+    print('OUTPUT: outputs folder path:')
+    print(str(output))
+    print('-'*50)
     first = True
     top_codes = {1:'tot', 2:'add', 3:'sub', 4:'m1', 5:'m2', 6:'div'}
     while True:
@@ -709,7 +709,7 @@ def processAnalysis():
             return
         am = AnalysisMenus(pjf.dframe, pjf.week_last)
         am.getYear() # year choice if week_last > 52
-        print('Year %d being analyzed' % (am.year))
+        print('\n\nYear %d being analyzed' % (am.year))
         am.getLevelsCount() # allows hiding menu levels when problem count = 0
         ca = ChartAnalysis(pjf.dframe, am.year, pjf.output_path)
         ca.changeTimeLimits()
