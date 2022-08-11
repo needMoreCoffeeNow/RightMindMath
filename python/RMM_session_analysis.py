@@ -334,8 +334,9 @@ class ProcessJsonFile():
         print('-'*50)
 
 class ChartAnalysis():
-    def __init__(self, dframe_in, year):
+    def __init__(self, dframe_in, year, output_path):
         self.dfc = dframe_in;
+        self.output_charts = self.setOutputCharts(output_path)
         self.wsplits = self.getWeekSplits(year)
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
@@ -344,6 +345,10 @@ class ChartAnalysis():
                             'a2':80, 's2':80,
                             'a3':100, 's3':100,
                             'm2':140, 'd3':150}
+
+    def setOutputCharts(self, output_path):
+        self.output_charts = output_path / 'charts'
+        self.output_charts.mkdir(exist_ok=True)
 
     def changeTimeLimits(self):
         order_tl = ['a1', 's1', 'm1', 'a2', 's2', 'a3', 's3', 'm2', 'd3']
@@ -703,7 +708,7 @@ def processAnalysis():
         am.getYear() # year choice if week_last > 52
         print('Year %d being analyzed' % (am.year))
         am.getLevelsCount() # allows hiding menu levels when problem count = 0
-        ca = ChartAnalysis(pjf.dframe, am.year)
+        ca = ChartAnalysis(pjf.dframe, am.year, pjf.output_path)
         ca.changeTimeLimits()
         menus_active = True
         while menus_active:
