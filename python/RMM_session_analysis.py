@@ -347,8 +347,9 @@ class ChartAnalysis():
                             'm2':140, 'd3':150}
 
     def setOutputCharts(self, output_path):
-        self.output_charts = output_path / 'charts'
-        self.output_charts.mkdir(exist_ok=True)
+        mypath = output_path / 'charts'
+        mypath.mkdir(exist_ok=True)
+        return mypath
 
     def changeTimeLimits(self):
         order_tl = ['a1', 's1', 'm1', 'a2', 's2', 'a3', 's3', 'm2', 'd3']
@@ -450,6 +451,8 @@ class ChartAnalysis():
         # adjust white space & show()
         fig.subplots_adjust(hspace=0.4)
         plt.show(block=False)
+        plt_path = self.output_charts / 'test.png'
+        plt.savefig(str(plt_path))
         print('chart completed & closed')
 
     def weekStackBarData(self, idlevel, wk_start, wk_end):
