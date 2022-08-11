@@ -14,6 +14,8 @@ class ProcessJsonFile():
     def __init__(self, root, input_file):
         self.root = root
         self.input_file = input_file
+        self.file_stem = input_file.stem
+        self.output_path = None # set to Path(root/output/input_file.stem
         self.week_first = 999999
         self.week_last = -1
         self.problems_d = {}
@@ -83,6 +85,15 @@ class ProcessJsonFile():
             'chunk_count' : None,
         }
 
+    def createOutputSubfolder(self, output_in):
+        self.output_path = output_in / str(self.file_stem)
+        if not self.output_path.exists():
+            self.output_path.mkdir()
+            print('%s%s' % ('\n\n', '-'*50))
+            print('OUTPUT: results for %s' % (str(self.input_file)))
+            print('will be saved in the following folder:')
+            print('%s' % (str(self.output_path)))
+            print('-'*50)
 
     def parseRstr(self, r_str, tstamp, time):
         my_df = self.rec_df.copy()
@@ -315,11 +326,10 @@ class ProcessJsonFile():
                                                    self.incomplete[key][1],
                                                    steps))
         lines.append('-'*50)
-        fname = self.input_file.name
-        mypath = self.root / 'outputs' / fname
+        mypath = self.output_path / 'File_Statistics.txt'
         mypath.write_text('\n'.join(lines))
         print('-'*50)
-        path_out = mypath.as_uri().replace('file://', '')
+        path_out = str(mypath)
         print('OUTPUT: Summary Statistics: %s' % (path_out))
         print('-'*50)
 
@@ -641,6 +651,7 @@ class AnalysisMenus():
 
 def processAnalysis():    
     root = Path(Path().resolve())
+    print(str(root))
     path_inputs = root / 'inputs'
     if not path_inputs.exists():
         print('%s%s' % ('\n', '-'*50))
@@ -649,7 +660,7 @@ def processAnalysis():
         print('the same folder as the Python (.py) file:')
         print('-'*50)
         print('Name the folder: inputs')
-        print('%s' % (path_inputs.as_uri().replace('file://', '')))
+        print('%s' % (str(path_inputs)))
         print('-'*50)
         print('(note: inputs must be lower case)')
         print('\nGoodbye')
@@ -680,6 +691,7 @@ def processAnalysis():
         pjf = ProcessJsonFile(root, input_file)
         pjf.readFile()
         pjf.processLines()
+        pjf.createOutputSubfolder(output)
         pjf.writeLinesStats()
         pjf.buildDataFrame()
         if pjf.week_last == -1:
