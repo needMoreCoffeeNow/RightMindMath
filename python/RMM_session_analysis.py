@@ -355,7 +355,7 @@ class ChartAnalysis():
             print('Select the option for how to handle charts:')
             print('     1) Display Charts (do not save)')
             print('     2) Display & Save Charts')
-            print('     3) Save Charte (do not display)')
+            print('     3) Save Charts (do not display)')
             if len(err_str) > 0:
                 print('-'*50)
                 print(err_str)
@@ -540,8 +540,12 @@ class AnalysisMenus():
         titles = {2:'ADDITION', 3:'SUBTRACTION', 4:'MULTIPLY 1-Digit',
                   5:'MULTIPLY 2-Digits', 6:'LONG DIVISION'}
         choices = {
-            2:'1) 1-Digit Times & Tries\n2) 2-Digit Problems Analysis\n3) 3-Digit Problems Analysis',
-            3:'1) 1-Digit Times & Tries\n2) 2-Digit Problems Analysis\n3) 3-Digit Problems Analysis'
+            2 : ['1) 1-Digit Times & Tries',
+                 '2) 2-Digit Problems Analysis',
+                 '3) 3-Digit Problems Analysis'],
+            3 : ['1) 1-Digit Times & Tries',
+                 '2) 2-Digit Problems Analysis',
+                 '3) 3-Digit Problems Analysis']
         }
         ok_list = {
             2:[1, 2, 3],
@@ -553,8 +557,10 @@ class AnalysisMenus():
         err_str = ''
         while True:
             print('-'*50)
-            print('\n\n%s%s%s' % ('-'*10, titles[idchoice], '-'*10))
-            print(choices[idchoice])
+            mytitle = titles[idchoice]
+            len_dash = int((50 - len(mytitle)) / 2)
+            print('\n\n%s%s%s' % ('-'*len_dash, mytitle, '-'*len_dash))
+            print('\n'.join(choices[idchoice]))
             print('[Return to Exit, Q to quit]')
             print('-'*50)
             if len(err_str) > 0:
@@ -596,7 +602,7 @@ class AnalysisMenus():
         while True:
             print('-'*50)
             lto = len(str(counts['total']))
-            print('\n\n%s%s :: Year %d%s' % ('-'*10, 'MAIN MENU', self.year, '-'*10))
+            print('\n\n%s%s :: Year %d%s' % ('-'*15, 'MAIN MENU', self.year, '-'*16))
             print('1) Total Problems Done Chart%s%d problems' % (' '*5, counts['total']))
             pad = ' '*(lto - len(str(counts['add'])))
             print('2) Addition Menu%s%s%d problems' % (' '*17, pad, counts['add']))
