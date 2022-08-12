@@ -594,9 +594,6 @@ class AnalysisMenus():
             if k[0:1] == 'm':
                 if k[1:2] == '1': counts['m1'] += v
                 if k[1:2] == '2': counts['m2'] += v
-
-        counts['div'] = 0
-
         ok = [1, 2, 3, 4, 5, 6]
         err_str = ''
         while True:
@@ -613,7 +610,7 @@ class AnalysisMenus():
             pad = ' '*(lto - len(str(counts['m2'])))
             print('5) Multiply 2-digits Menu%s%s%d problems' % (' '*8, pad, counts['m2']))
             pad = ' '*(lto - len(str(counts['div'])))
-            print('6) Long Division Menu%s%s%d problems' % (' '*10, pad, counts['div']))
+            print('6) Long Division Menu%s%s%d problems' % (' '*12, pad, counts['div']))
             print('[Return to Exit, Q to quit]')
             print('-'*50)
             if len(err_str) > 0:
