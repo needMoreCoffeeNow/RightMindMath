@@ -336,6 +336,7 @@ class ProcessJsonFile():
 class ChartAnalysis():
     def __init__(self, dframe_in, year, output_path):
         self.dfc = dframe_in;
+        self.save_flag = 'D' # D=display only, B=display & save S=save only
         self.output_charts = self.setOutputCharts(output_path)
         self.wsplits = self.getWeekSplits(year)
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
@@ -345,6 +346,31 @@ class ChartAnalysis():
                             'a2':80, 's2':80,
                             'a3':100, 's3':100,
                             'm2':140, 'd3':150}
+
+    def setSaveFlag(self):
+        ok = {1:'D', 2:'B', 3:'S'}
+        err_str = ''
+        while True:
+            print('%s%s' % ('\n\n', '-'*50))
+            print('Select the option for how to handle charts:')
+            print('     1) Display Charts (do not save)')
+            print('     2) Display & Save Charts')
+            print('     3) Save Charte (do not display)')
+            if len(err_str) > 0:
+                print('-'*50)
+                print(err_str)
+                err_str = ''
+            choice = input('Enter your choice (1, 2, 3):')
+            try:
+                choice = int(choice)
+            except:
+                err_str = 'Please enter integer number only'
+                continue
+            if not choice in ok:
+                err_str = 'Please limit entry to numbers shown'
+                continue
+            self.save_flag = ok[choice]
+            return
 
     def setOutputCharts(self, output_path):
         mypath = output_path / 'charts'
@@ -383,23 +409,8 @@ class ChartAnalysis():
             splits = {'start1':209, 'end1':235, 'start2':235, 'end2':261}
         return splits
 
-    def showChartPrelimNote(self, skip_input):
-        if not skip_input: print('%s%s' % ('\n\n', '-'*50))
-        print('NOTE: After viewing the chart, you MUST ')
-        print('close the window showing the chart, and ')
-        print('then click back into the window running ')
-        print('your Python script. If you do not do this ')
-        print('nothing (no menus) will show in your ')
-        print('teminal window. If this happens, simply ')
-        print('to the chart window and close it')
-        if skip_input:
-            return
-        print('%s%s' % ('-'*50, '\n'))
-        dummy = input('Read the Note above then\nPress Return to view the chart\n(allow a moment for processing)')
-        print('\n...processing\n')
-
     def processChartChoice(self, type, num):
-        print('\n...processing\n')
+        print('\n...processing')
         if type == 'tot':
             if num == 1: self.totalProblemsStackedBar()
 
@@ -450,10 +461,13 @@ class ChartAnalysis():
         ax2.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
         # adjust white space & show()
         fig.subplots_adjust(hspace=0.4)
-        plt.show(block=False)
-        plt_path = self.output_charts / 'test.png'
-        plt.savefig(str(plt_path))
-        print('chart completed & closed')
+        if self.save_flag == 'D' or self.save_flag == 'B':
+            plt.show(block=False)
+        if self.save_flag == 'S' or self.save_flag == 'B':
+            plt_path = self.output_charts / 'c00_TotalProblemsStackedBar.png'
+            plt.savefig(str(plt_path))
+            print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
+        print('\nchart completed & closed')
 
     def weekStackBarData(self, idlevel, wk_start, wk_end):
         # create a dict for making a df that has 26 weeks (no gaps)
@@ -714,6 +728,7 @@ def processAnalysis():
         am.getLevelsCount() # allows hiding menu levels when problem count = 0
         ca = ChartAnalysis(pjf.dframe, am.year, pjf.output_path)
         ca.changeTimeLimits()
+        ca.setSaveFlag()
         menus_active = True
         while menus_active:
             c_top = am.choiceTopMenu()
