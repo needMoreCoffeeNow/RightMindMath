@@ -387,7 +387,7 @@ class ChartAnalysis():
                 print('\nERROR in file at line: %d' % (i))
                 return False
             try:
-                self.limits_time[vars[0]] = int(vars[1])
+                self.limits_time[vars[0]] = int(vars[1].rstrip())
             except:
                 print('\nERROR in file at line: %d' % (i))
                 return False
