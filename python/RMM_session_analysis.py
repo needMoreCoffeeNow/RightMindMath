@@ -334,18 +334,16 @@ class ProcessJsonFile():
         print('-'*50)
 
 class ChartAnalysis():
-    def __init__(self, dframe_in, year, output_path):
-        self.dfc = dframe_in;
+    def __init__(self, dframe_in, year, root, output_path):
+        self.root = root
+        self.dfc = dframe_in
         self.save_flag = 'D' # D=display only, B=display & save S=save only
         self.output_charts = self.setOutputCharts(output_path)
         self.wsplits = self.getWeekSplits(year)
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
         self.savePlt = False # save plt to a file
-        self.limits_time = {'a1':45, 's1':45, 'm1':45,
-                            'a2':80, 's2':80,
-                            'a3':100, 's3':100,
-                            'm2':140, 'd3':150}
+        self.limits_time = {} # loaded from limits_time_default.txt file
 
     def setSaveFlag(self):
         ok = {1:'D', 2:'B', 3:'S'}
@@ -377,25 +375,89 @@ class ChartAnalysis():
         mypath.mkdir(exist_ok=True)
         return mypath
 
-    def changeTimeLimits(self):
-        order_tl = ['a1', 's1', 'm1', 'a2', 's2', 'a3', 's3', 'm2', 'd3']
-        print('\n\n%s%s%s' % ('-'*19, 'TIME LIMITS', '-'*19))
-        for k in order_tl:
-            print('%d=%s' % (self.limits_time[k], k))
-        print('-'*50)
-        print('The numbers above are used to ignore problems')
-        print('whose response times inidicate you child was')
-        print('distracted before answering. For example, the')
-        print('for 1-digit addition, subtraction & multiplication')
-        print('the value is 45. If your child took longer than 45')
-        print('seconds to respond the problem is ignored when')
-        print('analyzing response times.')
-        print('While not recommended, you can change these limits.')
-        print('Refer to the "readme.txt" file for more information.')
-        print('-'*50)
-        choice = input('Press Return for defaults or enter your changes:')
-        if len(choice) == 0: return
-        print('ToDo: limits_time changes')
+    def parseTimeLimitsFile(self, limits_file):
+        keys_check = [ 'a1', 's1', 'm1', 'a2', 's2', 'a3', 's3', 'm2', 'd3' ]
+        myfile = self.root / 'parameters_limits' / limits_file
+        with myfile.open() as f:
+            lines = f.readlines()
+        i = 1
+        for line in lines:
+            vars = line.split('=')
+            if len(vars) != 2:
+                print('\nERROR in file at line: %d' % (i))
+                return False
+            try:
+                self.limits_time[vars[0]] = int(vars[1])
+            except:
+                print('\nERROR in file at line: %d' % (i))
+                return False
+        for key in keys_check:
+            if not key in self.limits_time:
+                print('\nERROR: %s line is missing' % (key))
+                return False
+        print('\n\n%sTIME LIMITS%s' % ('-'*20, '-'*20))
+        print('The following time limits will be applied using file:')
+        print(str(myfile))
+        print('-'*10)
+        for key in keys_check:
+            print('%s = %d' % (key, self.limits_time[key]))
+        print('For more information refer to:')
+        print('%s\nin the folder: %s' % ('readme_for_limits_time.txt', str(myfile.parent)))
+        return True
+        
+
+    def getTimeLimits(self):
+        print('\n\n\ngetTimeLimits')
+        mypath = self.root / 'parameters_limits'
+        print(str(mypath))
+        files_all = list(mypath.glob('*.txt'))
+        files = []
+        for fname in files_all:
+            print(str(fname.name))
+            if str(fname.name)[0:12] != 'limits_time_': continue
+            files.append(str(fname.name))
+        print(files)
+        if len(files) == 0:
+            print('-'*50)
+            print('\n\nError: No limits_time_default.txt file was found.')
+            print('The files need to be in this folder:')
+            print(str(mypath))
+            print('Please download the following two files into the folder')
+            print('above:')
+            print('NEED URL FOR TIME_LIMITS')
+            print('NEED URL FOR limits readme')
+            print('\nRead the second (readme) file for more information.')
+            print('-'*50)
+            return False
+        if len(files) == 1:
+            if files[0] == 'limits_time_default.txt':
+                return self.parseTimeLimitsFile(files[0])
+        sorted(files)
+        print('\n\n%sCHOOSE TIME LIMITS FILE%s' % ('-'*13, '-'*14))
+        err_str = ''
+        while True:
+            ok = []
+            i = 1
+            if len(err_str) > 0:
+                print('-'*50)
+                print(err_str)
+                err_str = ''
+            for file in files:
+                print('%d) %s' % (i, file))
+                ok.append(i)
+                i += 1
+            ok_str = ', '.join([str(i) for i in ok])
+            choice = input('Enter the number of the file to use (%s):' % (ok_str))
+            try:
+                choice = int(choice)
+            except:
+                err_str = 'Please enter an integer value'
+                continue
+            if not choice in ok:
+                err_str = 'Please limit entry to numbers shown'
+                continue
+            print('-'*50)
+            return self.parseTimeLimitsFile(files[choice-1])
 
     def getWeekSplits(self, year):
         splits = {}
@@ -494,11 +556,10 @@ def getInputFile(path_inputs):
         print('Please use the RightMindMath app to export a file.')
         print('Be sure you save it in the inputs folder located in')
         print('the same folder as this Python (.py) file.')
-        return('')
+        return ''
     sorted(files)
     myfiles = []
     for file in files:
-        #file = filepath.split('/')[-1]
         myfiles.append(file.name)
     # exit loop by entering number or Return to exit
     while True:
@@ -729,9 +790,11 @@ def processAnalysis():
         am.getYear() # year choice if week_last > 52
         print('\n\nYear %d being analyzed' % (am.year))
         am.getLevelsCount() # allows hiding menu levels when problem count = 0
-        ca = ChartAnalysis(pjf.dframe, am.year, pjf.output_path)
-        ca.changeTimeLimits()
+        ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path)
         ca.setSaveFlag()
+        if not ca.getTimeLimits():
+            print('\nGoodbye')
+            return
         menus_active = True
         while menus_active:
             c_top = am.choiceTopMenu()
