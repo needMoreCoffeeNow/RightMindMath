@@ -407,18 +407,14 @@ class ChartAnalysis():
         
 
     def getTimeLimits(self):
-        print('\n\n\ngetTimeLimits')
         mypath = self.root / 'parameters_limits'
-        print(str(mypath))
         files_all = list(mypath.glob('*.txt'))
         files = []
         for fname in files_all:
-            print(str(fname.name))
             if str(fname.name)[0:12] != 'limits_time_': continue
             files.append(str(fname.name))
-        print(files)
+        print('-'*50)
         if len(files) == 0:
-            print('-'*50)
             print('\n\nError: No limits_time_default.txt file was found.')
             print('The files need to be in this folder:')
             print(str(mypath))
