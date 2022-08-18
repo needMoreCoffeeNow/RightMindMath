@@ -4,7 +4,7 @@
 
 <p><b>Have your child use RMM regularly (hopefully daily):</b> As explained in a previous Topic right-mind learning requires doing a lot of single-digit arithmetic. As also noted, this is not so burdensome for your child because RMM is relaxing &amp; fun. So please try to set up a time for 10 to 20 minutes of RMM each day. Yep, that&#039;s all it takes.</p>
 
-<p><b>Regularly review the performance charts:</b> (Once every few days or weekly.) RMM&#039;s easy-to-use charts are important because they show your child&#039;s progress. Your review of the charts also tells your child you care &#151; that is very important also.</p>
+<p><b>Regularly review the performance chart:</b> (Once every few days or weekly.) RMM&#039;s easy-to-use chart is important because it shows your child&#039;s progress. Your review of the chart also tells your child you care &#151; that is very important also. If you want to take a <b>I am 1000% engaged</b> approach, adopt the <u>Data Science Mode for Parents</u> approach detailed in the Topic of the same title below</p>
 
 <p><b>Manage pop-ups:</b> RMM uses popups to pause the process to give a moment for you child to consider what has happened (the problem just solved), or what is about to happen (e.g. borrowing). At some point, though, it will be more important for your child to <i>get into the flow</i>. Ask your child every once in a while if they want the popups off.<p>
 

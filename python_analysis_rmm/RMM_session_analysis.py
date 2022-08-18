@@ -5,6 +5,7 @@ import datetime
 import glob
 import sys
 import os
+import shutil
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -83,6 +84,7 @@ class ProcessJsonFile():
             'note_next' : None,
             'note_numpos' : None,
             'chunk_count' : None,
+            'device' : None
         }
 
     def createOutputSubfolder(self, output_in):
@@ -94,6 +96,22 @@ class ProcessJsonFile():
             print('will be saved in the following folder:')
             print('%s' % (str(self.output_path)))
             print('-'*50)
+
+    def copyPrevious(self):
+        previous_path = self.output_path / 'previous'
+        previous_path.mkdir(exist_ok=True)
+        for src_file in self.output_path.glob('*.txt'):
+            file_fr = str(src_file)
+            file_to = str(previous_path / src_file.name)
+            shutil.move(file_fr, file_to)
+        charts_path_fr = self.output_path / 'charts'
+        if not charts_path_fr.exists(): return
+        charts_path_to = previous_path / 'charts'
+        charts_path_to.mkdir(exist_ok=True)
+        for src_file in charts_path_fr.glob('*.png'):
+            file_fr = str(src_file)
+            file_to = str(charts_path_to / src_file.name)
+            shutil.move(file_fr, file_to)
 
     def parseRstr(self, r_str, tstamp, time):
         my_df = self.rec_df.copy()
@@ -182,6 +200,17 @@ class ProcessJsonFile():
                 time_last = 0
                 tries_last = 0
             my_df['idproblem'] = id_this
+            dvars = rec['device_iduser'].split('_')
+            my_df['device'] = dvars[0]
+
+            #tttttt
+            dpct = randint(1,10)
+            if dpct < 2:
+                my_df['device'] = 'phone.876'
+            if dpct == 3:
+                my_df['device'] = 'pad.123'
+            #tttttt
+
             # idsession tstamp is basis for date inputs
             ids_tstamp = int(vars[0])
             my_df['idsession_tstamp'] = ids_tstamp
@@ -194,6 +223,9 @@ class ProcessJsonFile():
             delta = date_now - dt
             my_df['date_days'] = delta.days
             my_df['date_week'] = int(delta.days/7) + 1
+
+            #if my_df['date_week'] > 10: continue #ttttt
+
             if my_df['date_week'] < self.week_first:
                 self.week_first = my_df['date_week']
             if my_df['date_week'] > self.week_last:
@@ -339,6 +371,7 @@ class ChartAnalysis():
         self.dfc = dframe_in
         self.save_flag = 'D' # D=display only, B=display & save S=save only
         self.output_charts = self.setOutputCharts(output_path)
+        self.year = year
         self.wsplits = self.getWeekSplits(year)
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
@@ -349,16 +382,21 @@ class ChartAnalysis():
         ok = {1:'D', 2:'B', 3:'S'}
         err_str = ''
         while True:
-            print('%s%s' % ('\n\n', '-'*50))
+            print('%s%s%s%s' % ('\n\n', '-'*18, 'CHART HANDLING', '-'*18))
             print('Select the option for how to handle charts:')
-            print('     1) Display Charts (do not save)')
-            print('     2) Display & Save Charts')
-            print('     3) Save Charts (do not display)')
+            print('-'*50)
+            print('1) Display Charts (do not save)')
+            print('2) Display & Save Charts')
+            print('3) Save Charts (do not display)')
+            print('[Return to Quit]')
+            print('-'*50)
             if len(err_str) > 0:
-                print('-'*50)
                 print(err_str)
                 err_str = ''
             choice = input('Enter your choice (1, 2, 3):')
+            if len(choice) == 0:
+                print('\nGoodbye')
+                sys.exit(0)
             try:
                 choice = int(choice)
             except:
@@ -467,74 +505,119 @@ class ChartAnalysis():
             splits = {'start1':209, 'end1':235, 'start2':235, 'end2':261}
         return splits
 
-    def processChartChoice(self, type, num):
+    def processChartChoice(self, mlevel, type, num):
+        print(mlevel, type, num, 'mlevel, type, num------------------')
         print('\n...processing')
-        if type == 'tot':
-            if num == 1: self.totalProblemsStackedBar()
+        if mlevel == 'top':
+            if type == 't01':
+                if num == 1: self.totalProblemsStackedBar(self.order, 'All')
+            if type == 't02':
+                if num == 1: self.chartLifetimeDevice()
+        if mlevel == 'level2':
+            if type == 'add' and num == 1:
+                self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Addition')
+            if type == 'sub' and num == 1:
+                self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Subtraction')
+        if mlevel == 'level3':
+            if type == 'add': self.chartTimesTries('a1', 'Addition')
+            if type == 'sub': self.chartTimesTries('s1', 'Subtraction')
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
-    def totalProblemsStackedBar(self):
-        # set matplotlib parameters
-        params = {'legend.fontsize': 8,
-                  'axes.labelsize': 8,
-                  'axes.titlesize': 10,
-                  'xtick.labelsize': 8,
-                  'ytick.labelsize': 8,
-                  'xtick.major.size' : 8,
-                  'ytick.major.size' : 8
-                  }
-        plt.rcParams.update(params)
-        fig, axes = plt.subplots(2, 1, figsize=(6,4), sharey=False)
-        fig.set_dpi(150)
-        ax1 = axes[0]
-        ax2 = axes[1]
-        # need a 26 week index to match series returned by weeStackBarData()
-        # ax1 data
-        sb_data = {}
+    def totalProblemsStackedBar(self, my_order, type):
         start = self.wsplits['start1']
         end = self.wsplits['end1']
-        sb_index = pd.RangeIndex(start, end, name='week')
-        for lvl in self.order:
-            sb_data[lvl] = self.weekStackBarData(lvl, start, end)
+        wmax = self.dfc['date_week'].max()
+        # set matplotlib parameters
+        rcparams = {'legend.fontsize':8,
+                    'legend.title_fontsize':6,
+                    'axes.labelsize':8,
+                    'axes.titlesize':10,
+                    'xtick.labelsize':8,
+                    'ytick.labelsize':8,
+                    'xtick.major.size':8,
+                    'ytick.major.size':8
+                  }
+        plt.rcParams.update(rcparams)
+        if wmax > 26:
+            sb_index = pd.RangeIndex(start, end, name='week')
+            fig, axes = plt.subplots(2, 1, figsize=(8,5), sharey=False)
+            ax1 = axes[0]
+            ax2 = axes[1]
+        else:
+            fig, ax1 = plt.subplots(1, 1, figsize=(8,5), sharey=False)
+            sb_index = pd.RangeIndex(start, wmax+1, name='week')
+        # ax1 data
+        sbdata = {}
+        ymax = 0.0
+        for lvl in my_order:
+            myseries = self.weekStackBarData(lvl, start, end)
+            if wmax < 26:
+                sbdata[lvl] = myseries[:wmax]
+            else:
+                sbdata[lvl] = myseries
+            if sbdata[lvl].max() > ymax:
+                ymax = sbdata[lvl].max()
         # ax1 stacked bar plot
-        df_sb = pd.DataFrame(sb_data, index=sb_index)
+        df_sb = pd.DataFrame(sbdata, index=sb_index)
         ax1 = df_sb.plot(kind='bar', stacked=True, ax=ax1)
+        ######ax1.yaxis.set_tick_params(labelsize=8)
         ax1.set_ylabel('problems')
-        ax1.set_title('Weekly Problems Month 1-26')
+        if wmax > 26:
+            ax1.set_title('%s Weekly Problems Month 1-26' % (type))
+        else:
+            ax1.set_title('%s Weekly Problems Month 1-%d' % (type, wmax))
         ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
         ax1.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
+        ax1.invert_xaxis()
+        tic = '' if start == 1 else '-'
+        tic2 = '' if start == 1 else 's'
+        hdr = '%s%d week%s' % (tic, start, tic2)
+        plt.figtext(0.86,0.9, hdr, fontsize=8, va="bottom", ha="left")
+        hdr = '-%d weeks' % (end-1)
+        plt.figtext(0.13,0.9, hdr, fontsize=8, va="bottom", ha="left")
         # ax2 data
-        sb_data = {}
-        start = self.wsplits['start2']
-        end = self.wsplits['end2']
-        sb_index = pd.RangeIndex(start, end, name='week')
-        for lvl in self.order:
-            sb_data[lvl] = self.weekStackBarData(lvl, start, end)
-        # ax2 stacked bar plot
-        df_sb = pd.DataFrame(sb_data, index=sb_index)
-        ax2 = df_sb.plot(kind='bar', stacked=True, ax=ax2)
-        ax2.set_ylabel('problems')
-        ax2.set_title('Weekly Problems Month 27-52')
-        ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
-        ax2.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
-        # adjust white space & show()
-        fig.subplots_adjust(hspace=0.4)
-        if self.save_flag == 'D' or self.save_flag == 'B':
-            plt.show(block=False)
+        if wmax > 26:
+            sbdata = {}
+            start = self.wsplits['start2']
+            end = self.wsplits['end2']
+            sb_index = pd.RangeIndex(start, end, name='week')
+            ymax = 0.0
+            for lvl in my_order:
+                sbdata[lvl] = self.weekStackBarData(lvl, start, end)
+                if sbdata[lvl].max() > ymax:
+                    ymax = sbdata[lvl].max()
+            # ax2 stacked bar plot
+            df_sb = pd.DataFrame(sbdata, index=sb_index)
+            ax2 = df_sb.plot(kind='bar', stacked=True, ax=ax2)
+            ax2.set_ylabel('problems')
+            ax2.set_title('%s Weekly Problems Month 27-52' % (type))
+            ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
+            ax2.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
+            ax2.invert_xaxis()
+            hdr = '-%d weeks' % (start)
+            plt.figtext(0.86,0.42, '-27 weeks', fontsize=8, va="bottom", ha="left")
+            hdr = '-%d weeks' % (end-1)
+            plt.figtext(0.13,0.42, hdr, fontsize=8, va="bottom", ha="left")
+            # adjust white space
+            fig.subplots_adjust(hspace=0.6)
+        #show and or save
         if self.save_flag == 'S' or self.save_flag == 'B':
-            plt_path = self.output_charts / 'c00_TotalProblemsStackedBar.png'
+            fname = 'c01_%s_ProblemsStackedBar.png' % (type)
+            plt_path = self.output_charts / fname
             plt.savefig(str(plt_path))
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
+        if self.save_flag == 'D' or self.save_flag == 'B':
+            plt.show(block=False)
         print('\nchart completed & closed')
 
-    def weekStackBarData(self, idlevel, wk_start, wk_end):
+    def weekStackBarData(self, idlevel, start, end):
         # create a dict for making a df that has 26 weeks (no gaps)
         week_dict = {
-            'date_week':list(range(wk_start, wk_end)),
+            'date_week':list(range(start, end)),
             'idproblem_count':[0]*26
         }
-        sb_index = pd.RangeIndex(wk_start, wk_end, name='date_week')
-        qstr = '(date_week >= %d & date_week < %d)' % (wk_start, wk_end)
+        sb_index = pd.RangeIndex(start, end, name='date_week')
+        qstr = '(date_week >= %d & date_week < %d)' % (start, end)
         qstr += ' and (idlevel in [ "%s" ])' % (idlevel)
         # get the session week total for the idlevel - note my have gaps
         temp = self.dfc.query(qstr).groupby('date_week')['idproblem_count'].sum()
@@ -544,6 +627,140 @@ class ChartAnalysis():
         temp_all.update(temp)
         # return the 26 slot series with the problem counts
         return temp_all['idproblem_count']
+
+    def chartTimesTries(self, idlevel, type):
+        print('def chartTimesTries(self, idlevel):')
+        qstr = '(idlevel == "%s" )' % (idlevel)
+        wmax = self.dfc.query(qstr)['date_week'].max()
+        start = self.wsplits['start1']
+        end = self.wsplits['end1']
+        week_dict = {
+            'date_week':list(range(start, end)),
+            'elapsed':[0.0]*26
+        }
+        sb_index = pd.RangeIndex(start, end, name='date_week')
+        tlimit = self.limits_time[idlevel] * 1000
+        qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+        qstr += ' and (idlevel in [ "%s" ])' % (idlevel)
+        qstr += ' and (time < %d)' % (tlimit)
+        times = self.dfc.query(qstr).groupby('date_week')['elapsed'].mean()
+        #times.set_index('date_week')
+        times_all = pd.DataFrame(week_dict)
+        times_all.index = sb_index
+        times_all.update(times)
+        times_all['elapsed'] = times_all['elapsed'] / 1000
+        if wmax < 26:
+            times_all = times_all[:wmax]
+        std_times = self.dfc.query(qstr).groupby('date_week')['elapsed'].std(ddof=0)
+        std_times_all = pd.DataFrame(week_dict)
+        std_times_all.index = sb_index
+        std_times_all.update(std_times)
+        std_times_all['elapsed'] = std_times_all['elapsed'] / 1000
+        if wmax < 26:
+            std_times_all = std_times_all[:wmax]
+        tries = self.dfc.query(qstr).groupby('date_week')['tries'].mean()
+        week_dict = {
+            'date_week':list(range(start, end)),
+            'tries':[0.0]*26
+        }
+        tries_all = pd.DataFrame(week_dict)
+        tries_all.index = sb_index
+        tries_all.update(tries)
+        if wmax < 26:
+            tries_all = tries_all[:wmax]
+        rcparams = {'legend.fontsize':8,
+                    'legend.title_fontsize':6,
+                    'axes.labelsize':8,
+                    'axes.titlesize':10,
+                    'xtick.labelsize':8,
+                    'ytick.labelsize':8,
+                    'xtick.major.size':8,
+                    'ytick.major.size':8
+                  }
+        plt.rcParams.update(rcparams)
+        fig, axes = plt.subplots(2, 1, figsize=(8,6), sharey=False)
+        #ax1
+        ax1 = axes[0]
+        ax2 = axes[1]
+        x = times_all['date_week']
+        y = times_all['elapsed']
+        y_error = std_times_all['elapsed']
+        ax1.bar(x,y)
+        ax1.set_xticks(x)
+        ax1.set_xlabel('week', fontsize=5)
+        ax1.set_ylabel('seconds (std dev)', fontsize=8)
+        ax1.errorbar(x, y, yerr=y_error, fmt='none', ecolor='r')
+        ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
+        ax1.set_title('%s Avg Time to Right Answer (with std dev)' % (type), fontsize=8)
+        ax1.invert_xaxis()
+        x_axis = ax1.axes.get_xaxis()
+        x_label = x_axis.get_label()
+        x_label.set_visible(False)
+        tic = '' if start == 1 else '-'
+        tic2 = '' if start == 1 else 's'
+        hdr = '%s%d week%s' % (tic, start, tic2)
+        plt.figtext(0.86,0.89, hdr, fontsize=8, va="bottom", ha="left")
+        hdr = '-%d weeks' % (end-1)
+        plt.figtext(0.13,0.89, hdr, fontsize=8, va="bottom", ha="left")
+        #ax2
+        x = tries_all['date_week']
+        y = tries_all['tries']
+        ax2.bar(x,y)
+        ax2.set_xticks(x)
+        ax2.set_xlabel('week', fontsize=5)
+        ax2.set_ylabel('tries', fontsize=8)
+        ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
+        ax2.set_title('%s Avg Number of Tries to Right Answer' % (type), fontsize=8)
+        ax2.invert_xaxis()
+        x_axis = ax2.axes.get_xaxis()
+        x_label = x_axis.get_label()
+        x_label.set_visible(False)
+        hdr = '%s%d week%s' % (tic, start, tic2)
+        plt.figtext(0.84,0.43, hdr, fontsize=8, va="bottom", ha="left")
+        hdr = '-%d weeks' % (end-1)
+        plt.figtext(0.13,0.43, hdr, fontsize=8, va="bottom", ha="left")
+        fig.subplots_adjust(hspace=0.5)
+        if self.save_flag == 'S' or self.save_flag == 'B':
+            fname = 'c03_%s_TimesTries.png' % (type)
+            plt_path = self.output_charts / fname
+            plt.savefig(str(plt_path))
+            print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
+        if self.save_flag == 'D' or self.save_flag == 'B':
+            plt.show(block=False)
+        print('\nchart completed & closed')
+
+
+    def chartLifetimeDevice(self): 
+        rcparams = {'legend.fontsize':8,
+                    'legend.title_fontsize':6,
+                    'axes.labelsize':8,
+                    'axes.titlesize':10,
+                    'xtick.labelsize':8,
+                    'ytick.labelsize':8,
+                    'xtick.major.size':8,
+                    'ytick.major.size':8
+                  }
+        plt.rcParams.update(rcparams)
+        tot = self.dfc.groupby(['date_yyyymm','device'])['idproblem_count'].sum().groupby(level=[1]).cumsum()
+        tot = tot.unstack()
+        fig, ax1 = plt.subplots(1, 1, figsize=(9,6), sharey=False)
+        ax1 = tot.plot(kind='bar', stacked=True, ax=ax1)
+        ax1.xaxis.set_tick_params(labelsize=8, labelrotation=60)
+        ax1.yaxis.set_tick_params(labelsize=8)
+        ax1.set_ylabel('problems')
+        ax1.set_title('Lifetime Cumulative Problems by Device')
+        ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
+        ax1.legend(title='device', loc='best')
+        x_axis = ax1.axes.get_xaxis()
+        x_label = x_axis.get_label()
+        x_label.set_visible(False)
+        if self.save_flag == 'S' or self.save_flag == 'B':
+            fname = 'c02_ProblemsLifetimeDevice.png'
+            plt_path = self.output_charts / fname
+            plt.savefig(str(plt_path))
+            print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
+        if self.save_flag == 'D' or self.save_flag == 'B':
+            plt.show(block=False)
 
 def getInputFile(path_inputs):
     files = list(path_inputs.glob('*.txt'))
@@ -567,6 +784,7 @@ def getInputFile(path_inputs):
             ok.append(i)
             i += 1
         print('[Return to Quit]')
+        print('-'*50)
         choice = input('Enter the number of the file to use (1-%d):' % (i-1))
         try:
             choice = int(choice)
@@ -584,50 +802,133 @@ class AnalysisMenus():
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.week_last = week_last
         self.year = 1
+        self.wsplits = self.getWeekSplits()
         self.levels = {} # initialized & updated using year idelevel/problems
+        self.counts = {}
+
+    def setIdlevelCounts(self):
+        self.counts = {'tot':{'year':0, 'months':0, 'weeks':0},
+                       'add':{'year':0, 'months':0, 'weeks':0},
+                       'sub':{'year':0, 'months':0, 'weeks':0},
+                       'd3':{'year':0, 'months':0, 'weeks':0},
+                       'a1':{'year':0, 'months':0, 'weeks':0},
+                       'a2':{'year':0, 'months':0, 'weeks':0},
+                       'a3':{'year':0, 'months':0, 'weeks':0},
+                       's1':{'year':0, 'months':0, 'weeks':0},
+                       's2':{'year':0, 'months':0, 'weeks':0},
+                       's3':{'year':0, 'months':0, 'weeks':0},
+                       'm1':{'year':0, 'months':0},
+                       'm2':{'year':0, 'months':0},
+                       'all':{'count':0}}
+        all = self.dfm['idproblem_count'].sum()
+        self.counts['all']['count'] = all
+        for k, v in self.levels.items():
+            self.counts['tot']['year'] += v['year']
+            self.counts['tot']['months'] += v['months']
+            self.counts['tot']['weeks'] += v['weeks']
+            if k[0:1] == 'a':
+                self.counts['add']['year'] += v['year']
+                self.counts['add']['months'] += v['months']
+                self.counts['add']['weeks'] += v['weeks']
+            if k[0:1] == 's':
+                self.counts['sub']['year'] += v['year']
+                self.counts['sub']['months'] += v['months']
+                self.counts['sub']['weeks'] += v['weeks']
+            if k[0:1] == 'm':
+                if k[1:2] == '1':
+                    self.counts['m1']['year'] += v['year']
+                    self.counts['m1']['months'] += v['months']
+                    continue
+                if k[1:2] == '2':
+                    self.counts['m2']['year'] += v['year']
+                    self.counts['m2']['months'] += v['months']
+                    continue
+            self.counts[k]['year'] += v['year']
+            self.counts[k]['months'] += v['months']
+            self.counts[k]['weeks'] += v['weeks']
+
+    def getWeekSplits(self):
+        splits = {}
+        if self.year == 1:
+            splits = {'start1':1, 'end1':27, 'start2':27, 'end2':53}
+        if self.year == 2:
+            splits = {'start1':53, 'end1':79, 'start2':79, 'end2':105}
+        if self.year == 3:
+            splits = {'start1':157, 'end1':183, 'start2':183, 'end2':209}
+        if self.year == 4:
+            splits = {'start1':209, 'end1':235, 'start2':235, 'end2':261}
+        return splits
 
     def getLevelsCount(self):
         for idlevel in self.order:
-            self.levels[idlevel] = 0
-        dftemp = self.dfm.groupby('idlevel')['idproblem_count'].sum()
-        for idlevel, count in dftemp.iteritems():
-            self.levels[idlevel] = count
+            self.levels[idlevel] = {'year':0, 'months':0, 'weeks':0}
+        ystart = self.wsplits['start1']
+        yend = self.wsplits['end2']
+        mstart = self.wsplits['start1']
+        mend = self.wsplits['end1']
+        dftemp = self.dfm['idproblem_count'].groupby([self.dfm['idlevel'],
+                                                      self.dfm['date_week']]).sum()
+        for k, mycount in dftemp.iteritems():
+            mylevel = k[0]
+            myweek = k[1]
+            if myweek >= ystart and myweek < yend:
+                self.levels[mylevel]['year'] += mycount
+            if myweek >= mstart and myweek < mend:
+                self.levels[mylevel]['months'] += mycount
+            if myweek < (mend - 22):
+                self.levels[mylevel]['weeks'] += mycount
 
-    def choiceLevelChart(self, idchoice):
-        titles = {2:'ADDITION', 3:'SUBTRACTION', 4:'MULTIPLY 1-Digit',
-                  5:'MULTIPLY 2-Digits', 6:'LONG DIVISION'}
+    def choiceLevel2Chart(self, idchoice):
+        print('choiceLevel2Chart')
+        titles = {'add':'ADDITION', 'sub':'SUBTRACTION', 'm1':'MULTIPLY 1-Digit',
+                  'm2':'MULTIPLY 2-Digits', 'd3':'LONG DIVISION'}
+        order = ['add', 'sub', 'm1', 'm2', 'd3']
         choices = {
-            2 : ['1) 1-Digit Times & Tries',
-                 '2) 2-Digit Problems Analysis',
-                 '3) 3-Digit Problems Analysis'],
-            3 : ['1) 1-Digit Times & Tries',
-                 '2) 2-Digit Problems Analysis',
-                 '3) 3-Digit Problems Analysis']
+            'add' : [['1) Yearly Problems by Type', '(12 mns)', 'add', 'year'],
+                     ['2) 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1'],
+                     ['3) 2-Digit Analyses', '(6 mns)', 'a2', 'months', 'a2'],
+                     ['4) 3-Digit Analyses', '(6 mns)', 'a3', 'months', 'a3']],
+            'sub' : [['1) Yearly Problems by Type', '(12 mns)', 'add', 'year'],
+                     ['2) 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1'],
+                     ['3) 2-Digit Analyses', '(6 mns)', 'a2', 'months', 'a2'],
+                     ['4) 3-Digit Analyses', '(6 mns)', 'a3', 'months', 'a3']]
         }
         ok_list = {
-            2:[1, 2, 3],
-            3:[1, 2, 3],
-            4:[],
-            5:[],
-            6:[]}
+            'add':[1, 2, 3, 4],
+            'sub':[1, 2, 3, 4],
+            'm1':[],
+            'm2':[],
+            'd3':[]}
         ok = ok_list[idchoice]
+        ok_str = ', '.join([str(i) for i in ok_list[idchoice]])
         err_str = ''
+        mytitle = titles[idchoice]
+        mychoice = choices[idchoice]
+        lmax = 0
+        nmax = 0
+        # find the longest title text to enable padding to numbers colum
+        for a in mychoice:
+            if len(a[0]) > lmax: lmax = len(a[0])
+            if len(str(self.counts[idchoice][a[3]])) > nmax:
+                nmax = len(str(self.counts[idchoice][a[3]]))
         while True:
             print('-'*50)
-            mytitle = titles[idchoice]
-            len_dash = int((50 - len(mytitle)) / 2)
+            len_dash = int((50 - len(mychoice)) / 2)
             print('\n\n%s%s%s' % ('-'*len_dash, mytitle, '-'*len_dash))
-            print('\n'.join(choices[idchoice]))
+            for a in mychoice:
+                count = self.counts[a[2]][a[3]]
+                npad = nmax - len(str(count))
+                npad += lmax - len(a[0])
+                print('%s%s%d problems %s' % (a[0], ' '*(npad+5), count, a[1] ))
             print('[Return to Exit, Q to quit]')
             print('-'*50)
             if len(err_str) > 0:
                 print('-'*50)
                 print(err_str)
                 err_str = ''
-            ok_str = ', '.join([str(i) for i in ok_list[idchoice]])
             choice = input('Please enter your choice (%s):' % (ok_str))
             if len(choice) == 0:
-                return 0
+                return idchoice, 0
             if choice.lower()[0:1] == 'q':
                 print('\nGoodbye')
                 sys.exit(0)
@@ -639,44 +940,48 @@ class AnalysisMenus():
             if not choice in ok:
                 err_str = 'Please limit entry to numbers shown'
                 continue
-            print('NEED CHART HERE')
+            return idchoice, choice
+            ######print(':'*20, idchoice)
+            ######if idchoice == 'add' or idchoice == 'sub':
+            ######    print('-----------------01')
+            ######    print(idchoice, choice, 'lvl, choice')
+            ######    lvl, choice2 = self.singleDigitMenu(mychoice[choice-1][4])
+            ######    print(lvl, choice2, 'lvl, choice2')
+            ######    if choice2 == 0:
+            ######        print('if len(choice2) == 0')
+            ######        continue
+            ######    print('heherhereasje;jkr')
+            ######    print(lvl, choice2, 'lvl, choice2')
 
-    def choiceTopMenu(self):
-        counts = {'total':0, 'add':0, 'sub':0, 'm1':0, 'm2':0, 'div':0}
-        for k, v in self.levels.items():
-            counts['total'] += v
-            if k[0:1] == 'a': counts['add'] += v
-            if k[0:1] == 's': counts['sub'] += v
-            if k[0:1] == 'd': counts['div'] += v
-            if k[0:1] == 'm':
-                if k[1:2] == '1': counts['m1'] += v
-                if k[1:2] == '2': counts['m2'] += v
-        ok = [1, 2, 3, 4, 5, 6]
+    def singleDigitMenu(self, idlevel):
+        print('singleDigitMenu')
+        types = {'add':'ADDITION (1-digit)', 'sub':'SUBTRACTION (1-digit)'}
+        count = self.counts[idlevel]['months']
+        choices = [
+            '1) Times & Tries',
+            '2) Problem Type',
+            '3) Outliers'
+        ]
+        ok = [1, 2, 3]
+        ok_str = ', '.join([str(i) for i in ok])
         err_str = ''
+        mytype = types[idlevel]
         while True:
             print('-'*50)
-            lto = len(str(counts['total']))
-            print('\n\n%s%s :: Year %d%s' % ('-'*15, 'MAIN MENU', self.year, '-'*16))
-            print('1) Total Problems Done Chart%s%d problems' % (' '*5, counts['total']))
-            pad = ' '*(lto - len(str(counts['add'])))
-            print('2) Addition Menu%s%s%d problems' % (' '*17, pad, counts['add']))
-            pad = ' '*(lto - len(str(counts['sub'])))
-            print('3) Subtraction Menu%s%s%d problems' % (' '*14, pad, counts['sub']))
-            pad = ' '*(lto - len(str(counts['m1'])))
-            print('4) Multiply 1-digit Menu%s%s%d problems' % (' '*9, pad, counts['m1']))
-            pad = ' '*(lto - len(str(counts['m2'])))
-            print('5) Multiply 2-digits Menu%s%s%d problems' % (' '*8, pad, counts['m2']))
-            pad = ' '*(lto - len(str(counts['div'])))
-            print('6) Long Division Menu%s%s%d problems' % (' '*12, pad, counts['div']))
+            mytitle = '%s : %d Problems' % (mytype, count)
+            len_dash = int((50 - len(mytitle)) / 2)
+            print('\n\n%s%s%s' % ('-'*len_dash, mytitle, '-'*len_dash))
+            for a in choices:
+                print('%s' % (a))
             print('[Return to Exit, Q to quit]')
             print('-'*50)
             if len(err_str) > 0:
                 print('-'*50)
                 print(err_str)
                 err_str = ''
-            choice = input('Please enter your choice (1, 2, 3, 4, 5, 6):')
+            choice = input('Please enter your choice (%s):' % (ok_str))
             if len(choice) == 0:
-                return 0
+                return idlevel, 0
             if choice.lower()[0:1] == 'q':
                 print('\nGoodbye')
                 sys.exit(0)
@@ -688,16 +993,73 @@ class AnalysisMenus():
             if not choice in ok:
                 err_str = 'Please limit entry to numbers shown'
                 continue
-            if choice == 2 and counts['add'] == 0: err_str = 'Sorry no problems'
-            if choice == 3 and counts['sub'] == 0: err_str = 'Sorry no problems'
-            if choice == 4 and counts['m1'] == 0: err_str = 'Sorry no problems'
-            if choice == 5 and counts['m2'] == 0: err_str = 'Sorry no problems'
-            if choice == 6 and counts['div'] == 0: err_str = 'Sorry no problems'
+            return idlevel, choice
+
+    def choiceTopMenu(self):
+        ok = [1, 2, 3, 4, 5, 6, 7]
+        ok_str = ', '.join([str(i) for i in ok])
+        err_str = ''
+        order = ['t01', 't02', 'add', 'sub', 'm1', 'm2', 'd3']
+        titles = {
+            't01':['1) Yearly Problems Done by Type', '(12 mns)', 'tot', 'year'],
+            't02':['2) Lifetime Total by Device', '(all mns)', 'all', 'count'],
+            'add':['3) Addition Menu', '(6 mns)', 'add', 'months'],
+            'sub':['4) Subtraction Menu', '(6 mns)', 'sub', 'months'],
+            'm1':['5) Multiply 1-digit Menu', '(6 mns)', 'm1', 'months'],
+            'm2':['6) Multiply 2-digit Menu', '(6 mns)', 'm2', 'months'],
+            'd3':['7) Long Division Menu', '(6 mns)', 'd3', 'months']
+        }
+        lmax = 0
+        nmax = len(str(self.counts['all']['count']))
+        # find the longest title text to enable padding to numbers colum
+        for k, v in titles.items():
+            if len(v[0]) > lmax: lmax = len(v[0])
+        while True:
+            print('-'*50)
+            print('\n\n%s%s :: Year %d%s' % (
+                '-'*20, 'MAIN MENU', self.year, '-'*21))
+            for k in order:
+                count = self.counts[titles[k][2]][titles[k][3]]
+                npad = nmax - len(str(count))
+                npad += lmax - len(titles[k][0])
+                print('%s%s%d problems %s' % (
+                    titles[k][0], ' '*(npad+5), count, titles[k][1] ))
+            print('[Return to Exit, Q to quit]')
+            print('-'*60)
+            if len(err_str) > 0:
+                print('-'*60)
+                print(err_str)
+                err_str = ''
+            choice = input('Please enter your choice (%s):' % (ok_str))
+            if len(choice) == 0:
+                return 'exit'
+            if choice.lower()[0:1] == 'q':
+                print('\nGoodbye')
+                sys.exit(0)
+            try:
+                choice = int(choice)
+            except:
+                err_str = 'Please enter integer number only'
+                continue
+            if not choice in ok:
+                err_str = 'Please limit entry to numbers shown'
+                continue
+            if choice == 3 and self.counts['add']['months'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 4 and self.counts['sub']['months'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 5 and self.counts['m1']['months'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 6 and self.counts['m2']['months'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 7 and self.counts['d3']['months'] == 0:
+                err_str = 'Sorry no problems'
             if len(err_str) > 0: continue
-            return choice
+            return order[choice-1]
 
     def getYear(self):
         self.year = 1
+        # skip menu if only one year of data
         if self.week_last < 53: return
         ok = [1, 2, 3, 4]
         err_str = ''
@@ -755,7 +1117,6 @@ def processAnalysis():
         print(str(output))
         print('-'*50)
     first = True
-    top_codes = {1:'tot', 2:'add', 3:'sub', 4:'m1', 5:'m2', 6:'div'}
     while True:
         if not first:
             print('-'*50)
@@ -775,6 +1136,7 @@ def processAnalysis():
         pjf.readFile()
         pjf.processLines()
         pjf.createOutputSubfolder(output)
+        pjf.copyPrevious()
         pjf.writeLinesStats()
         pjf.buildDataFrame()
         if pjf.week_last == -1:
@@ -785,25 +1147,53 @@ def processAnalysis():
         am = AnalysisMenus(pjf.dframe, pjf.week_last)
         am.getYear() # year choice if week_last > 52
         print('\n\nYear %d being analyzed' % (am.year))
-        am.getLevelsCount() # allows hiding menu levels when problem count = 0
+        am.getWeekSplits() # must follow getYear() as self.year is used
+        am.getLevelsCount() 
+        am.setIdlevelCounts() # must follow getLevelsCount()
         ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path)
         ca.setSaveFlag()
         if not ca.getTimeLimits():
             print('\nGoodbye')
             return
-        menus_active = True
-        while menus_active:
+        menu_top = True
+        while menu_top:
             c_top = am.choiceTopMenu()
-            if c_top == 0:
-                menus_active = False
+            if c_top == 'exit':
+                menu_top = False
                 continue
-            if c_top == 1:
-                ca.processChartChoice(top_codes[c_top], 1)
-                #ca.totalProblemsStackedBar()
+            if c_top == 't01' or c_top == 't02':
+                print('---------A')
+                ca.processChartChoice('top', c_top, 1)
                 continue
-            c_chart = am.choiceLevelChart(c_top)
-            if c_chart == 0: continue
-            #ca.chartFromLevelMenu(c_top, c_chart)
+            print('---------B')
+            lvl, choice = am.choiceLevel2Chart(c_top)
+            print(lvl, choice,'lvl, choice,---------B')
+            if choice == 0: continue
+            menu2 = True
+            while menu2:
+                print('while menu2')
+                if choice == 0:
+                    menu2 = False
+                    continue
+                if choice == 1: # yearly totals stacked bar chart
+                    ca.processChartChoice('level2', lvl, choice)
+                    print('---------C')
+                    lvl, choice = am.choiceLevel2Chart(lvl)
+                    print(lvl, choice, '---------C')
+                    continue
+                if choice == 2: # single digit add/sub/mul
+                    menu3 = True
+                    while menu3:
+                        print('---------D')
+                        lvl, choice = am.singleDigitMenu(lvl)
+                        print(lvl, choice, '---------D')
+                        if choice == 0:
+                            menu3 = False
+                            lvl, choice = am.choiceLevel2Chart(lvl)
+                            continue
+                        if choice == 1:
+                            ca.processChartChoice('level3', lvl, choice)
+                        print(lvl, choice, '---------F')
     print('\nAnalysis Complete')
 
 if __name__ == '__main__':
