@@ -506,8 +506,11 @@ class ChartAnalysis():
         return splits
 
     def processChartChoice(self, mlevel, type, num):
+        print('\n\n', '<>'*20)
+        print('processChartChoice')
         print(mlevel, type, num, 'mlevel, type, num------------------')
         print('\n...processing')
+        print('\n\n', '<>'*20)
         if mlevel == 'top':
             if type == 't01':
                 if num == 1: self.totalProblemsStackedBar(self.order, 'All')
@@ -519,8 +522,14 @@ class ChartAnalysis():
             if type == 'sub' and num == 1:
                 self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Subtraction')
         if mlevel == 'level3':
-            if type == 'add': self.chartTimesTries('a1', 'Addition')
-            if type == 'sub': self.chartTimesTries('s1', 'Subtraction')
+            if type == 'add' and num == 1:
+                self.chartTimesTries('a1', 'Addition', 'start1', 'end1')
+            if type == 'add' and num == 2:
+                self.chartTimesTries('a1', 'Addition', 'start2', 'end2')
+            if type == 'sub' and num == 1:
+                self.chartTimesTries('s1', 'Subtraction', 'start1', 'end1')
+            if type == 'sub' and num == 2:
+                self.chartTimesTries('s1', 'Subtraction', 'start2', 'end2')
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def totalProblemsStackedBar(self, my_order, type):
@@ -628,12 +637,12 @@ class ChartAnalysis():
         # return the 26 slot series with the problem counts
         return temp_all['idproblem_count']
 
-    def chartTimesTries(self, idlevel, type):
+    def chartTimesTries(self, idlevel, type, start_str, end_str):
         print('def chartTimesTries(self, idlevel):')
         qstr = '(idlevel == "%s" )' % (idlevel)
         wmax = self.dfc.query(qstr)['date_week'].max()
-        start = self.wsplits['start1']
-        end = self.wsplits['end1']
+        start = self.wsplits[start_str]
+        end = self.wsplits[end_str]
         week_dict = {
             'date_week':list(range(start, end)),
             'elapsed':[0.0]*26
@@ -941,28 +950,18 @@ class AnalysisMenus():
                 err_str = 'Please limit entry to numbers shown'
                 continue
             return idchoice, choice
-            ######print(':'*20, idchoice)
-            ######if idchoice == 'add' or idchoice == 'sub':
-            ######    print('-----------------01')
-            ######    print(idchoice, choice, 'lvl, choice')
-            ######    lvl, choice2 = self.singleDigitMenu(mychoice[choice-1][4])
-            ######    print(lvl, choice2, 'lvl, choice2')
-            ######    if choice2 == 0:
-            ######        print('if len(choice2) == 0')
-            ######        continue
-            ######    print('heherhereasje;jkr')
-            ######    print(lvl, choice2, 'lvl, choice2')
 
     def singleDigitMenu(self, idlevel):
         print('singleDigitMenu')
         types = {'add':'ADDITION (1-digit)', 'sub':'SUBTRACTION (1-digit)'}
         count = self.counts[idlevel]['months']
         choices = [
-            '1) Times & Tries',
-            '2) Problem Type',
-            '3) Outliers'
+            '1) Times & Tries (weeks  1-26)',
+            '2) Times & Tries (weeks 27-52)',
+            '3) Problem Type',
+            '4) Outliers'
         ]
-        ok = [1, 2, 3]
+        ok = [1, 2, 3, 4]
         ok_str = ', '.join([str(i) for i in ok])
         err_str = ''
         mytype = types[idlevel]
@@ -1191,7 +1190,7 @@ def processAnalysis():
                             menu3 = False
                             lvl, choice = am.choiceLevel2Chart(lvl)
                             continue
-                        if choice == 1:
+                        if choice == 1 or choice == 2:
                             ca.processChartChoice('level3', lvl, choice)
                         print(lvl, choice, '---------F')
     print('\nAnalysis Complete')
