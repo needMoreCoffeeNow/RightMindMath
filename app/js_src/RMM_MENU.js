@@ -177,12 +177,12 @@ var RMM_MENU = (function() {
         txt = txt.replace('REPLACE_number', addneg);
         txt += '  (' + addneg_pct + '%)';
         mydoc.getElementById('div_addneg_val').innerHTML = txt;
-        txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
-        txt = txt.replace('REPLACE_number', addtopneg);
-        txt += '  (' + addtopneg_pct + '%)';
-        mydoc.getElementById('div_addtopneg_val').innerHTML = txt;
-        addnegSetDefault('addneg_digit', addneg);
-        addnegSetDefault('addtopneg_digit', addtopneg);
+        //////txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
+        //////txt = txt.replace('REPLACE_number', addtopneg);
+        //////txt += '  (' + addtopneg_pct + '%)';
+        //////mydoc.getElementById('div_addtopneg_val').innerHTML = txt;
+        //////addnegSetDefault('addneg_digit', addneg);
+        //////addnegSetDefault('addtopneg_digit', addtopneg);
         hideAll();
         mydoc.getElementById('div_menu_addneg').style.display = 'block';
     }
@@ -787,10 +787,10 @@ var RMM_MENU = (function() {
         console.log('addnegPdataUpdate(ev)');
         var addneg_str = mydoc.getElementById('div_addneg_val').innerHTML;
         var addneg_num = addneg_str.split(' ')[0];
-        var addtopneg_str = mydoc.getElementById('div_addtopneg_val').innerHTML;
-        var addtopneg_num = addtopneg_str.split(' ')[0];
+        //////var addtopneg_str = mydoc.getElementById('div_addtopneg_val').innerHTML;
+        //////var addtopneg_num = addtopneg_str.split(' ')[0];
         pdata.addneg_pct = addneg_num;
-        pdata.addtopneg_pct = addtopneg_num;
+        //////pdata.addtopneg_pct = addtopneg_num;
         checkProblemStart();
     }
 

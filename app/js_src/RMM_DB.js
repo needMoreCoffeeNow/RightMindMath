@@ -123,7 +123,7 @@ var RMM_DB = (function() {
             'subneg_pct' : 0,
             'subtopneg_pct' : 0,
             'addneg_pct' : 0,
-            'addtopneg_pct' : 0,
+            //////'addtopneg_pct' : 0,
             'subborrow' : null,
             'm1_digit' : 1,
             'm1_order' : 'ordered',

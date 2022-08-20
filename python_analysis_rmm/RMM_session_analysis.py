@@ -829,8 +829,6 @@ class AnalysisMenus():
             qstr = '(idlevel == "m1") and (m1_type == "%s")' % (key)
             c = self.dfm.query(qstr)['idproblem_count'].sum()
             self.mcounts[key] = c
-        print(self.mcounts)
-        print(self.dfm.query('(idlevel == "m1")')['idproblem_count'].sum())
 
     def setIdlevelCounts(self):
         # uses the levels {} items to provide easy access to idlevels problem

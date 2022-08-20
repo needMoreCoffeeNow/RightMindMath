@@ -48,7 +48,7 @@ var RMM_ASM = (function() {
     var s3_doubleborrow_allow = true; // no double borrow problems if false
     var total_problems = 0; // counter of total problems when level is started
     var addneg_pct = 0.0; // control pct of negative A1 problems
-    var addtopneg_pct = 0.0; // control pct of negative top addendum A1 problems
+    //////var addtopneg_pct = 0.0; // control pct of negative top addendum A1 problems
     var a1_neg_problems = 0; // used to control pct of negative S1 problems
     // toggles start: next & borrow/carry notes between step levels
     var shnote_next = true; // controls display of next_problem notes
@@ -1322,29 +1322,41 @@ var RMM_ASM = (function() {
             pct_total = parseFloat(a1_neg_problems / total_problems, 10);
         }
         // exit if too many addneg problems already unless in printmode
-        if (!printmode && pct_total >= addneg_pct) { return; }
+        console.warn(rand, addneg_pct, pct_total, 'rand, addneg_pct, pct_total');
+        if (!printmode && pct_total >= addneg_pct) { console.error('exit1'); return; }
         // check if random percentage is below user set percentage
-        if (addneg_pct <= rand) { return;}
-        addnegAddendumSet();
+        if (addneg_pct < rand) { console.error('exit2'); return;}
+        // avoid -0 which causes logic to fail
+        if (prob_asm[1][2] === 0) { prob_asm[1][2] = 1; }
+        prob_asm[1][2] = prob_asm[1][2] * -1;
+        console.error('neg set');
+        //////addnegAddendumSet();
         // finally set a neg a1 problem using either top or bottom addendum
         prob_asm[2][2] = prob_asm[0][2] + prob_asm[1][2];
         a1_neg_problems += 1;
     }
 
-    // find a1 negative addendum (top or bottom)
-    function addnegAddendumSet() {
-        console.log('addnegAddendumSet()');
-        var rand = parseFloat(getRandInt(0, 10) / 10, 10);
-        if (rand < addtopneg_pct) {
-            // avoid -0 which causes logic to fail
-            if (prob_asm[0][2] === 0) { prob_asm[0][2] = 1; }
-            prob_asm[0][2] = prob_asm[0][2] * -1;
-        } else {
-            // avoid -0 which causes logic to fail
-            if (prob_asm[1][2] === 0) { prob_asm[1][2] = 1; }
-            prob_asm[1][2] = prob_asm[1][2] * -1;
-        }
-    }
+//////    // find a1 negative addendum (top or bottom)
+//////    function addnegAddendumSet() {
+//////        console.warn('addnegAddendumSet()');
+//////        var rand = parseFloat(getRandInt(0, 10) / 10, 10);
+//////        //////if (rand < addtopneg_pct) {
+//////        //////    // avoid -0 which causes logic to fail
+//////        //////    if (prob_asm[0][2] === 0) { prob_asm[0][2] = 1; }
+//////        //////    prob_asm[0][2] = prob_asm[0][2] * -1;
+//////        //////} else {
+//////        //////    // avoid -0 which causes logic to fail
+//////        //////    if (prob_asm[1][2] === 0) { prob_asm[1][2] = 1; }
+//////        //////    prob_asm[1][2] = prob_asm[1][2] * -1;
+//////        //////}
+//////        console.warn(rand, addneg_pct, 'rand, addneg_pct');
+//////        if (rand < addneg_pct) {
+//////            // avoid -0 which causes logic to fail
+//////            if (prob_asm[1][2] === 0) { prob_asm[1][2] = 1; }
+//////            prob_asm[1][2] = prob_asm[1][2] * -1;
+//////            console.error('neg set');
+//////        }
+//////    }
 
     // set the random
 
@@ -2210,7 +2222,7 @@ var RMM_ASM = (function() {
         total_problems = 0;
         if (pdata.module === 'a') {
             addneg_pct = parseFloat(pdata.addneg_pct / 10, 10);
-            addtopneg_pct = parseFloat(pdata.addtopneg_pct / 10, 10);
+            //////addtopneg_pct = parseFloat(pdata.addtopneg_pct / 10, 10);
             if (pdata.digits === 1) { levelA1Init(); }
             if (pdata.digits === 2) { levelA2Init(); }
             if (pdata.digits === 3) { levelA3Init(); }
