@@ -53,7 +53,9 @@ class ProcessJsonFile():
             'borrow_01' : None,
             'borrow_10' : None,
             'problem_start' : None,
-            'm1_type' : None,
+            'ptype_m1' : None, # digit value + r/o eg. 3r=ThreesRandom 40=FoursOrdered
+            'ptype_a1' : None, # +++ +-+ +-- --- based on pos/neg vals: 5+-6=-1 : +--
+            'ptype_s1' : None, # +-+ +-- --- based on pos/neg vals: 6-5=1 : +-+
             # r_str vars end
             'idsession' : None,
             'idsession_tstamp' : None,
@@ -132,6 +134,15 @@ class ProcessJsonFile():
             my_df['op2'] = int(vars[1])
             my_df['answer'] = int(vars[2])
             my_df['op'] = vars[3]
+            if idlevel in ['a1', 's1']:
+                ptype = '+' if my_df['op1'] > -1 else '-'
+                if idlevel == 'a1':
+                    ptype += '+' if my_df['op2'] > -1 else '-'
+                else:
+                    ptype += '-' # s1 second operand alwasy neg
+                ptype += '+' if my_df['answer'] > -1 else '-'
+                my_df['ptype_%s' % (idlevel)] = ptype
+                if idlevel == 'a1': print(ptype, '---------', r_str)
             if idlevel == 'm1':
                 my_df['chunk_count'] = int(parts[4])
             else:
@@ -152,9 +163,9 @@ class ProcessJsonFile():
         if idlevel == 'm1':
             my_df['ordered'] = parts[2] == 'true'
             if my_df['ordered']:
-                my_df['m1_type'] = '%s%s' % (str(my_df['op1']), 'o')
+                my_df['ptype_m1'] = '%s%s' % (str(my_df['op1']), 'o')
             else:
-                my_df['m1_type'] = '%s%s' % (str(my_df['op1']), 'r')
+                my_df['ptype_m1'] = '%s%s' % (str(my_df['op1']), 'r')
         if my_df['op1'] < 0: my_df['neg_op1'] = 1
         if my_df['op2'] < 0: my_df['neg_op2'] = 1
         if my_df['answer'] < 0: my_df['neg_ans'] = 1
@@ -826,7 +837,7 @@ class AnalysisMenus():
 
     def setMcounts(self):
         for key in self.mcounts.keys():
-            qstr = '(idlevel == "m1") and (m1_type == "%s")' % (key)
+            qstr = '(idlevel == "m1") and (ptype_m1 == "%s")' % (key)
             c = self.dfm.query(qstr)['idproblem_count'].sum()
             self.mcounts[key] = c
 
@@ -1155,6 +1166,7 @@ def processAnalysis():
         pjf.copyPrevious()
         pjf.writeLinesStats()
         pjf.buildDataFrame()
+        return
         if pjf.week_last == -1:
             print('\nSorry no records were loaded.')
             print('Please check your download.')
