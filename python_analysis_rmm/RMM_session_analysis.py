@@ -53,6 +53,7 @@ class ProcessJsonFile():
             'borrow_01' : None,
             'borrow_10' : None,
             'problem_start' : None,
+            'm1_type' : None,
             # r_str vars end
             'idsession' : None,
             'idsession_tstamp' : None,
@@ -123,7 +124,7 @@ class ProcessJsonFile():
         idlevel = vars[0][0:2]
         if (idlevel == 'm2'):
             my_df['m2_basic'] = vars[0][2:3] == 'b'
-        if not idlevel in not_asm:
+        if not idlevel in not_asm: # == a1, a2, a3, s1, s2, s3, m1 problem
             my_df['steps_total'] = int(vars[1])
             my_df['steps_count'] = int(vars[2]) + 1 # change to 1=start index
             vars = parts[1].split('|')
@@ -148,8 +149,12 @@ class ProcessJsonFile():
                 my_df['op2'] = int(vars[1])
                 my_df['answer'] = my_df['op1'] * my_df['op2']
                 my_df['op'] = 'x'
-        if idlevel == 'm':
+        if idlevel == 'm1':
             my_df['ordered'] = parts[2] == 'true'
+            if my_df['ordered']:
+                my_df['m1_type'] = '%s%s' % (str(my_df['op1']), 'o')
+            else:
+                my_df['m1_type'] = '%s%s' % (str(my_df['op1']), 'r')
         if my_df['op1'] < 0: my_df['neg_op1'] = 1
         if my_df['op2'] < 0: my_df['neg_op2'] = 1
         if my_df['answer'] < 0: my_df['neg_ans'] = 1
@@ -813,9 +818,23 @@ class AnalysisMenus():
         self.year = 1
         self.wsplits = self.getWeekSplits()
         self.levels = {} # initialized & updated using year idelevel/problems
-        self.counts = {}
+        self.counts = {} # stores year (52 wks), months (26 wks) & weeks (4 wks)
+        # yearly total of m1 problem counts by 1st ord digit & random/ordered
+        self.mcounts = { '1r':0, '1o':0, '2r':0, '2o':0, '3r':0, '3o':0,
+                         '4r':0, '4o':0, '5r':0, '5o':0, '6r':0, '6o':0,
+                         '7r':0, '7o':0, '8r':0, '8o':0, '9r':0, '9o':0 }
+
+    def setMcounts(self):
+        for key in self.mcounts.keys():
+            qstr = '(idlevel == "m1") and (m1_type == "%s")' % (key)
+            c = self.dfm.query(qstr)['idproblem_count'].sum()
+            self.mcounts[key] = c
+        print(self.mcounts)
+        print(self.dfm.query('(idlevel == "m1")')['idproblem_count'].sum())
 
     def setIdlevelCounts(self):
+        # uses the levels {} items to provide easy access to idlevels problem
+        # totals. Splits are: year=52wks, months=26wks, weeks=4wks 
         self.counts = {'tot':{'year':0, 'months':0, 'weeks':0},
                        'add':{'year':0, 'months':0, 'weeks':0},
                        'sub':{'year':0, 'months':0, 'weeks':0},
@@ -1148,6 +1167,8 @@ def processAnalysis():
         print('\n\nYear %d being analyzed' % (am.year))
         am.getWeekSplits() # must follow getYear() as self.year is used
         am.getLevelsCount() 
+        am.setMcounts()
+        return
         am.setIdlevelCounts() # must follow getLevelsCount()
         ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path)
         ca.setSaveFlag()
