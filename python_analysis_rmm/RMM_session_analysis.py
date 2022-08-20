@@ -534,18 +534,18 @@ class ChartAnalysis():
                 if num == 1: self.chartLifetimeDevice()
         if mlevel == 'level2':
             if type == 'add' and num == 1:
-                self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Addition')
+                self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
             if type == 'sub' and num == 1:
-                self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Subtraction')
+                self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Sub 1-Digit')
         if mlevel == 'level3':
             if type == 'add' and num == 1:
-                self.chartTimesTries('a1', 'Addition', 'start1', 'end1')
+                self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1')
             if type == 'add' and num == 2:
-                self.chartTimesTries('a1', 'Addition', 'start2', 'end2')
+                self.chartTimesTries('a1', 'Add 1-Digit', 'start2', 'end2')
             if type == 'sub' and num == 1:
-                self.chartTimesTries('s1', 'Subtraction', 'start1', 'end1')
+                self.chartTimesTries('s1', 'Sub 1-Digit', 'start1', 'end1')
             if type == 'sub' and num == 2:
-                self.chartTimesTries('s1', 'Subtraction', 'start2', 'end2')
+                self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2')
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def totalProblemsStackedBar(self, my_order, type):
