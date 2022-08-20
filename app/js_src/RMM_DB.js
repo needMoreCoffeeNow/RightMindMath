@@ -8,7 +8,6 @@ var RMM_DB = (function() {
     var db_error = false;
     var db_complete = false;
     var db_upgrade = false;
-    ////////////var DB_MILLI_STD = 10; // standard wait time to check for db_result
     var timervar = null; // use for setTimeout and clearTimeout functions
     var VERSION = 1; // indexedDB version - only change to force upgrade
     var IDSETUP = 1;
@@ -16,7 +15,6 @@ var RMM_DB = (function() {
     var pass_caller = ''; // set to function name to help passError debuging
     // async
     var MAX_TRIES = 100; // limit on how many waits for db_complete
-    ////////////var DB_MILLI_STD = 10; // standard wait time to check for db_result
     var DB_MILLI_LONG = 500; // standard wait time to check for db_result
     var db_next_function = null; //next function once db_complete = true
     var db_wait_tries_std = 800; // std arg to set MAX_TRIES in dbSetWaitVars
@@ -121,9 +119,9 @@ var RMM_DB = (function() {
             'module' : null,
             'digits' : null,
             'subneg_pct' : 0,
-            //////'subtopneg_pct' : 0,
+            'subtopneg_pct' : 0,
             'addneg_pct' : 0,
-            //////'addtopneg_pct' : 0,
+            'addtopneg_pct' : 0,
             'subborrow' : null,
             'm1_digit' : 1,
             'm1_order' : 'ordered',
@@ -240,7 +238,6 @@ var RMM_DB = (function() {
         var obj = objectstoreGet('setup', true);
         var req = null;
         if (!obj) { return; }
-        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_STD);
         transactionInit();
         req = obj.get(id);
         req.onsuccess = function(ev) {
@@ -270,7 +267,6 @@ var RMM_DB = (function() {
         var date_now = Date.now();
         var i = 0;
         if (!obj) { return; }
-        /////////////timervar = window.setTimeout(dbWait, DB_MILLI_STD);
         transactionInit();
         myindex = obj.index('iduser');
         myrange = IDBKeyRange.only(iduser_in);
@@ -321,7 +317,6 @@ var RMM_DB = (function() {
         var date_start = Date.now();
         var total_recs = 0;
         if (!obj) { return; }
-        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 100);
         transactionInit();
         myindex = obj.index('device_iduser');
         myrange = IDBKeyRange.only(ival);
@@ -360,7 +355,6 @@ var RMM_DB = (function() {
         var req = null;
         var myindex = null;
         if (!obj) { return; }
-        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_STD);
         transactionInit();
         myindex = obj.index(iname); 
         req = myindex.get(ival);
@@ -383,7 +377,6 @@ var RMM_DB = (function() {
         var obj = objectstoreGet('user', true);
         var req = null;
         if (!obj) { return; }
-        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_STD);
         transactionInit();
         req = obj.get(id);
         req.onsuccess = function(ev) {
@@ -406,7 +399,6 @@ var RMM_DB = (function() {
         var req = null;
         if (!obj) { return; }
         transactionInit();
-        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_STD);
         req = obj.getAll();
         req.onsuccess = function(ev) {
             db_result = ev.target.result;
@@ -470,7 +462,6 @@ var RMM_DB = (function() {
         var total_recs = 0;
         if (!obj) { return; }
         transactionInit();
-        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_LONG * 10);
         count_read = 0;
         obj.openCursor().onsuccess = function(ev) {
             cursor = ev.target.result;
@@ -651,7 +642,6 @@ var RMM_DB = (function() {
         req = obj.get(idrec);
         req.onsuccess = function(ev) {
             transactionInit();
-            ////////////timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
             data = req.result;
             for (key in dict) {
                 data[key] = dict[key];
@@ -688,7 +678,6 @@ var RMM_DB = (function() {
         req = obj.get(IDSETUP);
         req.onsuccess = function(ev) {
             transactionInit();
-            ////////////timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
             data = req.result;
             for (key in dict) {
                 data[key] = dict[key];
@@ -728,7 +717,6 @@ var RMM_DB = (function() {
         var txt_count = '';
         if (!obj) { return; }
         transactionInit();
-        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
         count_delete = 0;
         obj.openCursor().onsuccess = function(ev) {
             cursor = ev.target.result;
@@ -776,7 +764,6 @@ var RMM_DB = (function() {
         var obj = objectstoreGet(table, true);
         if (!obj) { return; }
         transactionInit();
-        ////////////timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
         req = obj.add(data);
         req.onsuccess = function(ev) {
             console.log('addRecord success');

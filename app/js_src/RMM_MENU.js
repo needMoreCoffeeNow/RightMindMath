@@ -142,18 +142,18 @@ var RMM_MENU = (function() {
         console.log('showSubnegMenu()');
         var subneg = pdata.subneg_pct;
         var subneg_pct = subneg * 10;
-        //////var subtopneg = pdata.subtopneg_pct;
-        //////var subtopneg_pct = subtopneg * 10;
+        var subtopneg = pdata.subtopneg_pct;
+        var subtopneg_pct = subtopneg * 10;
         var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
         txt = txt.replace('REPLACE_number', subneg);
         txt += '  (' + subneg_pct + '%)';
         mydoc.getElementById('div_subneg_val').innerHTML = txt;
-        //////txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
-        //////txt = txt.replace('REPLACE_number', subtopneg);
-        //////txt += '  (' + subtopneg_pct + '%)';
-        //////mydoc.getElementById('div_subtopneg_val').innerHTML = txt;
-        //////addnegSetDefault('subneg_digit', subneg);
-        //////addnegSetDefault('subtopneg_digit', subtopneg);
+        txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
+        txt = txt.replace('REPLACE_number', subtopneg);
+        txt += '  (' + subtopneg_pct + '%)';
+        mydoc.getElementById('div_subtopneg_val').innerHTML = txt;
+        addnegSetDefault('subneg_digit', subneg);
+        addnegSetDefault('subtopneg_digit', subtopneg);
         hideAll();
         mydoc.getElementById('div_menu_subneg').style.display = 'block';
     }
@@ -177,12 +177,12 @@ var RMM_MENU = (function() {
         txt = txt.replace('REPLACE_number', addneg);
         txt += '  (' + addneg_pct + '%)';
         mydoc.getElementById('div_addneg_val').innerHTML = txt;
-        //////txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
-        //////txt = txt.replace('REPLACE_number', addtopneg);
-        //////txt += '  (' + addtopneg_pct + '%)';
-        //////mydoc.getElementById('div_addtopneg_val').innerHTML = txt;
-        //////addnegSetDefault('addneg_digit', addneg);
-        //////addnegSetDefault('addtopneg_digit', addtopneg);
+        txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
+        txt = txt.replace('REPLACE_number', addtopneg);
+        txt += '  (' + addtopneg_pct + '%)';
+        mydoc.getElementById('div_addtopneg_val').innerHTML = txt;
+        addnegSetDefault('addneg_digit', addneg);
+        addnegSetDefault('addtopneg_digit', addtopneg);
         hideAll();
         mydoc.getElementById('div_menu_addneg').style.display = 'block';
     }
@@ -750,24 +750,6 @@ var RMM_MENU = (function() {
         } else {
             mydoc.getElementById('div_addtopneg_val').innerHTML = txt;
         }
-//////
-//////
-//////
-//////
-//////
-//////
-//////        var id = (ev.target.id);
-//////        var parts = id.split('_');
-//////        var pct = parseInt(parts[2], 10);
-//////        var type = parts[1];
-//////        var txt = getStr('TXT_a1_neg_current'); // will hold updated section title count
-//////        txt = txt.replace('REPLACE_number', pct);
-//////        if (type === 'addneg') {
-//////            mydoc.getElementById('div_addneg_val').innerHTML = txt;
-//////        } else {
-//////            mydoc.getElementById('div_addtopneg_val').innerHTML = txt;
-//////        }
-//////
     }
 
     // handle exiting the s1 negative menu which sets the 2 related pdata vars
@@ -775,10 +757,10 @@ var RMM_MENU = (function() {
         console.log('subnegPdataUpdate(ev)');
         var subneg_str = mydoc.getElementById('div_subneg_val').innerHTML;
         var subneg_num = subneg_str.split(' ')[0];
-        //////var addtopneg_str = mydoc.getElementById('div_subtopneg_val').innerHTML;
-        //////var addtopneg_num = addtopneg_str.split(' ')[0];
+        var addtopneg_str = mydoc.getElementById('div_subtopneg_val').innerHTML;
+        var addtopneg_num = addtopneg_str.split(' ')[0];
         pdata.subneg_pct = subneg_num;
-        //////pdata.subtopneg_pct = addtopneg_num;
+        pdata.subtopneg_pct = addtopneg_num;
         checkProblemStart();
     }
 
@@ -787,10 +769,10 @@ var RMM_MENU = (function() {
         console.log('addnegPdataUpdate(ev)');
         var addneg_str = mydoc.getElementById('div_addneg_val').innerHTML;
         var addneg_num = addneg_str.split(' ')[0];
-        //////var addtopneg_str = mydoc.getElementById('div_addtopneg_val').innerHTML;
-        //////var addtopneg_num = addtopneg_str.split(' ')[0];
+        var addtopneg_str = mydoc.getElementById('div_addtopneg_val').innerHTML;
+        var addtopneg_num = addtopneg_str.split(' ')[0];
         pdata.addneg_pct = addneg_num;
-        //////pdata.addtopneg_pct = addtopneg_num;
+        pdata.addtopneg_pct = addtopneg_num;
         checkProblemStart();
     }
 
@@ -809,9 +791,6 @@ var RMM_MENU = (function() {
         if (type === 'subneg') {
             mydoc.getElementById('div_subneg_val').innerHTML = txt;
         }
-        //////else {
-        //////    mydoc.getElementById('div_subtopneg_val').innerHTML = txt;
-        //////}
     }
     // handle subborrow yes/nor click
     function subborrowSet(ev) {

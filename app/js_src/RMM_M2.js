@@ -747,8 +747,6 @@ var RMM_M2 = (function() {
         num_in = parseInt(num_in / 10, 10);
         if (index === 100 || num_in < 10) { return num_in % 10; }
         return parseInt(num_in / 10, 10);
-        ////////////if (index === 1000 || num_in < 10) { return num_in % 10; }
-        ////////////return parseInt(num_in / 10, 10);
     }
 
     // setup a print problem such that the problem_str is available

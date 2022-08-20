@@ -48,7 +48,7 @@ var RMM_ASM = (function() {
     var s3_doubleborrow_allow = true; // no double borrow problems if false
     var total_problems = 0; // counter of total problems when level is started
     var addneg_pct = 0.0; // control pct of negative A1 problems
-    //////var addtopneg_pct = 0.0; // control pct of negative top addendum A1 problems
+    var addtopneg_pct = 0.0; // control pct of negative top addendum A1 problems
     var a1_neg_problems = 0; // used to control pct of negative S1 problems
     // toggles start: next & borrow/carry notes between step levels
     var shnote_next = true; // controls display of next_problem notes
@@ -121,7 +121,6 @@ var RMM_ASM = (function() {
     // called from RMM_STATSLIVE after loadSessionData is finished
     function initReadUserLast() {
         console.log('initReadUserLast()');
-        ////////////RMM_DB.dbSetWaitVars(db_wait_tries_std, RMM_ASM.initSetupDBSet)
         RMM_DB.setDbNextFunction(RMM_ASM.initSetupDBSet);
         RMM_DB.readSetup(1);
     }
@@ -282,7 +281,7 @@ var RMM_ASM = (function() {
 
     // read the SymnNums transform string & add it to end of svg path string
     function pathTransform(path, id) {
-        console.log('pathTransform(path, id)');
+        //console.log('pathTransform(path, id)');
         var tform = getTransforms(id);
         return path.replace('/>', ' ' + tform + '/>');
     }
@@ -406,7 +405,6 @@ var RMM_ASM = (function() {
         // ASM
         mydoc.getElementById('svg_asm_container').style.display = 'none';
         mydoc.getElementById('div_note').style.visibility = 'hidden';
-//////        mydoc.getElementById('div_test_count').style.display = 'none';
         mydoc.getElementById('div_info').style.display = 'none';
         mydoc.getElementById('div_animation_box').style.display = 'none';
         mydoc.getElementById('blockAll').style.display = 'none';
@@ -891,6 +889,7 @@ var RMM_ASM = (function() {
     function displayCarryNote(val) {
         console.log('displayCarryNote(val)');
         var note = '';
+        var neg = '';
         if (!shnote_carry) { return; }
         if (!complete) {
             note = getStr('TXT_carry_next');
@@ -898,6 +897,11 @@ var RMM_ASM = (function() {
             note = getStr('TXT_carry_add');
         }
         note = note.replace('REPLACE_ANSWER', ''+val);
+        if (val < 0) {
+            neg = getStr('TXT_negative_lower') + ' ';
+            val = Math.abs(val);
+        }
+        note = note.replace('REPLACE_NEGATIVE', neg);
         note = note.replace('REPLACE_ONES', ''+(val % 10));
         note = note.replace('REPLACE_VALUE', ''+(val % 10));
         if (level_done === 0) {
@@ -1213,14 +1217,17 @@ var RMM_ASM = (function() {
         if (printmode) {
             neg_prob = myrand <= subneg_pct;
         } else {
-            neg_prob = (s1_neg_problems / total_problems) < subneg_pct;
+            if (total_problems > 0) {
+                neg_prob = (s1_neg_problems / total_problems) < subneg_pct;
+            } else {
+                neg_prob = myrand <= subneg_pct;
+            }
         }
         if (neg_prob) {
             while (neg_needed) {
                 probColumnSetRandValue(2, 0, 10);
                 if (colAnswer(2) < 0) { neg_needed = false; }
             }
-            myrand = parseFloat(getRandInt(1, 11) / 10, 10);
             if (myrand <= subtopneg_pct && prob_asm[0][2] !== 0) {
                 prob_asm[0][2] = prob_asm[0][2] * -1;
             }
@@ -1306,10 +1313,13 @@ var RMM_ASM = (function() {
         //prob_asm  = [ [null, null, -5], [null, null, 1], [null,null,-4] ];
         //prob_asm  = [ [null, null, -1], [null, null, 5], [null,null,4] ];
         //prob_asm  = [ [null, null, -9], [null, null, 0], [null,null,-9] ];
+        //prob_asm  = [ [null, null, 9], [null, null, 9], [null,null,18] ];
+        //prob_asm  = [ [null, null, -9], [null, null, 5], [null,null,-4] ];
         carryforwardSet();
         probAnswerSet();
         finishProbSetup();
         correct = colAnswer(2);
+        console.warn('---------------------------correct=', correct)
     }
 
     // change to a equation with negative addendums
@@ -1322,43 +1332,21 @@ var RMM_ASM = (function() {
             pct_total = parseFloat(a1_neg_problems / total_problems, 10);
         }
         // exit if too many addneg problems already unless in printmode
-        console.warn(rand, addneg_pct, pct_total, 'rand, addneg_pct, pct_total');
-        if (!printmode && pct_total >= addneg_pct) { console.error('exit1'); return; }
+        if (!printmode && pct_total >= addneg_pct) { return; }
         // check if random percentage is below user set percentage
-        if (addneg_pct < rand) { console.error('exit2'); return;}
+        if (addneg_pct < rand) { return;}
         // avoid -0 which causes logic to fail
         if (prob_asm[1][2] === 0) { prob_asm[1][2] = 1; }
         prob_asm[1][2] = prob_asm[1][2] * -1;
-        console.error('neg set');
-        //////addnegAddendumSet();
+        if (rand < addtopneg_pct) {
+            // avoid -0 which causes logic to fail
+            if (prob_asm[0][2] === 0) { prob_asm[0][2] = 1; }
+            prob_asm[0][2] = prob_asm[0][2] * -1;
+        }
         // finally set a neg a1 problem using either top or bottom addendum
         prob_asm[2][2] = prob_asm[0][2] + prob_asm[1][2];
         a1_neg_problems += 1;
     }
-
-//////    // find a1 negative addendum (top or bottom)
-//////    function addnegAddendumSet() {
-//////        console.warn('addnegAddendumSet()');
-//////        var rand = parseFloat(getRandInt(0, 10) / 10, 10);
-//////        //////if (rand < addtopneg_pct) {
-//////        //////    // avoid -0 which causes logic to fail
-//////        //////    if (prob_asm[0][2] === 0) { prob_asm[0][2] = 1; }
-//////        //////    prob_asm[0][2] = prob_asm[0][2] * -1;
-//////        //////} else {
-//////        //////    // avoid -0 which causes logic to fail
-//////        //////    if (prob_asm[1][2] === 0) { prob_asm[1][2] = 1; }
-//////        //////    prob_asm[1][2] = prob_asm[1][2] * -1;
-//////        //////}
-//////        console.warn(rand, addneg_pct, 'rand, addneg_pct');
-//////        if (rand < addneg_pct) {
-//////            // avoid -0 which causes logic to fail
-//////            if (prob_asm[1][2] === 0) { prob_asm[1][2] = 1; }
-//////            prob_asm[1][2] = prob_asm[1][2] * -1;
-//////            console.error('neg set');
-//////        }
-//////    }
-
-    // set the random
 
     // converts the ASM grid into a str: row0|row1|row2|op where rows = int vals
     function reduceProblem() {
@@ -1495,7 +1483,6 @@ var RMM_ASM = (function() {
             return;
         }
         // handle completed multi-step problem and next_problem popup false
-        ////////// handle last step in multi-step
         // either go to next problem or show Next Problem popup
         if ( (level_done + 1) >= level_steps) {
             level_done += 1;
@@ -1792,15 +1779,19 @@ var RMM_ASM = (function() {
 
     // show/hide row2 (answer) in ASM grid: if grid box has value show/hide it
     function layoutToggleRow2Visibility(show, columns) {
-        console.log('layoutToggleRow2Visibility(show)', show, columns);
+        console.error('layoutToggleRow2Visibility(show)', show, columns);
         if (!show) {
             mydoc.getElementById('asm_num_20').style.display = 'none';
             mydoc.getElementById('asm_num_21').style.display = 'none';
             mydoc.getElementById('asm_num_22').style.display = 'none';
+            mydoc.getElementById('asm_num_02_neg').style.display = 'none';
             mydoc.getElementById('asm_num_22_neg').style.display = 'none';
             mydoc.getElementById('asm_num_DD_neg').style.display = 'none';
             return;
         }
+        mydoc.getElementById('asm_num_02_neg').style.display = 'none';
+        mydoc.getElementById('asm_num_22_neg').style.display = 'none';
+        mydoc.getElementById('asm_num_DD_neg').style.display = 'none';
         if (columns[0] && prob_asm[2][0] !== null) {
             mydoc.getElementById('asm_num_20').style.display = 'block';
         }
@@ -1810,7 +1801,20 @@ var RMM_ASM = (function() {
         if (columns[2] && prob_asm[2][2] !== null) {
             mydoc.getElementById('asm_num_22').style.display = 'block';
         }
-        mydoc.getElementById('asm_num_22_neg').style.display = 'none';
+        if (level === 'a1') {
+            if (correct < -9) {
+                mydoc.getElementById('asm_num_21').innerHTML = getNums(1);
+                mydoc.getElementById('asm_num_21').style.display = 'block';
+                mydoc.getElementById('asm_num_02_neg').style.display = 'block';
+                setBorrowCarry(1, 0, 1, false);
+                layoutBorrowCarry([1], true, false);
+                displayCarryNote(correct);
+            } else {
+                if (correct < 0) {
+                    mydoc.getElementById('asm_num_22_neg').style.display = 'block';
+                }
+            }
+        }
         if (level !== 's1') { return; }
         if (prob_asm[2][2] > -1) { return; }
         // special handling of s1 problems
@@ -1825,7 +1829,7 @@ var RMM_ASM = (function() {
                 // set and show the carry of 1 in carry value box
                 setBorrowCarry(1, 0, 1, false);
                 layoutBorrowCarry([1], true, false);
-                displayCarryNote(10);
+                displayCarryNote(correct);
             } else {
                 // display 22 minus sign is to left of ones column
                 mydoc.getElementById('asm_num_22_neg').style.display = 'block';
@@ -2216,13 +2220,11 @@ var RMM_ASM = (function() {
     // set problem using pdata input
     function setProblem(pdata) {
         console.log('setProblem(pdata)');
-        //////RMM_DB.developerResetSessionDevice();
-        //////return;
         hideAll();
         total_problems = 0;
         if (pdata.module === 'a') {
             addneg_pct = parseFloat(pdata.addneg_pct / 10, 10);
-            //////addtopneg_pct = parseFloat(pdata.addtopneg_pct / 10, 10);
+            addtopneg_pct = parseFloat(pdata.addtopneg_pct / 10, 10);
             if (pdata.digits === 1) { levelA1Init(); }
             if (pdata.digits === 2) { levelA2Init(); }
             if (pdata.digits === 3) { levelA3Init(); }
