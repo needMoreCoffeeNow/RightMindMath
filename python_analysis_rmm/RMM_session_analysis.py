@@ -545,16 +545,26 @@ class ChartAnalysis():
             if type == 'sub' and num == 2:
                 self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2')
 
-    def weekStackBarData(self, idlevel, start, end):
+    def setWeekMax(self, qstr):
+        self.wkmax = self.dfc.query('(idlevel == "a2")')['date_week'].max()
+        if qstr is None:
+            self.wkmax = self.dfc['date_week'].max()
+        else:
+            self.wkmax = self.dfc.query(qstr)['date_week'].max()
+
+    def prbcountWeekData(self, qstr, start, end):
+        print('n\n')
+        print('-'*100)
+        print(qstr)
+        print('-'*100)
+        print('n\n')
         # create a dict for making a df that has 26 weeks (no gaps)
         week_dict = {
             'date_week':list(range(start, end)),
             'idproblem_count':[0]*26
         }
         sb_index = pd.RangeIndex(start, end, name='date_week')
-        qstr = '(date_week >= %d & date_week < %d)' % (start, end)
-        qstr += ' and (idlevel in [ "%s" ])' % (idlevel)
-        # get the session week total for the idlevel - note my have gaps
+        # get the session week total for the query - note my have gaps
         temp = self.dfc.query(qstr).groupby('date_week')['idproblem_count'].sum()
         # create 26 week frame with all zeros then update with session data
         temp_all = pd.DataFrame(week_dict)
@@ -562,13 +572,6 @@ class ChartAnalysis():
         temp_all.update(temp)
         # return the 26 slot series with the problem counts
         return temp_all['idproblem_count']
-
-    def setWeekMax(self, qstr):
-        self.wkmax = self.dfc.query('(idlevel == "a2")')['date_week'].max()
-        if qstr is None:
-            self.wkmax = self.dfc['date_week'].max()
-        else:
-            self.wkmax = self.dfc.query(qstr)['date_week'].max()
 
     def getStackedBarParams(self):
         sbparams = {
@@ -601,7 +604,9 @@ class ChartAnalysis():
         else:
             sbparams['sbindex1'] = pd.RangeIndex(start, self.wkmax+1, name='week')
         for lvl in my_order:
-            myseries = self.weekStackBarData(lvl, start, end)
+            qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+            qstr += ' and (idlevel in [ "%s" ])' % (lvl)
+            myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
                 sbparams['data1'][lvl] = myseries[:wkmax]
             else:
@@ -617,7 +622,9 @@ class ChartAnalysis():
             sbparams['end2'] = end
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
             for lvl in my_order:
-                sbparams['data2'][lvl] = self.weekStackBarData(lvl, start, end)
+                qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+                qstr += ' and (idlevel in [ "%s" ])' % (lvl)
+                sbparams['data2'][lvl] = self.prbcountWeekData(qstr, start, end)
         self.plotStackedBar(sbparams)
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
