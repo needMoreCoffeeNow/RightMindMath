@@ -142,6 +142,7 @@ class ProcessJsonFile():
                     ptype += '-' # s1 second operand alwasy neg
                 ptype += '+' if my_df['answer'] > -1 else '-'
                 my_df['ptype_%s' % (idlevel)] = ptype
+                if idlevel == 'a1': print(ptype, '---------', r_str)
             if idlevel == 'm1':
                 my_df['chunk_count'] = int(parts[4])
             else:
@@ -525,6 +526,7 @@ class ChartAnalysis():
         print('processChartChoice')
         print(mlevel, type, num, 'mlevel, type, num------------------')
         print('\n...processing')
+        print('\n\n', '<>'*20)
         if mlevel == 'top':
             if type == 't01':
                 if num == 1: self.totalProblemsStackedBar(self.order, 'All')
@@ -545,6 +547,94 @@ class ChartAnalysis():
             if type == 'sub' and num == 2:
                 self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2')
 
+    # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
+    def totalProblemsStackedBar(self, my_order, type):
+        start = self.wsplits['start1']
+        end = self.wsplits['end1']
+        wmax = self.dfc['date_week'].max()
+        # set matplotlib parameters
+        rcparams = {'legend.fontsize':8,
+                    'legend.title_fontsize':6,
+                    'axes.labelsize':8,
+                    'axes.titlesize':10,
+                    'xtick.labelsize':8,
+                    'ytick.labelsize':8,
+                    'xtick.major.size':8,
+                    'ytick.major.size':8
+                  }
+        plt.rcParams.update(rcparams)
+        if wmax > 26:
+            sb_index = pd.RangeIndex(start, end, name='week')
+            fig, axes = plt.subplots(2, 1, figsize=(8,5), sharey=False)
+            ax1 = axes[0]
+            ax2 = axes[1]
+        else:
+            fig, ax1 = plt.subplots(1, 1, figsize=(8,5), sharey=False)
+            sb_index = pd.RangeIndex(start, wmax+1, name='week')
+        # ax1 data
+        sbdata = {}
+        ymax = 0.0
+        for lvl in my_order:
+            myseries = self.weekStackBarData(lvl, start, end)
+            if wmax < 26:
+                sbdata[lvl] = myseries[:wmax]
+            else:
+                sbdata[lvl] = myseries
+            if sbdata[lvl].max() > ymax:
+                ymax = sbdata[lvl].max()
+        # ax1 stacked bar plot
+        df_sb = pd.DataFrame(sbdata, index=sb_index)
+        ax1 = df_sb.plot(kind='bar', stacked=True, ax=ax1)
+        ######ax1.yaxis.set_tick_params(labelsize=8)
+        ax1.set_ylabel('problems')
+        if wmax > 26:
+            ax1.set_title('%s Weekly Problems Month 1-26' % (type))
+        else:
+            ax1.set_title('%s Weekly Problems Month 1-%d' % (type, wmax))
+        ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
+        ax1.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
+        ax1.invert_xaxis()
+        tic = '' if start == 1 else '-'
+        tic2 = '' if start == 1 else 's'
+        hdr = '%s%d week%s' % (tic, start, tic2)
+        plt.figtext(0.86,0.9, hdr, fontsize=8, va="bottom", ha="left")
+        hdr = '-%d weeks' % (end-1)
+        plt.figtext(0.13,0.9, hdr, fontsize=8, va="bottom", ha="left")
+        # ax2 data
+        if wmax > 26:
+            sbdata = {}
+            start = self.wsplits['start2']
+            end = self.wsplits['end2']
+            sb_index = pd.RangeIndex(start, end, name='week')
+            ymax = 0.0
+            for lvl in my_order:
+                sbdata[lvl] = self.weekStackBarData(lvl, start, end)
+                if sbdata[lvl].max() > ymax:
+                    ymax = sbdata[lvl].max()
+            # ax2 stacked bar plot
+            df_sb = pd.DataFrame(sbdata, index=sb_index)
+            ax2 = df_sb.plot(kind='bar', stacked=True, ax=ax2)
+            ax2.set_ylabel('problems')
+            ax2.set_title('%s Weekly Problems Month 27-52' % (type))
+            ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
+            ax2.legend(title='level', bbox_to_anchor=(1.0, 1), loc='upper left')
+            ax2.invert_xaxis()
+            hdr = '-%d weeks' % (start)
+            plt.figtext(0.86,0.42, '-27 weeks', fontsize=8, va="bottom", ha="left")
+            hdr = '-%d weeks' % (end-1)
+            plt.figtext(0.13,0.42, hdr, fontsize=8, va="bottom", ha="left")
+            # adjust white space
+            fig.subplots_adjust(hspace=0.6)
+        #show and or save
+        if self.save_flag == 'S' or self.save_flag == 'B':
+            fname = 'c01_%s_ProblemsStackedBar.png' % (type)
+            plt_path = self.output_charts / fname
+            plt.savefig(str(plt_path))
+            print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
+        if self.save_flag == 'D' or self.save_flag == 'B':
+            plt.show(block=False)
+        print('\nchart completed & closed')
+
     def weekStackBarData(self, idlevel, start, end):
         # create a dict for making a df that has 26 weeks (no gaps)
         week_dict = {
@@ -563,121 +653,10 @@ class ChartAnalysis():
         # return the 26 slot series with the problem counts
         return temp_all['idproblem_count']
 
-    def setWeekMax(self, qstr):
-        self.wkmax = self.dfc.query('(idlevel == "a2")')['date_week'].max()
-        if qstr is None:
-            self.wkmax = self.dfc['date_week'].max()
-        else:
-            self.wkmax = self.dfc.query(qstr)['date_week'].max()
-
-    # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
-    def totalProblemsStackedBar(self, my_order, type):
-        sbparams = {
-            'data1' : {},
-            'data2'  : {},
-            'start1' : -1,
-            'start2' : -1,
-            'end1' : -1,
-            'end2' : -1,
-            'index1' : None,
-            'index2' : None,
-            'title1' : '',
-            'title2' : '',
-            'ylabel' : '',
-            'fname' : 'c01_%s_ProblemsStackedBar.png' % (type)
-        }
-        self.setWeekMax(None)
-        start = self.wsplits['start1']
-        end = self.wsplits['end1']
-        sbparams['start1'] = start
-        sbparams['end1'] = end
-        if self.wkmax > 26:
-            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
-        else:
-            sbparams['sbindex1'] = pd.RangeIndex(start, self.wkmax+1, name='week')
-        for lvl in my_order:
-            myseries = self.weekStackBarData(lvl, start, end)
-            if self.wkmax < 26:
-                sbparams['data1'][lvl] = myseries[:wkmax]
-            else:
-                sbparams['data1'][lvl] = myseries
-        if self.wkmax > 26:
-            sbparams['title1'] = '%s Weekly Problems Month 1-26' % (type)
-        else:
-            sbparams['title1'] = '%s Weekly Problems Month 1-%d' % (type, self.wkmax)
-        if self.wkmax > 26:
-            start = self.wsplits['start2']
-            end = self.wsplits['end2']
-            sbparams['start2'] = start
-            sbparams['end2'] = end
-            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
-            for lvl in my_order:
-                sbparams['data2'][lvl] = self.weekStackBarData(lvl, start, end)
-        self.plotStackedBar(sbparams)
-
-    # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
-    def plotStackedBar(self, sbparams):
-        # set matplotlib parameters
-        rcparams = {'legend.fontsize':8,
-                    'legend.title_fontsize':6,
-                    'axes.labelsize':8,
-                    'axes.titlesize':10,
-                    'xtick.labelsize':8,
-                    'ytick.labelsize':8,
-                    'xtick.major.size':8,
-                    'ytick.major.size':8
-                  }
-        plt.rcParams.update(rcparams)
-        if self.wkmax > 26:
-            fig, axes = plt.subplots(2, 1, figsize=(8,5), sharey=False)
-            ax1 = axes[0]
-            ax2 = axes[1]
-        else:
-            fig, ax1 = plt.subplots(1, 1, figsize=(8,5), sharey=False)
-        # ax1 stacked bar plot
-        df_sb = pd.DataFrame(sbparams['data1'], index=sbparams['index1'])
-        ax1 = df_sb.plot(kind='bar', stacked=True, ax=ax1)
-        ax1.set_ylabel(sbparams['ylabel'])
-        ax1.set_title(sbparams['title1'])
-        ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
-        ax1.legend(title='level', bbox_to_anchor=(1.0, 1.05), loc='upper left')
-        ax1.invert_xaxis()
-        tic = '' if sbparams['start1'] == 1 else '-'
-        tic2 = '' if sbparams['start1'] == 1 else 's'
-        hdr = '%s%d week%s' % (tic, sbparams['start1'], tic2)
-        plt.figtext(0.86,0.9, hdr, fontsize=8, va="bottom", ha="left")
-        hdr = '-%d weeks' % (sbparams['end1']-1)
-        plt.figtext(0.13,0.9, hdr, fontsize=8, va="bottom", ha="left")
-        # ax2 data
-        if self.wkmax > 26:
-            # ax2 stacked bar plot
-            df_sb = pd.DataFrame(sbparams['data2'], index=sbparams['index2'])
-            ax2 = df_sb.plot(kind='bar', stacked=True, ax=ax2)
-            ax2.set_ylabel(sbparams['ylabel'])
-            ax2.set_title(sbparams['title2'])
-            ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
-            ax2.legend(title='level', bbox_to_anchor=(1.0, 1.05), loc='upper left')
-            ax2.invert_xaxis()
-            hdr = '-%d weeks' % (sbparams['start2'])
-            plt.figtext(0.86,0.42, '-27 weeks', fontsize=8, va="bottom", ha="left")
-            hdr = '-%d weeks' % (sbparams['end2']-1)
-            plt.figtext(0.13,0.42, hdr, fontsize=8, va="bottom", ha="left")
-            # adjust white space
-            fig.subplots_adjust(hspace=0.6)
-        #show and or save
-        if self.save_flag == 'S' or self.save_flag == 'B':
-            fname = sbparams['fname']
-            plt_path = self.output_charts / fname
-            plt.savefig(str(plt_path))
-            print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
-        if self.save_flag == 'D' or self.save_flag == 'B':
-            plt.show(block=False)
-        print('\nchart completed & closed')
-
     def chartTimesTries(self, idlevel, type, start_str, end_str):
         print('def chartTimesTries(self, idlevel):')
         qstr = '(idlevel == "%s" )' % (idlevel)
-        self.wkmax = self.dfc.query(qstr)['date_week'].max()
+        wmax = self.dfc.query(qstr)['date_week'].max()
         start = self.wsplits[start_str]
         end = self.wsplits[end_str]
         week_dict = {
@@ -695,15 +674,15 @@ class ChartAnalysis():
         times_all.index = sb_index
         times_all.update(times)
         times_all['elapsed'] = times_all['elapsed'] / 1000
-        if self.wkmax < 26:
-            times_all = times_all[:wkmax]
+        if wmax < 26:
+            times_all = times_all[:wmax]
         std_times = self.dfc.query(qstr).groupby('date_week')['elapsed'].std(ddof=0)
         std_times_all = pd.DataFrame(week_dict)
         std_times_all.index = sb_index
         std_times_all.update(std_times)
         std_times_all['elapsed'] = std_times_all['elapsed'] / 1000
-        if self.wkmax < 26:
-            std_times_all = std_times_all[:wkmax]
+        if wmax < 26:
+            std_times_all = std_times_all[:wmax]
         tries = self.dfc.query(qstr).groupby('date_week')['tries'].mean()
         week_dict = {
             'date_week':list(range(start, end)),
@@ -712,8 +691,8 @@ class ChartAnalysis():
         tries_all = pd.DataFrame(week_dict)
         tries_all.index = sb_index
         tries_all.update(tries)
-        if self.wkmax < 26:
-            tries_all = tries_all[:wkmax]
+        if wmax < 26:
+            tries_all = tries_all[:wmax]
         rcparams = {'legend.fontsize':8,
                     'legend.title_fontsize':6,
                     'axes.labelsize':8,
@@ -1187,6 +1166,7 @@ def processAnalysis():
         pjf.copyPrevious()
         pjf.writeLinesStats()
         pjf.buildDataFrame()
+        return
         if pjf.week_last == -1:
             print('\nSorry no records were loaded.')
             print('Please check your download.')
@@ -1198,6 +1178,7 @@ def processAnalysis():
         am.getWeekSplits() # must follow getYear() as self.year is used
         am.getLevelsCount() 
         am.setMcounts()
+        return
         am.setIdlevelCounts() # must follow getLevelsCount()
         ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path)
         ca.setSaveFlag()
