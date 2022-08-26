@@ -570,8 +570,7 @@ class ChartAnalysis():
         else:
             self.wkmax = self.dfc.query(qstr)['date_week'].max()
 
-    # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
-    def totalProblemsStackedBar(self, my_order, type):
+    def getStackedBarParams(self):
         sbparams = {
             'data1' : {},
             'data2'  : {},
@@ -586,7 +585,13 @@ class ChartAnalysis():
             'ylabel' : '',
             'fname' : 'c01_%s_ProblemsStackedBar.png' % (type)
         }
+        return sbparams
+
+    # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
+    def totalProblemsStackedBar(self, my_order, type):
         self.setWeekMax(None)
+        sbparams = self.getStackedBarParams()
+        sbparams['fname'] = 'c01_%s_ProblemsStackedBar.png' % (type)
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
