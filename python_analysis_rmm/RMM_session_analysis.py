@@ -53,9 +53,7 @@ class ProcessJsonFile():
             'borrow_01' : None,
             'borrow_10' : None,
             'problem_start' : None,
-            'ptype_m1' : None, # digit value + r/o eg. 3r=ThreesRandom 40=FoursOrdered
-            'ptype_a1' : None, # +++ +-+ +-- --- based on pos/neg vals: 5+-6=-1 : +--
-            'ptype_s1' : None, # +-+ +-- --- based on pos/neg vals: 6-5=1 : +-+
+            'ptype' : None, # eg: +++, +-+ for a1, s1, 2r, 3o for m1
             # r_str vars end
             'idsession' : None,
             'idsession_tstamp' : None,
@@ -141,7 +139,7 @@ class ProcessJsonFile():
                 else:
                     ptype += '-' # s1 second operand alwasy neg
                 ptype += '+' if my_df['answer'] > -1 else '-'
-                my_df['ptype_%s' % (idlevel)] = ptype
+                my_df['ptype'] = ptype
             if idlevel == 'm1':
                 my_df['chunk_count'] = int(parts[4])
             else:
@@ -162,9 +160,9 @@ class ProcessJsonFile():
         if idlevel == 'm1':
             my_df['ordered'] = parts[2] == 'true'
             if my_df['ordered']:
-                my_df['ptype_m1'] = '%s%s' % (str(my_df['op1']), 'o')
+                my_df['ptype'] = '%s%s' % (str(my_df['op1']), 'o')
             else:
-                my_df['ptype_m1'] = '%s%s' % (str(my_df['op1']), 'r')
+                my_df['ptype'] = '%s%s' % (str(my_df['op1']), 'r')
         if my_df['op1'] < 0: my_df['neg_op1'] = 1
         if my_df['op2'] < 0: my_df['neg_op2'] = 1
         if my_df['answer'] < 0: my_df['neg_ans'] = 1
@@ -523,30 +521,36 @@ class ChartAnalysis():
         print(splits)
         return splits
 
-    def processChartChoice(self, mlevel, type, num):
+    def processChartChoice(self, mlevel, mytype, num):
         print('\n\n', '<>'*20)
         print('processChartChoice')
-        print(mlevel, type, num, 'mlevel, type, num------------------')
+        print(mlevel, mytype, num, 'mlevel, mytype, num------------------')
         print('\n...processing')
         if mlevel == 'top':
-            if type == 't01':
+            if mytype == 't01':
                 if num == 1: self.totalProblemsStackedBar(self.order, 'All')
-            if type == 't02':
+            if mytype == 't02':
                 if num == 1: self.chartLifetimeDevice()
         if mlevel == 'level2':
-            if type == 'add' and num == 1:
+            if mytype == 'add' and num == 1:
                 self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
-            if type == 'sub' and num == 1:
+            if mytype == 'sub' and num == 1:
                 self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Sub 1-Digit')
         if mlevel == 'level3':
-            if type == 'add' and num == 1:
+            if mytype == 'add' and num == 1:
                 self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1')
-            if type == 'add' and num == 2:
+            if mytype == 'add' and num == 2:
                 self.chartTimesTries('a1', 'Add 1-Digit', 'start2', 'end2')
-            if type == 'sub' and num == 1:
+            if mytype == 'add' and num == 3:
+                order = ['+++', '+-+', '+--', '---']
+                self.ptypeProblemsStackedBar('a1', order)
+            if mytype == 'sub' and num == 1:
                 self.chartTimesTries('s1', 'Sub 1-Digit', 'start1', 'end1')
-            if type == 'sub' and num == 2:
+            if mytype == 'sub' and num == 2:
                 self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2')
+            if mytype == 'sub' and num == 3:
+                order = ['+-+', '+--', '---']
+                self.ptypeProblemsStackedBar('a1', order)
 
     def setWeekMax(self, qstr):
         print('-'*100)
@@ -588,19 +592,21 @@ class ChartAnalysis():
             'title1' : '',
             'title2' : '',
             'ylabel' : '',
-            'fname' : 'c01_%s_ProblemsStackedBar.png' % (type)
+            'fname' : 'title name not set'
         }
         return sbparams
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
-    def ptypeProblemsStackedBar(self, my_order, ptype):
+    def ptypeProblemsStackedBar(self, idlevel, my_order):
+        print('\n\n\n')
+        print('89'*20)
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
-                                                         self.wsplits['end2']) 
-        qstr += ' and (ptype == "%s")' % (ptype)
+                                                         self.wsplits['end2'])
+        qstr += ' and (idlevel == "%s")' % (idlevel)
         self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
-        sbparams['fname'] = 'c01_%s_ProblemTypeStackedBar.png' % (type)
+        sbparams['fname'] = 'c01_%s_ProblemTypeStackedBar.png' % (idlevel)
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
@@ -618,29 +624,29 @@ class ChartAnalysis():
             else:
                 sbparams['data1'][pt] = myseries
         if self.wkmax > 26:
-            sbparams['title1'] = '%s Problem Types Weeks 1-26' % (type)
+            sbparams['title1'] = '%s Problem Types Weeks 1-%d' % (idlevel, self.wkmax)
         else:
-            sbparams['title1'] = '%s Problem Types Weeks 1-%d' % (type, self.wkmax)
+            sbparams['title1'] = '%s Problem Types Weeks 1-26' % (idlevel)
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
             sbparams['start2'] = start
             sbparams['end2'] = end
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
-            for lvl in my_order:
+            for pt in my_order:
                 qstr = '(date_week >= %d & date_week < %d)' % (start, end)
-                qstr += ' and (idlevel in [ "%s" ])' % (lvl)
-                sbparams['data2'][lvl] = self.prbcountWeekData(qstr, start, end)
+                qstr += ' and (ptype == "%s")' % (pt)
+                sbparams['data2'][pt] = self.prbcountWeekData(qstr, start, end)
         self.plotStackedBar(sbparams)
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
-    def totalProblemsStackedBar(self, my_order, type):
+    def totalProblemsStackedBar(self, my_order, mytype):
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
-                                                         self.wsplits['end2']) 
+                                                         self.wsplits['end2'])
         self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
-        sbparams['fname'] = 'c01_%s_ProblemsStackedBar.png' % (type)
+        sbparams['fname'] = 'c01_%s_ProblemsStackedBar.png' % (mytype)
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
@@ -658,9 +664,9 @@ class ChartAnalysis():
             else:
                 sbparams['data1'][lvl] = myseries
         if self.wkmax > 26:
-            sbparams['title1'] = '%s Total Problems Weeks 1-%d' % (type, self.wkmax)
+            sbparams['title1'] = '%s Total Problems Weeks 1-%d' % (mytype, self.wkmax)
         else:
-            sbparams['title1'] = '%s Total Problems Weeks 1-26' % (type)
+            sbparams['title1'] = '%s Total Problems Weeks 1-26' % (mytype)
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
@@ -732,7 +738,7 @@ class ChartAnalysis():
             plt.show(block=False)
         print('\nchart completed & closed')
 
-    def chartTimesTries(self, idlevel, type, start_str, end_str):
+    def chartTimesTries(self, idlevel, mytype, start_str, end_str):
         print('def chartTimesTries(self, idlevel):')
         qstr = '(idlevel == "%s" )' % (idlevel)
         self.wkmax = self.dfc.query(qstr)['date_week'].max()
@@ -795,7 +801,7 @@ class ChartAnalysis():
         ax1.set_ylabel('seconds (std dev)', fontsize=8)
         ax1.errorbar(x, y, yerr=y_error, fmt='none', ecolor='r')
         ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
-        ax1.set_title('%s Avg Time to Right Answer (with std dev)' % (type), fontsize=8)
+        ax1.set_title('%s Avg Time to Right Answer (with std dev)' % (mytype), fontsize=8)
         ax1.invert_xaxis()
         x_axis = ax1.axes.get_xaxis()
         x_label = x_axis.get_label()
@@ -814,7 +820,7 @@ class ChartAnalysis():
         ax2.set_xlabel('week', fontsize=5)
         ax2.set_ylabel('tries', fontsize=8)
         ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
-        ax2.set_title('%s Avg Number of Tries to Right Answer' % (type), fontsize=8)
+        ax2.set_title('%s Avg Number of Tries to Right Answer' % (mytype), fontsize=8)
         ax2.invert_xaxis()
         x_axis = ax2.axes.get_xaxis()
         x_label = x_axis.get_label()
@@ -825,7 +831,7 @@ class ChartAnalysis():
         plt.figtext(0.13,0.43, hdr, fontsize=8, va="bottom", ha="left")
         fig.subplots_adjust(hspace=0.5)
         if self.save_flag == 'S' or self.save_flag == 'B':
-            fname = 'c03_%s_TimesTries.png' % (type)
+            fname = 'c03_%s_TimesTries.png' % (mytype)
             plt_path = self.output_charts / fname
             plt.savefig(str(plt_path))
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
@@ -916,7 +922,7 @@ class AnalysisMenus():
 
     def setMcounts(self):
         for key in self.mcounts.keys():
-            qstr = '(idlevel == "m1") and (ptype_m1 == "%s")' % (key)
+            qstr = '(idlevel == "m1") and (ptype == "%s")' % (key)
             c = self.dfm.query(qstr)['idproblem_count'].sum()
             self.mcounts[key] = c
 
@@ -1298,7 +1304,7 @@ def processAnalysis():
                             menu3 = False
                             lvl, choice = am.choiceLevel2Chart(lvl)
                             continue
-                        if choice == 1 or choice == 2:
+                        if choice == 1 or choice == 2 or choice == 3:
                             ca.processChartChoice('level3', lvl, choice)
                         print(lvl, choice, '---------F')
     print('\nAnalysis Complete')
