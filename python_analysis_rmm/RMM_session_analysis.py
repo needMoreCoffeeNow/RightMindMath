@@ -518,6 +518,9 @@ class ChartAnalysis():
             splits = {'start1':157, 'end1':183, 'start2':183, 'end2':209}
         if year == 4:
             splits = {'start1':209, 'end1':235, 'start2':235, 'end2':261}
+        print('&'*100)
+        print('splits')
+        print(splits)
         return splits
 
     def processChartChoice(self, mlevel, type, num):
@@ -546,18 +549,17 @@ class ChartAnalysis():
                 self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2')
 
     def setWeekMax(self, qstr):
-        self.wkmax = self.dfc.query('(idlevel == "a2")')['date_week'].max()
-        if qstr is None:
-            self.wkmax = self.dfc['date_week'].max()
-        else:
-            self.wkmax = self.dfc.query(qstr)['date_week'].max()
-
-    def prbcountWeekData(self, qstr, start, end):
-        print('n\n')
         print('-'*100)
         print(qstr)
         print('-'*100)
-        print('n\n')
+        self.wkmax = self.dfc.query(qstr)['date_week'].max()
+        print('&'*100)
+        print(self.wkmax, 'wkmax')
+
+    def prbcountWeekData(self, qstr, start, end):
+        print('-'*100)
+        print(qstr)
+        print('-'*100)
         # create a dict for making a df that has 26 weeks (no gaps)
         week_dict = {
             'date_week':list(range(start, end)),
@@ -591,8 +593,52 @@ class ChartAnalysis():
         return sbparams
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
+    def ptypeProblemsStackedBar(self, my_order, ptype):
+        # get the max week number for this year
+        qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
+                                                         self.wsplits['end2']) 
+        qstr += ' and (ptype == "%s")' % (ptype)
+        self.setWeekMax(qstr)
+        sbparams = self.getStackedBarParams()
+        sbparams['fname'] = 'c01_%s_ProblemTypeStackedBar.png' % (type)
+        start = self.wsplits['start1']
+        end = self.wsplits['end1']
+        sbparams['start1'] = start
+        sbparams['end1'] = end
+        if self.wkmax > 26:
+            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+        else:
+            sbparams['sbindex1'] = pd.RangeIndex(start, self.wkmax+1, name='week')
+        for pt in my_order:
+            qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+            qstr += ' and (ptype == "%s")' % (pt)
+            myseries = self.prbcountWeekData(qstr, start, end)
+            if self.wkmax < 26:
+                sbparams['data1'][pt] = myseries[:wkmax]
+            else:
+                sbparams['data1'][pt] = myseries
+        if self.wkmax > 26:
+            sbparams['title1'] = '%s Problem Types Weeks 1-26' % (type)
+        else:
+            sbparams['title1'] = '%s Problem Types Weeks 1-%d' % (type, self.wkmax)
+        if self.wkmax > 26:
+            start = self.wsplits['start2']
+            end = self.wsplits['end2']
+            sbparams['start2'] = start
+            sbparams['end2'] = end
+            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+            for lvl in my_order:
+                qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+                qstr += ' and (idlevel in [ "%s" ])' % (lvl)
+                sbparams['data2'][lvl] = self.prbcountWeekData(qstr, start, end)
+        self.plotStackedBar(sbparams)
+
+    # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def totalProblemsStackedBar(self, my_order, type):
-        self.setWeekMax(None)
+        # get the max week number for this year
+        qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
+                                                         self.wsplits['end2']) 
+        self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
         sbparams['fname'] = 'c01_%s_ProblemsStackedBar.png' % (type)
         start = self.wsplits['start1']
@@ -612,9 +658,9 @@ class ChartAnalysis():
             else:
                 sbparams['data1'][lvl] = myseries
         if self.wkmax > 26:
-            sbparams['title1'] = '%s Weekly Problems Month 1-26' % (type)
+            sbparams['title1'] = '%s Total Problems Weeks 1-%d' % (type, self.wkmax)
         else:
-            sbparams['title1'] = '%s Weekly Problems Month 1-%d' % (type, self.wkmax)
+            sbparams['title1'] = '%s Total Problems Weeks 1-26' % (type)
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
