@@ -1,6 +1,6 @@
 <p>Nothing says <b>I care about you learning math</b> more than becoming a Data Scientist (DS) whose focus is analyzing your child&#039;s progress in RMM.</p>
 
-<p>OK the statement above is hyperbole (exaggerated). But there is an element of truth to it. Also, if you are new to data analysis with Python, running the data science analysis process should be fun, enlightening, and egaginge for both you &amp; your child.</p>
+<p>OK the statement above is hyperbole (exaggerated). But there is an element of truth to it. Also, if you are new to data analysis with Python, running the data science analysis process should be fun, enlightening, and engaging for both you &amp; your child.</p>
 
 <p>If you are thinking "No Way!" you will be surprised. Thanks to some nice developers it is pretty easy to use Python for DS activities. RMM&#039;s simple analysis script is pretty powerful, and pretty (maybe even very) easy to run.</p>
 
