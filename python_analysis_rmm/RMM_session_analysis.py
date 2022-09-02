@@ -216,8 +216,12 @@ class ProcessJsonFile():
             my_df['idproblem'] = id_this
             dvars = rec['device_iduser'].split('_')
             my_df['device'] = dvars[0]
-            my_df['outlier'] = self.limits_time[idlevel] >= rec['time']
+            # set outlier boolean and record limit used
+            limit_this = int(rec['time']/1000)
+            my_df['outlier'] = self.limits_time[idlevel] < limit_this
             my_df['outlier_limit'] = self.limits_time[idlevel]
+            if my_df['outlier']:
+                print(limit_this, rec['time'], self.limits_time[idlevel], rec['r_str'])
 
             #tttttt
             dpct = randint(1,10)
@@ -403,7 +407,10 @@ class ChartAnalysis():
             print('1) Display Charts (do not save)')
             print('2) Display & Save Charts')
             print('3) Save Charts (do not display)')
-            print('[Return to Quit]')
+            print('[Return or Q to Quit]')
+            if choice.lower() == 'q':
+                print('\nGoodbye')
+                sys.exit(0)
             print('-'*50)
             if len(err_str) > 0:
                 print(err_str)
@@ -1157,9 +1164,12 @@ class FileHandler():
                 print('%d) %s' % (i, file))
                 ok.append(i)
                 i += 1
-            print('[Return to Quit]')
+            print('[Return or Q to Quit]')
             print('-'*50)
             choice = input('Enter the number of the file to use (1-%d):' % (i-1))
+            if choice.lower() == 'q':
+                print('\nGoodbye')
+                sys.exit(0)
             try:
                 choice = int(choice)
             except:
