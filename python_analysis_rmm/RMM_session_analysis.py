@@ -12,11 +12,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class ProcessJsonFile():
-    def __init__(self, root, input_file):
+    def __init__(self, root, json_file, limits_time):
         self.root = root
-        self.input_file = input_file
-        self.file_stem = input_file.stem
-        self.output_path = None # set to Path(root/output/input_file.stem
+        self.json_file = json_file
+        self.file_stem = json_file.stem
+        self.limits_time = limits_time
+        self.output_path = None # set to Path(root/output/json_file.stem
         self.week_first = 999999
         self.week_last = -1
         self.problems_d = {}
@@ -69,8 +70,8 @@ class ProcessJsonFile():
             'elapsed' : None,
             'total_time' : None,
             'total_tries' : None,
-            'outlier_max' : None,
-            'outlier_std' : None,
+            'outlier' : False,
+            'outlier_limit' : -1,
             'input_max' : None,
             'input_std' : None,
             'tstamp' : None,
@@ -93,7 +94,7 @@ class ProcessJsonFile():
         if not self.output_path.exists():
             self.output_path.mkdir()
             print('%s%s' % ('\n\n', '-'*50))
-            print('OUTPUT: results for %s' % (str(self.input_file)))
+            print('OUTPUT: results for %s' % (str(self.json_file)))
             print('will be saved in the following folder:')
             print('%s' % (str(self.output_path)))
             print('-'*50)
@@ -215,6 +216,8 @@ class ProcessJsonFile():
             my_df['idproblem'] = id_this
             dvars = rec['device_iduser'].split('_')
             my_df['device'] = dvars[0]
+            my_df['outlier'] = self.limits_time[idlevel] >= rec['time']
+            my_df['outlier_limit'] = self.limits_time[idlevel]
 
             #tttttt
             dpct = randint(1,10)
@@ -282,7 +285,7 @@ class ProcessJsonFile():
 
     def readFile(self):
         uniques = {}
-        with self.input_file.open() as f:
+        with self.json_file.open() as f:
             lines = f.readlines()
         self.file_stats['lines'] = len(lines)
         for line in lines:
@@ -389,7 +392,6 @@ class ChartAnalysis():
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.show = True #show plot on screen
         self.savePlt = False # save plt to a file
-        self.limits_time = {} # loaded from limits_time_default.txt file
 
     def setSaveFlag(self):
         ok = {1:'D', 2:'B', 3:'S'}
@@ -426,86 +428,6 @@ class ChartAnalysis():
         mypath.mkdir(exist_ok=True)
         return mypath
 
-    def parseTimeLimitsFile(self, limits_file):
-        keys_check = [ 'a1', 's1', 'm1', 'a2', 's2', 'a3', 's3', 'm2', 'd3' ]
-        myfile = self.root / 'parameters_limits' / limits_file
-        with myfile.open() as f:
-            lines = f.readlines()
-        i = 1
-        for line in lines:
-            vars = line.split('=')
-            if len(vars) != 2:
-                print('\nERROR in file at line: %d' % (i))
-                return False
-            try:
-                self.limits_time[vars[0]] = int(vars[1].rstrip())
-            except:
-                print('\nERROR in file at line: %d' % (i))
-                return False
-        for key in keys_check:
-            if not key in self.limits_time:
-                print('\nERROR: %s line is missing' % (key))
-                return False
-        print('\n\n%sTIME LIMITS%s' % ('-'*20, '-'*20))
-        print('The following time limits will be applied using file:')
-        print(str(myfile))
-        print('-'*10)
-        for key in keys_check:
-            print('%s = %d' % (key, self.limits_time[key]))
-        print('For more information refer to:')
-        print('%s\nin the folder: %s' % ('readme_for_limits_time.txt', str(myfile.parent)))
-        return True
-        
-
-    def getTimeLimits(self):
-        mypath = self.root / 'parameters_limits'
-        files_all = list(mypath.glob('*.txt'))
-        files = []
-        for fname in files_all:
-            if str(fname.name)[0:12] != 'limits_time_': continue
-            files.append(str(fname.name))
-        print('-'*50)
-        if len(files) == 0:
-            print('\n\nError: No limits_time_default.txt file was found.')
-            print('The files need to be in this folder:')
-            print(str(mypath))
-            print('Please download the following two files into the folder')
-            print('above:')
-            print('NEED URL FOR TIME_LIMITS')
-            print('NEED URL FOR limits readme')
-            print('\nRead the second (readme) file for more information.')
-            print('-'*50)
-            return False
-        if len(files) == 1:
-            if files[0] == 'limits_time_default.txt':
-                return self.parseTimeLimitsFile(files[0])
-        sorted(files)
-        print('\n\n%sCHOOSE TIME LIMITS FILE%s' % ('-'*13, '-'*14))
-        err_str = ''
-        while True:
-            ok = []
-            i = 1
-            if len(err_str) > 0:
-                print('-'*50)
-                print(err_str)
-                err_str = ''
-            for file in files:
-                print('%d) %s' % (i, file))
-                ok.append(i)
-                i += 1
-            ok_str = ', '.join([str(i) for i in ok])
-            choice = input('Enter the number of the file to use (%s):' % (ok_str))
-            try:
-                choice = int(choice)
-            except:
-                err_str = 'Please enter an integer value'
-                continue
-            if not choice in ok:
-                err_str = 'Please limit entry to numbers shown'
-                continue
-            print('-'*50)
-            return self.parseTimeLimitsFile(files[choice-1])
-
     def getWeekSplits(self, year):
         splits = {}
         if year == 1:
@@ -534,6 +456,8 @@ class ChartAnalysis():
         if mlevel == 'level2':
             if mytype == 'add' and num == 1:
                 self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
+            if mytype == 'add' and num == 2:
+                self.outlierProblemsBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
             if mytype == 'sub' and num == 1:
                 self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Sub 1-Digit')
         if mlevel == 'level3':
@@ -553,17 +477,11 @@ class ChartAnalysis():
                 self.ptypeProblemsStackedBar('a1', order)
 
     def setWeekMax(self, qstr):
-        print('-'*100)
-        print(qstr)
-        print('-'*100)
         self.wkmax = self.dfc.query(qstr)['date_week'].max()
         print('&'*100)
         print(self.wkmax, 'wkmax')
 
     def prbcountWeekData(self, qstr, start, end):
-        print('-'*100)
-        print(qstr)
-        print('-'*100)
         # create a dict for making a df that has 26 weeks (no gaps)
         week_dict = {
             'date_week':list(range(start, end)),
@@ -637,6 +555,46 @@ class ChartAnalysis():
                 qstr = '(date_week >= %d & date_week < %d)' % (start, end)
                 qstr += ' and (ptype == "%s")' % (pt)
                 sbparams['data2'][pt] = self.prbcountWeekData(qstr, start, end)
+        self.plotStackedBar(sbparams)
+
+    # 1-26 & 27-52 week bar showing outlier count of problems by idlevel
+    def totalProblemsStackedBar(self, my_order, mytype):
+        # get the max week number for this year
+        qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
+                                                         self.wsplits['end2'])
+        self.setWeekMax(qstr)
+        sbparams = self.getStackedBarParams()
+        sbparams['fname'] = 'c01_%s_ProblemsStackedBar.png' % (mytype)
+        start = self.wsplits['start1']
+        end = self.wsplits['end1']
+        sbparams['start1'] = start
+        sbparams['end1'] = end
+        if self.wkmax > 26:
+            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+        else:
+            sbparams['sbindex1'] = pd.RangeIndex(start, self.wkmax+1, name='week')
+        for lvl in my_order:
+            qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+            qstr += ' and (idlevel in [ "%s" ])' % (lvl)
+            myseries = self.prbcountWeekData(qstr, start, end)
+            if self.wkmax < 26:
+                sbparams['data1'][lvl] = myseries[:wkmax]
+            else:
+                sbparams['data1'][lvl] = myseries
+        if self.wkmax > 26:
+            sbparams['title1'] = '%s Total Problems Weeks 1-%d' % (mytype, self.wkmax)
+        else:
+            sbparams['title1'] = '%s Total Problems Weeks 1-26' % (mytype)
+        if self.wkmax > 26:
+            start = self.wsplits['start2']
+            end = self.wsplits['end2']
+            sbparams['start2'] = start
+            sbparams['end2'] = end
+            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+            for lvl in my_order:
+                qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+                qstr += ' and (idlevel in [ "%s" ])' % (lvl)
+                sbparams['data2'][lvl] = self.prbcountWeekData(qstr, start, end)
         self.plotStackedBar(sbparams)
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
@@ -872,40 +830,6 @@ class ChartAnalysis():
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
 
-def getInputFile(path_inputs):
-    files = list(path_inputs.glob('*.txt'))
-    if len(files) == 0:
-        print('\n\nError: No downloaded .txt files were found')
-        print('Please use the RightMindMath app to export a file.')
-        print('Be sure you save it in the inputs folder located in')
-        print('the same folder as this Python (.py) file.')
-        return ''
-    sorted(files)
-    myfiles = []
-    for file in files:
-        myfiles.append(file.name)
-    # exit loop by entering number or Return to exit
-    while True:
-        ok = []
-        i = 1
-        print('\n\n%sCHOOSE INPUT FILE%s' % ('-'*10, '-'*10))
-        for file in myfiles:
-            print('%d) %s' % (i, file))
-            ok.append(i)
-            i += 1
-        print('[Return to Quit]')
-        print('-'*50)
-        choice = input('Enter the number of the file to use (1-%d):' % (i-1))
-        try:
-            choice = int(choice)
-        except:
-            return True, None
-        if choice in ok:
-            return False, files[choice-1]
-        print('%s%s' % ('\n', '-'*50))
-        print('Please limit entry to numbers shown')
-        print('-'*50)
-
 class AnalysisMenus():
     def __init__(self, dframe_in, week_last):
         self.dfm = dframe_in;
@@ -1007,16 +931,17 @@ class AnalysisMenus():
         order = ['add', 'sub', 'm1', 'm2', 'd3']
         choices = {
             'add' : [['1) Yearly Problems by Type', '(12 mns)', 'add', 'year'],
-                     ['2) 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1'],
-                     ['3) 2-Digit Analyses', '(6 mns)', 'a2', 'months', 'a2'],
-                     ['4) 3-Digit Analyses', '(6 mns)', 'a3', 'months', 'a3']],
+                     ['2) Outliers Yearly by Type', '(12 mns)', 'add', 'year'],
+                     ['3) 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1'],
+                     ['4) 2-Digit Analyses', '(6 mns)', 'a2', 'months', 'a2'],
+                     ['5) 3-Digit Analyses', '(6 mns)', 'a3', 'months', 'a3']],
             'sub' : [['1) Yearly Problems by Type', '(12 mns)', 'add', 'year'],
                      ['2) 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1'],
                      ['3) 2-Digit Analyses', '(6 mns)', 'a2', 'months', 'a2'],
                      ['4) 3-Digit Analyses', '(6 mns)', 'a3', 'months', 'a3']]
         }
         ok_list = {
-            'add':[1, 2, 3, 4],
+            'add':[1, 2, 3, 4, 5],
             'sub':[1, 2, 3, 4],
             'm1':[],
             'm2':[],
@@ -1205,6 +1130,126 @@ class AnalysisMenus():
             self.year = choice
             return
 
+class FileHandler():
+    def __init__(self, root):
+        self.root = root
+        self.json_file = None
+        self.limits_time = {} # loaded from limits_time_default.txt file
+
+    def getInputFile(self, path_inputs):
+        files = list(path_inputs.glob('*.txt'))
+        if len(files) == 0:
+            print('\n\nError: No downloaded .txt files were found')
+            print('Please use the RightMindMath app to export a file.')
+            print('Be sure you save it in the inputs folder located in')
+            print('the same folder as this Python (.py) file.')
+            return ''
+        sorted(files)
+        myfiles = []
+        for file in files:
+            myfiles.append(file.name)
+        # exit loop by entering number or Return to exit
+        while True:
+            ok = []
+            i = 1
+            print('\n\n%sCHOOSE INPUT FILE%s' % ('-'*10, '-'*10))
+            for file in myfiles:
+                print('%d) %s' % (i, file))
+                ok.append(i)
+                i += 1
+            print('[Return to Quit]')
+            print('-'*50)
+            choice = input('Enter the number of the file to use (1-%d):' % (i-1))
+            try:
+                choice = int(choice)
+            except:
+                return True
+            if choice in ok:
+                self.json_file = files[choice-1]
+                return False
+            print('%s%s' % ('\n', '-'*50))
+            print('Please limit entry to numbers shown')
+            print('-'*50)
+
+    def getTimeLimits(self):
+        mypath = self.root / 'parameters_limits'
+        files_all = list(mypath.glob('*.txt'))
+        files = []
+        for fname in files_all:
+            if str(fname.name)[0:12] != 'limits_time_': continue
+            files.append(str(fname.name))
+        print('-'*50)
+        if len(files) == 0:
+            print('\n\nError: No limits_time_default.txt file was found.')
+            print('The files need to be in this folder:')
+            print(str(mypath))
+            print('Please download the following two files into the folder')
+            print('above:')
+            print('NEED URL FOR TIME_LIMITS')
+            print('NEED URL FOR limits readme')
+            print('\nRead the second (readme) file for more information.')
+            print('-'*50)
+            return False
+        if len(files) == 1:
+            if files[0] == 'limits_time_default.txt':
+                return self.parseTimeLimitsFile(files[0])
+        sorted(files)
+        print('\n\n%sCHOOSE TIME LIMITS FILE%s' % ('-'*13, '-'*14))
+        err_str = ''
+        while True:
+            ok = []
+            i = 1
+            if len(err_str) > 0:
+                print('-'*50)
+                print(err_str)
+                err_str = ''
+            for file in files:
+                print('%d) %s' % (i, file))
+                ok.append(i)
+                i += 1
+            ok_str = ', '.join([str(i) for i in ok])
+            choice = input('Enter the number of the file to use (%s):' % (ok_str))
+            try:
+                choice = int(choice)
+            except:
+                err_str = 'Please enter an integer value'
+                continue
+            if not choice in ok:
+                err_str = 'Please limit entry to numbers shown'
+                continue
+            print('-'*50)
+            return self.parseTimeLimitsFile(files[choice-1])
+
+    def parseTimeLimitsFile(self, limits_file):
+        keys_check = [ 'a1', 's1', 'm1', 'a2', 's2', 'a3', 's3', 'm2', 'd3' ]
+        myfile = self.root / 'parameters_limits' / limits_file
+        with myfile.open() as f:
+            lines = f.readlines()
+        i = 1
+        for line in lines:
+            vars = line.split('=')
+            if len(vars) != 2:
+                print('\nERROR in file at line: %d' % (i))
+                return False
+            try:
+                self.limits_time[vars[0]] = int(vars[1].rstrip())
+            except:
+                print('\nERROR in file at line: %d' % (i))
+                return False
+        for key in keys_check:
+            if not key in self.limits_time:
+                print('\nERROR: %s line is missing' % (key))
+                return False
+        print('\n\n%sTIME LIMITS%s' % ('-'*20, '-'*20))
+        print('The following time limits will be applied using file:')
+        print(str(myfile))
+        print('-'*10)
+        for key in keys_check:
+            print('%s = %d' % (key, self.limits_time[key]))
+        print('For more information refer to:')
+        print('%s\nin the folder: %s' % ('readme_for_limits_time.txt', str(myfile.parent)))
+        return True
+
 def processAnalysis():    
     root = Path(Path().resolve())
     print(str(root))
@@ -1229,6 +1274,7 @@ def processAnalysis():
         print(str(output))
         print('-'*50)
     first = True
+    fh = FileHandler(root)
     while True:
         if not first:
             print('-'*50)
@@ -1240,11 +1286,14 @@ def processAnalysis():
                 print('\nGoodbye')
                 return
         first = False
-        exit, input_file = getInputFile(path_inputs)
+        exit = fh.getInputFile(path_inputs)
         if exit:
             print('\nGoodbye')
             return
-        pjf = ProcessJsonFile(root, input_file)
+        if not fh.getTimeLimits():
+            print('\nGoodbye')
+            return
+        pjf = ProcessJsonFile(root, fh.json_file, fh.limits_time)
         pjf.readFile()
         pjf.processLines()
         pjf.createOutputSubfolder(output)
@@ -1265,9 +1314,6 @@ def processAnalysis():
         am.setIdlevelCounts() # must follow getLevelsCount()
         ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path)
         ca.setSaveFlag()
-        if not ca.getTimeLimits():
-            print('\nGoodbye')
-            return
         menu_top = True
         while menu_top:
             c_top = am.choiceTopMenu()
@@ -1288,13 +1334,13 @@ def processAnalysis():
                 if choice == 0:
                     menu2 = False
                     continue
-                if choice == 1: # yearly totals stacked bar chart
+                if choice == 1 or choice == 2: # yearly totals stacked bar chart
                     ca.processChartChoice('level2', lvl, choice)
                     print('---------C')
                     lvl, choice = am.choiceLevel2Chart(lvl)
                     print(lvl, choice, '---------C')
                     continue
-                if choice == 2: # single digit add/sub/mul
+                if choice == 3: # single digit add/sub/mul
                     menu3 = True
                     while menu3:
                         print('---------D')
