@@ -1,6 +1,6 @@
 <p><span style="font-size:75%;">Note: all video links open a new window.</span></p>
 
-<p>Start subtraction after you child has mastered addition levels a1, a2, &amp; a3 <span style="font-size:90%;">(1 thru 3 digit additions)</span>. Subtraction introduces both the concept of negative numbers &amp; the relatively complex process of borrowing <span style="font-size:90%;">(compared to addition&#039;s carries).</span></p>
+<p>Start subtraction after you child has mastered addition levels a1, a2, &amp; a3 <span style="font-size:90%;">(1 thru 3 digit additions)</span>. Subtraction involves both the concept of negative numbers &amp; the relatively complex process of borrowing <span style="font-size:90%;">(compared to addition&#039;s carries).</span></p>
 
 <hr>
 
