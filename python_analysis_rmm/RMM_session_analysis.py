@@ -143,6 +143,7 @@ class ProcessJsonFile():
                 my_df['ptype'] = ptype
             if idlevel == 'm1':
                 my_df['chunk_count'] = int(parts[4])
+                ptype = 'm1.%d' % (my_df['op1'])
             else:
                 my_df['chunk_count'] = int(parts[3])
         else:
@@ -254,8 +255,6 @@ class ProcessJsonFile():
             limit_this = int(rec['time']/1000)
             my_df['outlier'] = self.limits_time[idlevel] < limit_this
             my_df['outlier_limit'] = self.limits_time[idlevel]
-            if my_df['outlier']:
-                print(my_df['date_week'], limit_this, rec['time'], self.limits_time[idlevel], rec['r_str'])
             # transfer all one-to-one named variables from rec to my_df
             for key, val in rec.items():
                 if key in my_df:
@@ -468,6 +467,8 @@ class ChartAnalysis():
                 self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
             if mytype == 'sub' and num == 1:
                 self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Sub 1-Digit')
+            if mytype == 'm1' and num == 1:
+                self.m1ProblemsStackedBar()
         if mlevel == 'level3':
             if mytype == 'add' and num == 1:
                 self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1')
@@ -523,6 +524,50 @@ class ChartAnalysis():
             'fname' : 'title name not set'
         }
         return sbparams
+
+    # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
+    def m1ProblemsStackedBar(self):
+        print('\n\n\n')
+        print('89'*20)
+        myorder = [2, 3, 4, 5, 6, 7, 8, 9]
+        # get the max week number for this year
+        qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
+                                                         self.wsplits['end2'])
+        qstr += ' and (idlevel == "%s")' % (idlevel)
+        self.setWeekMax(qstr)
+        sbparams = self.getStackedBarParams()
+        sbparams['fname'] = 'c01_%s_ProblemTypeStackedBar.png' % (idlevel)
+        start = self.wsplits['start1']
+        end = self.wsplits['end1']
+        sbparams['start1'] = start
+        sbparams['end1'] = end
+        if self.wkmax > 26:
+            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+        else:
+            sbparams['sbindex1'] = pd.RangeIndex(start, self.wkmax+1, name='week')
+        for num in my_order:
+            qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+            qstr += ' and (ptype == "m1.%d")' % (num)
+            myseries = self.prbcountWeekData(qstr, start, end)
+            if self.wkmax < 26:
+                sbparams['data1'][pt] = myseries[:wkmax]
+            else:
+                sbparams['data1'][pt] = myseries
+        if self.wkmax > 26:
+            sbparams['title1'] = '%s M1 Problems Weeks 1-%d' % (idlevel, self.wkmax)
+        else:
+            sbparams['title1'] = '%s M1 Problems Weeks 1-26' % (idlevel)
+        if self.wkmax > 26:
+            start = self.wsplits['start2']
+            end = self.wsplits['end2']
+            sbparams['start2'] = start
+            sbparams['end2'] = end
+            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+            for pt in my_order:
+                qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+                qstr += ' and (ptype == "%s")' % (pt)
+                sbparams['data2'][pt] = self.prbcountWeekData(qstr, start, end)
+        self.plotStackedBar(sbparams)
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def ptypeProblemsStackedBar(self, idlevel, my_order):
@@ -708,6 +753,7 @@ class ChartAnalysis():
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
+            plt.show()
         print('\nchart completed & closed')
 
     def chartTimesTries(self, idlevel, mytype, start_str, end_str):
@@ -809,6 +855,7 @@ class ChartAnalysis():
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
+            plt.show()
         print('\nchart completed & closed')
 
 
@@ -843,6 +890,7 @@ class ChartAnalysis():
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
+            plt.show()
 
 class AnalysisMenus():
     def __init__(self, dframe_in, week_last):
@@ -939,7 +987,7 @@ class AnalysisMenus():
                 self.levels[mylevel]['weeks'] += mycount
 
     def choiceLevel2Chart(self, idchoice):
-        print('choiceLevel2Chart')
+        print('choiceLevel2Chart', idchoice, '=idchoice')
         titles = {'add':'ADDITION', 'sub':'SUBTRACTION', 'm1':'MULTIPLY 1-Digit',
                   'm2':'MULTIPLY 2-Digits', 'd3':'LONG DIVISION'}
         order = ['add', 'sub', 'm1', 'm2', 'd3']
@@ -951,12 +999,14 @@ class AnalysisMenus():
             'sub' : [['1) Yearly Problems by Type', '(12 mns)', 'add', 'year'],
                      ['2) 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1'],
                      ['3) 2-Digit Analyses', '(6 mns)', 'a2', 'months', 'a2'],
-                     ['4) 3-Digit Analyses', '(6 mns)', 'a3', 'months', 'a3']]
+                     ['4) 3-Digit Analyses', '(6 mns)', 'a3', 'months', 'a3']],
+            'm1' : [['1) Yearly Problems by Digit', '(12 mns)', 'm1', 'year'],
+                    ['2) 2-9 Problem Times & Tries', '(12 mns)', 'm1', 'year', 'm1']]
         }
         ok_list = {
             'add':[1, 2, 3, 4],
             'sub':[1, 2, 3, 4],
-            'm1':[],
+            'm1':[1,2],
             'm2':[],
             'd3':[]}
         ok = ok_list[idchoice]
@@ -1046,7 +1096,7 @@ class AnalysisMenus():
             return idlevel, choice
 
     def choiceTopMenu(self):
-        ok = [1, 2, 3, 4, 5, 6, 7]
+        ok = [1, 2, 3, 4, 5, 6, 7, 8]
         ok_str = ', '.join([str(i) for i in ok])
         err_str = ''
         order = ['t01', 't02', 't03', 'add', 'sub', 'm1', 'm2', 'd3']
@@ -1054,11 +1104,11 @@ class AnalysisMenus():
             't01':['1) Yearly Problems Done by Type', '(12 mns)', 'tot', 'year'],
             't02':['2) Outliers Yearly by Type', '(12 mns)', 'tot', 'year'],
             't03':['3) Lifetime Total by Device', '(all mns)', 'all', 'count'],
-            'add':['3) Addition Menu', '(6 mns)', 'add', 'months'],
-            'sub':['4) Subtraction Menu', '(6 mns)', 'sub', 'months'],
-            'm1':['5) Multiply 1-digit Menu', '(6 mns)', 'm1', 'months'],
-            'm2':['6) Multiply 2-digit Menu', '(6 mns)', 'm2', 'months'],
-            'd3':['7) Long Division Menu', '(6 mns)', 'd3', 'months']
+            'add':['4) Addition Menu', '(6 mns)', 'add', 'months'],
+            'sub':['5) Subtraction Menu', '(6 mns)', 'sub', 'months'],
+            'm1':['6) Multiply 1-digit Menu', '(6 mns)', 'm1', 'months'],
+            'm2':['7) Multiply 2-digit Menu', '(6 mns)', 'm2', 'months'],
+            'd3':['8) Long Division Menu', '(6 mns)', 'd3', 'months']
         }
         lmax = 0
         nmax = len(str(self.counts['all']['count']))
