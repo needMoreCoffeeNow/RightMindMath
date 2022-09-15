@@ -757,10 +757,10 @@ var RMM_MENU = (function() {
         console.log('subnegPdataUpdate(ev)');
         var subneg_str = mydoc.getElementById('div_subneg_val').innerHTML;
         var subneg_num = subneg_str.split(' ')[0];
-        var addtopneg_str = mydoc.getElementById('div_subtopneg_val').innerHTML;
-        var addtopneg_num = addtopneg_str.split(' ')[0];
+        var subtopneg_str = mydoc.getElementById('div_subtopneg_val').innerHTML;
+        var subtopneg_num = subtopneg_str.split(' ')[0];
         pdata.subneg_pct = subneg_num;
-        pdata.subtopneg_pct = addtopneg_num;
+        pdata.subtopneg_pct = subtopneg_num;
         checkProblemStart();
     }
 
@@ -790,6 +790,9 @@ var RMM_MENU = (function() {
         txt += '  (' + pct + '%)';
         if (type === 'subneg') {
             mydoc.getElementById('div_subneg_val').innerHTML = txt;
+        }
+        if (type === 'subtopneg') {
+            mydoc.getElementById('div_subtopneg_val').innerHTML = txt;
         }
     }
     // handle subborrow yes/nor click

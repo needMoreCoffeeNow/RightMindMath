@@ -1220,9 +1220,11 @@ var RMM_ASM = (function() {
             if (total_problems > 0) {
                 neg_prob = (s1_neg_problems / total_problems) < subneg_pct;
             } else {
-                neg_prob = myrand <= subneg_pct;
+                neg_prob = myrand < subneg_pct;
             }
         }
+        // final override for 100% negatives
+        if (subneg_pct === 1 || subtopneg_pct === 1) { neg_prob = true; }
         if (neg_prob) {
             while (neg_needed) {
                 probColumnSetRandValue(2, 0, 10);
@@ -1332,7 +1334,7 @@ var RMM_ASM = (function() {
             pct_total = parseFloat(a1_neg_problems / total_problems, 10);
         }
         // exit if too many addneg problems already unless in printmode
-        if (!printmode && pct_total >= addneg_pct) { return; }
+        if (!printmode && pct_total > addneg_pct) { return; }
         // check if random percentage is below user set percentage
         if (addneg_pct < rand) { return;}
         // avoid -0 which causes logic to fail
@@ -1779,7 +1781,7 @@ var RMM_ASM = (function() {
 
     // show/hide row2 (answer) in ASM grid: if grid box has value show/hide it
     function layoutToggleRow2Visibility(show, columns) {
-        console.error('layoutToggleRow2Visibility(show)', show, columns);
+        console.log('layoutToggleRow2Visibility(show)', show, columns);
         if (!show) {
             mydoc.getElementById('asm_num_20').style.display = 'none';
             mydoc.getElementById('asm_num_21').style.display = 'none';
@@ -2232,11 +2234,11 @@ var RMM_ASM = (function() {
         }
         if (pdata.module === 's') {
             subborrow = pdata.subborrow;
+            subneg_pct = parseFloat(pdata.subneg_pct / 10, 10);
+            subtopneg_pct = parseFloat(pdata.subtopneg_pct / 10, 10);
             if (pdata.digits === 1) { levelS1Init(); }
             if (pdata.digits === 2) { levelS2Init(); }
             if (pdata.digits === 3) { levelS3Init(); }
-            subneg_pct = parseFloat(pdata.subneg_pct / 10, 10);
-            subtopneg_pct = parseFloat(pdata.subtopneg_pct / 10, 10);
         }
         if (pdata.module === 'm') {
             m1_digit = pdata.m1_digit;
