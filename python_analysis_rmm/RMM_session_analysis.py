@@ -161,10 +161,7 @@ class ProcessJsonFile():
                 my_df['op'] = 'x'
         if idlevel == 'm1':
             my_df['ordered'] = parts[2] == 'true'
-            if my_df['ordered']:
-                my_df['ptype'] = '%s%s' % (str(my_df['op1']), 'o')
-            else:
-                my_df['ptype'] = '%s%s' % (str(my_df['op1']), 'r')
+            my_df['ptype'] = 'm1.%s' % (str(my_df['op1']))
         if my_df['op1'] < 0: my_df['neg_op1'] = 1
         if my_df['op2'] < 0: my_df['neg_op2'] = 1
         if my_df['answer'] < 0: my_df['neg_ans'] = 1
@@ -536,14 +533,14 @@ class ChartAnalysis():
     def m1ProblemsStackedBar(self):
         print('\n\n\n')
         print('89'*20)
-        myorder = [2, 3, 4, 5, 6, 7, 8, 9]
+        my_order = [2, 3, 4, 5, 6, 7, 8, 9]
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
                                                          self.wsplits['end2'])
-        qstr += ' and (idlevel == "%s")' % (idlevel)
+        qstr += ' and (idlevel == "m1")'
         self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
-        sbparams['fname'] = 'c01_%s_ProblemTypeStackedBar.png' % (idlevel)
+        sbparams['fname'] = 'c01_m1_ProblemTypeStackedBar.png'
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
@@ -557,13 +554,13 @@ class ChartAnalysis():
             qstr += ' and (ptype == "m1.%d")' % (num)
             myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
-                sbparams['data1'][pt] = myseries[:wkmax]
+                sbparams['data1'][num] = myseries[:wkmax]
             else:
-                sbparams['data1'][pt] = myseries
+                sbparams['data1'][num] = myseries
         if self.wkmax > 26:
-            sbparams['title1'] = '%s M1 Problems Weeks 1-%d' % (idlevel, self.wkmax)
+            sbparams['title1'] = 'M1 Problems Weeks 1-%d' % (self.wkmax)
         else:
-            sbparams['title1'] = '%s M1 Problems Weeks 1-26' % (idlevel)
+            sbparams['title1'] = 'M1 Problems Weeks 1-26'
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
@@ -572,7 +569,7 @@ class ChartAnalysis():
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
             for pt in my_order:
                 qstr = '(date_week >= %d & date_week < %d)' % (start, end)
-                qstr += ' and (ptype == "%s")' % (pt)
+                qstr += ' and (ptype == "m1.%d")' % (num)
                 sbparams['data2'][pt] = self.prbcountWeekData(qstr, start, end)
         self.plotStackedBar(sbparams)
 
