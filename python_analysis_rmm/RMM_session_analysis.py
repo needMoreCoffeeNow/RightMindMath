@@ -386,9 +386,10 @@ class ProcessJsonFile():
         print('-'*50)
 
 class ChartAnalysis():
-    def __init__(self, dframe_in, year, root, output_path):
+    def __init__(self, dframe_in, year, root, output_path, limits_time):
         self.root = root
         self.dfc = dframe_in
+        self.limits_time = limits_time
         self.save_flag = 'D' # D=display only, B=display & save S=save only
         self.output_charts = self.setOutputCharts(output_path)
         self.year = year
@@ -477,6 +478,9 @@ class ChartAnalysis():
             if mytype == 'add' and num == 3:
                 order = ['+++', '+-+', '+--', '---']
                 self.ptypeProblemsStackedBar('a1', order)
+            if mytype == 'add' and num == 4:
+                order = ['a1']
+                self.outlierProblemsStackedBar(order, 'a1')
             if mytype == 'sub' and num == 1:
                 self.chartTimesTries('s1', 'Sub 1-Digit', 'start1', 'end1')
             if mytype == 'sub' and num == 2:
@@ -484,6 +488,9 @@ class ChartAnalysis():
             if mytype == 'sub' and num == 3:
                 order = ['+-+', '+--', '---']
                 self.ptypeProblemsStackedBar('a1', order)
+            if mytype == 'sub' and num == 4:
+                order = ['s1']
+                self.outlierProblemsStackedBar(order, 's1')
 
     def setWeekMax(self, qstr):
         self.wkmax = self.dfc.query(qstr)['date_week'].max()
@@ -614,6 +621,8 @@ class ChartAnalysis():
 
     # 1-26 & 27-52 week bar showing outlier count of problems by idlevel
     def outlierProblemsStackedBar(self, my_order, mytype):
+        print('\noutlierProblemsStackedBar')
+        print(my_order)
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
                                                          self.wsplits['end2'])
@@ -632,6 +641,7 @@ class ChartAnalysis():
             qstr = '(date_week >= %d & date_week < %d)' % (start, end)
             qstr += ' and (idlevel in [ "%s" ])' % (lvl)
             qstr += ' and (outlier == True)'
+            print(qstr)
             myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
                 sbparams['data1'][lvl] = myseries[:wkmax]
@@ -753,7 +763,7 @@ class ChartAnalysis():
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
-            plt.show()
+            #plt.show()
         print('\nchart completed & closed')
 
     def chartTimesTries(self, idlevel, mytype, start_str, end_str):
@@ -855,7 +865,6 @@ class ChartAnalysis():
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
-            plt.show()
         print('\nchart completed & closed')
 
 
@@ -890,7 +899,6 @@ class ChartAnalysis():
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
-            plt.show()
 
 class AnalysisMenus():
     def __init__(self, dframe_in, week_last):
@@ -1379,7 +1387,7 @@ def processAnalysis():
         am.getLevelsCount() 
         am.setMcounts()
         am.setIdlevelCounts() # must follow getLevelsCount()
-        ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path)
+        ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path, fh.limits_time)
         ca.setSaveFlag()
         menu_top = True
         while menu_top:
@@ -1401,13 +1409,13 @@ def processAnalysis():
                 if choice == 0:
                     menu2 = False
                     continue
-                if choice == 1 or choice == 2: # yearly totals stacked bar chart
+                if choice == 1: # yearly totals stacked bar chart
                     ca.processChartChoice('level2', lvl, choice)
                     print('---------C')
                     lvl, choice = am.choiceLevel2Chart(lvl)
                     print(lvl, choice, '---------C')
                     continue
-                if choice == 3: # single digit add/sub/mul
+                if choice == 2: # single digit add/sub/mul
                     menu3 = True
                     while menu3:
                         print('---------D')
@@ -1417,7 +1425,7 @@ def processAnalysis():
                             menu3 = False
                             lvl, choice = am.choiceLevel2Chart(lvl)
                             continue
-                        if choice == 1 or choice == 2 or choice == 3:
+                        if choice in [1, 2, 3, 4]:
                             ca.processChartChoice('level3', lvl, choice)
                         print(lvl, choice, '---------F')
     print('\nAnalysis Complete')
