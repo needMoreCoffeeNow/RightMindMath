@@ -46,7 +46,6 @@ class ProcessJsonFile():
             'neg_op2' : None,
             'neg_ans' : None,
             'ordered' : None,
-            'm2_basic' : None,
             'ans_elapsed_01' : None,
             'ans_elapsed_12' : None,
             'ans_elapsed_23' : None,
@@ -117,15 +116,27 @@ class ProcessJsonFile():
 
     def parseRstr(self, r_str, tstamp, time):
         my_df = self.rec_df.copy()
-        not_asm = {'d3':True, 'm2':True}
+        not_asm = {'d3':True, 'm2':True, 'm2b':True, 'm2c':True}
         parts = r_str.split('^')
         vars = parts[0].split('.')
         # strip the b/c from M2b M2c
         my_df['idlevel_rstr'] = vars[0]
         idlevel = vars[0][0:2]
-        if (idlevel == 'm2'):
-            my_df['m2_basic'] = vars[0][2:3] == 'b'
-        if not idlevel in not_asm: # == a1, a2, a3, s1, s2, s3, m1 problem
+        if idlevel in not_asm:
+            my_df['ptype'] = my_df['idlevel_rstr']
+            if idlevel == 'd3':
+                vars = parts[1].split('/')
+                my_df['op1'] = int(vars[0])
+                my_df['op2'] = int(vars[1])
+                my_df['answer'] = float(my_df['op1']) / float(my_df['op2'])
+                my_df['op'] = '/'
+            else:
+                vars = parts[1].split('x')
+                my_df['op1'] = int(vars[0])
+                my_df['op2'] = int(vars[1])
+                my_df['answer'] = my_df['op1'] * my_df['op2']
+                my_df['op'] = 'x'
+        else: # == a1, a2, a3, s1, s2, s3, m1 problem
             my_df['steps_total'] = int(vars[1])
             my_df['steps_count'] = int(vars[2]) + 1 # change to 1=start index
             vars = parts[1].split('|')
@@ -146,19 +157,6 @@ class ProcessJsonFile():
                 ptype = 'm1.%d' % (my_df['op1'])
             else:
                 my_df['chunk_count'] = int(parts[3])
-        else:
-            if idlevel == 'd3':
-                vars = parts[1].split('/')
-                my_df['op1'] = int(vars[0])
-                my_df['op2'] = int(vars[1])
-                my_df['answer'] = float(my_df['op1']) / float(my_df['op2'])
-                my_df['op'] = '/'
-            else:
-                vars = parts[1].split('x')
-                my_df['op1'] = int(vars[0])
-                my_df['op2'] = int(vars[1])
-                my_df['answer'] = my_df['op1'] * my_df['op2']
-                my_df['op'] = 'x'
         if idlevel == 'm1':
             my_df['ordered'] = parts[2] == 'true'
             my_df['ptype'] = 'm1.%s' % (str(my_df['op1']))
@@ -389,6 +387,8 @@ class ChartAnalysis():
         self.limits_time = limits_time
         self.save_flag = 'D' # D=display only, B=display & save S=save only
         self.output_charts = self.setOutputCharts(output_path)
+        self.m1_ordered = {}
+        self.m2_basic_chunk = {}
         self.year = year
         self.wsplits = self.getWeekSplits(year)
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
@@ -443,16 +443,91 @@ class ChartAnalysis():
             splits = {'start1':157, 'end1':183, 'start2':183, 'end2':209}
         if year == 4:
             splits = {'start1':209, 'end1':235, 'start2':235, 'end2':261}
-        print('&'*100)
-        print('splits')
-        print(splits)
         return splits
 
+    def getM2BasicChunkSplits(self):
+        order = ['all', 'm2b', 'm2c']
+        for type in order:
+            wk_basicchunk = {}
+            for x in range(self.wsplits['start1'], self.wsplits['end2']):
+                wk_basicchunk[x] = [0, 0]
+            self.m2_basic_chunk[type] = wk_basicchunk
+        qstr = '(date_week >= %d & date_week < %d)' % (self.wsplits['start1'],
+                                                       self.wsplits['end2'])
+        qstr += ' and (ptype in ["m2b", "m2c"])'
+        temp = self.dfc.query(qstr).groupby(['date_week', 'ptype'])['idproblem_count'].sum()
+        for k,v in sorted(temp.items()):
+            index = k[0]
+            pt = k[1]
+            apos = 0 if pt == 'm2b' else 1
+            self.m2_basic_chunk['all'][index][apos] += v
+            self.m2_basic_chunk[pt][index][apos] += v
+        for pt, weeks in self.m2_basic_chunk.items():
+            for week, val in weeks.items():
+                basic = val[0]
+                chunk = val[1]
+                if basic == 0 and chunk == 0:
+                    pct = 0.0
+                else:
+                    if chunk == 0:
+                        pct = 100.0
+                    else:
+                        pct = round(basic / (basic + chunk), 2) * 100.0
+                self.m2_basic_chunk[pt][week] = [basic, chunk, pct]
+
+    def getM2BasicChunkPctDF(self, type, start, end):
+        week_dict = {
+            'date_week':list(range(start, end+1)),
+            'basic_pct':[0.0]*26
+        }
+        mydict = self.m2_basic_chunk[type]
+        for i in range(start, end+1):
+            week_dict['basic_pct'][i-1] = mydict[i][2]
+        df = pd.DataFrame(week_dict)
+        return df
+
+    def getM1OrdRndSplits(self):
+        order = ['all', 2, 3, 4, 5, 6, 7, 8, 9]
+        for type in order:
+            wk_ordrnd = {}
+            for x in range(self.wsplits['start1'], self.wsplits['end2']):
+                wk_ordrnd[x] = [0, 0]
+            self.m1_ordered[type] = wk_ordrnd
+        qstr = '(date_week >= %d & date_week < %d)' % (self.wsplits['start1'],
+                                                       self.wsplits['end2'])
+        qstr += ' and (ordered in [True, False])'
+        temp = self.dfc.query(qstr).groupby(['date_week', 'ptype', 'ordered'])['idproblem_count'].sum()
+        for k,v in sorted(temp.items()):
+            index = k[0]
+            pt = int(k[1].split('.')[1])
+            apos = 0 if k[2] == True else 1
+            self.m1_ordered['all'][index][apos] += v
+            self.m1_ordered[pt][index][apos] += v
+        for pt, weeks in self.m1_ordered.items():
+            for week, val in weeks.items():
+                ord = val[0]
+                rnd = val[1]
+                if ord == 0 and rnd == 0:
+                    pct = 0.0
+                else:
+                    if rnd == 0:
+                        pct = 100.0
+                    else:
+                        pct = round(ord / (ord + rnd), 2) * 100.0
+                self.m1_ordered[pt][week] = [ord, rnd, pct]
+
+    def getM1OrderedPctDF(self, type, start, end):
+        week_dict = {
+            'date_week':list(range(start, end+1)),
+            'ord_pct':[0.0]*26
+        }
+        mydict = self.m1_ordered[type]
+        for i in range(start, end+1):
+            week_dict['ord_pct'][i-1] = mydict[i][2]
+        df = pd.DataFrame(week_dict)
+        return df
+
     def processChartChoice(self, mlevel, mytype, num):
-        print('\n\n', '<>'*20)
-        print('processChartChoice')
-        print(mlevel, mytype, num, 'mlevel, mytype, num------------------')
-        print('\n...processing')
         if mlevel == 'top':
             if mytype == 't01':
                 if num == 1: self.totalProblemsStackedBar(self.order, 'All')
@@ -1386,6 +1461,10 @@ def processAnalysis():
         am.setIdlevelCounts() # must follow getLevelsCount()
         ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path, fh.limits_time)
         ca.setSaveFlag()
+        ca.getM2BasicChunkSplits()
+        ca.getM2BasicChunkPctDF('all', 1, 26)
+        ca.getM1OrdRndSplits()
+        ca.getM1OrderedPctDF('all', 1, 26)
         menu_top = True
         while menu_top:
             c_top = am.choiceTopMenu()
