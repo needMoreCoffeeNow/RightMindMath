@@ -6,4 +6,4 @@
 
 <p>It sounds impossible, but it is not. Becoming a <i>RMM Data Scientist</i> only requires following some simple instructions.</p>
 
-<p>To find out about these new skills which appear magical (but really are not) <a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/rmm_analysis_pythton/readmet.txt">Click Here</a> <span style="font-size:75%;">(opens a new window)</span>
+<p>To find out about these new skills which appear magical (but really are not) <a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/readmet.txt">Click Here</a> <span style="font-size:75%;">(opens a new window)</span>

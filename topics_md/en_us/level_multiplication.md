@@ -6,13 +6,13 @@
 
 <p>Multiplication will likely be a BIG CONFIDENCE booster. RMM is really great the way it presents multiplication. Also the two videos below are both truly excellent explaining multiplication. So expect quick advancement.</p>
 
-<p>There are a lot of single-digit patterns to learn. The equations span 1-9 as the primary digit, and 0-20 as the second digit. Remember from the arithmetic overview video that 3x9=9x3, so half the problems will be repeats. Your child should progress quickly.</p>
+<p>There are a lot of single-digit patterns to learn. The equations span 2-9 as the primary digit, and 0-20 as the second digit. Remember from the arithmetic overview video that 3x9=9x3, so half the problems will be repeats. Your child should progress quickly.</p>
 
-<p>Also if you child has a good grasp of <u>"...any number x 1 = that number"</u> you likely can skip the ones.</p>
+<p>Also your child likely has a good grasp of <u>"...any number x 1 = that number"</u> so 1s are not presented.</p>
 
 <hr>
 
-<p>You should progress thru multiplication by working up from 1 to 9. You have three options for each number:
+<p>You should progress thru multiplication by working up from 2 to 9. You have three options for each number:
 <ol>
 <li>Ordered vs. Random presentation</li>
 <li>Starting at 0 or 11, and</li>

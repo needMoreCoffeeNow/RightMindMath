@@ -7,4 +7,4 @@
 
 <p>The download will include all levels of use in one file. You can load this csv export into Excel and (assuming your have good skills) design a pivot table and charts that will be much more detailed than RMM&#039;s single chart function.</p>
 
-<p>An alternative to CSV export and Excel is to use the <i>Data Scientist</i> approach provided by RMM&#039;s session analysis Python script. To find out more about both installing Python &amp; running the script <a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/rmm_analysis_pythton/readmet.txt">Click Here</a> <span style="font-size:75%;">(opens a new window)</span>
+<p>An alternative to CSV export and Excel is to use the <i>Data Scientist</i> approach provided by RMM&#039;s session analysis Python script. To find out more about both installing Python &amp; running the script <a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/readmet.txt">Click Here</a> <span style="font-size:75%;">(opens a new window)</span>
