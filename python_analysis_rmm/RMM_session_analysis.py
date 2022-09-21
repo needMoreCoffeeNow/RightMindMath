@@ -662,10 +662,10 @@ class ChartAnalysis():
             sbparams['end2'] = end
             sbparams['twin_x2'], sbparams['twin_y2'] = self.getM1OrderedTwin('all', start, end)
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
-            for pt in my_order:
+            for num in my_order:
                 qstr = '(date_week >= %d & date_week < %d)' % (start, end)
-                qstr += ' and (ptype == "m1.%d")' % (pt)
-                sbparams['data2'][pt] = self.prbcountWeekData(qstr, start, end)
+                qstr += ' and (ptype == "m1.%d")' % (num)
+                sbparams['data2'][num] = self.prbcountWeekData(qstr, start, end)
         self.plotStackedBar(sbparams)
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
