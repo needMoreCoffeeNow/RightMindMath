@@ -527,6 +527,18 @@ class ChartAnalysis():
         df = pd.DataFrame(week_dict)
         return df
 
+    def getM1OrderedTwin(self, type, start, end):
+        x = []
+        y = []
+        mydict = self.m1_ordered[type]
+        # twin index_x will always start at 0
+        i = 0
+        for index in range(start, end):
+            x.append(i)
+            y.append(mydict[index][2])
+            i += 1
+        return x, y
+
     def processChartChoice(self, mlevel, mytype, num):
         if mlevel == 'top':
             if mytype == 't01':
@@ -600,13 +612,18 @@ class ChartAnalysis():
             'xlabel1' : 'week',
             'xlabel2' : 'week',
             'ylabel' : '',
-            'fname' : 'title name not set'
+            'fname' : 'title name not set',
+            'twin_x1' : None,
+            'twin_y1' : None,
+            'twin_x2' : None,
+            'twin_y2' : None
         }
         return sbparams
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def m1ProblemsStackedBar(self):
         print('\n\n\n')
+        print('m1ProblemsStackedBar')
         print('89'*20)
         my_order = [2, 3, 4, 5, 6, 7, 8, 9]
         # get the max week number for this year
@@ -620,6 +637,7 @@ class ChartAnalysis():
         end = self.wsplits['end1']
         sbparams['start1'] = start
         sbparams['end1'] = end
+        sbparams['twin_x1'], sbparams['twin_y1'] = self.getM1OrderedTwin('all', start, end)
         if self.wkmax > 26:
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
         else:
@@ -633,7 +651,8 @@ class ChartAnalysis():
             else:
                 sbparams['data1'][num] = myseries
         if self.wkmax > 26:
-            sbparams['title1'] = 'M1 Problems Weeks 1-%d' % (self.wkmax)
+            #sbparams['title1'] = 'M1 Problems Weeks 1-%d' % (self.wkmax)
+            sbparams['title1'] = 'M1 Problems Weeks 1-52'
         else:
             sbparams['title1'] = 'M1 Problems Weeks 1-26'
         if self.wkmax > 26:
@@ -641,17 +660,16 @@ class ChartAnalysis():
             end = self.wsplits['end2']
             sbparams['start2'] = start
             sbparams['end2'] = end
+            sbparams['twin_x2'], sbparams['twin_y2'] = self.getM1OrderedTwin('all', start, end)
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
             for pt in my_order:
                 qstr = '(date_week >= %d & date_week < %d)' % (start, end)
-                qstr += ' and (ptype == "m1.%d")' % (num)
+                qstr += ' and (ptype == "m1.%d")' % (pt)
                 sbparams['data2'][pt] = self.prbcountWeekData(qstr, start, end)
         self.plotStackedBar(sbparams)
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def ptypeProblemsStackedBar(self, idlevel, my_order):
-        print('\n\n\n')
-        print('89'*20)
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
                                                          self.wsplits['end2'])
@@ -693,8 +711,6 @@ class ChartAnalysis():
 
     # 1-26 & 27-52 week bar showing outlier count of problems by idlevel
     def outlierProblemsStackedBar(self, my_order, mytype):
-        print('\noutlierProblemsStackedBar')
-        print(my_order)
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
                                                          self.wsplits['end2'])
@@ -713,7 +729,6 @@ class ChartAnalysis():
             qstr = '(date_week >= %d & date_week < %d)' % (start, end)
             qstr += ' and (idlevel in [ "%s" ])' % (lvl)
             qstr += ' and (outlier == True)'
-            print(qstr)
             myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
                 sbparams['data1'][lvl] = myseries[:wkmax]
@@ -791,18 +806,20 @@ class ChartAnalysis():
         plt.rcParams.update(rcparams)
         if self.wkmax > 26:
             fig, axes = plt.subplots(2, 1, figsize=(8,5), sharey=False)
-            ax1 = axes[0]
-            ax2 = axes[1]
+            ax_1 = axes[0]
+            ax_2 = axes[1]
         else:
             fig, ax1 = plt.subplots(1, 1, figsize=(8,5), sharey=False)
         # ax1 stacked bar plot
         df_sb = pd.DataFrame(sbparams['data1'], index=sbparams['index1'])
-        ax1 = df_sb.plot(kind='bar', stacked=True, ax=ax1)
+        ax1 = df_sb.plot(kind='bar', stacked=True, ax=ax_1)
         ax1.set_ylabel(sbparams['ylabel'])
         ax1.set_xlabel(sbparams['xlabel1'])
         ax1.set_title(sbparams['title1'])
         ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
-        ax1.legend(title='level', bbox_to_anchor=(1.0, 1.05), loc='upper left')
+        #ax1.legend(title='level', bbox_to_anchor=(1.0, 1.05), loc='upper left')
+        ax1.legend(loc='upper left', bbox_to_anchor=(0.0, 1.40),
+          ncol=12, fancybox=True, shadow=True)
         ax1.invert_xaxis()
         tic = '' if sbparams['start1'] == 1 else '-'
         tic2 = '' if sbparams['start1'] == 1 else 's'
@@ -810,16 +827,20 @@ class ChartAnalysis():
         plt.figtext(0.86,0.9, hdr, fontsize=8, va="bottom", ha="left")
         hdr = '-%d weeks' % (sbparams['end1']-1)
         plt.figtext(0.13,0.9, hdr, fontsize=8, va="bottom", ha="left")
+        if sbparams['twin_x1'] and sbparams['twin_y1']:
+            ax_twin1 = ax1.twinx()
+            ax_twin1.plot(sbparams['twin_x1'], sbparams['twin_y1'], color='black', linewidth=0.5)
         # ax2 data
         if self.wkmax > 26:
             # ax2 stacked bar plot
             df_sb = pd.DataFrame(sbparams['data2'], index=sbparams['index2'])
-            ax2 = df_sb.plot(kind='bar', stacked=True, ax=ax2)
+            ax2 = df_sb.plot(kind='bar', stacked=True, ax=ax_2)
             ax2.set_ylabel(sbparams['ylabel'])
             ax2.set_xlabel(sbparams['xlabel2'])
             ax2.set_title(sbparams['title2'])
             ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
-            ax2.legend(title='level', bbox_to_anchor=(1.0, 1.05), loc='upper left')
+            #ax2.legend(title='level', bbox_to_anchor=(1.0, 1.05), loc='upper left')
+            ax2.get_legend().remove()
             ax2.invert_xaxis()
             hdr = '-%d weeks' % (sbparams['start2'])
             plt.figtext(0.86,0.42, '-27 weeks', fontsize=8, va="bottom", ha="left")
@@ -827,6 +848,9 @@ class ChartAnalysis():
             plt.figtext(0.13,0.42, hdr, fontsize=8, va="bottom", ha="left")
             # adjust white space
             fig.subplots_adjust(hspace=0.6)
+            if sbparams['twin_x2'] and sbparams['twin_y2']:
+                ax_twin2 = ax2.twinx()
+                ax_twin2.plot(sbparams['twin_x2'], sbparams['twin_y2'], color='black', linewidth=0.5)
         #show and or save
         if self.save_flag == 'S' or self.save_flag == 'B':
             fname = sbparams['fname']
@@ -938,7 +962,6 @@ class ChartAnalysis():
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
         print('\nchart completed & closed')
-
 
     def chartLifetimeDevice(self): 
         rcparams = {'legend.fontsize':8,
