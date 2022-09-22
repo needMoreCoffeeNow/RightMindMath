@@ -558,10 +558,12 @@ class ChartAnalysis():
                 self.m1ProblemsStackedBar()
             if mytype == 'm1' and num == 2:
                 title = 'Multiply 1-Digit: %ds' % (digit)
-                self.chartTimesTries('m1', title, 'start1', 'end1', False)
+                my_ptype = 'm1.%d' % (digit)
+                self.chartTimesTries(my_ptype, title, 'start1', 'end1', False)
             if mytype == 'm1' and num == 3:
                 title = 'Multiply 1-Digit: %ds' % (digit)
-                self.chartTimesTries('m1', title, 'start2', 'end2', False)
+                my_ptype = 'm1.%d' % (digit)
+                self.chartTimesTries(my_ptype, title, 'start2', 'end2', False)
         if mlevel == 'level3':
             if mytype == 'add' and num == 1:
                 self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1', False)
@@ -872,6 +874,11 @@ class ChartAnalysis():
 
     def chartTimesTries(self, idlevel, mytype, start_str, end_str, m1_twin):
         print('def chartTimesTries(self, idlevel):')
+        # need to set ptype based on m1 idlevel in like m1.2
+        my_ptype = None
+        if idlevel[:2] == 'm1':
+            my_ptype = '' + idlevel
+            idlevel = 'm1'
         qstr = '(idlevel == "%s" )' % (idlevel)
         self.wkmax = self.dfc.query(qstr)['date_week'].max()
         start = self.wsplits[start_str]
@@ -883,8 +890,12 @@ class ChartAnalysis():
         sb_index = pd.RangeIndex(start, end, name='date_week')
         tlimit = self.limits_time[idlevel] * 1000
         qstr = '(date_week >= %d & date_week < %d)' % (start, end)
-        qstr += ' and (idlevel in [ "%s" ])' % (idlevel)
+        if my_ptype:
+            qstr += ' and (ptype == "%s")' % (my_ptype)
+        else:
+            qstr += ' and (idlevel in [ "%s" ])' % (idlevel)
         qstr += ' and (time < %d)' % (tlimit)
+        print(qstr)
         times = self.dfc.query(qstr).groupby('date_week')['elapsed'].mean()
         #times.set_index('date_week')
         times_all = pd.DataFrame(week_dict)
