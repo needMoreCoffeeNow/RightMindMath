@@ -1098,8 +1098,8 @@ class AnalysisMenus():
             if myweek < (mend - 22):
                 self.levels[mylevel]['weeks'] += mycount
 
-    def choiceLevel2Chart(self, idchoice):
-        print('choiceLevel2Chart', idchoice, '=idchoice')
+    def menuLevel2(self, idchoice):
+        print('menuLevel2', idchoice, '=idchoice')
         titles = {'add':'ADDITION', 'sub':'SUBTRACTION', 'm1':'MULTIPLY 1-Digit',
                   'm2':'MULTIPLY 2-Digits', 'd3':'LONG DIVISION'}
         order = ['add', 'sub', 'm1', 'm2', 'd3']
@@ -1204,8 +1204,8 @@ class AnalysisMenus():
             return choice, None, False
         return choice, int(digit_str), True
 
-    def singleDigitMenu(self, idlevel):
-        print('singleDigitMenu')
+    def menuLevel3(self, idlevel):
+        print('menuLevel3')
         types = {'add':'ADDITION (1-digit)', 'sub':'SUBTRACTION (1-digit)'}
         count = self.counts[idlevel]['months']
         choices = [
@@ -1247,7 +1247,7 @@ class AnalysisMenus():
                 continue
             return idlevel, choice
 
-    def choiceTopMenu(self):
+    def menuLevel1(self):
         ok = [1, 2, 3, 4, 5, 6, 7, 8]
         ok_str = ', '.join([str(i) for i in ok])
         err_str = ''
@@ -1539,7 +1539,7 @@ def processAnalysis():
         ca.getM1OrderedPctDF('all', 1, 26)
         menu_top = True
         while menu_top:
-            c_top = am.choiceTopMenu()
+            c_top = am.menuLevel1()
             if c_top == 'exit':
                 menu_top = False
                 continue
@@ -1548,7 +1548,7 @@ def processAnalysis():
                 ca.processChartChoice('top', c_top, 1, None)
                 continue
             print('---------B')
-            lvl, choice, digit = am.choiceLevel2Chart(c_top)
+            lvl, choice, digit = am.menuLevel2(c_top)
             print(lvl, choice, digit, 'lvl, choice, digit---------B')
             if choice == 0: continue
             menu2 = True
@@ -1566,7 +1566,7 @@ def processAnalysis():
                 if choice == 1 or lvl == 'm1': # yearly totals stacked bar chart
                     ca.processChartChoice('level2', lvl, choice, digit)
                     print('---------C')
-                    lvl, choice, digit = am.choiceLevel2Chart(lvl)
+                    lvl, choice, digit = am.menuLevel2(lvl)
                     print(lvl, choice, '---------C')
                     continue
                 #if lvl == 'm1':
@@ -1574,11 +1574,11 @@ def processAnalysis():
                     menu3 = True
                     while menu3:
                         print('---------D')
-                        lvl, choice = am.singleDigitMenu(lvl)
+                        lvl, choice = am.menuLevel3(lvl)
                         print(lvl, choice, '---------D')
                         if choice == 0:
                             menu3 = False
-                            lvl, choice, digit = am.choiceLevel2Chart(lvl)
+                            lvl, choice, digit = am.menuLevel2(lvl)
                             continue
                         if choice in [1, 2, 3, 4, 5]:
                             ca.processChartChoice('level3', lvl, choice, None)
