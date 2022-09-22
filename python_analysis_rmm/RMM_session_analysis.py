@@ -546,9 +546,9 @@ class ChartAnalysis():
             if mytype == 't01':
                 if num == 1: self.totalProblemsStackedBar(self.order, 'All')
             if mytype == 't02':
-                if num == 1: self.outlierProblemsStackedBar(self.order, 'All')
-            if mytype == 't03':
                 if num == 1: self.chartLifetimeDevice()
+            if mytype == 't03':
+                if num == 1: self.outlierProblemsStackedBar(self.order, 'All')
         if mlevel == 'level2':
             if mytype == 'a1' and num == 1:
                 self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
@@ -1189,7 +1189,7 @@ class AnalysisMenus():
             print('[Return to Exit, Q to quit]')
             print('-'*50)
             if len(err_str) > 0:
-                print('\n---Invalid Entry---\n')
+                print('\n*** Invalid Entry ***\n')
                 print('-'*50)
                 print(err_str)
                 print('-'*50)
@@ -1320,8 +1320,8 @@ class AnalysisMenus():
         order = ['t01', 't02', 't03', 'add', 'sub', 'm1', 'adv']
         titles = {
             't01':['1) CHART: Problems Done', '(12 mns)', 'tot', 'year'],
-            't02':['2) CHART: Outliers', '(12 mns)', 'tot', 'year'],
-            't03':['3) CHART: Lifetime Total by Device', '(all mns)', 'all', 'count'],
+            't02':['2) CHART: Lifetime Total by Device', '(all mns)', 'all', 'count'],
+            't03':['3) CHART: Outliers', '(12 mns)', 'tot', 'year'],
             'add':['4) MENU: Addition', '(12 mns)', 'add', 'year'],
             'sub':['5) MENU: Subtraction', '(12 mns)', 'sub', 'year'],
             'm1':['6) MENU: Multiply 1-digit', '(12 mns)', 'm1', 'year'],
