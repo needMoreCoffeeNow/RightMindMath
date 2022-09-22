@@ -527,21 +527,40 @@ class ChartAnalysis():
         df = pd.DataFrame(week_dict)
         return df
 
-    def getM1OrderedTwin(self, type, start, end):
+    def getM1OrderedTwin(self, type, start, end, i_start):
+        print('-----------------------getM1OrderedTwin')
+        print(type, start, end, i_start)
         x = []
         y = []
         mydict = self.m1_ordered[type]
+        print(mydict)
         # twin index_x will always start at 0
-        i = 0
+        i = i_start
         for index in range(start, end):
             x.append(i)
             y.append(mydict[index][2])
             i += 1
         return x, y
 
+    def getM1ChartTwinDict(self, type, start_str, end_str):
+        print('-'*100)
+        print('-'*100)
+        print('-'*100)
+        print('-'*100)
+        print('getM1ChartTwinDict')
+        print(type, start_str, end_str)
+        start = self.wsplits[start_str]
+        end = self.wsplits[end_str]
+        print(start, end, '(start, end')
+        x, y = self.getM1OrderedTwin(type, start, end, start)
+        print('-'*100)
+        print('-'*100)
+        print('-'*100)
+        return {'x':x, 'y':y}
+
     def processChartChoice(self, mlevel, mytype, num, digit):
         print('\n\nprocessChartChoice')
-        print(mlevel, mytype, num)
+        print(mlevel, mytype, num, digit)
         if mlevel == 'top':
             if mytype == 't01':
                 if num == 1: self.totalProblemsStackedBar(self.order, 'All')
@@ -552,18 +571,25 @@ class ChartAnalysis():
         if mlevel == 'level2':
             if mytype == 'a1' and num == 1:
                 self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
+                return
             if mytype == 's1' and num == 1:
                 self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Sub 1-Digit')
+                return
             if mytype == 'm1' and num == 1:
                 self.m1ProblemsStackedBar()
-            if mytype == 'm1' and num == 2:
+                return
+            if mytype == 'm1':
                 title = 'Multiply 1-Digit: %ds' % (digit)
                 my_ptype = 'm1.%d' % (digit)
-                self.chartTimesTries(my_ptype, title, 'start1', 'end1', False)
-            if mytype == 'm1' and num == 3:
-                title = 'Multiply 1-Digit: %ds' % (digit)
-                my_ptype = 'm1.%d' % (digit)
-                self.chartTimesTries(my_ptype, title, 'start2', 'end2', False)
+                if num == 2:
+                    m1_twin = self.getM1ChartTwinDict(digit, 'start1', 'end1')
+                    print(m1_twin)
+                    self.chartTimesTries(my_ptype, title, 'start1', 'end1', m1_twin)
+                if num == 3:
+                    m1_twin = self.getM1ChartTwinDict(digit, 'start2', 'end2')
+                    print(m1_twin)
+                    self.chartTimesTries(my_ptype, title, 'start2', 'end2', m1_twin)
+                return
         if mlevel == 'level3':
             if mytype == 'a1' and num == 1:
                 self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1', False)
@@ -647,7 +673,7 @@ class ChartAnalysis():
         end = self.wsplits['end1']
         sbparams['start1'] = start
         sbparams['end1'] = end
-        sbparams['twin_x1'], sbparams['twin_y1'] = self.getM1OrderedTwin('all', start, end)
+        sbparams['twin_x1'], sbparams['twin_y1'] = self.getM1OrderedTwin('all', start, end, 0)
         if self.wkmax > 26:
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
         else:
@@ -670,7 +696,7 @@ class ChartAnalysis():
             end = self.wsplits['end2']
             sbparams['start2'] = start
             sbparams['end2'] = end
-            sbparams['twin_x2'], sbparams['twin_y2'] = self.getM1OrderedTwin('all', start, end)
+            sbparams['twin_x2'], sbparams['twin_y2'] = self.getM1OrderedTwin('all', start, end, 0)
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
             for num in my_order:
                 qstr = '(date_week >= %d & date_week < %d)' % (start, end)
@@ -949,6 +975,9 @@ class ChartAnalysis():
         x_axis = ax1.axes.get_xaxis()
         x_label = x_axis.get_label()
         x_label.set_visible(False)
+        ######if m1_twin:
+        ######    ax_twin1 = ax1.twinx()
+        ######    ax_twin1.plot(m1_twin['x'], m1_twin['y'], color='black', linewidth=0.5)
         tic = '' if start == 1 else '-'
         tic2 = '' if start == 1 else 's'
         hdr = '%s%d week%s' % (tic, start, tic2)
@@ -965,6 +994,9 @@ class ChartAnalysis():
         ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
         ax2.set_title('%s Avg Number of Tries to Right Answer' % (mytype), fontsize=8)
         ax2.invert_xaxis()
+        if m1_twin:
+            ax_twin2 = ax2.twinx()
+            ax_twin2.plot(m1_twin['x'], m1_twin['y'], color='black', linewidth=0.5)
         x_axis = ax2.axes.get_xaxis()
         x_label = x_axis.get_label()
         x_label.set_visible(False)
