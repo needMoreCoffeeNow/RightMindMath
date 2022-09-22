@@ -1026,18 +1026,19 @@ class AnalysisMenus():
     def setIdlevelCounts(self):
         # uses the levels {} items to provide easy access to idlevels problem
         # totals. Splits are: year=52wks, months=26wks, weeks=4wks 
-        self.counts = {'tot':{'year':0, 'months':0, 'weeks':0},
-                       'add':{'year':0, 'months':0, 'weeks':0},
-                       'sub':{'year':0, 'months':0, 'weeks':0},
-                       'd3':{'year':0, 'months':0, 'weeks':0},
-                       'a1':{'year':0, 'months':0, 'weeks':0},
-                       'a2':{'year':0, 'months':0, 'weeks':0},
-                       'a3':{'year':0, 'months':0, 'weeks':0},
-                       's1':{'year':0, 'months':0, 'weeks':0},
-                       's2':{'year':0, 'months':0, 'weeks':0},
-                       's3':{'year':0, 'months':0, 'weeks':0},
-                       'm1':{'year':0, 'months':0},
-                       'm2':{'year':0, 'months':0},
+        self.counts = {'tot':{'year':0, 'months':0, 'prev':0, 'weeks':0},
+                       'add':{'year':0, 'months':0, 'prev':0, 'weeks':0},
+                       'sub':{'year':0, 'months':0, 'prev':0, 'weeks':0},
+                       'd3':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       'a1':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       'a2':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       'a3':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       's1':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       's2':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       's3':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       'm1':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       'm2':{'year':0,  'months':0, 'prev':0, 'weeks':0},
+                       'adv':{'year':0, 'months':0, 'prev':0, 'weeks':0},
                        'all':{'count':0}}
         all = self.dfm['idproblem_count'].sum()
         self.counts['all']['count'] = all
@@ -1045,26 +1046,47 @@ class AnalysisMenus():
             self.counts['tot']['year'] += v['year']
             self.counts['tot']['months'] += v['months']
             self.counts['tot']['weeks'] += v['weeks']
+            self.counts['tot']['prev'] += v['prev']
             if k[0:1] == 'a':
                 self.counts['add']['year'] += v['year']
                 self.counts['add']['months'] += v['months']
                 self.counts['add']['weeks'] += v['weeks']
+                self.counts['add']['prev'] += v['prev']
             if k[0:1] == 's':
                 self.counts['sub']['year'] += v['year']
                 self.counts['sub']['months'] += v['months']
                 self.counts['sub']['weeks'] += v['weeks']
+                self.counts['sub']['prev'] += v['prev']
             if k[0:1] == 'm':
                 if k[1:2] == '1':
                     self.counts['m1']['year'] += v['year']
                     self.counts['m1']['months'] += v['months']
+                    self.counts['m1']['weeks'] += v['weeks']
+                    self.counts['m1']['prev'] += v['prev']
                     continue
                 if k[1:2] == '2':
                     self.counts['m2']['year'] += v['year']
                     self.counts['m2']['months'] += v['months']
+                    self.counts['m2']['weeks'] += v['weeks']
+                    self.counts['m2']['prev'] += v['prev']
+                    self.counts['adv']['year'] += v['year']
+                    self.counts['adv']['months'] += v['months']
+                    self.counts['adv']['weeks'] += v['weeks']
+                    self.counts['adv']['prev'] += v['prev']
                     continue
+            if k[0:1] == 'd':
+                self.counts['d3']['year'] += v['year']
+                self.counts['d3']['months'] += v['months']
+                self.counts['d3']['weeks'] += v['weeks']
+                self.counts['d3']['prev'] += v['prev']
+                self.counts['adv']['year'] += v['year']
+                self.counts['adv']['months'] += v['months']
+                self.counts['adv']['weeks'] += v['weeks']
+                self.counts['adv']['prev'] += v['prev']
             self.counts[k]['year'] += v['year']
             self.counts[k]['months'] += v['months']
             self.counts[k]['weeks'] += v['weeks']
+            self.counts[k]['prev'] += v['prev']
 
     def getWeekSplits(self):
         splits = {}
@@ -1097,12 +1119,13 @@ class AnalysisMenus():
                 self.levels[mylevel]['months'] += mycount
             if myweek < (mend - 22):
                 self.levels[mylevel]['weeks'] += mycount
+            self.levels[mylevel]['prev'] = self.levels[mylevel]['year'] - self.levels[mylevel]['months']
 
     def menuLevel2(self, idchoice):
         print('menuLevel2', idchoice, '=idchoice')
         titles = {'add':'ADDITION', 'sub':'SUBTRACTION', 'm1':'MULTIPLY 1-Digit',
-                  'm2':'MULTIPLY 2-Digits', 'd3':'LONG DIVISION'}
-        order = ['add', 'sub', 'm1', 'm2', 'd3']
+                  'adv':'ADVANCED Multipy 2-digits, Division'}
+        order = ['add', 'sub', 'm1', 'adv']
         choices = {
             'add' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
                      ['2) MENU: 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1']],
@@ -1110,12 +1133,17 @@ class AnalysisMenus():
                      ['2) MENU: 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1']],
             'm1' : [['1) CHART: Yearly Problems by Digit', '(12 mns)', 'm1', 'year'],
                     ['2) CHART: Times & Tries (weeks 1-26)', '(6 mns)', 'm1', 'months', 'm1'],
-                    ['3) CHART: Times $ Tries (weeks 27-52)', '(prev 6 mns)', 'm1', 'year', 'm1']]
+                    ['3) CHART: Times $ Tries (weeks 27-52)', '(prev 6 mns)', 'm1', 'prev', 'm1']],
+            'adv' : [['1) CHART: M2 Problems & Times (weeks 1-26)', '(6 mns)', 'adv', 'months'],
+                    ['2) CHART: M2 Problems & Times (weeks 27-52)', '(prev 6 mns)', 'adv', 'prev', 'adv'],
+                    ['3) CHART: DIV Problems & Times (weeks 1-26)', '(6 mns)', 'adv', 'months', 'adv'],
+                    ['4) CHART: Times $ Tries (weeks 27-52)', '(prev 6 mns)', 'adv', 'prev', 'adv']]
         }
         ok_list = {
             'add':[1, 2],
             'sub':[1, 2],
-            'm1':[1, 2, 3] 
+            'm1':[1, 2, 3],
+            'adv':[1, 2, 3, 4]
             }
         ok = ok_list[idchoice]
         ok_str = ', '.join([str(i) for i in ok_list[idchoice]])
@@ -1248,10 +1276,10 @@ class AnalysisMenus():
             return idlevel, choice
 
     def menuLevel1(self):
-        ok = [1, 2, 3, 4, 5, 6, 7, 8]
+        ok = [1, 2, 3, 4, 5, 6, 7]
         ok_str = ', '.join([str(i) for i in ok])
         err_str = ''
-        order = ['t01', 't02', 't03', 'add', 'sub', 'm1', 'm2', 'd3']
+        order = ['t01', 't02', 't03', 'add', 'sub', 'm1', 'adv']
         titles = {
             't01':['1) CHART: Problems Done', '(12 mns)', 'tot', 'year'],
             't02':['2) CHART: Outliers', '(12 mns)', 'tot', 'year'],
@@ -1259,8 +1287,7 @@ class AnalysisMenus():
             'add':['4) MENU: Addition', '(12 mns)', 'add', 'year'],
             'sub':['5) MENU: Subtraction', '(12 mns)', 'sub', 'year'],
             'm1':['6) MENU: Multiply 1-digit', '(12 mns)', 'm1', 'year'],
-            'm2':['7) CHART: Multiply 2-digit Problems', '(12 mns)', 'm2', 'year'],
-            'd3':['8) CHART: Long Division Problems', '(12 mns)', 'd3', 'year']
+            'adv':['7) MENU: Advanced Multiply & Division', '(12 mns)', 'adv', 'year']
         }
         lmax = 0
         nmax = len(str(self.counts['all']['count']))
@@ -1297,15 +1324,13 @@ class AnalysisMenus():
             if not choice in ok:
                 err_str = 'Please limit entry to numbers shown'
                 continue
-            if choice == 3 and self.counts['add']['months'] == 0:
-                err_str = 'Sorry no problems'
             if choice == 4 and self.counts['sub']['months'] == 0:
                 err_str = 'Sorry no problems'
             if choice == 5 and self.counts['m1']['months'] == 0:
                 err_str = 'Sorry no problems'
             if choice == 6 and self.counts['m2']['months'] == 0:
                 err_str = 'Sorry no problems'
-            if choice == 7 and self.counts['d3']['months'] == 0:
+            if choice == 7 and self.counts['adv']['months'] == 0:
                 err_str = 'Sorry no problems'
             if len(err_str) > 0: continue
             return order[choice-1]
