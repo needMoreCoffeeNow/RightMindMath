@@ -996,7 +996,7 @@ class ChartAnalysis():
         ax2.invert_xaxis()
         if m1_twin:
             ax_twin2 = ax2.twinx()
-            ax_twin2.plot(m1_twin['x'], m1_twin['y'], color='black', linewidth=0.5)
+            ax_twin2.plot(m1_twin['x'], m1_twin['y'], color='red', linewidth=1.0)
         x_axis = ax2.axes.get_xaxis()
         x_label = x_axis.get_label()
         x_label.set_visible(False)
@@ -1100,28 +1100,7 @@ class AnalysisMenus():
                 self.counts['sub']['months'] += v['months']
                 self.counts['sub']['weeks'] += v['weeks']
                 self.counts['sub']['prev'] += v['prev']
-            if k[0:1] == 'm':
-                if k[1:2] == '1':
-                    self.counts['m1']['year'] += v['year']
-                    self.counts['m1']['months'] += v['months']
-                    self.counts['m1']['weeks'] += v['weeks']
-                    self.counts['m1']['prev'] += v['prev']
-                    continue
-                if k[1:2] == '2':
-                    self.counts['m2']['year'] += v['year']
-                    self.counts['m2']['months'] += v['months']
-                    self.counts['m2']['weeks'] += v['weeks']
-                    self.counts['m2']['prev'] += v['prev']
-                    self.counts['adv']['year'] += v['year']
-                    self.counts['adv']['months'] += v['months']
-                    self.counts['adv']['weeks'] += v['weeks']
-                    self.counts['adv']['prev'] += v['prev']
-                    continue
-            if k[0:1] == 'd':
-                self.counts['d3']['year'] += v['year']
-                self.counts['d3']['months'] += v['months']
-                self.counts['d3']['weeks'] += v['weeks']
-                self.counts['d3']['prev'] += v['prev']
+            if k[0:2] in ['a2', 'a3', 's2', 's3', 'm2', 'd3']:
                 self.counts['adv']['year'] += v['year']
                 self.counts['adv']['months'] += v['months']
                 self.counts['adv']['weeks'] += v['weeks']
@@ -1171,7 +1150,7 @@ class AnalysisMenus():
         if idchoice_in == 's1': idchoice = 'sub'
         print('menuLevel2', idchoice, '=idchoice')
         titles = {'add':'ADDITION', 'sub':'SUBTRACTION', 'm1':'MULTIPLY 1-Digit',
-                  'adv':'ADVANCED Multipy 2-digits, Division'}
+                  'adv':'ADVANCED 2-digit Add/Sub/Mult & Division'}
         choices = {
             'add' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
                      ['2) MENU: 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1']],
@@ -1180,10 +1159,12 @@ class AnalysisMenus():
             'm1' : [['1) CHART: Yearly Problems by Digit', '(12 mns)', 'm1', 'year'],
                     ['2) CHART: Times & Tries (weeks 1-26)', '(6 mns)', 'm1', 'months', 'm1'],
                     ['3) CHART: Times $ Tries (weeks 27-52)', '(prev 6 mns)', 'm1', 'prev', 'm1']],
-            'adv' : [['1) CHART: M2 Problems & Times (weeks 1-26)', '(6 mns)', 'adv', 'months'],
-                    ['2) CHART: M2 Problems & Times (weeks 27-52)', '(prev 6 mns)', 'adv', 'prev', 'adv'],
-                    ['3) CHART: DIV Problems & Times (weeks 1-26)', '(6 mns)', 'adv', 'months', 'adv'],
-                    ['4) CHART: Times $ Tries (weeks 27-52)', '(prev 6 mns)', 'adv', 'prev', 'adv']]
+            'adv' : [['1) CHART: A2 Problems & Times (year)', '(12 mns)', 'a2', 'year'],
+                     ['2) CHART: A3 Problems & Times (year)', '(12 mns)', 'a3', 'year'],
+                     ['3) CHART: S2 Problems & Times (year)', '(12 mns)', 's2', 'year'],
+                     ['4) CHART: S3 Problems & Times (year)', '(12 mns)', 's3', 'year'],
+                     ['5) CHART: M2 Problems & Times (year)', '(12 mns)', 'm2', 'year'],
+                     ['6) CHART: LD Problems & Times (year)', '(12 mns)', 'd3', 'year']]
         }
         ok_list = {
             'add':[1, 2],
@@ -1357,7 +1338,7 @@ class AnalysisMenus():
             'add':['4) MENU: Addition', '(12 mns)', 'add', 'year'],
             'sub':['5) MENU: Subtraction', '(12 mns)', 'sub', 'year'],
             'm1':['6) MENU: Multiply 1-digit', '(12 mns)', 'm1', 'year'],
-            'adv':['7) MENU: Advanced Multiply & Division', '(12 mns)', 'adv', 'year']
+            'adv':['7) MENU: 2-3 Digit Add/Sub/Mult & Division', '(12 mns)', 'adv', 'year']
         }
         lmax = 0
         nmax = len(str(self.counts['all']['count']))
