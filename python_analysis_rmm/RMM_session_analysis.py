@@ -562,55 +562,50 @@ class ChartAnalysis():
         print('\n\nprocessChartChoice')
         print(mlevel, mytype, num, digit)
         if mlevel == 'top':
-            if mytype == 't01':
-                if num == 1: self.totalProblemsStackedBar(self.order, 'All')
-            if mytype == 't02':
-                if num == 1: self.chartLifetimeDevice()
-            if mytype == 't03':
-                if num == 1: self.outlierProblemsStackedBar(self.order, 'All')
-        if mlevel == 'level2':
-            if mytype == 'a1' and num == 1:
-                self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
-                return
-            if mytype == 's1' and num == 1:
-                self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Sub 1-Digit')
-                return
-            if mytype == 'm1' and num == 1:
-                self.m1ProblemsStackedBar()
-                return
-            if mytype == 'm1':
-                title = 'Multiply 1-Digit: %ds' % (digit)
-                my_ptype = 'm1.%d' % (digit)
-                if num == 2:
-                    m1_twin = self.getM1ChartTwinDict(digit, 'start1', 'end1')
-                    print(m1_twin)
-                    self.chartTimesTries(my_ptype, title, 'start1', 'end1', m1_twin)
-                if num == 3:
-                    m1_twin = self.getM1ChartTwinDict(digit, 'start2', 'end2')
-                    print(m1_twin)
-                    self.chartTimesTries(my_ptype, title, 'start2', 'end2', m1_twin)
-                return
-        if mlevel == 'level3':
-            if mytype == 'a1' and num == 1:
-                self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1', False)
-            if mytype == 'a1' and num == 2:
-                self.chartTimesTries('a1', 'Add 1-Digit', 'start2', 'end2', False)
-            if mytype == 'a1' and num == 3:
+            if mytype == 't01': self.totalProblemsStackedBar(self.order, 'All')
+            if mytype == 't02': self.chartLifetimeDevice()
+            if mytype == 't03': self.outlierProblemsStackedBar(self.order, 'All')
+            return
+        # a1
+        if mlevel == 'level2' and mytype == 'a1':
+            if num == 1: self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
+            if num == 2: self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1', False)
+            if num == 3: self.chartTimesTries('a1', 'Add 1-Digit', 'start2', 'end2', False)
+            if num == 4:
                 order = ['+++', '+-+', '+--', '---']
                 self.ptypeProblemsStackedBar('a1', order)
-            if mytype == 'a1' and num == 4:
+            if num == 5:
                 order = ['a1']
                 self.outlierProblemsStackedBar(order, 'a1')
-            if mytype == 's1' and num == 1:
-                self.chartTimesTries('s1', 'Sub 1-Digit', 'start1', 'end1', False)
-            if mytype == 's1' and num == 2:
-                self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2', False)
-            if mytype == 's1' and num == 3:
+            return
+        # s1
+        if mlevel == 'level2' and mytype == 's1':
+            if num == 1: self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Sub 1-Digit')
+            if num == 2: self.chartTimesTries('s1', 'Sub 1-Digit', 'start1', 'end1', False)
+            if num == 3: self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2', False)
+            if num == 4:
                 order = ['+-+', '+--', '---']
-                self.ptypeProblemsStackedBar('a1', order)
-            if mytype == 's1' and num == 4:
+                self.ptypeProblemsStackedBar('s1', order)
+            if num == 5:
                 order = ['s1']
                 self.outlierProblemsStackedBar(order, 's1')
+            return
+        # m1
+        if mlevel == 'level2' and mytype == 'm1':
+            print('m1'*20)
+            if num == 1:
+                self.m1ProblemsStackedBar()
+                return
+            # handle specific 2-9 digit analysis
+            title = 'Multiply 1-Digit: %ds' % (digit)
+            my_ptype = 'm1.%d' % (digit)
+            if num == 2:
+                m1_twin = self.getM1ChartTwinDict(digit, 'start1', 'end1')
+                self.chartTimesTries(my_ptype, title, 'start1', 'end1', m1_twin)
+            if num == 3:
+                m1_twin = self.getM1ChartTwinDict(digit, 'start2', 'end2')
+                self.chartTimesTries(my_ptype, title, 'start2', 'end2', m1_twin)
+            return
 
     def setWeekMax(self, qstr):
         self.wkmax = self.dfc.query(qstr)['date_week'].max()
@@ -1167,14 +1162,14 @@ class AnalysisMenus():
         ok = [1, 2, 3, 4, 5, 6, 7]
         ok_str = ', '.join([str(i) for i in ok])
         err_str = ''
-        order = ['t01', 't02', 't03', 'add', 'sub', 'm1', 'adv']
+        order = ['t01', 't02', 't03', 'a1', 's1', 'm1', 'adv']
         titles = {
             't01':['1) CHART: Problems Done', '(12 mns)', 'tot', 'year'],
             't02':['2) CHART: Lifetime Total by Device', '(all mns)', 'all', 'count'],
             't03':['3) CHART: Outliers', '(12 mns)', 'tot', 'year'],
-            'add':['4) MENU: Addition', '(12 mns)', 'add', 'year'],
-            'sub':['5) MENU: Subtraction', '(12 mns)', 'sub', 'year'],
-            'm1':['6) MENU: Multiply 1-digit', '(12 mns)', 'm1', 'year'],
+            'a1':['4) MENU: Addition 1-Digit', '(12 mns)', 'add', 'year'],
+            's1':['5) MENU: Subtraction 1-Digit', '(12 mns)', 'sub', 'year'],
+            'm1':['6) MENU: Multiply 1-Digit', '(12 mns)', 'm1', 'year'],
             'adv':['7) MENU: 2-3 Digit Add/Sub/Mult & Division', '(12 mns)', 'adv', 'year']
         }
         lmax = 0
@@ -1212,13 +1207,13 @@ class AnalysisMenus():
             if not choice in ok:
                 err_str = 'Please limit entry to numbers shown'
                 continue
-            if choice == 4 and self.counts['sub']['months'] == 0:
+            if choice == 4 and self.counts['a1']['year'] == 0:
                 err_str = 'Sorry no problems'
-            if choice == 5 and self.counts['m1']['months'] == 0:
+            if choice == 5 and self.counts['s1']['year'] == 0:
                 err_str = 'Sorry no problems'
-            if choice == 6 and self.counts['m2']['months'] == 0:
+            if choice == 6 and self.counts['m1']['year'] == 0:
                 err_str = 'Sorry no problems'
-            if choice == 7 and self.counts['adv']['months'] == 0:
+            if choice == 7 and self.counts['adv']['year'] == 0:
                 err_str = 'Sorry no problems'
             if len(err_str) > 0: continue
             return order[choice-1]
@@ -1226,31 +1221,33 @@ class AnalysisMenus():
     def menuLevel2(self, idchoice_in):
         print('menuLevel2', idchoice_in, '=idchoice_in')
         idchoice = '' + idchoice_in
-        # convert higher-level add/sub to a1/s1 to ensure consistency with
-        # function calls using 1-digit designators
-        if idchoice_in == 'add': idchoice = 'a1'
-        if idchoice_in == 'sub': idchoice = 's1'
         print('menuLevel2', idchoice, '=idchoice')
-        titles = {'a1':'ADDITION', 's1':'SUBTRACTION', 'm1':'MULTIPLY 1-Digit',
-                  'adv':'ADVANCED 2-digit Add/Sub/Mult & Division'}
+        titles = {'a1':'ADDITION 1-Digit', 's1':'SUBTRACTION 1-Digit', 'm1':'MULTIPLY 1-Digit',
+                  'adv':'2/3-Digit Add/Sub/Mult & Division'}
         choices = {
             'a1' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
-                     ['2) MENU: 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1']],
+                    ['2) CHART: Times & Tries (weeks  1-26)', '(6 mns)', 'a1', 'months'],
+                    ['3) CHART: Times & Tries (weeks 27-52)', '(6 mns prev)', 'a1', 'prev'],
+                    ['4) CHART: Problem Type', '(12 mns)', 'a1', 'year'],
+                    ['5) CHART: Outliers', '(12 mns)', 'a1', 'year']],
             's1' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
-                     ['2) MENU: 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1']],
+                    ['2) CHART: Times & Tries (weeks  1-26)', '(6 mns)', 'a1', 'months'],
+                    ['3) CHART: Times & Tries (weeks 27-52)', '(6 mns prev)', 'a1', 'prev'],
+                    ['4) CHART: Problem Type', '(12 mns)', 'a1', 'year'],
+                    ['5) CHART: Outliers', '(12 mns)', 'a1', 'year']],
             'm1' : [['1) CHART: Yearly Problems by Digit', '(12 mns)', 'm1', 'year'],
                     ['2) CHART: Times & Tries (weeks 1-26)', '(6 mns)', 'm1', 'months', 'm1'],
                     ['3) CHART: Times $ Tries (weeks 27-52)', '(prev 6 mns)', 'm1', 'prev', 'm1']],
             'adv' : [['1) CHART: A2 Problems & Times (year)', '(12 mns)', 'a2', 'year'],
-                     ['2) CHART: A3 Problems & Times (year)', '(12 mns)', 'a3', 'year'],
-                     ['3) CHART: S2 Problems & Times (year)', '(12 mns)', 's2', 'year'],
-                     ['4) CHART: S3 Problems & Times (year)', '(12 mns)', 's3', 'year'],
-                     ['5) CHART: M2 Problems & Times (year)', '(12 mns)', 'm2', 'year'],
-                     ['6) CHART: LD Problems & Times (year)', '(12 mns)', 'd3', 'year']]
+                    ['2) CHART: A3 Problems & Times (year)', '(12 mns)', 'a3', 'year'],
+                    ['3) CHART: S2 Problems & Times (year)', '(12 mns)', 's2', 'year'],
+                    ['4) CHART: S3 Problems & Times (year)', '(12 mns)', 's3', 'year'],
+                    ['5) CHART: M2 Problems & Times (year)', '(12 mns)', 'm2', 'year'],
+                    ['6) CHART: LD Problems & Times (year)', '(12 mns)', 'd3', 'year']]
         }
         ok_list = {
-            'a1':[1, 2],
-            's1':[1, 2],
+            'a1':[1, 2, 3, 4, 5],
+            's1':[1, 2, 3, 4, 5],
             'm1':[1, 2, 3],
             'adv':[1, 2, 3, 4]
             }
@@ -1318,75 +1315,6 @@ class AnalysisMenus():
                 err_str = 'Please limit entry to numbers shown'
                 continue
             return idchoice, choice, digit
-
-    def menuLevel3(self, idchoice):
-        print('menuLevel3')
-        titles = {'a1':'ADDITION (1-digit)', 's1':'SUBTRACTION (1-digit)'}
-        count = self.counts[idchoice]['months']
-        choices = {
-            'a1' : [['1) CHART: Times & Tries (weeks  1-26)', '(6 mns)', 'a1', 'months'],
-                    ['2) CHART: Times & Tries (weeks 27-52)', '(6 mns prev)', 'a1', 'prev'],
-                    ['3) CHART: Problem Type', '(12 mns)', 'a1', 'year'],
-                    ['4) CHART: Outliers', '(12 mns)', 'a1', 'year']],
-            's1' : [['1) CHART: Times & Tries (weeks  1-26)', '(6 mns)', 's1', 'months'],
-                    ['2) CHART: Times & Tries (weeks 27-52)', '(6 mns prev)', 's1', 'prev'],
-                    ['3) CHART: Problem Type', '(12 mns)', 's1', 'year'],
-                    ['4) CHART: Outliers', '(12 mns)', 's1', 'year']]
-        }
-        ok_list = {
-            'a1':[1, 2, 3, 4],
-            's1':[1, 2, 3, 4]
-            }
-        ok = ok_list[idchoice]
-        ok_str = ', '.join([str(i) for i in ok_list[idchoice]])
-        err_str = ''
-        mytitle = titles[idchoice]
-        mychoice = choices[idchoice]
-        lmax = 0
-        nmax = 0
-        # find the longest title text to enable padding to numbers colum
-        for a in mychoice:
-            if len(a[0]) > lmax: lmax = len(a[0])
-            if len(str(self.counts[idchoice][a[3]])) > nmax:
-                nmax = len(str(self.counts[idchoice][a[3]]))
-        # find the longest title text to enable padding to numbers colum
-        for a in mychoice:
-            if len(a[0]) > lmax: lmax = len(a[0])
-            if len(str(self.counts[idchoice][a[3]])) > nmax:
-                nmax = len(str(self.counts[idchoice][a[3]]))
-        while True:
-            print('-'*50)
-            mytitle = '%s : %d Problems' % (mytitle, count)
-            len_dash = int((50 - len(mytitle)) / 2)
-            print('\n\n%s%s%s' % ('-'*len_dash, mytitle, '-'*len_dash))
-            for a in mychoice:
-                #print(a)
-                #print(a[0], a[1], a[2], a[3])
-                count = self.counts[a[2]][a[3]]
-                npad = nmax - len(str(count))
-                npad += lmax - len(a[0])
-                print('%s%s%d problems %s' % (a[0], ' '*(npad+5), count, a[1] ))
-            print('[Return to Exit, Q to quit]')
-            print('-'*50)
-            if len(err_str) > 0:
-                print('-'*50)
-                print(err_str)
-                err_str = ''
-            choice = input('Please enter your choice (%s):' % (ok_str))
-            if len(choice) == 0:
-                return idchoice, 0
-            if choice.lower()[0:1] == 'q':
-                print('\nGoodbye')
-                sys.exit(0)
-            try:
-                choice = int(choice)
-            except:
-                err_str = 'Please enter integer number only'
-                continue
-            if not choice in ok:
-                err_str = 'Please limit entry to numbers shown'
-                continue
-            return idchoice, choice
 
     def getYear(self):
         self.year = 1
@@ -1628,8 +1556,6 @@ def processAnalysis():
             print(c_top, 'c_top -----------A')
             print('---------B')
             lvl, choice, digit = am.menuLevel2(c_top)
-            if lvl == 'add': lvl = 'a1'
-            if lvl == 'sub': lvl = 's1'
             print(lvl, choice, digit, 'lvl, choice, digit---------B')
             if choice == 0: continue
             menu2 = True
@@ -1644,26 +1570,10 @@ def processAnalysis():
                     menu2 = False
                     continue
                 print(lvl, choice, digit, choice == 1, 'while menu2  B')
-                if choice == 1 or lvl == 'm1': # yearly totals stacked bar chart
-                    ca.processChartChoice('level2', lvl, choice, digit)
-                    print('---------C')
-                    lvl, choice, digit = am.menuLevel2(lvl)
-                    print(lvl, choice, '---------C')
-                    continue
-                #if lvl == 'm1':
-                if lvl == 'a1' or lvl == 's1': # single digit add/sub/mul
-                    menu3 = True
-                    while menu3:
-                        print('---------D')
-                        lvl, choice = am.menuLevel3(lvl)
-                        print(lvl, choice, '---------D')
-                        if choice == 0:
-                            menu3 = False
-                            lvl, choice, digit = am.menuLevel2(lvl)
-                            continue
-                        if choice in [1, 2, 3, 4, 5]:
-                            ca.processChartChoice('level3', lvl, choice, None)
-                        print(lvl, choice, digit, '---------F')
+                ca.processChartChoice('level2', lvl, choice, digit)
+                print('---------C')
+                lvl, choice, digit = am.menuLevel2(lvl)
+                print(lvl, choice, '---------C')
     print('\nAnalysis Complete')
 
 if __name__ == '__main__':
