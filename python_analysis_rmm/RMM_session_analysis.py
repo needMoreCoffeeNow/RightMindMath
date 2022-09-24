@@ -888,7 +888,9 @@ class ChartAnalysis():
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
         else:
             sbparams['sbindex1'] = pd.RangeIndex(start, self.wkmax+1, name='week')
+        times_types = ''
         for ptype in my_order:
+            times_types += '"%s", ' % (ptype)
             qstr = '(date_week >= %d & date_week < %d)' % (start, end)
             qstr += ' and (ptype == "%s")' % (ptype)
             myseries = self.prbcountWeekData(qstr, start, end)
@@ -896,6 +898,15 @@ class ChartAnalysis():
                 sbparams['data1'][ptype] = myseries[:wkmax]
             else:
                 sbparams['data1'][ptype] = myseries
+        times_types = times_types[:len(times_types)-2]
+        qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+        qstr += ' and (ptype in [%s])' % (times_types)
+        tlimit = self.limits_time[mytype] * 1000
+        qstr += ' and (time < %d)' % (tlimit)
+        ######print(qstr)
+        x, y = self.getAdvTimeTwin(qstr, start, end, 1)
+        sbparams['twin_x1'] = x
+        sbparams['twin_y1'] = y
         if self.wkmax > 26:
             sbparams['title1'] = '%s Total Problems Weeks 1-%d' % (mytype, self.wkmax)
         else:
@@ -906,11 +917,49 @@ class ChartAnalysis():
             sbparams['start2'] = start
             sbparams['end2'] = end
             sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+            times_types = ''
             for ptype in my_order:
+                times_types += '"%s", ' % (ptype)
                 qstr = '(date_week >= %d & date_week < %d)' % (start, end)
                 qstr += ' and (ptype == "%s")' % (ptype)
                 sbparams['data2'][ptype] = self.prbcountWeekData(qstr, start, end)
+            times_types = times_types[:len(times_types)-2]
+            qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+            qstr += ' and (ptype in [%s])' % (times_types)
+            tlimit = self.limits_time[mytype] * 1000
+            qstr += ' and (time < %d)' % (tlimit)
+            ######print(qstr)
+            x, y = self.getAdvTimeTwin(qstr, start, end, 1)
+            sbparams['twin_x2'] = x
+            sbparams['twin_y2'] = y
         self.plotStackedBar(sbparams)
+
+    def getAdvTimeTwin(self, qstr, start, end, i_start):
+        ######print('-----------------------getAdvTimeTwin')
+        ######print(start, end, i_start)
+        times = self.dfc.query(qstr).groupby('date_week')['time'].mean()
+        ######print(times)
+        ######print('-'*80, 'times')
+        ######print(times.head(26))
+        ######for index, value in times.items():
+        ######    print(index, value, '---index, value')
+        # pad array to allow for twin alignment starting at x=0
+        x = [0]
+        y = [0.0]
+        i = i_start
+        for k in range(start, end):
+            # need to adjust for 1-26 series vs. 27-52
+            index = i + (start - 1)
+            x.append(i-1)
+            if index in times:
+                ######print(times[index], '----times[i]', index)
+                y.append(round(times[index]/1000.0, 0))
+            else:
+                y.append(0.0)
+            i += 1
+        ######print(x)
+        ######print(y)
+        return x, y
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def plotStackedBar(self, sbparams):
