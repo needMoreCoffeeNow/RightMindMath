@@ -125,7 +125,6 @@ class ProcessJsonFile():
         borrows = 0
         if d1s_top < d1s_bot: borrows += 1
         if ((d10s_top - borrows) < d10s_bot): borrows += 1
-        #print(parts[0], parts[1], '-------------', borrows)
         return borrows
 
     def carriesCount(self, r_str):
@@ -139,8 +138,16 @@ class ProcessJsonFile():
         carries = 0
         if (d1s_top + d1s_bot) > 9: carries += 1
         if (d10s_top + d10s_bot + carries) > 9: carries += 1
-        #print(parts[0], parts[1], parts[2], '-------------', carries)
         return carries
+
+    def d3GetPtype(self, r_str):
+        parts = r_str.split('^')
+        eq_parts = parts[1].split('/')
+        dividend = float(eq_parts[0])
+        divisor = float(eq_parts[1])
+        dec = 'n' if int(dividend/divisor) == (dividend/divisor) else 'y'
+        ptype = 'd3.%d.%s' % (len(eq_parts[1]), dec)
+        return ptype
 
     def parseRstr(self, r_str, tstamp, time):
         my_df = self.rec_df.copy()
@@ -158,6 +165,7 @@ class ProcessJsonFile():
                 my_df['op2'] = int(vars[1])
                 my_df['answer'] = float(my_df['op1']) / float(my_df['op2'])
                 my_df['op'] = '/'
+                my_df['ptype'] = self.d3GetPtype(r_str)
             else:
                 vars = parts[1].split('x')
                 my_df['op1'] = int(vars[0])
@@ -190,6 +198,7 @@ class ProcessJsonFile():
             my_df['ptype'] = 'm1.%s' % (str(my_df['op1']))
         if idlevel in ['s2', 's3']:
             my_df['ptype'] = '%sb%d' % (idlevel, self.borrowsCount(r_str))
+            #print(my_df['ptype'])
         if idlevel in ['a2', 'a3']:
             my_df['ptype'] = '%sc%d' % (idlevel, self.carriesCount(r_str))
         if my_df['op1'] < 0: my_df['neg_op1'] = 1
@@ -640,7 +649,13 @@ class ChartAnalysis():
             return
         # adv
         if mlevel == 'level2' and mytype == 'adv':
-            print('adv')
+            print('--------------adv')
+            if num == 1: self.advProblemsStackedBar(['a2c0', 'a2c1'], 'a2')
+            if num == 2: self.advProblemsStackedBar(['a3c0', 'a3c1', 'a3c2'], 'a3')
+            if num == 3: self.advProblemsStackedBar(['s2b0', 's2b1'], 's2')
+            if num == 4: self.advProblemsStackedBar(['s3b0', 's3b1', 's3b2'], 's3')
+            if num == 5: self.advProblemsStackedBar(['m2b', 'm2c'], 'm2')
+            if num == 6: self.advProblemsStackedBar(['d3.1.n', 'd3.1.y', 'd3.2.n', 'd3.2.y'], 'd3')
 
     def setWeekMax(self, qstr):
         self.wkmax = self.dfc.query(qstr)['date_week'].max()
@@ -855,6 +870,46 @@ class ChartAnalysis():
                 qstr = '(date_week >= %d & date_week < %d)' % (start, end)
                 qstr += ' and (idlevel in [ "%s" ])' % (lvl)
                 sbparams['data2'][lvl] = self.prbcountWeekData(qstr, start, end)
+        self.plotStackedBar(sbparams)
+
+    # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
+    def advProblemsStackedBar(self, my_order, mytype):
+        # get the max week number for this year
+        qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
+                                                         self.wsplits['end2'])
+        self.setWeekMax(qstr)
+        sbparams = self.getStackedBarParams()
+        sbparams['fname'] = 'adv01_%s_ProblemsStackedBar.png' % (mytype)
+        start = self.wsplits['start1']
+        end = self.wsplits['end1']
+        sbparams['start1'] = start
+        sbparams['end1'] = end
+        if self.wkmax > 26:
+            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+        else:
+            sbparams['sbindex1'] = pd.RangeIndex(start, self.wkmax+1, name='week')
+        for ptype in my_order:
+            qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+            qstr += ' and (ptype == "%s")' % (ptype)
+            myseries = self.prbcountWeekData(qstr, start, end)
+            if self.wkmax < 26:
+                sbparams['data1'][ptype] = myseries[:wkmax]
+            else:
+                sbparams['data1'][ptype] = myseries
+        if self.wkmax > 26:
+            sbparams['title1'] = '%s Total Problems Weeks 1-%d' % (mytype, self.wkmax)
+        else:
+            sbparams['title1'] = '%s Total Problems Weeks 1-26' % (mytype)
+        if self.wkmax > 26:
+            start = self.wsplits['start2']
+            end = self.wsplits['end2']
+            sbparams['start2'] = start
+            sbparams['end2'] = end
+            sbparams['sbindex1'] = pd.RangeIndex(start, end, name='week')
+            for ptype in my_order:
+                qstr = '(date_week >= %d & date_week < %d)' % (start, end)
+                qstr += ' and (ptype == "%s")' % (ptype)
+                sbparams['data2'][ptype] = self.prbcountWeekData(qstr, start, end)
         self.plotStackedBar(sbparams)
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
@@ -1560,7 +1615,6 @@ def processAnalysis():
         pjf.copyPrevious()
         pjf.writeLinesStats()
         pjf.buildDataFrame()
-        return
         if pjf.week_last == -1:
             print('\nSorry no records were loaded.')
             print('Please check your download.')
