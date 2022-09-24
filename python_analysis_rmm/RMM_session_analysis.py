@@ -114,6 +114,34 @@ class ProcessJsonFile():
             file_to = str(charts_path_to / src_file.name)
             shutil.move(file_fr, file_to)
 
+    def borrowsCount(self, r_str):
+        eq_str = r_str.split('^')[1]
+        parts = eq_str.split('|')
+        digits = len(parts[0])
+        d1s_top = int(parts[0][digits-1:digits])
+        d1s_bot = int(parts[1][digits-1:digits])
+        d10s_top = int(parts[0][digits-2:digits-1])
+        d10s_bot = int(parts[1][digits-2:digits-1])
+        borrows = 0
+        if d1s_top < d1s_bot: borrows += 1
+        if ((d10s_top - borrows) < d10s_bot): borrows += 1
+        #print(parts[0], parts[1], '-------------', borrows)
+        return borrows
+
+    def carriesCount(self, r_str):
+        eq_str = r_str.split('^')[1]
+        parts = eq_str.split('|')
+        digits = len(parts[0])
+        d1s_top = int(parts[0][digits-1:digits])
+        d1s_bot = int(parts[1][digits-1:digits])
+        d10s_top = int(parts[0][digits-2:digits-1])
+        d10s_bot = int(parts[1][digits-2:digits-1])
+        carries = 0
+        if (d1s_top + d1s_bot) > 9: carries += 1
+        if (d10s_top + d10s_bot + carries) > 9: carries += 1
+        #print(parts[0], parts[1], parts[2], '-------------', carries)
+        return carries
+
     def parseRstr(self, r_str, tstamp, time):
         my_df = self.rec_df.copy()
         not_asm = {'d3':True, 'm2':True, 'm2b':True, 'm2c':True}
@@ -160,6 +188,10 @@ class ProcessJsonFile():
         if idlevel == 'm1':
             my_df['ordered'] = parts[2] == 'true'
             my_df['ptype'] = 'm1.%s' % (str(my_df['op1']))
+        if idlevel in ['s2', 's3']:
+            my_df['ptype'] = '%sb%d' % (idlevel, self.borrowsCount(r_str))
+        if idlevel in ['a2', 'a3']:
+            my_df['ptype'] = '%sc%d' % (idlevel, self.carriesCount(r_str))
         if my_df['op1'] < 0: my_df['neg_op1'] = 1
         if my_df['op2'] < 0: my_df['neg_op2'] = 1
         if my_df['answer'] < 0: my_df['neg_ans'] = 1
@@ -606,6 +638,9 @@ class ChartAnalysis():
                 m1_twin = self.getM1ChartTwinDict(digit, 'start2', 'end2')
                 self.chartTimesTries(my_ptype, title, 'start2', 'end2', m1_twin)
             return
+        # adv
+        if mlevel == 'level2' and mytype == 'adv':
+            print('adv')
 
     def setWeekMax(self, qstr):
         self.wkmax = self.dfc.query(qstr)['date_week'].max()
@@ -1249,7 +1284,7 @@ class AnalysisMenus():
             'a1':[1, 2, 3, 4, 5],
             's1':[1, 2, 3, 4, 5],
             'm1':[1, 2, 3],
-            'adv':[1, 2, 3, 4]
+            'adv':[1, 2, 3, 4, 5, 6]
             }
         ok = ok_list[idchoice]
         ok_str = ', '.join([str(i) for i in ok_list[idchoice]])
@@ -1525,6 +1560,7 @@ def processAnalysis():
         pjf.copyPrevious()
         pjf.writeLinesStats()
         pjf.buildDataFrame()
+        return
         if pjf.week_last == -1:
             print('\nSorry no records were loaded.')
             print('Please check your download.')
