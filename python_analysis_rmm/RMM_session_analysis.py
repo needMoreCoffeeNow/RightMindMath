@@ -1143,18 +1143,100 @@ class AnalysisMenus():
                 self.levels[mylevel]['weeks'] += mycount
             self.levels[mylevel]['prev'] = self.levels[mylevel]['year'] - self.levels[mylevel]['months']
 
+    def m1ValidMenuChoice(self, choice_str):
+        print('\n\nm1ValidMenuChoice')
+        digit_not_needed = [1]
+        digits_ok = ['2', '3', '4', '5', '6', '7', '8', '9']
+        # first char must be an integer
+        try:
+            choice = int(choice_str[0:1])
+        except:
+            return None, None, False
+        # if only one char entered exit & leave remaining validation to caller
+        if choice in digit_not_needed:
+            return choice, None, True
+        # handle menu.digit entry
+        if len(choice_str) != 3:
+            return choice, None, False
+        digit_str = choice_str[2:3]
+        if not digit_str in digits_ok:
+            return choice, None, False
+        return choice, int(digit_str), True
+
+    def menuLevel1(self):
+        ok = [1, 2, 3, 4, 5, 6, 7]
+        ok_str = ', '.join([str(i) for i in ok])
+        err_str = ''
+        order = ['t01', 't02', 't03', 'add', 'sub', 'm1', 'adv']
+        titles = {
+            't01':['1) CHART: Problems Done', '(12 mns)', 'tot', 'year'],
+            't02':['2) CHART: Lifetime Total by Device', '(all mns)', 'all', 'count'],
+            't03':['3) CHART: Outliers', '(12 mns)', 'tot', 'year'],
+            'add':['4) MENU: Addition', '(12 mns)', 'add', 'year'],
+            'sub':['5) MENU: Subtraction', '(12 mns)', 'sub', 'year'],
+            'm1':['6) MENU: Multiply 1-digit', '(12 mns)', 'm1', 'year'],
+            'adv':['7) MENU: 2-3 Digit Add/Sub/Mult & Division', '(12 mns)', 'adv', 'year']
+        }
+        lmax = 0
+        nmax = len(str(self.counts['all']['count']))
+        # find the longest title text to enable padding to numbers colum
+        for k, v in titles.items():
+            if len(v[0]) > lmax: lmax = len(v[0])
+        while True:
+            print('-'*50)
+            print('\n\n%s%s :: Year %d%s' % (
+                '-'*20, 'MAIN MENU', self.year, '-'*21))
+            for k in order:
+                count = self.counts[titles[k][2]][titles[k][3]]
+                npad = nmax - len(str(count))
+                npad += lmax - len(titles[k][0])
+                print('%s%s%d problems %s' % (
+                    titles[k][0], ' '*(npad+5), count, titles[k][1] ))
+            print('[Return to Exit, Q to quit]')
+            print('-'*60)
+            if len(err_str) > 0:
+                print('-'*60)
+                print(err_str)
+                err_str = ''
+            choice = input('Please enter your choice (%s):' % (ok_str))
+            if len(choice) == 0:
+                return 'exit'
+            if choice.lower()[0:1] == 'q':
+                print('\nGoodbye')
+                sys.exit(0)
+            try:
+                choice = int(choice)
+            except:
+                err_str = 'Please enter integer number only'
+                continue
+            if not choice in ok:
+                err_str = 'Please limit entry to numbers shown'
+                continue
+            if choice == 4 and self.counts['sub']['months'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 5 and self.counts['m1']['months'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 6 and self.counts['m2']['months'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 7 and self.counts['adv']['months'] == 0:
+                err_str = 'Sorry no problems'
+            if len(err_str) > 0: continue
+            return order[choice-1]
+
     def menuLevel2(self, idchoice_in):
         print('menuLevel2', idchoice_in, '=idchoice_in')
         idchoice = '' + idchoice_in
-        if idchoice_in == 'a1': idchoice = 'add'
-        if idchoice_in == 's1': idchoice = 'sub'
+        # convert higher-level add/sub to a1/s1 to ensure consistency with
+        # function calls using 1-digit designators
+        if idchoice_in == 'add': idchoice = 'a1'
+        if idchoice_in == 'sub': idchoice = 's1'
         print('menuLevel2', idchoice, '=idchoice')
-        titles = {'add':'ADDITION', 'sub':'SUBTRACTION', 'm1':'MULTIPLY 1-Digit',
+        titles = {'a1':'ADDITION', 's1':'SUBTRACTION', 'm1':'MULTIPLY 1-Digit',
                   'adv':'ADVANCED 2-digit Add/Sub/Mult & Division'}
         choices = {
-            'add' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
+            'a1' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
                      ['2) MENU: 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1']],
-            'sub' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
+            's1' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
                      ['2) MENU: 1-Digit Analyses', '(6 mns)', 'a1', 'months', 'a1']],
             'm1' : [['1) CHART: Yearly Problems by Digit', '(12 mns)', 'm1', 'year'],
                     ['2) CHART: Times & Tries (weeks 1-26)', '(6 mns)', 'm1', 'months', 'm1'],
@@ -1167,8 +1249,8 @@ class AnalysisMenus():
                      ['6) CHART: LD Problems & Times (year)', '(12 mns)', 'd3', 'year']]
         }
         ok_list = {
-            'add':[1, 2],
-            'sub':[1, 2],
+            'a1':[1, 2],
+            's1':[1, 2],
             'm1':[1, 2, 3],
             'adv':[1, 2, 3, 4]
             }
@@ -1236,26 +1318,6 @@ class AnalysisMenus():
                 err_str = 'Please limit entry to numbers shown'
                 continue
             return idchoice, choice, digit
-
-    def m1ValidMenuChoice(self, choice_str):
-        print('\n\nm1ValidMenuChoice')
-        digit_not_needed = [1]
-        digits_ok = ['2', '3', '4', '5', '6', '7', '8', '9']
-        # first char must be an integer
-        try:
-            choice = int(choice_str[0:1])
-        except:
-            return None, None, False
-        # if only one char entered exit & leave remaining validation to caller
-        if choice in digit_not_needed:
-            return choice, None, True
-        # handle menu.digit entry
-        if len(choice_str) != 3:
-            return choice, None, False
-        digit_str = choice_str[2:3]
-        if not digit_str in digits_ok:
-            return choice, None, False
-        return choice, int(digit_str), True
 
     def menuLevel3(self, idchoice):
         print('menuLevel3')
@@ -1325,66 +1387,6 @@ class AnalysisMenus():
                 err_str = 'Please limit entry to numbers shown'
                 continue
             return idchoice, choice
-
-    def menuLevel1(self):
-        ok = [1, 2, 3, 4, 5, 6, 7]
-        ok_str = ', '.join([str(i) for i in ok])
-        err_str = ''
-        order = ['t01', 't02', 't03', 'add', 'sub', 'm1', 'adv']
-        titles = {
-            't01':['1) CHART: Problems Done', '(12 mns)', 'tot', 'year'],
-            't02':['2) CHART: Lifetime Total by Device', '(all mns)', 'all', 'count'],
-            't03':['3) CHART: Outliers', '(12 mns)', 'tot', 'year'],
-            'add':['4) MENU: Addition', '(12 mns)', 'add', 'year'],
-            'sub':['5) MENU: Subtraction', '(12 mns)', 'sub', 'year'],
-            'm1':['6) MENU: Multiply 1-digit', '(12 mns)', 'm1', 'year'],
-            'adv':['7) MENU: 2-3 Digit Add/Sub/Mult & Division', '(12 mns)', 'adv', 'year']
-        }
-        lmax = 0
-        nmax = len(str(self.counts['all']['count']))
-        # find the longest title text to enable padding to numbers colum
-        for k, v in titles.items():
-            if len(v[0]) > lmax: lmax = len(v[0])
-        while True:
-            print('-'*50)
-            print('\n\n%s%s :: Year %d%s' % (
-                '-'*20, 'MAIN MENU', self.year, '-'*21))
-            for k in order:
-                count = self.counts[titles[k][2]][titles[k][3]]
-                npad = nmax - len(str(count))
-                npad += lmax - len(titles[k][0])
-                print('%s%s%d problems %s' % (
-                    titles[k][0], ' '*(npad+5), count, titles[k][1] ))
-            print('[Return to Exit, Q to quit]')
-            print('-'*60)
-            if len(err_str) > 0:
-                print('-'*60)
-                print(err_str)
-                err_str = ''
-            choice = input('Please enter your choice (%s):' % (ok_str))
-            if len(choice) == 0:
-                return 'exit'
-            if choice.lower()[0:1] == 'q':
-                print('\nGoodbye')
-                sys.exit(0)
-            try:
-                choice = int(choice)
-            except:
-                err_str = 'Please enter integer number only'
-                continue
-            if not choice in ok:
-                err_str = 'Please limit entry to numbers shown'
-                continue
-            if choice == 4 and self.counts['sub']['months'] == 0:
-                err_str = 'Sorry no problems'
-            if choice == 5 and self.counts['m1']['months'] == 0:
-                err_str = 'Sorry no problems'
-            if choice == 6 and self.counts['m2']['months'] == 0:
-                err_str = 'Sorry no problems'
-            if choice == 7 and self.counts['adv']['months'] == 0:
-                err_str = 'Sorry no problems'
-            if len(err_str) > 0: continue
-            return order[choice-1]
 
     def getYear(self):
         self.year = 1
