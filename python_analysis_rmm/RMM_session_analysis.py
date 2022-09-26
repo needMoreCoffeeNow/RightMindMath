@@ -198,7 +198,6 @@ class ProcessJsonFile():
             my_df['ptype'] = 'm1.%s' % (str(my_df['op1']))
         if idlevel in ['s2', 's3']:
             my_df['ptype'] = '%sb%d' % (idlevel, self.borrowsCount(r_str))
-            #print(my_df['ptype'])
         if idlevel in ['a2', 'a3']:
             my_df['ptype'] = '%sc%d' % (idlevel, self.carriesCount(r_str))
         if my_df['op1'] < 0: my_df['neg_op1'] = 1
@@ -571,12 +570,9 @@ class ChartAnalysis():
         return df
 
     def getM1OrderedTwin(self, type, start, end, i_start):
-        print('-----------------------getM1OrderedTwin')
-        print(type, start, end, i_start)
         x = []
         y = []
         mydict = self.m1_ordered[type]
-        print(mydict)
         # twin index_x will always start at 0
         i = i_start
         for index in range(start, end):
@@ -586,24 +582,12 @@ class ChartAnalysis():
         return x, y
 
     def getM1ChartTwinDict(self, type, start_str, end_str):
-        print('-'*100)
-        print('-'*100)
-        print('-'*100)
-        print('-'*100)
-        print('getM1ChartTwinDict')
-        print(type, start_str, end_str)
         start = self.wsplits[start_str]
         end = self.wsplits[end_str]
-        print(start, end, '(start, end')
         x, y = self.getM1OrderedTwin(type, start, end, start)
-        print('-'*100)
-        print('-'*100)
-        print('-'*100)
         return {'x':x, 'y':y}
 
     def processChartChoice(self, mlevel, mytype, num, digit):
-        print('\n\nprocessChartChoice')
-        print(mlevel, mytype, num, digit)
         if mlevel == 'top':
             self.save_name_prefix = 'all_%s' % (mytype[2:3])
             if mytype == 't01': self.totalProblemsStackedBar(self.order, 'All')
@@ -640,7 +624,6 @@ class ChartAnalysis():
             return
         # m1
         if mlevel == 'level2' and mytype == 'm1':
-            print('m1'*20)
             if num == 1:
                 self.m1ProblemsStackedBar()
                 return
@@ -656,7 +639,6 @@ class ChartAnalysis():
             return
         # adv
         if mlevel == 'level2' and mytype == 'adv':
-            print('--------------adv')
             if num == 1: self.advProblemsStackedBar(['a2c0', 'a2c1'], 'a2')
             if num == 2: self.advProblemsStackedBar(['a3c0', 'a3c1', 'a3c2'], 'a3')
             if num == 3: self.advProblemsStackedBar(['s2b0', 's2b1'], 's2')
@@ -666,8 +648,6 @@ class ChartAnalysis():
 
     def setWeekMax(self, qstr):
         self.wkmax = self.dfc.query(qstr)['date_week'].max()
-        print('&'*100)
-        print(self.wkmax, 'wkmax')
 
     def prbcountWeekData(self, qstr, start, end):
         # create a dict for making a df that has 26 weeks (no gaps)
@@ -710,9 +690,6 @@ class ChartAnalysis():
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def m1ProblemsStackedBar(self):
         self.save_name = '%s_%s' % (self.save_name_prefix, 'Problem_Type.png')
-        print('\n\n\n')
-        print('m1ProblemsStackedBar')
-        print('89'*20)
         my_order = [2, 3, 4, 5, 6, 7, 8, 9]
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
@@ -909,7 +886,6 @@ class ChartAnalysis():
         qstr += ' and (ptype in [%s])' % (times_types)
         tlimit = self.limits_time[mytype] * 1000
         qstr += ' and (time < %d)' % (tlimit)
-        ######print(qstr)
         x, y = self.getAdvTimeTwin(qstr, start, end, 1)
         sbparams['twin_x1'] = x
         sbparams['twin_y1'] = y
@@ -934,21 +910,13 @@ class ChartAnalysis():
             qstr += ' and (ptype in [%s])' % (times_types)
             tlimit = self.limits_time[mytype] * 1000
             qstr += ' and (time < %d)' % (tlimit)
-            ######print(qstr)
             x, y = self.getAdvTimeTwin(qstr, start, end, 1)
             sbparams['twin_x2'] = x
             sbparams['twin_y2'] = y
         self.plotStackedBar(sbparams)
 
     def getAdvTimeTwin(self, qstr, start, end, i_start):
-        ######print('-----------------------getAdvTimeTwin')
-        ######print(start, end, i_start)
         times = self.dfc.query(qstr).groupby('date_week')['time'].mean()
-        ######print(times)
-        ######print('-'*80, 'times')
-        ######print(times.head(26))
-        ######for index, value in times.items():
-        ######    print(index, value, '---index, value')
         # pad array to allow for twin alignment starting at x=0
         x = [0]
         y = [0.0]
@@ -958,13 +926,10 @@ class ChartAnalysis():
             index = i + (start - 1)
             x.append(i-1)
             if index in times:
-                ######print(times[index], '----times[i]', index)
                 y.append(round(times[index]/1000.0, 0))
             else:
                 y.append(0.0)
             i += 1
-        ######print(x)
-        ######print(y)
         return x, y
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
@@ -1038,7 +1003,6 @@ class ChartAnalysis():
 
     def chartTimesTries(self, idlevel, mytype, start_str, end_str, m1_twin):
         self.save_name = '%s_%s' % (self.save_name_prefix, 'Times_Tries.png')
-        print('def chartTimesTries(self, idlevel):')
         # need to set ptype based on m1 idlevel in like m1.2
         my_ptype = None
         if idlevel[:2] == 'm1':
@@ -1060,7 +1024,6 @@ class ChartAnalysis():
         else:
             qstr += ' and (idlevel in [ "%s" ])' % (idlevel)
         qstr += ' and (time < %d)' % (tlimit)
-        print(qstr)
         times = self.dfc.query(qstr).groupby('date_week')['elapsed'].mean()
         #times.set_index('date_week')
         times_all = pd.DataFrame(week_dict)
@@ -1114,9 +1077,6 @@ class ChartAnalysis():
         x_axis = ax1.axes.get_xaxis()
         x_label = x_axis.get_label()
         x_label.set_visible(False)
-        ######if m1_twin:
-        ######    ax_twin1 = ax1.twinx()
-        ######    ax_twin1.plot(m1_twin['x'], m1_twin['y'], color='black', linewidth=0.5)
         tic = '' if start == 1 else '-'
         tic2 = '' if start == 1 else 's'
         hdr = '%s%d week%s' % (tic, start, tic2)
@@ -1284,7 +1244,6 @@ class AnalysisMenus():
             self.levels[mylevel]['prev'] = self.levels[mylevel]['year'] - self.levels[mylevel]['months']
 
     def m1ValidMenuChoice(self, choice_str):
-        print('\n\nm1ValidMenuChoice')
         digit_not_needed = [1]
         digits_ok = ['2', '3', '4', '5', '6', '7', '8', '9']
         # first char must be an integer
@@ -1364,9 +1323,7 @@ class AnalysisMenus():
             return order[choice-1]
 
     def menuLevel2(self, idchoice_in):
-        print('menuLevel2', idchoice_in, '=idchoice_in')
         idchoice = '' + idchoice_in
-        print('menuLevel2', idchoice, '=idchoice')
         titles = {'a1':'ADDITION 1-Digit', 's1':'SUBTRACTION 1-Digit', 'm1':'MULTIPLY 1-Digit',
                   'adv':'2/3-Digit Add/Sub/Mult & Division'}
         choices = {
@@ -1439,7 +1396,6 @@ class AnalysisMenus():
                 sys.exit(0)
             if idchoice == 'm1':
                 choice, digit, valid = self.m1ValidMenuChoice(choice)
-                print(choice, digit, valid)
                 if choice is None:
                     err_str = 'Your entry must start with %s' % (ok_str)
                     continue
@@ -1622,7 +1578,6 @@ class FileHandler():
 
 def processAnalysis():    
     root = Path(Path().resolve())
-    print(str(root))
     path_inputs = root / 'inputs'
     if not path_inputs.exists():
         print('%s%s' % ('\n', '-'*50))
@@ -1695,13 +1650,9 @@ def processAnalysis():
                 menu_top = False
                 continue
             if c_top == 't01' or c_top == 't02' or c_top == 't03':
-                print('---------A')
                 ca.processChartChoice('top', c_top, 1, None)
                 continue
-            print(c_top, 'c_top -----------A')
-            print('---------B')
             lvl, choice, digit = am.menuLevel2(c_top)
-            print(lvl, choice, digit, 'lvl, choice, digit---------B')
             if choice == 0: continue
             menu2 = True
             limit = 0
@@ -1709,16 +1660,11 @@ def processAnalysis():
                 limit += 1
                 if limit > 10: 
                     sys.exit(0)
-                print(lvl, choice, digit, 'while menu2')
                 if choice == 0:
-                    print('menu2 = False')
                     menu2 = False
                     continue
-                print(lvl, choice, digit, choice == 1, 'while menu2  B')
                 ca.processChartChoice('level2', lvl, choice, digit)
-                print('---------C')
                 lvl, choice, digit = am.menuLevel2(lvl)
-                print(lvl, choice, '---------C')
     print('\nAnalysis Complete')
 
 if __name__ == '__main__':
