@@ -1,0 +1,34 @@
+Once you have either the Powershell (Windows) or Terminal (Mac) programs running, you need to use two commands to run the Python script. The steps are quite similar for both Window & Mac.
+
+1) Open the Explorer/Finder and and navigate so that the "python_analysis_rmm" folder folder is showing.
+
+2) Position the Explorer/Finder window such that you can see the Powershell/Terminal app in the background.
+
+3) Click in the Powershell/Terminal window and type (without the quotes): "cd " (cd followed by a space).
+
+4) Click back to the Explorer/Terminal window.
+
+5) Drag the python_analysis_rmm folder onto the Powershell/Terminal window. When you do this, the text representing the full path to the python_analysis_rmm folder will appear in the Powershell/Terminal window following the "cd " you just typed.
+
+6) Press return. This will execute the command that changes the current Powershell/Terminal directory to the python_analysis_rmm folder.
+
+7) To save the command, highlight it and copy/paste it below replacing the REPLACE_ME... text below. Do a file-> save command to have the cd command available at a later date.
+
+8) Copy/paste the "python RMM_session_analysis.py" command below into the Powershell/Terminal window, and hit Return. This will run the Python script.
+
+
+-----Notes about the next time (your command stack)-----
+
+Note that both the Powershell & Terminal apps will keep a history of your commands. So it is very likely you only have to do the steps above once. The next time you run either Powershell or Terminal you can recall these two commands using your stack.
+
+For Powershell: Use the up arrow to navigate up your command stack. Up arrow twice and you should get the "cd" command. Press return. Up arrow twice again and the "python" command (now at position 2) will appear. Press return.
+
+For Terminal: Type "history" at the prompt (no quotes). Terminal will show you the history of your commands entered. Find the number for the "cd" command. Let's say this number is 2 type (without quotes) "!2" (exclamation mark followed by 2). Press return and Terminal will run that command. Repeat for the "python" command.
+
+
+
+-----Commands for Copy/Paste-----
+
+REPLACE_ME_with_CD_cmd
+
+python RMM_session_analysis.py

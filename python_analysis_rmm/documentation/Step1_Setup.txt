@@ -1,5 +1,21 @@
 After you have installed the Anaconda Python app, you will want to open the app you use to access Python and change the window size.
 
+---Windows---
+
+1) Click the Start menu and select the "Powershell Prompt" option provided in the Anaconda3 application. This will run the Powershell (command line) application. Initially the Powershell window may be very small with a tiny font. If so, continue with the steps below.
+
+2) Click the icon in the top left of the Powershell app title bar, and select Properties.
+
+3) Click on the Layout tab in Propertiews and change the width & height values to make the window comfortably large.
+
+4) If necessary move the Properties window so you can see the text in the Powershell window.
+
+5) Click on the Font tab and select a font & font size you find easy to read.
+
+6) Click on the Color tab and select a text color, background color, and background transparency that you like.
+
+Once these profiles changes have been made, they will be loaded next time you run the Powershell app.
+
 ---MacOS---
 
 1) Search for and open the Terminal application. Use either Spotlight, or find the app in the "Utilities" folder inside the "Applications" folder.
@@ -16,8 +32,9 @@ After you have installed the Anaconda Python app, you will want to open the app 
 
 7) Click on the Text tab for the current profile.
 
-8) The the Change button for the font if you want to change the font & font size used.
+8) Click the Change button for the font if you want to change the font & font size used.
 
 9) Optional: Click Color & Effects for the background. Using this you can customize the background color and transparency/blur. Play around with different values and choose one you like best.
+
 
 Once these profiles changes have been made, they will be loaded next time you run the Terminal app.

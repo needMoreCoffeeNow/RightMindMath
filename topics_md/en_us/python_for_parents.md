@@ -17,3 +17,9 @@
 <p>There will be a "documentation" folder in the unzipped directory. It has text files you can open &amp; review which explain everything you need to know.</p>
 
 <p>If you want to preview these text files at the Github site, use the links below (all open in a new window)</p>
+
+<hr>
+
+<p><a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/documentation/Step1_Setup.txt">Step1_Setup</a></p>
+
+<p><a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/documentation/Step1_Setup.txt">Step2_Commands</a></p>
