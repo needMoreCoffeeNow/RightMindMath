@@ -588,6 +588,7 @@ class ChartAnalysis():
         return {'x':x, 'y':y}
 
     def processChartChoice(self, mlevel, mytype, num, digit):
+        plt.close()
         if mlevel == 'top':
             self.save_name_prefix = 'all_%s' % (mytype[2:3])
             if mytype == 't01': self.totalProblemsStackedBar(self.order, 'All')
