@@ -1,0 +1,23 @@
+After you have installed the Anaconda Python app, you will want to open the app you use to access Python and change the window size.
+
+---MacOS---
+
+1) Search for and open the Terminal application. Use either Spotlight, or find the app in the "Utilities" folder inside the "Applications" folder.
+
+2) When first opened Terminal will be a small window most likely with black text on a white background.
+
+3) With the Terminal app active, open its Preferences.
+
+4) Click on the Profiles tab at the top.
+
+5) Click on the Window tab for the current profile.
+
+6) Change the number of columns & rows displayed to create a comfortably large Terminal window.
+
+7) Click on the Text tab for the current profile.
+
+8) The the Change button for the font if you want to change the font & font size used.
+
+9) Optional: Click Color & Effects for the background. Using this you can customize the background color and transparency/blur. Play around with different values and choose one you like best.
+
+Once these profiles changes have been made, they will be loaded next time you run the Terminal app.

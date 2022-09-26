@@ -6,4 +6,14 @@
 
 <p>It sounds impossible, but it is not. Becoming a <i>RMM Data Scientist</i> only requires following some simple instructions.</p>
 
-<p>To find out about these new skills which appear magical (but really are not) <a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/readmet.txt">Click Here</a> <span style="font-size:75%;">(opens a new window)</span>
+<hr>
+
+<p>There are two relatively easy steps to accomplish this:</p>
+
+<p><b>First:</b> Install the Anaconda distribution of Python using the following link. Note: You only need the main Python app. You can ignore the other optional components. Link: <a target="_blank" href="https://docs.anaconda.com/anaconda/install/">Python Installation</a> <span style="font-size:75%;">(opens a new window)</span></p>
+
+<p><b>Second:</b> Click the link that follows which is a zip file from the RMM Github project. The page will provide a "download" button for the file. Download the file and unzip it in the folder where you want to store the Python script, and input/output files. This likely should be in your Documents folder not in your Applications folder. (You will be running what is called a "script" in the unzipped folder which is not the same as the apps in your Application folder.) Link: <a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm.zip">Python Installation</a> <span style="font-size:75%;">(opens a new window)</span></p>
+
+<p>There will be a "documentation" folder in the unzipped directory. It has text files you can open &amp; review which explain everything you need to know.</p>
+
+<p>If you want to preview these text files at the Github site, use the links below (all open in a new window)</p>
