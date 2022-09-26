@@ -427,6 +427,8 @@ class ChartAnalysis():
         self.dfc = dframe_in
         self.limits_time = limits_time
         self.save_flag = 'D' # D=display only, B=display & save S=save only
+        self.save_name_prefix = ''
+        self.save_name_suffix = ''
         self.output_charts = self.setOutputCharts(output_path)
         self.m1_ordered = {}
         self.m2_basic_chunk = {}
@@ -603,13 +605,18 @@ class ChartAnalysis():
         print('\n\nprocessChartChoice')
         print(mlevel, mytype, num, digit)
         if mlevel == 'top':
+            self.save_name_prefix = 'all_%s' % (mytype[2:3])
             if mytype == 't01': self.totalProblemsStackedBar(self.order, 'All')
             if mytype == 't02': self.chartLifetimeDevice()
             if mytype == 't03': self.outlierProblemsStackedBar(self.order, 'All')
             return
+        if digit:
+            self.save_name_prefix = '%s_%d-%d' % (mytype, num, digit)
+        else:
+            self.save_name_prefix = '%s_%d' % (mytype, num)
         # a1
         if mlevel == 'level2' and mytype == 'a1':
-            if num == 1: self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Add 1-Digt')
+            if num == 1: self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Addition')
             if num == 2: self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1', False)
             if num == 3: self.chartTimesTries('a1', 'Add 1-Digit', 'start2', 'end2', False)
             if num == 4:
@@ -621,7 +628,7 @@ class ChartAnalysis():
             return
         # s1
         if mlevel == 'level2' and mytype == 's1':
-            if num == 1: self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Sub 1-Digit')
+            if num == 1: self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Subtraction')
             if num == 2: self.chartTimesTries('s1', 'Sub 1-Digit', 'start1', 'end1', False)
             if num == 3: self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2', False)
             if num == 4:
@@ -693,7 +700,6 @@ class ChartAnalysis():
             'xlabel1' : 'week',
             'xlabel2' : 'week',
             'ylabel' : '',
-            'fname' : 'title name not set',
             'twin_x1' : None,
             'twin_y1' : None,
             'twin_x2' : None,
@@ -703,6 +709,7 @@ class ChartAnalysis():
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def m1ProblemsStackedBar(self):
+        self.save_name = '%s_%s' % (self.save_name_prefix, 'Problem_Type.png')
         print('\n\n\n')
         print('m1ProblemsStackedBar')
         print('89'*20)
@@ -713,7 +720,6 @@ class ChartAnalysis():
         qstr += ' and (idlevel == "m1")'
         self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
-        sbparams['fname'] = 'c01_m1_ProblemTypeStackedBar.png'
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
@@ -751,13 +757,13 @@ class ChartAnalysis():
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def ptypeProblemsStackedBar(self, idlevel, my_order):
+        self.save_name = '%s_%s' % (self.save_name_prefix, 'Problem_Type.png')
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
                                                          self.wsplits['end2'])
         qstr += ' and (idlevel == "%s")' % (idlevel)
         self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
-        sbparams['fname'] = 'c01_%s_ProblemTypeStackedBar.png' % (idlevel)
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
@@ -793,11 +799,11 @@ class ChartAnalysis():
     # 1-26 & 27-52 week bar showing outlier count of problems by idlevel
     def outlierProblemsStackedBar(self, my_order, mytype):
         # get the max week number for this year
+        self.save_name = '%s_%s' % (self.save_name_prefix, 'Outliers.png')
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
                                                          self.wsplits['end2'])
         self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
-        sbparams['fname'] = 'c02_%s_ProblemsStackedBar.png' % (mytype)
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
@@ -835,11 +841,11 @@ class ChartAnalysis():
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def totalProblemsStackedBar(self, my_order, mytype):
         # get the max week number for this year
+        self.save_name = '%s_%s' % (self.save_name_prefix, 'Total_Problems.png')
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
                                                          self.wsplits['end2'])
         self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
-        sbparams['fname'] = 'c01_%s_ProblemsStackedBar.png' % (mytype)
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
@@ -874,12 +880,12 @@ class ChartAnalysis():
 
     # 1-26 & 27-52 week stacked bar showing count of problems by idlevel
     def advProblemsStackedBar(self, my_order, mytype):
+        self.save_name = '%s_%s' % (self.save_name_prefix, 'Problem_Type.png')
         # get the max week number for this year
         qstr = '(date_week >= %d and date_week < %d)' % (self.wsplits['start1'],
                                                          self.wsplits['end2'])
         self.setWeekMax(qstr)
         sbparams = self.getStackedBarParams()
-        sbparams['fname'] = 'adv01_%s_ProblemsStackedBar.png' % (mytype)
         start = self.wsplits['start1']
         end = self.wsplits['end1']
         sbparams['start1'] = start
@@ -1023,16 +1029,15 @@ class ChartAnalysis():
                 ax_twin2.plot(sbparams['twin_x2'], sbparams['twin_y2'], color='black', linewidth=0.5)
         #show and or save
         if self.save_flag == 'S' or self.save_flag == 'B':
-            fname = sbparams['fname']
-            plt_path = self.output_charts / fname
+            plt_path = self.output_charts / self.save_name
             plt.savefig(str(plt_path))
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
             plt.show(block=False)
-            #plt.show()
         print('\nchart completed & closed')
 
     def chartTimesTries(self, idlevel, mytype, start_str, end_str, m1_twin):
+        self.save_name = '%s_%s' % (self.save_name_prefix, 'Times_Tries.png')
         print('def chartTimesTries(self, idlevel):')
         # need to set ptype based on m1 idlevel in like m1.2
         my_ptype = None
@@ -1139,9 +1144,9 @@ class ChartAnalysis():
         hdr = '-%d weeks' % (end-1)
         plt.figtext(0.13,0.43, hdr, fontsize=8, va="bottom", ha="left")
         fig.subplots_adjust(hspace=0.5)
+        #show and or save
         if self.save_flag == 'S' or self.save_flag == 'B':
-            fname = 'c03_%s_TimesTries.png' % (mytype)
-            plt_path = self.output_charts / fname
+            plt_path = self.output_charts / self.save_name
             plt.savefig(str(plt_path))
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
@@ -1149,6 +1154,7 @@ class ChartAnalysis():
         print('\nchart completed & closed')
 
     def chartLifetimeDevice(self): 
+        self.save_name = '%s_%s' % (self.save_name_prefix, 'Lifetime_Problems.png')
         rcparams = {'legend.fontsize':8,
                     'legend.title_fontsize':6,
                     'axes.labelsize':8,
@@ -1172,9 +1178,9 @@ class ChartAnalysis():
         x_axis = ax1.axes.get_xaxis()
         x_label = x_axis.get_label()
         x_label.set_visible(False)
+        #show and or save
         if self.save_flag == 'S' or self.save_flag == 'B':
-            fname = 'c03_ProblemsLifetimeDevice.png'
-            plt_path = self.output_charts / fname
+            plt_path = self.output_charts / self.save_name
             plt.savefig(str(plt_path))
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
         if self.save_flag == 'D' or self.save_flag == 'B':
