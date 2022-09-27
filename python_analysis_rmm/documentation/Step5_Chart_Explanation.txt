@@ -1,0 +1,91 @@
+*** all charts ***
+The "all" part of this chart title for the three chart file titles (and file names) indicates that all nine levels of problems (a1, a2, a3, s1, s2,s3, m1, m2, d3) is included. If a problem level is missing, it means no data for that week for that level.
+
+
+*** all_1_Total_Problems ***
+This is choice (1) in the level1 menu. It is a simple stacked-bar chart with weeks 1-26 on top, and weeks 27-52 (if any) on the bottom. Each bar is the total number of problems done for each week. The color segments of the bars indicate the different amounts of problems comprise the total problems done.
+
+
+*** all_2_Lifetime_Problems ***
+This is choice (2) in the level1 menu. It is the only chart that uses months not weeks, and it shows the total for the lifetime of use not the 52 week limit. It is a simple stacked bar chart where the height of the bar is the cumulative number of problems through the month since RMM use began. If your child is using multiple devices, the color segments of the bars indicate the amount of monthly problems done on each device.
+
+
+*** all_3_Outliers ***
+This is choice (3) in the level1 menu. Its layout is the same at the all_1_Total_Problems. The data is the number of problems in which the time to solve the problem exceeded the limit defined in the input file located in the "parameters_limits" folder. In general there should not be too many outliers shown. The default values in the input file are pretty generous is their allowance for time-to-solve limits. If have a lot of outliers, you may want to consider increasing the input values if the outliers represent your child struggling to answer the problem. A large number of outliers may also simply represent a lot of distractions encountered when answering the problems. This may or may not be an issue.
+
+
+
+********** 1-Digit Addition/Subtration **********
+These charts are accessed from the level2 menus. Each of the 5 charts available from the level2 menu are the same for both a1 and s1 problems.
+
+
+*** a1_1_Total_Problems (also s1_1_) ***
+This is choice (1) in the level2 menu for either 1-Digit Addition or Subtraction. It is the same chart as all_1_Total_Problems except the levels for the problems shown is limited to a1/a2/a3 or s1/s2/s3.
+
+
+*** a1_2_Times_Tries (also s1_2_) ***
+This is choice (2) in the level2 menu for either 1-Digit Addition or Subtraction. This is the key chart you will use to analyze whether your child has good associative (right brain) recall of the a1 or s1 problems. This chart covers the most recent weeks (1-26).
+
+The top chart presents the weekly average amount of time to click the right answer once the problem has been presented. The red bars overlaying the bar show the standard deviation of the answers for the week. You can interpret standard deviation as a representation "spread of the answers". If for example the weekly average is 8 seconds, and most of the answers are between 6 and 10, then the standard deviation will be pretty narrow. If the average is 8 and the spread is between 6 and 15, then the standard deviation will be larger. The trait you will look for in this chart for a constantly smaller average time and narrower deviation as your child progresses. Once the average is around 3-5 seconds with a tight stddev you should consider your child to have right-brain recall of this problem level.
+
+The bottom bar chart represents the number of tries needed on average to click the right answer. Remember there are four possible answers for each problem. As with times, you should see the average trending toward one. With good right-brain recall your child should be answering almost every problem on the first try. One other patter to look for in the tries chart is a relatively constant (flat) set of bars equal to two tries. This would indicate that your child is not imagining or trying to click the right answer. The child is simply guessing. Given 4 possible answers, the average for randomly clicking on the answers will be two.
+
+
+*** a1_3_Times_Tries (also s1_3_) ***
+This is choice (3) in the level2 menu for either 1-Digit Addition or Subtraction. This is the same chart as a1_2_Times_Tries except is covers the back half of the year (weeks 27-52).
+
+
+***a1_4_Problem_Type (also s1_4_)***
+This is choice (4) in the level2 menu for either 1-Digit Addition or Subtraction. This is another stacked bar chart similar in content to the all_1_Total_Problems & a1_1_Total_Problems. The problems represented though are very different. The legend of the colors that can appear in the stacked bar represent the signs of the operands/answer in the problems. There are four possible items for a1 and three possible items for s1. (RMM does not present subtraction problems like -3 - (-5) = 2 which is simplified to the addition problem: -3 + 5 = 2.)
+
+The legend for a1 problems is:
++++ = a problem like: 2 + 3 = 5
++++ = a problem like: 3 + -2 = 1
++-- = a problem like: 3 + -4 = -1
+*** = a problem like: -1 + -4 = -5
+
+The legend for s1 problems is:
++-+ = a problem like: 3 - 2 = 1
++-- = a problem like: 2 - 5 = -3
+*** = a problem like: -3  - 4 = -7
+
+
+*** a1_5_Outliers (also s1_5_) ***
+This is choice (5) in the level2 menu for either 1-Digit Addition or Subtraction. This is the same as the all_3_Outliers except the data is limited to type a1 or s1 problems.
+
+
+
+********** 1-Digit Multiply **********
+These charts are accessed from the level2 menu. 
+
+
+*** m1_1_Problem_Type ***
+This is choice (1) in the level2 menu. This is the a stacked bar chart similar to the all_3_Outliers except the stacked data is comprised of the number of problems for each of the m1 digits: 2, 3, 4, 5, 6, 7, 8, 9. In addition there is a second line graph that overlays the top bar chart. This line graph is read against the second (right) y-axis. It is the average weekly percentage of problems that were presented in "ordered" fashion: 2x2=4, 2+3=6, 2x4=8, etc. Because problems presented in order more quickly fall into a recognizable pattern, you should expect the weekly average times to be lower when the ordered percent line for a week is above 80%.
+
+
+*** m1_2-2_Times_Tries ***
+This is choice (2) in the level2 menu. This is the same chart as the a1/s1 Times & Tries chart. The only difference is that the line graph representing the average percentage of ordered problems for the week has been moved to the lower (tries) bar chart so as to not interfere with the standard deviation overlays in the upper chart. The "m1_2-2_" start of the chart file name denotes that the chart is for 2s. If the name started m1_2-5_" it would be for the fives. This chart represents the most current weeks: 1-26.
+
+
+*** m1_3-2_Times_Tries ***
+This is choice (3) in the level2 menu. This is the same chart as m1_2-2_Times_Tries except the data is for weeks: 27-52.
+
+
+
+*** 2/3-Digit Add/Sub/Mult & Division ***
+
+There are six charts available in this level 2 menu. Each menu option generates a chart for a different type of multi-digit problem: a2, a3, s2, s3, m2, and LD (or d3/long division). Each chart is the standard 52 weeks (26 above, 26 below) stacked bar. The types of problems is some cases are expanded to give insights on the "nature" of the problem. This is explained below. These charts are unique in that all the bar charts have a line chart overlay which uses the second (right) y-axis. The line charts is used to identify the average amount of time needed to solve the problem steps. Note that unlike 1-digit problems, multi-digit problems always have a series of 1-digit steps used to find the answer. Only the overall amount of time taken from start to finish is recorded.
+
+Here are the unique "nature of the problems" breakouts:
+
+a2 = a2c0 & a2c1 where c0 is "no carries" and c1 is "one carry"
+
+a3 = a2c0 & a2c1 where c0 is "no carries" and c1 is "one carry" and c2 = "two carries"
+
+s2 = s2b0 & s2b1 where b0 is "no borrows" and b1 is "one one borrow"
+
+s3 = s2b0 & s2b1 & s2b where b0 is "no borrows" and b1 is "one one borrow" and b2 = "two borrows"
+
+m2 = m2b & m2c where m2b are "basic process" problems and m2c are "chunkit" problems
+
+LD (d3) = d3.1.n & d3.1. & d3.2.n & d3.2.y where .1/.2 represents the number of digits in the divisor, and .n/.y represents whether the problem had a decimal in the answer such as 27/5=5.4
