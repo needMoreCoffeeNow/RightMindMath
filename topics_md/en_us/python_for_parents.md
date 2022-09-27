@@ -23,3 +23,9 @@
 <p><a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/documentation/Step1_Setup.txt">Step1_Setup</a></p>
 
 <p><a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/documentation/Step2_Commands.txt">Step2_Commands</a></p>
+
+<p><a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/documentation/Step3_Data.txt">Step3_Data</a></p>
+
+<p><a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/documentation/Step4_Analysis_Overview.txt">Step4_Analysis_Overview</a></p>
+
+<p><a target="_blank" href="https://github.com/needMoreCoffeeNow/RightMindMath/blob/main/python_analysis_rmm/documentation/Step5_Chart_Explanation.txt">Step5_Chart_Explanation</a></p>
