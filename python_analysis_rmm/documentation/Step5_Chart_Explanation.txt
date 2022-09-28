@@ -1,3 +1,5 @@
+Note: The names in the headers are the file names used when a chart is saved. All chart image files have the .png extension.
+
 *** all charts ***
 The "all" part of this chart title for the three chart file titles (and file names) indicates that all nine levels of problems (a1, a2, a3, s1, s2,s3, m1, m2, d3) is included. If a problem level is missing, it means no data for that week for that level.
 
