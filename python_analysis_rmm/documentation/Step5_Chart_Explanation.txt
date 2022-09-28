@@ -30,7 +30,7 @@ This is choice (2) in the level2 menu for either 1-Digit Addition or Subtraction
 
 The top chart presents the weekly average amount of time to click the right answer once the problem has been presented. The red bars overlaying the bar show the standard deviation of the answers for the week. You can interpret standard deviation as a representation "spread of the answers". If for example the weekly average is 8 seconds, and most of the answers are between 6 and 10, then the standard deviation will be pretty narrow. If the average is 8 and the spread is between 6 and 15, then the standard deviation will be larger. The trait you will look for in this chart for a constantly smaller average time and narrower deviation as your child progresses. Once the average is around 3-5 seconds with a tight stddev you should consider your child to have right-brain recall of this problem level.
 
-The bottom bar chart represents the number of tries needed on average to click the right answer. Remember there are four possible answers for each problem. As with times, you should see the average trending toward one. With good right-brain recall your child should be answering almost every problem on the first try. One other patter to look for in the tries chart is a relatively constant (flat) set of bars equal to two tries. This would indicate that your child is not imagining or trying to click the right answer. The child is simply guessing. Given 4 possible answers, the average for randomly clicking on the answers will be two.
+The bottom bar chart represents the number of tries needed on average to click the right answer. Remember there are four possible answers for each problem. As with times, you should see the average trending toward one. With good right-brain recall your child should be answering almost every problem on the first try. One other pattern to look for in the tries chart is a relatively constant (flat) set of bars equal to two tries. This would indicate that your child is not imagining or trying to click the right answer. The child is simply guessing. Given 4 possible answers, the average for randomly clicking on the answers will be two.
 
 
 *** a1_3_Times_Tries (also s1_3_) ***
@@ -82,7 +82,7 @@ Here are the unique "nature of the problems" breakouts:
 
 a2 = a2c0 & a2c1 where c0 is "no carries" and c1 is "one carry"
 
-a3 = a2c0 & a2c1 where c0 is "no carries" and c1 is "one carry" and c2 = "two carries"
+a3 = a2c0 & a2c1 & a3c2 where c0 is "no carries" and c1 is "one carry" and c2 = "two carries"
 
 s2 = s2b0 & s2b1 where b0 is "no borrows" and b1 is "one one borrow"
 
