@@ -1,4 +1,4 @@
-<p>As noted on the main page <span style="background-color:#ffffcc">your engagement with &amp interest in your child&#039;s learning process</span> is the most important factor that will help them learn. Engagement &amp; interst are far more important than the app you use.</p>
+<p>As noted on the main page <span style="background-color:#ffffcc">your engagement with &amp interest in your child&#039;s learning process</span> is the most important factor that will help them learn. Engagement &amp; interest are far more important than the app you use.</p>
 
 <p>Fortunately <span style="background-color:#ffffcc">with RMM this natural &amp; easy for you.</span> It also only takes minutes of your time. Here is how to make this so:</p>
 
