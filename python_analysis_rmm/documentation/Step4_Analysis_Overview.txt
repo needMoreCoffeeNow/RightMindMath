@@ -1,5 +1,8 @@
 The Python analysis program is not very complicated. After responding to some initial prompts, the program provides a series of menus that enable you to print various charts that provide insights about your child's progress in RightMindMath. The information below should help you both understand the whats/whys/hows of the analysis.
 
+*** Mac UI Potential Issue ***
+Sometimes the Anaconda Python distribution will be affected by a small bug in the way one of its libraries has been compiled. When this happens, the window that opens to show the chart cannot be moved/closed. Do not worry if this happens -- it is just an annoyance nothing dangerous. Simply click back into the Terminal app and run the next chart, or close the app. The zombie chart window will be closed.
+
 *** The python_analysis_rmm Folder ***
 To setup the Python analysis you download a zip file titled: "python_analysis_rmm.zip". This unzipped folder has the Python scripts (programs) needed to run the analysis. It also has all the folder structure needed for you to save the Json extract file, and any saved chart image (PNG) files you generate during the analysis. In general the content of this folder is related to your "Documents" not your "Applications". Keep that in mind when you choose a location for the unzip process.
 

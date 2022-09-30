@@ -66,7 +66,7 @@ This is choice (1) in the level2 menu. This is the a stacked bar chart similar t
 
 
 *** m1_2-2_Times_Tries ***
-This is choice (2) in the level2 menu. This is the same chart as the a1/s1 Times & Tries chart. The only difference is that the line graph representing the average percentage of ordered problems for the week has been moved to the lower (tries) bar chart so as to not interfere with the standard deviation overlays in the upper chart. The "m1_2-2_" start of the chart file name denotes that the chart is for 2s. If the name started m1_2-5_" it would be for the fives. This chart represents the most current weeks: 1-26.
+This is choice (2) in the level2 menu. This is the same chart as the a1/s1 Times & Tries chart. The only difference is that the line graph representing the average percentage of ordered problems  (as described for m1_1_Problem_Type) for the week has been moved to the lower (tries) bar chart so as to not interfere with the standard deviation overlays in the upper chart. The "m1_2-2_" start of the chart file name denotes that the chart is for 2s. If the name started m1_2-5_" it would be for the fives. This chart represents the most current weeks: 1-26.
 
 
 *** m1_3-2_Times_Tries ***
