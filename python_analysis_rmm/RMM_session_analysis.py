@@ -12,8 +12,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class ProcessJsonFile():
-    def __init__(self, root, json_file, limits_time):
+    def __init__(self, root, json_file, limits_time, days52):
         self.root = root
+        self.days52 = days52
         self.json_file = json_file
         self.file_stem = json_file.stem
         self.limits_time = limits_time
@@ -272,7 +273,11 @@ class ProcessJsonFile():
             my_df['date_weekday'] = my_wd
             delta = date_now - dt
             my_df['date_days'] = delta.days
-            my_df['date_week'] = int(delta.days/7) + 1
+            # we use date_week as the single source for analyzing either day or weeks
+            if self.days52:
+                my_df['date_week'] = int(delta.days) + 1
+            else:
+                my_df['date_week'] = int(delta.days/7) + 1
 
             #if my_df['date_week'] > 10: continue #ttttt
 
@@ -421,9 +426,12 @@ class ProcessJsonFile():
         print('-'*50)
 
 class ChartAnalysis():
-    def __init__(self, dframe_in, year, root, output_path, limits_time):
+    def __init__(self, dframe_in, year, root, output_path, limits_time, days52):
         self.root = root
         self.dfc = dframe_in
+        self.tref = 'days' if days52 else 'weeks'
+        self.trefcap = 'Days' if days52 else 'Weeks'
+        self.trefprefix = 'Dys' if days52 else 'Wks'
         self.limits_time = limits_time
         self.save_flag = 'D' # D=display only, B=display & save S=save only
         self.save_name_prefix = ''
@@ -601,25 +609,23 @@ class ChartAnalysis():
             self.save_name_prefix = '%s_%d' % (mytype, num)
         # a1
         if mlevel == 'level2' and mytype == 'a1':
-            if num == 1: self.totalProblemsStackedBar(['a1', 'a2', 'a3'], 'Addition')
-            if num == 2: self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1', False)
-            if num == 3: self.chartTimesTries('a1', 'Add 1-Digit', 'start2', 'end2', False)
-            if num == 4:
+            if num == 1: self.chartTimesTries('a1', 'Add 1-Digit', 'start1', 'end1', False)
+            if num == 2: self.chartTimesTries('a1', 'Add 1-Digit', 'start2', 'end2', False)
+            if num == 3:
                 order = ['+++', '+-+', '+--', '---']
                 self.ptypeProblemsStackedBar('a1', order)
-            if num == 5:
+            if num == 4:
                 order = ['a1']
                 self.outlierProblemsStackedBar(order, 'a1')
             return
         # s1
         if mlevel == 'level2' and mytype == 's1':
-            if num == 1: self.totalProblemsStackedBar(['s1', 's2', 's3'], 'Subtraction')
-            if num == 2: self.chartTimesTries('s1', 'Sub 1-Digit', 'start1', 'end1', False)
-            if num == 3: self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2', False)
-            if num == 4:
+            if num == 1: self.chartTimesTries('s1', 'Sub 1-Digit', 'start1', 'end1', False)
+            if num == 2: self.chartTimesTries('s1', 'Sub 1-Digit', 'start2', 'end2', False)
+            if num == 3:
                 order = ['+-+', '+--', '---']
                 self.ptypeProblemsStackedBar('s1', order)
-            if num == 5:
+            if num == 4:
                 order = ['s1']
                 self.outlierProblemsStackedBar(order, 's1')
             return
@@ -678,8 +684,8 @@ class ChartAnalysis():
             'index2' : None,
             'title1' : '',
             'title2' : '',
-            'xlabel1' : 'week',
-            'xlabel2' : 'week',
+            'xlabel1' : '%s' % (self.tref),
+            'xlabel2' : '%s' % (self.tref),
             'ylabel' : '',
             'twin_x1' : None,
             'twin_y1' : None,
@@ -716,10 +722,9 @@ class ChartAnalysis():
             else:
                 sbparams['data1'][num] = myseries
         if self.wkmax > 26:
-            #sbparams['title1'] = 'M1 Problems Weeks 1-%d' % (self.wkmax)
-            sbparams['title1'] = 'M1 Problems Weeks 1-52'
+            sbparams['title1'] = 'M1 Problems %s 1-52' % (self.trefcap)
         else:
-            sbparams['title1'] = 'M1 Problems Weeks 1-26'
+            sbparams['title1'] = 'M1 Problems %s 1-26' % (self.trefcap)
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
@@ -759,9 +764,9 @@ class ChartAnalysis():
             else:
                 sbparams['data1'][pt] = myseries
         if self.wkmax > 26:
-            sbparams['title1'] = '%s Problem Types Weeks 1-%d' % (idlevel, self.wkmax)
+            sbparams['title1'] = '%s Problem Types %s 1-%d' % (idlevel, self.trefcap, self.wkmax)
         else:
-            sbparams['title1'] = '%s Problem Types Weeks 1-26' % (idlevel)
+            sbparams['title1'] = '%s Problem Types %s 1-26' % (idlevel, self.trefcap)
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
@@ -800,9 +805,9 @@ class ChartAnalysis():
             else:
                 sbparams['data1'][lvl] = myseries
         if self.wkmax > 26:
-            sbparams['title1'] = '%s Outlier Problems Weeks 1-%d' % (mytype, self.wkmax)
+            sbparams['title1'] = '%s Outlier Problems %s 1-%d' % (mytype, self.trefcap, self.wkmax)
         else:
-            sbparams['title1'] = '%s Outlier Problems Weeks 1-26' % (mytype)
+            sbparams['title1'] = '%s Outlier Problems %s 1-26' % (mytype, self.trefcap)
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
@@ -841,9 +846,9 @@ class ChartAnalysis():
             else:
                 sbparams['data1'][lvl] = myseries
         if self.wkmax > 26:
-            sbparams['title1'] = '%s Total Problems Weeks 1-%d' % (mytype, self.wkmax)
+            sbparams['title1'] = '%s Total Problems %s 1-%d' % (mytype, self.trefcap, self.wkmax)
         else:
-            sbparams['title1'] = '%s Total Problems Weeks 1-26' % (mytype)
+            sbparams['title1'] = '%s Total Problems %s 1-26' % (mytype, self.trefcap)
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
@@ -891,9 +896,9 @@ class ChartAnalysis():
         sbparams['twin_x1'] = x
         sbparams['twin_y1'] = y
         if self.wkmax > 26:
-            sbparams['title1'] = '%s Total Problems Weeks 1-%d' % (mytype, self.wkmax)
+            sbparams['title1'] = '%s Total Problems %s 1-%d' % (mytype, self.trefcap, self.wkmax)
         else:
-            sbparams['title1'] = '%s Total Problems Weeks 1-26' % (mytype)
+            sbparams['title1'] = '%s Total Problems %s 1-26' % (mytype, self.trefcap)
         if self.wkmax > 26:
             start = self.wsplits['start2']
             end = self.wsplits['end2']
@@ -964,10 +969,9 @@ class ChartAnalysis():
           ncol=12, fancybox=True, shadow=True)
         ax1.invert_xaxis()
         tic = '' if sbparams['start1'] == 1 else '-'
-        tic2 = '' if sbparams['start1'] == 1 else 's'
-        hdr = '%s%d week%s' % (tic, sbparams['start1'], tic2)
+        hdr = '%s%d %s' % (tic, sbparams['start1'], self.tref)
         plt.figtext(0.86,0.9, hdr, fontsize=8, va="bottom", ha="left")
-        hdr = '-%d weeks' % (sbparams['end1']-1)
+        hdr = '-%d %s' % (sbparams['end1']-1, self.tref)
         plt.figtext(0.13,0.9, hdr, fontsize=8, va="bottom", ha="left")
         if sbparams['twin_x1'] and sbparams['twin_y1']:
             ax_twin1 = ax1.twinx()
@@ -984,9 +988,9 @@ class ChartAnalysis():
             #ax2.legend(title='level', bbox_to_anchor=(1.0, 1.05), loc='upper left')
             ax2.get_legend().remove()
             ax2.invert_xaxis()
-            hdr = '-%d weeks' % (sbparams['start2'])
-            plt.figtext(0.86,0.42, '-27 weeks', fontsize=8, va="bottom", ha="left")
-            hdr = '-%d weeks' % (sbparams['end2']-1)
+            hdr = '-%d %s' % (sbparams['start2'], self.tref)
+            plt.figtext(0.86,0.42, '-27 %s' % (self.tref), fontsize=8, va="bottom", ha="left")
+            hdr = '-%d %s' % (sbparams['end2']-1, self.tref)
             plt.figtext(0.13,0.42, hdr, fontsize=8, va="bottom", ha="left")
             # adjust white space
             fig.subplots_adjust(hspace=0.6)
@@ -995,6 +999,7 @@ class ChartAnalysis():
                 ax_twin2.plot(sbparams['twin_x2'], sbparams['twin_y2'], color='black', linewidth=0.5)
         #show and or save
         if self.save_flag == 'S' or self.save_flag == 'B':
+            self.save_name = '%s_%s' % (self.trefprefix, self.save_name)
             plt_path = self.output_charts / self.save_name
             plt.savefig(str(plt_path))
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
@@ -1069,7 +1074,7 @@ class ChartAnalysis():
         y_error = std_times_all['elapsed']
         ax1.bar(x,y)
         ax1.set_xticks(x)
-        ax1.set_xlabel('week', fontsize=5)
+        ax1.set_xlabel('%s' % (self.tref), fontsize=5)
         ax1.set_ylabel('seconds (std dev)', fontsize=8)
         ax1.errorbar(x, y, yerr=y_error, fmt='none', ecolor='r')
         ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
@@ -1079,17 +1084,16 @@ class ChartAnalysis():
         x_label = x_axis.get_label()
         x_label.set_visible(False)
         tic = '' if start == 1 else '-'
-        tic2 = '' if start == 1 else 's'
-        hdr = '%s%d week%s' % (tic, start, tic2)
+        hdr = '%s%d %s' % (tic, start, self.tref)
         plt.figtext(0.86,0.89, hdr, fontsize=8, va="bottom", ha="left")
-        hdr = '-%d weeks' % (end-1)
+        hdr = '-%d %s' % (end-1, self.tref)
         plt.figtext(0.13,0.89, hdr, fontsize=8, va="bottom", ha="left")
         #ax2
         x = tries_all['date_week']
         y = tries_all['tries']
         ax2.bar(x,y)
         ax2.set_xticks(x)
-        ax2.set_xlabel('week', fontsize=5)
+        ax2.set_xlabel('%s' % (self.tref), fontsize=5)
         ax2.set_ylabel('tries', fontsize=8)
         ax2.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
         ax2.set_title('%s Avg Number of Tries to Right Answer' % (mytype), fontsize=8)
@@ -1100,13 +1104,14 @@ class ChartAnalysis():
         x_axis = ax2.axes.get_xaxis()
         x_label = x_axis.get_label()
         x_label.set_visible(False)
-        hdr = '%s%d week%s' % (tic, start, tic2)
+        hdr = '%s%d %s' % (tic, start, self.tref)
         plt.figtext(0.84,0.43, hdr, fontsize=8, va="bottom", ha="left")
-        hdr = '-%d weeks' % (end-1)
+        hdr = '-%d %s' % (end-1, self.tref)
         plt.figtext(0.13,0.43, hdr, fontsize=8, va="bottom", ha="left")
         fig.subplots_adjust(hspace=0.5)
         #show and or save
         if self.save_flag == 'S' or self.save_flag == 'B':
+            self.save_name = '%s_%s' % (self.trefprefix, self.save_name)
             plt_path = self.output_charts / self.save_name
             plt.savefig(str(plt_path))
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
@@ -1141,6 +1146,7 @@ class ChartAnalysis():
         x_label.set_visible(False)
         #show and or save
         if self.save_flag == 'S' or self.save_flag == 'B':
+            self.save_name = '%s_%s' % (self.trefprefix, self.save_name)
             plt_path = self.output_charts / self.save_name
             plt.savefig(str(plt_path))
             print('\nOUTPUT saved chart: %s' % (str(plt_path.name)))
@@ -1148,11 +1154,16 @@ class ChartAnalysis():
             plt.show(block=False)
 
 class AnalysisMenus():
-    def __init__(self, dframe_in, week_last):
+    def __init__(self, dframe_in, week_last, days52):
         self.dfm = dframe_in;
         self.order = ['a1', 'a2', 'a3', 's1', 's2', 's3', 'm1', 'm2', 'd3']
         self.week_last = week_last
         self.year = 1
+        self.days51 = days52
+        self.tref = 'days' if days52 else 'weeks'
+        self.tref12 = '(52 days)' if days52 else '(12 mns)'
+        self.tref06 = '(26 days)' if days52 else '(6 mns)'
+        self.trefprev = '26 days' if days52 else '6 mns'
         self.wsplits = self.getWeekSplits()
         self.levels = {} # initialized & updated using year idelevel/problems
         self.counts = {} # stores year (52 wks), months (26 wks) & weeks (4 wks)
@@ -1225,7 +1236,7 @@ class AnalysisMenus():
 
     def getLevelsCount(self):
         for idlevel in self.order:
-            self.levels[idlevel] = {'year':0, 'months':0, 'weeks':0}
+            self.levels[idlevel] = {'year':0, 'months':0, 'weeks':0, 'prev':0}
         ystart = self.wsplits['start1']
         yend = self.wsplits['end2']
         mstart = self.wsplits['start1']
@@ -1269,13 +1280,13 @@ class AnalysisMenus():
         err_str = ''
         order = ['t01', 't02', 't03', 'a1', 's1', 'm1', 'adv']
         titles = {
-            't01':['1) CHART: Problems Done', '(12 mns)', 'tot', 'year'],
-            't02':['2) CHART: Lifetime Total by Device', '(all mns)', 'all', 'count'],
-            't03':['3) CHART: Outliers', '(12 mns)', 'tot', 'year'],
-            'a1':['4) MENU: Addition 1-Digit', '(12 mns)', 'add', 'year'],
-            's1':['5) MENU: Subtraction 1-Digit', '(12 mns)', 'sub', 'year'],
-            'm1':['6) MENU: Multiply 1-Digit', '(12 mns)', 'm1', 'year'],
-            'adv':['7) MENU: 2-3 Digit Add/Sub/Mult & Division', '(12 mns)', 'adv', 'year']
+            't01':['1) CHART: Problems Done', self.tref12, 'tot', 'year'],
+            't02':['2) CHART: Lifetime Total by Device', '(all year)', 'all', 'count'],
+            't03':['3) CHART: Outliers', self.tref12, 'tot', 'year'],
+            'a1':['4) MENU: Addition 1-Digit', self.tref12, 'add', 'year'],
+            's1':['5) MENU: Subtraction 1-Digit', self.tref12, 'sub', 'year'],
+            'm1':['6) MENU: Multiply 1-Digit', self.tref12, 'm1', 'year'],
+            'adv':['7) MENU: 2-3 Digit Add/Sub/Mult & Division', self.tref12, 'adv', 'year']
         }
         lmax = 0
         nmax = len(str(self.counts['all']['count']))
@@ -1328,29 +1339,27 @@ class AnalysisMenus():
         titles = {'a1':'ADDITION 1-Digit', 's1':'SUBTRACTION 1-Digit', 'm1':'MULTIPLY 1-Digit',
                   'adv':'2/3-Digit Add/Sub/Mult & Division'}
         choices = {
-            'a1' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
-                    ['2) CHART: Times & Tries (weeks  1-26)', '(6 mns)', 'a1', 'months'],
-                    ['3) CHART: Times & Tries (weeks 27-52)', '(6 mns prev)', 'a1', 'prev'],
-                    ['4) CHART: Problem Type', '(12 mns)', 'a1', 'year'],
-                    ['5) CHART: Outliers', '(12 mns)', 'a1', 'year']],
-            's1' : [['1) CHART: Yearly Problems by Type', '(12 mns)', 'add', 'year'],
-                    ['2) CHART: Times & Tries (weeks  1-26)', '(6 mns)', 'a1', 'months'],
-                    ['3) CHART: Times & Tries (weeks 27-52)', '(6 mns prev)', 'a1', 'prev'],
-                    ['4) CHART: Problem Type', '(12 mns)', 'a1', 'year'],
-                    ['5) CHART: Outliers', '(12 mns)', 'a1', 'year']],
-            'm1' : [['1) CHART: Yearly Problems by Digit', '(12 mns)', 'm1', 'year'],
-                    ['2) CHART: Times & Tries (weeks 1-26)', '(6 mns)', 'm1', 'months', 'm1'],
-                    ['3) CHART: Times $ Tries (weeks 27-52)', '(prev 6 mns)', 'm1', 'prev', 'm1']],
-            'adv' : [['1) CHART: A2 Problems & Times (year)', '(12 mns)', 'a2', 'year'],
-                    ['2) CHART: A3 Problems & Times (year)', '(12 mns)', 'a3', 'year'],
-                    ['3) CHART: S2 Problems & Times (year)', '(12 mns)', 's2', 'year'],
-                    ['4) CHART: S3 Problems & Times (year)', '(12 mns)', 's3', 'year'],
-                    ['5) CHART: M2 Problems & Times (year)', '(12 mns)', 'm2', 'year'],
-                    ['6) CHART: LD Problems & Times (year)', '(12 mns)', 'd3', 'year']]
+            'a1' : [['1) CHART: Times & Tries (%s  1-26)' % (self.tref), self.tref06, 'a1', 'months'],
+                    ['2) CHART: Times & Tries (%s 27-52)' % (self.tref), '(prev %s' % (self.tref06[1:]), 'a1', 'prev'],
+                    ['3) CHART: Problem Type', self.tref12, 'a1', 'year'],
+                    ['4) CHART: Outliers', self.tref12, 'a1', 'year']],
+            's1' : [['1) CHART: Times & Tries (%s  1-26)' % (self.tref), self.tref06, 's1', 'months'],
+                    ['2) CHART: Times & Tries (%s 27-52)' % (self.tref), '(%s prev)' % (self.trefprev), 's1', 'prev'],
+                    ['3) CHART: Problem Type', self.tref12, 's1', 'year'],
+                    ['4) CHART: Outliers', self.tref12, 's1', 'year']],
+            'm1' : [['1) CHART: Yearly Problems by Digit', self.tref12, 'm1', 'year'],
+                    ['2) CHART: Times & Tries (%s 1-26)' % (self.tref), '(%s)' % (self.trefprev), 'm1', 'months', 'm1'],
+                    ['3) CHART: Times $ Tries (%s 27-52)' % (self.tref), '(prev %s)' % (self.trefprev), 'm1', 'prev', 'm1']],
+            'adv' : [['1) CHART: A2 Problems & Times', self.tref12, 'a2', 'year'],
+                    ['2) CHART: A3 Problems & Times', self.tref12, 'a3', 'year'],
+                    ['3) CHART: S2 Problems & Times', self.tref12, 's2', 'year'],
+                    ['4) CHART: S3 Problems & Times', self.tref12, 's3', 'year'],
+                    ['5) CHART: M2 Problems & Times', self.tref12, 'm2', 'year'],
+                    ['6) CHART: LD Problems & Times', self.tref12, 'd3', 'year']]
         }
         ok_list = {
-            'a1':[1, 2, 3, 4, 5],
-            's1':[1, 2, 3, 4, 5],
+            'a1':[1, 2, 3, 4],
+            's1':[1, 2, 3, 4],
             'm1':[1, 2, 3],
             'adv':[1, 2, 3, 4, 5, 6]
             }
@@ -1418,25 +1427,36 @@ class AnalysisMenus():
                 continue
             return idchoice, choice, digit
 
-    def getYear(self):
+    def getYear(self, days52):
         self.year = 1
         # skip menu if only one year of data
-        if self.week_last < 53: return
-        ok = [1, 2, 3, 4]
+        if self.week_last < 53 or days52: return
+        ok = []
         err_str = ''
         while True:
             # exit by entering valid number or Return/Q to exit/quit
+            print('\n\n%s' % ('-'*50))
+            print('There is more than 1 year of data.')
+            print('Please select the year you want to analyze.')
             print('-'*50)
             print('1) Year 1 (1-52 weeks previous)')
-            if self.week_last > 52: print('2) Year 2 (53-104 weeks previous)')
-            if self.week_last > 104: print('3) Year 3 (105-156 weeks previous)')
-            if self.week_last > 156: print('4) Year  (157-208 weeks previous)')
+            ok.append(1)
+            if self.week_last > 52:
+                print('2) Year 2 (53-104 weeks previous)')
+                ok.append(2)
+            if self.week_last > 104:
+                print('3) Year 3 (105-156 weeks previous)')
+                ok.append(3)
+            if self.week_last > 156:
+                print('4) Year 4 (157-208 weeks previous)')
+                ok.append(4)
             print('[Return to Exit, Q to quit]')
             if len(err_str) > 0:
                 print('-'*50)
                 print(err_str)
                 err_str = ''
-            choice = input('Enter the year number to analyze (1, 2, 3, 4):')
+            ok_str = ', '.join([str(i) for i in ok])
+            choice = input('Enter the year number to analyze (%s):' % (ok_str))
             if choice.lower()[0:1] == 'q':
                 print('\nGoodbye')
                 sys.exit(0)
@@ -1497,6 +1517,31 @@ class FileHandler():
             print('%s%s' % ('\n', '-'*50))
             print('Please limit entry to numbers shown')
             print('-'*50)
+
+    def getDays52(self):
+        ok = [1, 2]
+        while True:
+            print('%s%s' % ('\n', '-'*50))
+            print('\n\nYou can analyze:\n1) 52 DAYS (current year only)')
+            print('2) 52 weeks (any year)')
+            print('[Return or Q to Quit]')
+            print('-'*50)
+            choice = input('Enter the number for the type of analysis:')
+            if len(choice) == 0 or choice.lower() == 'q':
+                print('\nGoodbye')
+                sys.exit(0)
+            try:
+                choice = int(choice)
+            except:
+                print('%s%s' % ('\n', '-'*50))
+                print('Please limit entry to numbers shown')
+                continue
+            if not choice in ok:
+                print('%s%s' % ('\n', '-'*50))
+                print('Please limit entry to numbers shown')
+                continue
+            print(choice == 1, 'choice == 1')
+            return choice == 1
 
     def getTimeLimits(self):
         mypath = self.root / 'parameters_limits'
@@ -1616,10 +1661,11 @@ def processAnalysis():
         if exit:
             print('\nGoodbye')
             return
+        days52 = fh.getDays52()
         if not fh.getTimeLimits():
             print('\nGoodbye')
             return
-        pjf = ProcessJsonFile(root, fh.json_file, fh.limits_time)
+        pjf = ProcessJsonFile(root, fh.json_file, fh.limits_time, days52)
         pjf.readFile()
         pjf.processLines()
         pjf.createOutputSubfolder(output)
@@ -1631,14 +1677,14 @@ def processAnalysis():
             print('Please check your download.')
             print('\nGoodbye')
             return
-        am = AnalysisMenus(pjf.dframe, pjf.week_last)
-        am.getYear() # year choice if week_last > 52
+        am = AnalysisMenus(pjf.dframe, pjf.week_last, days52)
+        am.getYear(days52) # year choice if week_last > 52
         print('\n\nYear %d being analyzed' % (am.year))
         am.getWeekSplits() # must follow getYear() as self.year is used
         am.getLevelsCount() 
         am.setMcounts()
         am.setIdlevelCounts() # must follow getLevelsCount()
-        ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path, fh.limits_time)
+        ca = ChartAnalysis(pjf.dframe, am.year, root, pjf.output_path, fh.limits_time, days52)
         ca.setSaveFlag()
         ca.getM2BasicChunkSplits()
         ca.getM2BasicChunkPctDF('all', 1, 26)
