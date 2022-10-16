@@ -271,7 +271,6 @@ var RMM_STATS = (function() {
                     times.push(sdata[i].elapsed);
             }
         }
-        //////mydoc.getElementById('stats_tab_export').innerHTML = txt;
         averaged = false;
         avg_len = times.length;
         if (times.length > 100) { averageTimes(); }
