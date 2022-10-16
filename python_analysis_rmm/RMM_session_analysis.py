@@ -278,7 +278,6 @@ class ProcessJsonFile():
                 my_df['date_week'] = int(delta.days) + 1
             else:
                 my_df['date_week'] = int(delta.days/7) + 1
-
             #if my_df['date_week'] > 10: continue #ttttt
 
             if my_df['date_week'] < self.week_first:
@@ -718,7 +717,7 @@ class ChartAnalysis():
             qstr += ' and (ptype == "m1.%d")' % (num)
             myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
-                sbparams['data1'][num] = myseries[:wkmax]
+                sbparams['data1'][num] = myseries[:self.wkmax]
             else:
                 sbparams['data1'][num] = myseries
         if self.wkmax > 26:
@@ -760,7 +759,7 @@ class ChartAnalysis():
             qstr += ' and (ptype == "%s")' % (pt)
             myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
-                sbparams['data1'][pt] = myseries[:wkmax]
+                sbparams['data1'][pt] = myseries[:self.wkmax]
             else:
                 sbparams['data1'][pt] = myseries
         if self.wkmax > 26:
@@ -801,7 +800,7 @@ class ChartAnalysis():
             qstr += ' and (outlier == True)'
             myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
-                sbparams['data1'][lvl] = myseries[:wkmax]
+                sbparams['data1'][lvl] = myseries[:self.wkmax]
             else:
                 sbparams['data1'][lvl] = myseries
         if self.wkmax > 26:
@@ -842,7 +841,7 @@ class ChartAnalysis():
             qstr += ' and (idlevel in [ "%s" ])' % (lvl)
             myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
-                sbparams['data1'][lvl] = myseries[:wkmax]
+                sbparams['data1'][lvl] = myseries[:self.wkmax]
             else:
                 sbparams['data1'][lvl] = myseries
         if self.wkmax > 26:
@@ -884,7 +883,7 @@ class ChartAnalysis():
             qstr += ' and (ptype == "%s")' % (ptype)
             myseries = self.prbcountWeekData(qstr, start, end)
             if self.wkmax < 26:
-                sbparams['data1'][ptype] = myseries[:wkmax]
+                sbparams['data1'][ptype] = myseries[:self.wkmax]
             else:
                 sbparams['data1'][ptype] = myseries
         times_types = times_types[:len(times_types)-2]
@@ -956,7 +955,7 @@ class ChartAnalysis():
             ax_1 = axes[0]
             ax_2 = axes[1]
         else:
-            fig, ax1 = plt.subplots(1, 1, figsize=(8,5), sharey=False)
+            fig, ax_1 = plt.subplots(1, 1, figsize=(8,5), sharey=False)
         # ax1 stacked bar plot
         df_sb = pd.DataFrame(sbparams['data1'], index=sbparams['index1'])
         ax1 = df_sb.plot(kind='bar', stacked=True, ax=ax_1)
@@ -964,9 +963,10 @@ class ChartAnalysis():
         ax1.set_xlabel(sbparams['xlabel1'])
         ax1.set_title(sbparams['title1'])
         ax1.grid(color='#444', linestyle='--', linewidth=1, axis='y', alpha=0.4)
-        #ax1.legend(title='level', bbox_to_anchor=(1.0, 1.05), loc='upper left')
-        ax1.legend(loc='upper left', bbox_to_anchor=(0.0, 1.40),
-          ncol=12, fancybox=True, shadow=True)
+        if self.wkmax > 26:
+            ax1.legend(loc='upper left', bbox_to_anchor=(0.0, 1.40), ncol=12, fancybox=True, shadow=True)
+        else:
+            ax1.legend(loc='upper left', bbox_to_anchor=(0.0, 1.15), ncol=12, fancybox=True, shadow=True)
         ax1.invert_xaxis()
         tic = '' if sbparams['start1'] == 1 else '-'
         hdr = '%s%d %s' % (tic, sbparams['start1'], self.tref)
@@ -1037,14 +1037,14 @@ class ChartAnalysis():
         times_all.update(times)
         times_all['elapsed'] = times_all['elapsed'] / 1000
         if self.wkmax < 26:
-            times_all = times_all[:wkmax]
+            times_all = times_all[:self.wkmax]
         std_times = self.dfc.query(qstr).groupby('date_week')['elapsed'].std(ddof=0)
         std_times_all = pd.DataFrame(week_dict)
         std_times_all.index = sb_index
         std_times_all.update(std_times)
         std_times_all['elapsed'] = std_times_all['elapsed'] / 1000
         if self.wkmax < 26:
-            std_times_all = std_times_all[:wkmax]
+            std_times_all = std_times_all[:self.wkmax]
         tries = self.dfc.query(qstr).groupby('date_week')['tries'].mean()
         week_dict = {
             'date_week':list(range(start, end)),
@@ -1054,7 +1054,7 @@ class ChartAnalysis():
         tries_all.index = sb_index
         tries_all.update(tries)
         if self.wkmax < 26:
-            tries_all = tries_all[:wkmax]
+            tries_all = tries_all[:self.wkmax]
         rcparams = {'legend.fontsize':8,
                     'legend.title_fontsize':6,
                     'axes.labelsize':8,
@@ -1323,6 +1323,12 @@ class AnalysisMenus():
             if not choice in ok:
                 err_str = 'Please limit entry to numbers shown'
                 continue
+            if choice == 1 and self.counts['tot']['year'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 2 and self.counts['all']['count'] == 0:
+                err_str = 'Sorry no problems'
+            if choice == 3 and self.counts['tot']['year'] == 0:
+                err_str = 'Sorry no problems'
             if choice == 4 and self.counts['a1']['year'] == 0:
                 err_str = 'Sorry no problems'
             if choice == 5 and self.counts['s1']['year'] == 0:
