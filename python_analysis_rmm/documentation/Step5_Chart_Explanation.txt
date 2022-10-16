@@ -1,10 +1,10 @@
 Note: The names in the headers are the file names used when a chart is saved. All chart image files have the .png extension.
 
 *** Days / Weeks Prefix ***
-With one exception, the name of the saved chart will be the same whether 52 days or 52 weeks is being analyzed. The exception is the first four characters of the file name (the prefix). For 52 days analysis the prefix is: Dys. For 52 weeks analysis, the prefix is: Wks_. In all the file names below Dys has been used.
+With one exception, the name of the saved chart will be the same whether 52 days or 52 weeks is being analyzed. The exception is the first four characters of the file name (the prefix). For 52 days analysis the prefix is: Dys_. For 52 weeks analysis, the prefix is: Wks_. In all the file names below Dys has been used.
 
-*** all charts ***
-The "all" part of this chart title for the three chart file titles (and file names) indicates that all nine levels of problems (a1, a2, a3, s1, s2,s3, m1, m2, d3) is included. If a problem level is missing, it means no data for that level.
+*** all charts versus a1, a2, a3, etc. ***
+Charts with file names that start with "all" show data for all nine levels of problems: a1, a2, a3, s1, s2, s3, m1, m2, d3. Other charts will be specific to one type of arithmetic. For these charts, the level abbreviations previously listed will follow the "Dys_" or "Wks_" prefix.
 
 
 *** Dys_all_1_Total_Problems ***
