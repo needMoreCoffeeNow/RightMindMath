@@ -1,4 +1,4 @@
-<p>RMM uses the database built into your browser for everything. No other browser storage devices like cookies are used.</p>
+<p>RMM uses the database built into your browser for everything (IndexedDB <a target="_blank" href="https://en.wikipedia.org/wiki/Indexed_Database_API">click here for more information</a>). No other browser storage devices like cookies are used.</p>
 
 <p>When you first start RMM it needs to setup its database. Since RMM&#039;s database can be sync&#039;ed across multiple devices, each device&#039;s records need to be unique. The device name you enter is used for this. <span style="font-size:90%;">(Your device name is combined with a 3-digit value to ensure uniqueness.)</span></p>
 
