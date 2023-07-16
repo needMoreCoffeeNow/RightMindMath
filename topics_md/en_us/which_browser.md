@@ -1,6 +1,6 @@
 <p><span style="background-color:#ffffcc">The browser you use to install RMM as a PWA will be the browser that always runs the app.</span></p>
 
-<p>For computers running Windows or the MacOS you should use either Microsft Edge or Google Chrome browsers. Apple, for unknown reasons, does not support the <u>long-ago accepted PWA standard</u> with MacOS Safari.<p>
+<p>For computers running Windows or the MacOS you should use either Microsft Edge or Google Chrome browsers. Apple, for unknown reasons, does not support the <u>long-ago accepted PWA standard</u> with MacOS Safari. (This will change with the upcoming Sonoma release expected Fall 2023.)<p>
 
 <p>Between Edge &amp; Chrome on a computer, you may prefer Edge. Both browsers run the app equally well. When presenting the scalable vector graphics RMM uses extensively Edge renders them a bit more crisply than Chrome.</p>
 
