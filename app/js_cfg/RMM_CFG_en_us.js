@@ -297,7 +297,8 @@
         b_sync_key_create : 'Create New Key',
         b_sync_key_update : 'Update Current Key',
         b_subborrow_0 : 'No',
-        b_subborrow_1 : 'Yes'
+        b_subborrow_1 : 'Yes',
+        b_print_window : 'Print'
     };
     // charRange is a series of strings that will be expanded into a dict
     // of numbers against which valid string entries will be verifies
