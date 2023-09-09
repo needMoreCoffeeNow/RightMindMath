@@ -15,17 +15,17 @@
 <hr><hr>
 <div class="step">Step 4</div>
 <p>Click the <u>File</u> menu button</p>
-<p><img src="../../images/img_en_us/01_01a_click_file.jpg"  class="img_responsive"></p>
+<p><img src="https://rightmindmath.com/html_sync/images/img_en_us/01_01a_click_file.jpg"  class="img_responsive"></p>
 
 <hr><hr>
 <div class="step">Step 5</div>
 <p>Select the <u>Make a copy</u> File menu option</p>
-<p><img src="../../images/img_en_us/01_02a_click_make_copy.jpg" class="img_responsive"></p>
+<p><img src="https://rightmindmath.com/html_sync/images/img_en_us/01_02a_click_make_copy.jpg" class="img_responsive"></p>
 
 <hr><hr>
 <div class="step">Step 6</div>
 <p>You will see the dialog below after clicking the link above. Change the text in the <u>Name</u> box to <b>RightMindMath</b> (delete the &#039;Copy of&#039; text). Leave everything else unchanged. Then click the green <u>Make a copy</u> button</p>
-<p><img src="../../images/img_en_us/01_03a_copy_rmm_dialog.jpg" class="img_responsive"></p>
+<p><img src="https://rightmindmath.com/html_sync/images/img_en_us/01_03a_copy_rmm_dialog.jpg" class="img_responsive"></p>
 
 
 <hr><hr>
@@ -42,7 +42,7 @@
 <div class="step">Step 9</div>
 <p>Goto the Tab/Window with the recently saved RightMindMath sheet (or open it if you closed that Tab/Window).</p>
 <p>Click on the sheet&#039;s <u>Extensions</u> menu and select <u>Apps Script</u> option. This will open the Apps Script editor in a new tab.<span style="font-size:90%;"> Note: The extensions load slowly after the sheet itself is open.  If the tab does not open, wait a minute and try again.</span></p>
-<p><img src="../../images/img_en_us/01_04_copy_api_code.jpg"  class="img_responsive"></p></p>
+<p><img src="https://rightmindmath.com/html_sync/images/img_en_us/01_04_copy_api_code.jpg"  class="img_responsive"></p></p>
 
 
 <hr><hr>
