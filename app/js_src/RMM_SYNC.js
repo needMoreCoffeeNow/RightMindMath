@@ -946,7 +946,7 @@ var RMM_SYNC = (function() {
             if (['false', 'true'].indexOf(parts[2]) === -1) { return false; }
             ans = parts[3].split('|'); // m1 answers in slot 4 (index 3)
         } else {
-            if (parts.length !== 3) { return false; }
+            if (parts.length !== 4) { return false; }
             ans = parts[2].split('|'); //answers in slot 3 (index 2)
         }
         if (ans.length !== 4) { return false; }

@@ -199,48 +199,48 @@ var g_v = (function() {
             }
             // ERR01: device_iduser = mac.952_442135493
             my_v = td.device_iduser;
-            if (!my_v) { my_e = 'ERR01a'; continue; } // does not exist
+            if (my_v === null) { my_e = 'ERR01a'; continue; } // does not exist
             if (!devs_ids[my_v]) { // not previously proofed
                 if (!validDeviceIduser(my_v)) { my_e = 'ERR01b'; continue; }
                 devs_ids[td.device_iduser] = true; // save proof
             }
             // ERR02: idsession = 1653751651154_2 or 1658157755851_1_1
             my_v = td.idsession;
-            if (!my_v) { my_e = 'ERR02a'; continue; }
+            if (my_v === null) { my_e = 'ERR02a'; continue; }
             if (!validIdsession(my_v)) { my_e = 'ERR02b'; continue; }
             // ERR03: iduser = 243184381
             my_v = td.iduser;
-            if (!my_v) { my_e = 'ERR03a'; continue; }
+            if (my_v === null) { my_e = 'ERR03a'; continue; }
             if (!validINT(my_v)) { my_e = 'ERR03b'; continue; }
             // ERR04: elapsed = 1431
             my_v = td.elapsed;
-            if (!my_v) { my_e = 'ERR04a'; continue; }
+            if (my_v === null) { my_e = 'ERR04a'; continue; }
             if (!validINT(my_v)) { my_e = 'ERR04b'; continue; }
             // ERR05: time = 2431
             my_v = td.time;
-            if (!my_v) { my_e = 'ERR05a'; continue; }
+            if (my_v === null) { my_e = 'ERR05a'; continue; }
             if (!validINT(my_v)) { my_e = 'ERR05b'; continue; }
             // ERR06: idlevel =  a1, a2, a3, s1, s2, s3, m1, m2, d3
             my_v = td.idlevel;
-            if (!my_v) { my_e = 'ERR06a'; continue; }
+            if (my_v === null) { my_e = 'ERR06a'; continue; }
             if (!validIdlevel(my_v)) { my_e = 'ERR06b'; continue; }
             // ERR07: tstamp =  1658157757460
             my_v = td.tstamp;
-            if (!my_v) { my_e = 'ERR07a'; continue; }
+            if (my_v === null) { my_e = 'ERR07a'; continue; }
             if (!validINT(my_v)) { my_e = 'ERR07b'; continue; }
             // ERR08: tries = 4 only for a1, s1, m1
             if (td.idlevel === 'a1' || td.idlevel === 's1' || td.idlevel === 'm1') {
                 my_v = td.tries;
-                if (!my_v) { my_e = 'ERR08a'; continue; }
+                if (my_v === null) { my_e = 'ERR08a'; continue; }
                 if (!validINT(my_v)) { my_e = 'ERR08b'; continue; }
             }
             // ERR09: r_str
             my_v = td.r_str;
-            if (!my_v) { my_e = 'ERR09a'; continue; }
+            if (my_v === null) { my_e = 'ERR09a'; continue; }
             if (!validRstring(my_v)) { my_e = 'ERR09b'; continue; }
             // ERR10: notes
             my_v = td.notes;
-            if (!my_v) { my_e = 'ERR10a'; continue; }
+            if (my_v === null) { my_e = 'ERR10a'; continue; }
             if (!validNotes(my_v)) { my_e = 'ERR10b'; continue; }
         }
         return [my_e.length === 0, my_e];
@@ -250,6 +250,9 @@ var g_v = (function() {
         var ok = ['t', 'f', '.'];
         var i = 0;
         var len = notes.length;
+        // notes do not exist for m2/d3 equations
+        if (len === 0) { return true; }
+        // notes will always be 11 chars for a/s/m
         if (len !== 11) { return false; }
         for (i=0; i<len; i++) {
             if (ok.indexOf(notes.substr(i, 1)) === -1) { return false; }
