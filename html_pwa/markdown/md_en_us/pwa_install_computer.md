@@ -2,7 +2,7 @@
 
 <p>If you have a choice, use Microsoft Edge. It does a bit better job rendering the Scalable Vector Graphics that RMM uses extensively</p>
 
-<p>The process to install with Edge or Chrome is very similar. Both are presented below.</p>
+<p>The process to install with Edge or Chrome is very similar. Both are presented below.<br><br>Note: Your version of Chrome or Edge may be different than those used below. This may result in slight differences from the instructions. However these should be minor, and easily worked around.</p>
 
 <hr><hr>
 
@@ -28,8 +28,8 @@
 
 <hr><hr>
 
-<p><span style="background:#fff;color:#cc0052;">Apple Details</span><br>Apple unfortunately does not let Edge or Chrome make your life so easy.<br>To add RightMindMath to your Dock or Desktop you need to:<br><br>Edge Step 1) Select the Three Dots menu then <u>Apps --> Manage Apps</u>:<br>Edge Step 2) Right click RightMindMath and select <u>Pin To...</u><br>Edge Step 3) A Finder window will open showing the RightMindMath.app file. You can drag this to your Dock, or make an alias and drag the alias to your Desktop.<br><br>Chrome Step 1) In a new tab, open <b>chrome://apps</b><br>Chrome Step 2) Right click RightMindMath and select <u>Create Shortcut</u><br>Chrome Step 3) A Finder window will open showing the RightMindMath.app file. You can drag this to your Dock, or make an alias and drag the alias to your Desktop.<br></p>
+<p><span style="background:#fff;color:#cc0052;">Apple Details</span><br>The instructions for Windows above will apply (possibly with slight variances) for Chrome and Edge running on a Mac. When installed, The RightMindMath.app will be located in either the following folders in <b>the Applications folder shown for your User Name</b> (this is different from the system Application folder located under the main drive): <u>Applications>Chrome Apps</u> or <u>Applications>Edge Apps.</u> Access the app from these folders, or drage the app to your Dock to launch it from there.</p>
 
 <hr><hr>
 
-<p><span style="background:#fff;color:#cc0052;">To Uninstall</span><br><br>Edge Step 1) Select the Three Dots menu then <u>Apps --> Manage Apps</u>:<br>Edge Step 2) Click the <u>X</u> to remove RightMindMath.<br><br>Chrome Step 1) In a new tab, open <b>chrome://apps</b><br>Chrome Step 2) Right click RightMindMath and select <u>Remove from Chrome</u></p>
+<p><span style="background:#fff;color:#cc0052;">To Uninstall</span><br><br>Edge Step 1) Select the Three Dots menu then <u>Apps --> View Apps</u><br>Edge Step 2) Select the next Three Dots menu then <u>Manage Apps</u><br>Edge Step 3) Select the final Three Dots menu above RightMindMath and select <u>Uninstall</u><br><br>Chrome Step 1) In a new tab, open <b>chrome://apps</b><br>Chrome Step 2) Right click RightMindMath and select <u>Remove from Chrome</u></p>
