@@ -1139,6 +1139,9 @@ var RMM_SYNC = (function() {
         var ok = ['t', 'f', '.'];
         var i = 0;
         var len = notes.length;
+        // notes do not exist for m2/d3 equations
+        if (len === 0) { return true; }
+        // notes will always be 11 chars for a/s/m
         if (len !== 11) { return false; }
         for (i=0; i<len; i++) {
             if (ok.indexOf(notes.substr(i, 1)) === -1) { return false; }
