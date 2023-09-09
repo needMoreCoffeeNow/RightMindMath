@@ -1,7 +1,7 @@
 <hr><hr>
 <div class="step">Step 1</div>
 <p>Be sure you are logged into your Google Sheets account. Click the link below to open the Google Sheets main page. If you are prompted to log in, you will need to do that first, or create an account if you do not already have one.</p>
-<p><a target="_blank" href="https://docs.google.com/spreadsheets/d/1rvGuj6SkLtarqv6KIiZruUKnf3WAug2sIUIyRcpHBEM/edit?usp=sharing">Open Your Google Sheets Main Page</a></p>
+<p><a target="_blank" href="https://docs.google.com/spreadsheets">Open Your Google Sheets Main Page</a></p>
 
 <hr><hr>
 <div class="step">Step 2 (optional)</div>
@@ -10,7 +10,7 @@
 <hr><hr>
 <div class="step">Step 3</div>
 <p>Click the link below to open the Google Sheet named <u>RightMindMath</u> in a separate window.</p>
-<p><a target="_blank" href="https://docs.google.com/spreadsheets/d/1rvGuj6SkLtarqv6KIiZruUKnf3WAug2sIUIyRcpHBEM/edit?usp=sharing">RightMindMath Google Sheet Link</a></p>
+<p><a target="_blank" href="https://docs.google.com/spreadsheets/d/19njvzY6HNsjJ8juFMxCmaQrhc3dAvWqaqRJn1sm8-Gs/edit?usp=sharing">RightMindMath Google Sheet Link</a></p>
 
 <hr><hr>
 <div class="step">Step 4</div>
