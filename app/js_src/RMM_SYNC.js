@@ -756,20 +756,18 @@ var RMM_SYNC = (function() {
             if (my_ts > tstamp_max) { tstamp_max = my_ts; }
         }
         sync_confirm_tstamp = Date.now(); // confirms write after fetch return
-        console.log(sync_confirm_tstamp , 'sync_confirm_tstamp from Date.now()')
         data['sync_key'] = sync_key;
         data['pwd'] = sync_user_pwd;
         data['device'] = d_device;
         data['sheet'] = sync_iduser;
         data['tstamp'] = sync_confirm_tstamp;
-        console.log(data['tstamp'] , 'data[tstamp]')
         data['tstamp_max'] = tstamp_max;
         data['datastr'] = a_recs.join('####');
-        console.log('data');
-        console.log(data);
+        //console.log('data');  // leave in for debug
+        //console.log(data);  // leave in for debug
         showMomentPlease('MSG_sync_process_step4');
-        console.log('sync_user_url');
-        console.log(sync_user_url);
+        //console.log('sync_user_url');  // leave in for debug
+        //console.log(sync_user_url);  // leave in for debug
         fetch(sync_user_url, {
             method: 'post',
             mode: 'no-cors',
@@ -782,9 +780,8 @@ var RMM_SYNC = (function() {
     }
 
     function confirmSessionUpPost(response) {
+        // response will be "opaque". Use Python request with data from above to debug server response
         console.log('confirmSessionUpPost(response)');
-        console.log('response');
-        console.log(response);
         var url = '';
         url = sync_user_url;
         url += '?idtype=getConfirmationTstamp';
@@ -802,15 +799,11 @@ var RMM_SYNC = (function() {
         var element = document.getElementById('googlesheet');
         var response = syncResponseGS();
         element.parentNode.removeChild(element);
-        console.log('response');
-        console.log(response);
         if (response.result !== 'OK') {
             console.error(response.result, 'response.result'); // KEEPIN
             postProcessWrapup('MSG_sync_process_final_err');
             return;
         }
-        console.log(sync_confirm_tstamp , 'sync_confirm_tstamp')
-        console.log(response.value , 'response.value')
         if (sync_confirm_tstamp === response.value) {
             procdnStartDownload();
         } else {
