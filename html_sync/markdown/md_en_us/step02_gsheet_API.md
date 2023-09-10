@@ -62,15 +62,16 @@
 
 <hr><hr>
 <div class="step">Step 11</div>
-<p>Navigate back to the <u>Apps Script</u> window (e.g. click its tab). You are now going to start your API. If you do not start it, it will not be active.</p>
+<p>Navigate back to the <u>Apps Script</u> window (e.g. click its tab). You are now going to start your API. If you do not start it, it will not be active. You cannot run any sync activities from the app unless the API is running. The API stays active once you start it even after you close the sheet window, so you only need to do this once.</p>
 <p>Locate the <u>Run</u> button. The button to the right if <u>Run</u> is <u>Debug</u>. Ignore Debug.</p>
 <p>Immediately to the right of Debug is a drop-down selector. This selector may already show <u>aa_setup</u>. If <u>aa_setup</u> is not shown, click the selector and choose <u>aa_setup</u>.</p>
-<p>Once <u>aa_setup</u> is showing, click the <u>Run</u> button.</p>
+<p>Once <u>aa_setup</u> is showing, click the <u>Run</u> button. When you do this you should see an <u>Execution Log</u> pane similar to the one below (with different ID numbers, times, etc.)</p>
 <p>You RMMSync API is now active, and will stay active even when you close the RightMindMath sheet.</p>
 
 <p>You can now close the <u>Apps Script</u> window.</p>
 
 <p><img src="../../images/img_en_us/02_11a_run_aa_setup.jpg"  class="img_responsive"></p>
+<p><img src="../../images/img_en_us/02_11b_execution_log.jpg"  class="img_responsive"></p>
 
 
 <hr><hr>
