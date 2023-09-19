@@ -1,6 +1,6 @@
 <p>Use either Edge or Chrome on Mac or Windows to install RightMindMath as a PWA. Safari on MacOS does not support PWA installs. (This is likely to change with the Fall 2023 release of Safari with the new Mac OS Sonoma.) Other browsers have not been tested, and may not work</p>
 
-<p>If you have a choice, you may prefer Chrome when using it on a Mac. Edge when running the app on the Mac opens the Edge browser each time you open the app. Chrome does not do this. On Windows Edge and Chrome run the app similarly, so either is a good choice.</p>
+<p>Both Chrome and Edge perform very similarly on both Mac and Windows. Each runs the same RMM code, and each adheres well to web standards. Unlike some other web apps which install a separate, memory-hungry browser runtime, when you run RMM in either, both use a very small amount of system resources because they utilize the native browser.</p>
 
 <p>The process to install with Edge or Chrome is very similar. Both are presented below.<br><br>Note: Your version of Chrome or Edge may be different than those used below. This may result in slight differences from the instructions. However these should be minor, and easily worked around.</p>
 
