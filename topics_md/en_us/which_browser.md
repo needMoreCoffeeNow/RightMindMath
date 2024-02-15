@@ -4,7 +4,7 @@
 
 <p>Both Chrome and Edge perform very similarly on both Mac and Windows. Each runs the same RMM code, and each adheres well to web standards. Unlike some other web apps which install a separate, memory-hungry browser runtime, when you run RMM in either, both use a very small amount of system resources because they utilize the native browser.</p>
 
-<p>On Apple iOS devices use Apple&#039;s Safari browser. iOS Safari <span style="font-size:85%;">(unlike MacOS)</span> is an outstanding browser for running RMM as a PWA.</p>
+<p>On Apple iOS devices use Apple&#039;s Safari browser. iOS Safari <span style="font-size:85%;">(unlike MacOS)</span> is an outstanding browser for running RMM as a PWA. Please note, though, that as of iOS 17.4 Apple will no longer support PWAs for users in the European Union.</p>
 
 <p>On Android devices use the native Chrome browser which should be the default app for most popular phones. If not you should be able to install it.</p>
 
