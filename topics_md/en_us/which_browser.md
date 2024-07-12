@@ -1,6 +1,6 @@
 <p><span style="background-color:#ffffcc">The browser you use to install RMM as a PWA will be the browser that always runs the app.</span></p>
 
-<p>For computers running Windows or the MacOS you should use either Microsft Edge or Google Chrome browsers. Apple, for unknown reasons, does not support the <u>long-ago accepted PWA standard</u> with MacOS Safari. (This will change with the upcoming Sonoma release expected Fall 2023.)<p>
+<p>For computers running Windows or the MacOS you should use either Microsft Edge or Google Chrome browsers. Apple, for unknown reasons, does not support the <u>long-ago accepted PWA standard</u> with MacOS Safari. Despite Apple claiming support for PWAs as of Sonoma (Fall 2023), the Safari "Add to Dock" feature only creates an optimized link to the web server in your Applications folder. So you cannot run a PWA while off-line. If you never need to use RMM while off-line Safari may work, but if has not been tested because it is not a true PWA implementation.<p>
 
 <p>Both Chrome and Edge perform very similarly on both Mac and Windows. Each runs the same RMM code, and each adheres well to web standards. Unlike some other web apps which install a separate, memory-hungry browser runtime, when you run RMM in either, both use a very small amount of system resources because they utilize the native browser.</p>
 
