@@ -34,7 +34,13 @@ self.addEventListener('fetch', (e) => {
         const response = await fetch(e.request);
         const cache = await caches.open(cache_name);
         console.log(`[ServiceWorker] Caching new resource: ${e.request.url}`);
-        cache.put(e.request, response.clone());
+        try {
+            cache.put(e.request, response.clone());
+        } catch (err) {
+            console.log('cache.put error for fetch');
+            console.log(e.request.url);
+            console.log(err.message);
+        }
         return response;
     })());
 });
