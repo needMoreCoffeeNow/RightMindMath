@@ -12,15 +12,11 @@
 
 <hr><hr>
 
-<p><span style="background:#fff;color:#cc0052;">Step 2</span><br>Tap the three small vertical dots in the top right corner.</p>
+<p><span style="background:#fff;color:#cc0052;">Step 2</span><br>Click the icon on the right side of the address bar that look like a download/share icon with an arrow. On Edge you can also click the three small vertical dots in the top right corner.</p>
 
 <hr><hr>
 
-<p><span style="background:#fff;color:#cc0052;">Step 3</span><br><b>Edge:</b> Click <u>Apps --> Install This Site as an App</u> or <u>Install RightMindMath</u> (either may show).<br><b>Chrome:</b> <u>Install RightMindMath</u></p>
-
-<hr><hr>
-
-<p><span style="background:#fff;color:#cc0052;">Step 4</span><br>Follow the various prompts to install RightMindMath.</p>
+<p><span style="background:#fff;color:#cc0052;">Step 3</span><br>Follow the various prompts to install RightMindMath.</p>
 
 <hr><hr>
 
