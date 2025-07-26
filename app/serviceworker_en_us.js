@@ -37,7 +37,7 @@ self.addEventListener('fetch', (e) => {
             return r;
         }
         const response = await fetch(e.request);
-        if (url.indexOf('script.google') > -1) { 
+        if (url.indexOf('script.google') > -1) {
             console.log('skipping cache for script.google');
             return response;
         }
