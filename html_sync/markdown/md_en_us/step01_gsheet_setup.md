@@ -24,9 +24,9 @@
 
 <hr><hr>
 <div class="step">Step 6</div>
-<p>You will see the dialog below after clicking the link above. Change the text in the <u>Name</u> box to <b>RightMindMath</b> (delete the &#039;Copy of&#039; text). Be sure the <b>"Share it..." checkbox</b> is selected (checked).  Leave everything else unchanged. Then click the green <u>Make a copy</u> button</p>
+<p>You will see the dialog below after clicking the link above. Change the text in the <u>Name</u> box to <b>RightMindMath</b> (delete the &#039;Copy of&#039; text). Then click the blue <u>Make a copy</u> button</p>
 <p><img src="https://rightmindmath.com/html_sync/images/img_en_us/01_03a_copy_rmm_dialog.jpg" class="img_responsive"></p>
-
+<p><b>Important Sharing Note:</b> When you make a copy, the sharing default should restrict access to everyone except you. You should double check this after making your copy.</p>
 
 <hr><hr>
 <div class="step">Step 7</div>
