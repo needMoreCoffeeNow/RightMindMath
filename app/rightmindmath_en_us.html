@@ -41,6 +41,7 @@
             try {
                 // LOCALIZATION: service worker name must be locale specific
                 navigator.serviceWorker.register('./serviceworker_en_us.js');
+                console.log('ServiceWorker registration successful.');
             } catch (e) {
                 console.warn('Sorry ServiceWorker registration failed.');
             }
