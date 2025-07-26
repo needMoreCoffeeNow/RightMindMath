@@ -1,7 +1,7 @@
 const cache_name = 'rightmindmath_en_us_v01';
 const assets = [
     // localized assets
-    './rightmindmath_en_us.html,
+    './rightmindmath_en_us.html',
     './css/RMM_styles_en_us.css',
     './js_cfg/RMM_CFG_en_us.js',
     // common assets (not localized)
