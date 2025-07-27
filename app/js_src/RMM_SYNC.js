@@ -807,7 +807,9 @@ var RMM_SYNC = (function() {
         if (sync_confirm_tstamp === response.value) {
             procdnStartDownload();
         } else {
-            console.error('timestamp error'); // KEEPIN
+            console.error('timestamp does not match error'); // KEEPIN
+            console.error(response.value, 'response.value'); // KEEPIN
+            console.error(sync_confirm_tstamp, 'sync_confirm_tstamp'); // KEEPIN
             postProcessWrapup('MSG_sync_process_final_err');
         }
     }
