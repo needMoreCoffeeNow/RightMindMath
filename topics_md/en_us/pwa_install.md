@@ -8,7 +8,7 @@
 
 <p>The last reason is the most important. The data RMM uses is stored by the browser in a database located in what is called <u>local storage</u>.</p>
 
-<p>Browsers are very aggressive about clearing out web site local storage. If you do not visit an app website for just a few days, it is very likely the next time visit the site your local storage will be gone &#151; disappeared forever. YIKES.</p>
+<p>Browsers are very aggressive about clearing out web site local storage. If you do not visit an app website for just a few days, it is very likely the next time visit the site your local storage may be gone. Finally, please note that if you occasionally chose to manuallay delete your browser history (often a good idea), you will want to pay attention to <u>Step 1</u> in the PWA Installation guide which outlines easy work-arounds to this potential problem.</p>
 
 <p>Three things happen when you tell your web browser to install RMM as a PWA:</p>
 
