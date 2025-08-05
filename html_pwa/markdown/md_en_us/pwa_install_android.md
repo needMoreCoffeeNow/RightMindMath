@@ -7,21 +7,31 @@
 
 <hr><hr>
 
-<p><span style="background:#fff;color:#cc0052;">Step 2</span><br>Use <b>Chrome</b> to open this link on the Android device:<br>
- <a target="_blank" href="https://rightmindmath.com/app/rightmindmath_en_us.html">Open RightMindMath Browser Window</a> <span style="font-size:75%;">(opens a new window)</span>
+<p><span style="background:#fff;color:#cc0052;">Step 2</span><ol>
+<li>Make sure you are in the newly created account</li>
+<li>Type in the url: <span style="background:#ffffcc;color:darkblue;font-weight:bold;padding-left:5px;padding-right:5px;">rightmindmath.com</span></li>
+<li>Scroll down and reopen the PWA installation instructions.</li>
+<li>Open the <b><u>Install on an Android device</u></b> topic</li>
+<li>Continue with <u>Step 3</u> below.</li>
+</ol>
+
+<hr><hr>
+
+<p><span style="background:#fff;color:#cc0052;">Step 3</span><br>
+ <a target="_blank" href="https://rightmindmath.com/app/rightmindmath_en_us.html">Open the RightMindMath App </a> <span style="font-size:75%;">(opens a new tab/window)</span>
 </p>
 
 <hr><hr>
 
-<p><span style="background:#fff;color:#cc0052;">Step 3</span><br>Tap the three small vertical dots in the top right corner.</p>
+<p><span style="background:#fff;color:#cc0052;">Step 4</span><br>Tap the three small vertical dots in the top right corner.</p>
 
 <hr><hr>
 
-<p><span style="background:#fff;color:#cc0052;">Step 4</span><br>When the menu options select <b>Install app</b>.</p>
+<p><span style="background:#fff;color:#cc0052;">Step 5</span><br>When the menu options select <b>Install app</b>.</p>
 
 <hr><hr>
 
-<p><span style="background:#fff;color:#cc0052;">Step 5</span><br>Tap the <b>Install</b> then the <b>Add to Home screen</b> options.</p>
+<p><span style="background:#fff;color:#cc0052;">Step 6</span><br>Tap the <b>Install</b> then the <b>Add to Home screen</b> options.</p>
 
 <hr><hr>
 
