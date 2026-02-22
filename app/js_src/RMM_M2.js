@@ -156,7 +156,7 @@ var RMM_M2 = (function() {
         }
         lo_numberSet('41', nums.n41); // need this here for chunk
         if (rows.r4 < 1000) {
-            recordAnswer();
+            //////recordAnswer();
             finalMessage();
             return;
         }
