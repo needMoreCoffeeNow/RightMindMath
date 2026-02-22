@@ -413,7 +413,8 @@ var RMM_DB = (function() {
     }
 
     function rollupRec(data, id_curr, eq_time, date_now) {
-        //console.log('----------------------------------------------------------rollupRec(data, id_curr, eq_time)');
+        //console.log('----------------------------------------------------------rollupRec(data, id_curr, eq_time, date_now)');
+        //console.log(data);
         var date_eq = parseInt(id_curr.split('_'), 10);
         var day_milli = (1000*60*60*24);
         var basic = 'a1_s1_m1';
@@ -443,6 +444,7 @@ var RMM_DB = (function() {
     // getAll recs for any tabler
     function sessionGetAllRollup(iduser, modnum, divmsg) {
         console.log('sessionGetAllRollup(iduser)');
+        console.log(iduser, '=iduser');
         var obj = objectstoreGet('session', true);
         var req = null;
         var cursor = null;

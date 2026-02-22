@@ -323,9 +323,9 @@ var RMM_STATS = (function() {
             }
             txt += sdata[i].equation;
             if (sdata[i].ordered) {
-                txt += 'True' + ',';
+                txt += ',True,';
             } else {
-                txt += ',';
+                txt += ',,';
             }
             txt += chunked;
         }

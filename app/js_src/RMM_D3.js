@@ -902,7 +902,7 @@ var RMM_D3 = (function() {
     function setCounters() {
         console.log('setCounters()');
         session = Date.now();
-        count_problem = 1;
+        count_problem = 0;
         chunk_counter = 0;
         time_start = -1;
     }
