@@ -93,7 +93,7 @@ var RMM_ASM = (function() {
 //
     // processes run before fully functional main page displays
     function init() {
-        console.log('init()');
+        console.log('init() version 2.0');
         var slash_num_0 = mydoc.getElementById('asm_bc_0_slash_num');
         var slash_num_1 = mydoc.getElementById('asm_bc_1_slash_num');
         var slash_num_2 = mydoc.getElementById('asm_bc_2_slash_num');
