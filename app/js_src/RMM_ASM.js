@@ -877,8 +877,13 @@ var RMM_ASM = (function() {
         console.log('carryforwardSet()');
         carries = {0:0, 1:0, 2:0}; // key=2 just for symmetry
         // possible carries: 1s (col=2) & 10s (col=1)
-        carries[1] = parseInt(calcColumn(2, opASM) / 10, 10);
+        val = calcColumn(2, opASM);
+        carries[1] = parseInt(val / 10, 10);
+        val = calcColumn(1, opASM);
         carries[0] = parseInt(calcColumn(1, opASM) / 10, 10);
+        if (opASM === '+') {
+            if (val === 9 && carries[1] === 1) { carries[0] = 1; }
+        }
         if (prob_asm[0][0] === null && prob_asm[1][0] === null) {
             if (prob_asm[2][0] > 0) {
                 carries[0] = 1;
@@ -1169,7 +1174,7 @@ var RMM_ASM = (function() {
             if (!subborrow && borrowNeeded()) { continue; }
             if (probRowsAsTotal('-') > -1) { pos_needed = false; }
         }
-        //prob_asm  = [ [9,0,0], [7,5,9], [1,4,1] ];
+        ///prob_asm  = [ [9,2,6], [1,3,7], [7,8,9] ];
         //prob_asm  = [ [4,1,2], [1,8,3], [2,2,9] ];
         //prob_asm  = [ [8,6,2], [5,0,9], [3,5,3] ];
         //prob_asm  = [ [7,0,5], [5,6,8], [1,4,3] ];
@@ -1274,7 +1279,7 @@ var RMM_ASM = (function() {
             prob_asm[0][0] = getRandInt(1, 5);
             prob_asm[1][0] = getRandInt(1, 4);
         }
-        //prob_asm  = [ [1, 6, 5], [2, 7, 8], [4, 4, 3] ];
+        //prob_asm  = [ [6, 4, 9], [1, 5, 5], [0, 0, 0] ];
         //prob_asm  = [ [1, 0, 4], [2, 7, 8], [4, 4, 3] ];
         //prob_asm  = [ [2, 4, 5], [5, 6, 0], [8, 0, 5] ];
         //prob_asm  = [ [1, 9, 9], [1, 9, 9], [3, 9, 8] ];
@@ -1455,6 +1460,7 @@ var RMM_ASM = (function() {
     // steps for ASM correct answer click (problem level dependencies)
     function correctAnswerHandler(index) {
         console.log('correctAnswerHandler(index) ------------------------------------------------------------------------');
+        var nextproblem_complete = false;
         bnext_note_active = false;
         setCarryOverride();
         // answer buttons updates
@@ -1512,13 +1518,19 @@ var RMM_ASM = (function() {
         setResponsesAnswersActive();
         complete = false;
         if (shnote_next === false && shnote_numpos === false) {
-            nextProblemLevel();
+            if (!nextproblem_complete) {
+                nextProblemLevel();
+                nextproblem_complete = true;
+            }
         }
         if (level.substr(0, 1) === 's') {
             if (bnext_note_active) {
                 activateSvgNext();
             } else {
-                nextProblemLevel();
+                if (!nextproblem_complete) {
+                    nextProblemLevel();
+                    nextproblem_complete = true;
+                }
             }
         }
         if (level.substr(0, 1) === 'a') {
@@ -1532,7 +1544,10 @@ var RMM_ASM = (function() {
                 activateSvgNext();
             } else {
                 if (!shnote_carry || !carry_override) {
-                    nextProblemLevel();
+                    if (!nextproblem_complete) {
+                        nextProblemLevel();
+                        nextproblem_complete = true;
+                    }
                 } else {
                     activateSvgNext();
                 }

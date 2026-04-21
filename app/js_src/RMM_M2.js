@@ -661,10 +661,10 @@ var RMM_M2 = (function() {
         nums.n13 = getRandInt(0,9);
         nums.n12 = getRandInt(1,9);
 
-        //////nums.n03 = 4;
-        //////nums.n02 = 8;
-        //////nums.n13 = 5;
-        //////nums.n12 = 1;
+        //////nums.n03 = 8;
+        //////nums.n02 = 4;
+        //////nums.n13 = 7;
+        //////nums.n12 = 6;
         //////console.error(nums);
 
         rows.r0 = (nums.n02 * 10) + nums.n03;
