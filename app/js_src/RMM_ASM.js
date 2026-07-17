@@ -402,6 +402,7 @@ var RMM_ASM = (function() {
         mydoc.getElementById('div_d3_container').style.display = 'none';
         mydoc.getElementById('div_menu_container').style.display = 'none';
         mydoc.getElementById('div_print_container').style.display = 'none';
+        mydoc.getElementById('div_exportDB').style.display = 'none';
         // ASM
         mydoc.getElementById('svg_asm_container').style.display = 'none';
         mydoc.getElementById('div_note').style.visibility = 'hidden';

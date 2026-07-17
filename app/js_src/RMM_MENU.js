@@ -1480,8 +1480,12 @@ var RMM_MENU = (function() {
     function menuMainClick(ev) {
         console.log('menuMainClick()');
         var id = ev.target.id;
+        console.log(id);
         hideAll();
         switch(id) {
+            case 'b_menu_exportDB':
+                RMM_DB.exportDBConfirm();
+                break;
             case 'b_menu_sync':
                 RMM_SYNC.mainMenuShow();
                 break;

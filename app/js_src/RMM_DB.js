@@ -21,6 +21,12 @@ var RMM_DB = (function() {
     var db_tries_count = 0;
     var count_delete = 0; // counts the number of cursor deletes
     var device = null; // set to the current device
+    //exportDB
+    var tables = ['print', 'setup', 'user', 'session'];
+    var tables_done = 0; // used to index which tables have been exported
+    var exportDB_txt = ''; // text file with exportDB table heards and json data
+    var exportDB_fname = ''; // export fnme ending _YYYYMMDDHHMMSS.txt
+    var exportDB_failed = false;
 
     // RMM_CFG shortcuts start
     function getStr(id) { return RMM_CFG.getStr(id); }
@@ -924,6 +930,97 @@ var RMM_DB = (function() {
 //
 // >>> DEVOPER: end
 //
+//
+// >>> EXPORTDB: start
+//
+    function exportDBConfirm(ev) {
+        console.log('exportDBConfirm(ev)');
+        var txt = getStr('MSG_exportDBConfirm');
+        if (confirm(txt) == true) {
+            RMM_MENU.hideAll();
+            console.log('exportDB confirmed');
+            tables_done = 0;
+            exportDB_failed = false;
+            exportDB();
+        } else {
+            RMM_MENU.settingsClick();
+        }
+    }
+    function exportDB(ev) {
+        console.log('exportDB(ev)');
+        var msg = getStr('MSG_exportDB_finished');
+        mydoc.getElementById('div_exportDB').style.display = 'block';
+        console.log('tables_done:', tables_done);
+        if (tables_done < 4) {
+            mydoc.getElementById('div_exportDB_table').innerHTML = tables[tables_done];
+        }
+        console.log('--------------table: ' + tables[tables_done]);
+        exportDB_txt += tables[tables_done] + '\n';
+        if (tables_done === 4) {
+            exportDBFileSave();
+            if (!exportDB_failed) {
+                msg += '  ' + exportDB_fname;
+                alert(msg);
+                exportDBWrapup();
+                return;
+            }
+        } else {
+            RMM_DB.setDbNextFunction(RMM_DB.exportDBWrite);
+            RMM_DB.tableGetAll(tables[tables_done]);
+        }
+        //console.log(exportDB_txt);
+    }
+    function exportDBWrite() {
+        console.log('exportDBWrite()');
+        var result = RMM_DB.getDbResult();
+        var txt = '';
+        var i = 0;
+        var len = result.length;
+        mydoc.getElementById('div_exportDB_count').innerHTML = '0/' + len;
+        for (i=0; i<len; i++) {
+            txt = JSON.stringify(result[i]);
+            if (i+1 < len) { txt += '\n'; };
+            exportDB_txt += txt;
+            if (i % 10 == 0) {
+                mydoc.getElementById('div_exportDB_count').innerHTML = (i+1) + '/' + (len+1);
+            }
+        }
+            mydoc.getElementById('div_exportDB_count').innerHTML = (i+1) + '/' + (len+1);
+        tables_done += 1
+        if (tables_done < 4) { exportDB_txt += '\n'; }
+        exportDB();
+    }
+    function exportDBFileSave() {
+        console.log('exportDBFileSave');
+        var now = new Date();
+        var yr = now.getFullYear();  // Returns the 4-digit year (YYYY)
+        var mn = String((now.getMonth() + 1)).padStart(2, '0'); // Returns the month (0-11), so add 1 to get (1-12)
+        var dy = String((now.getDay() + 1)).padStart(2, '0');
+        var hh = String(now.getHours()).padStart(2, '0');
+        var mm = String(now.getMinutes()).padStart(2, '0');
+        var ss = String(now.getSeconds()).padStart(2, '0');
+        exportDB_fname = 'RMM_Export_Data_' + yr + mn + dy + hh + mm + ss + '.txt';
+        try {
+            anchor = document.createElement('a');
+            anchor.id = 'a_exportDB_text_file';
+            anchor.href = window.URL.createObjectURL(new Blob([exportDB_txt], {type: 'text/plain'}));
+            anchor.download = exportDB_fname;
+            anchor.click();
+        } catch(err) {
+            exportDB_failed = true;
+            alert(getStr('MSG_export_not_supported'));
+            exportDBWrapup();
+            return;
+        }
+    }
+    function exportDBWrapup() {
+        console.log('exportDBWrapup');
+        RMM_MENU.settingsClick();
+    }
+//
+// >>> EXPORTDB: end
+//
+
     return {
         init : init,
         // getters & setters
@@ -957,6 +1054,9 @@ var RMM_DB = (function() {
         // sync
         sessionDeviceUserGet : sessionDeviceUserGet,
         sessionDeviceMaxTstamps : sessionDeviceMaxTstamps,
+        // exportDB
+        exportDBConfirm : exportDBConfirm,
+        exportDBWrite : exportDBWrite,
         // developer
         developerResetSessionDevice : developerResetSessionDevice
     };
