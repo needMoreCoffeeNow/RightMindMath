@@ -743,8 +743,9 @@ var RMM_STATS = (function() {
             'd3' : getStr('TXT_use_d3')  //08
         }
         showMomentPlease('MSG_moment_please');
+        console.log(sdata);
         for (i=0; i<len; i++) {
-            if (sdata[i].iduser !== idstats) { continue; }
+            if (sdata[i].iduser !== idstats) { console.log(sdata[i].iduser); continue; }
             count += 1;
             keyvalue = Math.floor(sdata[i].days / 10);
             dkey = xref[sdata[i].idlevel.substr(0, 2)];

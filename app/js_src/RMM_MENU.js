@@ -603,6 +603,7 @@ var RMM_MENU = (function() {
     // handle logic after adding device name
     function handleDeviceUpdate() {
         console.log('handleDeviceUpdate()');
+        console.log('no load file chosen');
         hideAll();
         msg_div_next = 'div_menu_main';
         // restore the exit button area

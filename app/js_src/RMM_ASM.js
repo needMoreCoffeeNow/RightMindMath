@@ -112,9 +112,8 @@ var RMM_ASM = (function() {
         slash_num_1.innerHTML = spath;
         slash_num_2.innerHTML = spath;
         processInnerHtml();
-        RMM_DB.dbSetWaitVars(db_wait_tries_std, RMM_STATSLIVE.loadSessionData);
+        //////RMM_DB.dbSetWaitVars(db_wait_tries_std, RMM_STATSLIVE.loadSessionData);
         RMM_DB.init();
-        console.log('done');
     }
 
     // last step of init is to read iduser from DB

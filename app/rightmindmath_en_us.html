@@ -1032,16 +1032,6 @@
     </div>
 <!--D3 End-->
 
-<!--EXORtDB Start-->
-    <div id="div_exportDB" class="container" style="display:none;">
-        <div id="div_stats_user_select" class="menu_items" style="height:100px;display:block;">
-            <div id="div_exportDB_title">IHNEEDED</div>
-            <div id="div_exportDB_table" style="margin-top:30px;color:blue;">-----</div>
-            <div id="div_exportDB_count" style="margin-top:10px;color:LightBlue;">0/0</div>
-        </div>
-    </div>
-<!--EXORtDB End-->
-
 <!--STATS Start-->
     <div id="div_stats_container" class="container" style="display:none;">
         <div id="div_stats_user_select" class="menu_items" style="display:none;">
@@ -1124,6 +1114,26 @@
 
     <!--MISC-->
     <div id="blockAll" class="block" onclick="RMM_ASM.blockAllClick(event);"></div>
+
+
+<!--EXPORTDB Start-->
+    <div id="div_exportDB" class="container" style="display:none;">
+        <div id="div_exportDB_info" class="menu_items" style="height:100px;display:block;">
+            <div id="div_exportDB_title"></div>
+            <div id="div_exportDB_table" style="margin-top:30px;color:blue;">-----</div>
+            <div id="div_exportDB_count" style="margin-top:10px;color:#3D5791;">0/0</div>
+        </div>
+    </div>
+<!--EXPORTDB End-->
+
+<!--LOAD Start-->
+    <!--File Load-->
+    <div id="div_loadDB" class="container" style="padding:20px;display:none;">
+        <div id="div_file_load_input" class="container">
+            <input type="file" id="file_input" class="mbutton"/>
+        </div>
+    </div>
+<!--LOAD End-->
 
 </body>
 

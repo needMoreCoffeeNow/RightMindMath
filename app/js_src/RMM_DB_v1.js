@@ -1,18 +1,18 @@
 var RMM_DB = (function() {
     var mydoc = window.document;
-//////    var db_active = false; // set to true when opend DB is successful
-//////    var db = null;
+    var db_active = false; // set to true when opend DB is successful
+    var db = null;
     var rw_session = null;
     var RW = 'readwrite';
-//////    var db_load_active = false; // use to properly handle load in db open success function
-//////    var db_result = null; // stores the request results
-//////    var db_error = false;
-//////    var db_complete = false;
-//////    var db_upgrade = false;
+    var db_load_active = false; // use to properly handle load in db open success function
+    var db_result = null; // stores the request results
+    var db_error = false;
+    var db_complete = false;
+    var db_upgrade = false;
     var timervar = null; // use for setTimeout and clearTimeout functions
-//////    var VERSION = 1; // indexedDB version initially set to zero to force upgrade logic
+    var VERSION = 1; // indexedDB version initially set to zero to force upgrade logic
     var IDSETUP = 1;
-//////    var IDGUEST = 10884293110550;
+    var IDGUEST = 10884293110550;
     var pass_caller = ''; // set to function name to help passError debuging
     // async
     var MAX_TRIES = 100; // limit on how many waits for db_complete
@@ -28,261 +28,120 @@ var RMM_DB = (function() {
     var exportDB_txt = ''; // text file with exportDB table heards and json data
     var exportDB_fname = ''; // export fnme ending _YYYYMMDDHHMMSS.txt
     var exportDB_failed = false;
-    // indexedDB variables
-    const DB_NAME = 'rmm_db';
-    var VERSION = 1;
-    var IDGUEST = 10884293110550;
-    var db = null;
-    var db_active = false;
-    var db_complete = false;
-    var db_error = false;
-    var db_result = null;
-    var db_load_active = false;
 
     // RMM_CFG shortcuts start
     function getStr(id) { return RMM_CFG.getStr(id); }
 //
 // >>> --------------------------------OPEN:Start
 //
-    /**
-     * Master Initialization Sequence
-     * Coordinates database startup, user migration approval, and standard post-setup steps.
-     */
-    async function init() {
+
+    // processes run before fully functional main page displays
+    function init() {
         console.warn('db.init()');
         console.log(Date.now(), 'Date.now()');
-        try {
-            // 1. Initialize variables and wait for database setup to finish completely
+        var req = null;
+        if (!window.indexedDB) {
+            alert(getStr('MSG_db_not_supported'));
+        } else { 
             transactionInit();
-            await openDB();
-            console.log('Database successfully connected and schema checks complete.');
-            // 2. Prompt user for external data restore
-            if (confirm(getStr('MSG_exportDBLoadFile')) === true) {
-                // PATH A: User confirmed file upload. Run import and bypass standard seed.
-                db_load_active = true;
-                // Safe fallback DOM handling (handles 'mydoc' or 'document')
-                const docContext = typeof mydoc !== 'undefined' ? mydoc : document;
-                const infoDiv = docContext.getElementById('div_info');
-                if (infoDiv) infoDiv.style.display = 'none';
-                console.log('exportDBLoadFile confirmed. Executing file import...');
-                if (typeof exportDBLoadFile === 'function') {
-                    exportDBLoadFile();
-                }
-            } else {
-                // PATH B: User declined upload. Process standard new-database installations.
-                console.log('Export file load declined. Processing standard database seeding...');
-                if (VERSION < 2) { 
-                    await dbupgradeWriteUser(); 
-                }
-                if (VERSION === 2) {
-                    // Future v2 data migration pathways go here
-                }
-                if (typeof RMM_STATSLIVE !== 'undefined' && RMM_STATSLIVE.loadSessionData) {
-                    RMM_STATSLIVE.loadSessionData();
-                }
-                db_complete = true;
-            }
-        } catch (error) {
-            console.error('Critical error during database initialization sequence:', error);
+            //timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
+            console.log('init open next');
+            req = window.indexedDB.open('rmm_db', VERSION);
+            req.onsuccess = dbhandleOpenSuccess;
+            req.onerror = dbhandleOpenError;
+            req.onupgradeneeded = dbhandleOpenUpgrade;
+            console.log(req);
         }
     }
-    /**
-     * Resets tracking fields for an operational database transaction cycle
-     */
+
+    // initialize db transaction fields
     function transactionInit() {
+        //////console.log('transactionInit()');  //KEEPIN
         db_complete = false;
         db_error = false;
         db_result = null;
     }
-    /**
-     * Promise wrapper around the native IndexedDB open event loop
-     */
-    function openDB() {
-        return new Promise((resolve, reject) => {
-            if (!window.indexedDB) {
-                alert(getStr('MSG_db_not_supported'));
-                return reject(new Error('IndexedDB is not supported by this browser.'));
-            }
-            console.log('init open next');
-            const req = window.indexedDB.open(DB_NAME, VERSION);
-            // Synchronously handle structural schema migrations when version updates
-            req.onupgradeneeded = (ev) => {
-                console.log('dbhandleOpenUpgrade(ev)', ev);
-                const upgradeDb = ev.target.result;
-                const old_version = ev.oldVersion;
-                const new_version = ev.newVersion;
-                console.log('old_version:', old_version, 'new_version:', new_version);
-                if (old_version < 1) {
-                    const db_session = upgradeDb.createObjectStore('session', { keyPath: 'idsession' });
-                    db_session.createIndex('iduser', 'iduser', { unique: false });
-                    db_session.createIndex('idlevel', 'idlevel', { unique: false });
-                    db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
-                    const db_user = upgradeDb.createObjectStore('user', { keyPath: 'iduser' });
-                    db_user.createIndex('name', 'name', { unique: true });
-                    // FIXED: Separate assignments preserve both objectStores securely
-                    const db_setup = upgradeDb.createObjectStore('setup', { keyPath: 'idkey' });
-                    const db_print = upgradeDb.createObjectStore('print', { keyPath: 'idprint' });
-                    console.warn('------------------------------------version setup complete');
-                }
-            };
-            req.onsuccess = (ev) => {
-                console.log('dbhandleOpenSuccess(ev)');
-                db = ev.target.result;
-                db_active = true;
-                resolve(db);
-            };
-            req.onerror = (ev) => {
-                console.log('dbhandleOpenError(ev)');
-                console.error('Database error: ' + ev.target.errorCode);
-                reject(ev.target.error);
-            };
-        });
+    // handle db open upgrade
+    function dbhandleOpenUpgrade(ev) {
+        console.log('dbhandleOpenUpgrade(ev)');
+        console.log(ev);
+        var old_version = ev.oldVersion;
+        var new_version = ev.newVersion;
+        var db_session = null;
+        var db_user = null;
+        var db_setup = null;
+        var db_print = null;
+        console.log('old_version:', old_version);
+        console.log('new_version:', new_version);
+        db = ev.target.result;
+        if (old_version !== new_version) {
+            db_upgrade = true;
+        }
+        if (old_version < 1) {
+            db_session = db.createObjectStore('session', { keyPath: 'idsession' });
+            db_session.createIndex('iduser', 'iduser', { unique: false });
+            db_session.createIndex('idlevel', 'idlevel', { unique: false });
+            db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
+            db_user = db.createObjectStore('user', { keyPath: 'iduser' });
+            db_user.createIndex('name', 'name', { unique: true });
+            db_setup = db.createObjectStore('setup', { keyPath: 'idkey' });
+            db_setup = db.createObjectStore('print', { keyPath: 'idprint' });
+            console.warn('------------------------------------version setup complete');
+        }
+        if (confirm(getStr('MSG_exportDBLoadFile')) == true) {
+            db_load_active = true;
+            mydoc.getElementById('div_info').style.display = 'none';
+            console.log('exportDBLoadFile confirmed');
+            exportDBLoadFile();
+        }
     }
-
-    /**
-     * Handles seeding the initial Guest user record down into the datastore safely
-     */
-    async function dbupgradeWriteUser() {
-        console.log('dbupgradeWriteUser() invoking write...');
-        if (!db) {
-            console.error('Database connection reference lost during seeding.');
+    // handle db open success
+    function dbhandleOpenSuccess(ev) {
+        console.log('dbhandleOpenSuccess(ev)');
+        if (db_load_active) {
+            db_upgrade = false;
+            db_active = true;
             return;
         }
-        const data = { 
-            iduser: IDGUEST, 
-            name: getStr('DAT_guest')
-        };
-        transactionInit();
-        try {
-            // Run internal write logic natively using an isolated transaction promise block
-            await new Promise((resolve, reject) => {
-                const tx = db.transaction(['user'], 'readwrite');
-                const store = tx.objectStore('user');
-                const req = store.add(data);
-
-                req.onsuccess = () => resolve();
-                req.onerror = (ev) => reject(ev.target.error);
-            });
-            console.log('db.user.added: ' + getStr('DAT_guest'));
-            // Advance to subsequent setup writing if defined down-chain
-            if (typeof dbupgradeWriteSetup === 'function') {
-                dbupgradeWriteSetup(data);
+        db = ev.target.result;
+        db_active = true;
+        if (db_upgrade) {
+            // write guest user rec first time DB is setup only
+            if (VERSION < 2) { dbupgradeWriteUser(); }
+            if (VERSION == 2) {
+                // need to add future upgrade logic herersion2();
             }
-        } catch (err) {
-            alert('ERR: dbupgradeWriteUser id=' + getStr('DAT_guest'));
-            db_error = true;
-            console.error('Failed to seed guest database entry:', err);
+            db_upgrade = false;
+        } else {
+            db_complete = true;
         }
+        RMM_STATSLIVE.loadSessionData();
     }
 
-    // processes run before fully functional main page displays
-//////    function init() {
-//////        console.warn('db.init()');
-//////        console.log(Date.now(), 'Date.now()');
-//////        var req = null;
-//////        if (!window.indexedDB) {
-//////            alert(getStr('MSG_db_not_supported'));
-//////        } else { 
-//////            transactionInit();
-//////            //timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
-//////            console.log('init open next');
-//////            req = window.indexedDB.open('rmm_db', VERSION);
-//////            req.onsuccess = dbhandleOpenSuccess;
-//////            req.onerror = dbhandleOpenError;
-//////            req.onupgradeneeded = dbhandleOpenUpgrade;
-//////            console.log(req);
-//////        }
-//////    }
-//////
-//////    // initialize db transaction fields
-//////    function transactionInit() {
-//////        //////console.log('transactionInit()');  //KEEPIN
-//////        db_complete = false;
-//////        db_error = false;
-//////        db_result = null;
-//////    }
-//////    // handle db open upgrade
-//////    function dbhandleOpenUpgrade(ev) {
-//////        console.log('dbhandleOpenUpgrade(ev)');
-//////        console.log(ev);
-//////        var old_version = ev.oldVersion;
-//////        var new_version = ev.newVersion;
-//////        var db_session = null;
-//////        var db_user = null;
-//////        var db_setup = null;
-//////        var db_print = null;
-//////        console.log('old_version:', old_version);
-//////        console.log('new_version:', new_version);
-//////        db = ev.target.result;
-//////        if (old_version !== new_version) {
-//////            db_upgrade = true;
-//////        }
-//////        if (old_version < 1) {
-//////            db_session = db.createObjectStore('session', { keyPath: 'idsession' });
-//////            db_session.createIndex('iduser', 'iduser', { unique: false });
-//////            db_session.createIndex('idlevel', 'idlevel', { unique: false });
-//////            db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
-//////            db_user = db.createObjectStore('user', { keyPath: 'iduser' });
-//////            db_user.createIndex('name', 'name', { unique: true });
-//////            db_setup = db.createObjectStore('setup', { keyPath: 'idkey' });
-//////            db_setup = db.createObjectStore('print', { keyPath: 'idprint' });
-//////            console.warn('------------------------------------version setup complete');
-//////        }
-//////        if (confirm(getStr('MSG_exportDBLoadFile')) == true) {
-//////            db_load_active = true;
-//////            mydoc.getElementById('div_info').style.display = 'none';
-//////            console.log('exportDBLoadFile confirmed');
-//////            exportDBLoadFile();
-//////        }
-//////    }
-//////    // handle db open success
-//////    function dbhandleOpenSuccess(ev) {
-//////        console.log('dbhandleOpenSuccess(ev)');
-//////        if (db_load_active) {
-//////            db_upgrade = false;
-//////            db_active = true;
-//////            return;
-//////        }
-//////        db = ev.target.result;
-//////        db_active = true;
-//////        if (db_upgrade) {
-//////            // write guest user rec first time DB is setup only
-//////            if (VERSION < 2) { dbupgradeWriteUser(); }
-//////            if (VERSION == 2) {
-//////                // need to add future upgrade logic herersion2();
-//////            }
-//////            db_upgrade = false;
-//////        } else {
-//////            db_complete = true;
-//////        }
-//////        RMM_STATSLIVE.loadSessionData();
-//////    }
-//////
-//////    // handle db open error
-//////    function dbhandleOpenError(ev) {
-//////        console.log('dbhandleOpenError(ev)');
-//////        console.error('Database error:'  + ev.target.errorCode); //KEEPIN
-//////    }
-//////
-//////    // write the Guest user record in new DB Note: after upgrade only
-//////    // if data export is to be uploaded, the initial setup & user table entried will be over-written by export data
-//////    function dbupgradeWriteUser(ev) {
-//////        console.log('dbupgradeWriteUser(ev)');
-//////        var obj = objectstoreGet('user', true);
-//////        var req = null;
-//////        var data = { iduser:IDGUEST, 'name':getStr('DAT_guest')};
-//////        if (!obj) { return; }
-//////        transactionInit();
-//////        req = obj.add(data);
-//////        req.onsuccess = function(ev) {
-//////            console.log('db.user.added:  ' + getStr('DAT_guest'));
-//////            dbupgradeWriteSetup(data);
-//////        }
-//////        req.onerror = function(ev) {
-//////            alert('ERR: dbupgradeWriteUser id=' + getStr('DAT_guest'));
-//////            db_error = true;
-//////        }
-//////    }
+    // handle db open error
+    function dbhandleOpenError(ev) {
+        console.log('dbhandleOpenError(ev)');
+        console.error('Database error:'  + ev.target.errorCode); //KEEPIN
+    }
+
+    // write the Guest user record in new DB Note: after upgrade only
+    function dbupgradeWriteUser(ev) {
+        console.log('dbupgradeWriteUser(ev)');
+        var obj = objectstoreGet('user', true);
+        var req = null;
+        var data = { iduser:IDGUEST, 'name':getStr('DAT_guest')};
+        if (!obj) { return; }
+        transactionInit();
+        req = obj.add(data);
+        req.onsuccess = function(ev) {
+            console.log('db.user.added:  ' + getStr('DAT_guest'));
+            dbupgradeWriteSetup(data);
+        }
+        req.onerror = function(ev) {
+            alert('ERR: dbupgradeWriteUser id=' + getStr('DAT_guest'));
+            db_error = true;
+        }
+    }
 
     // initial pdata values
     function pdataInit() {
@@ -608,7 +467,7 @@ var RMM_DB = (function() {
 
     // getAll recs for any tabler
     function sessionGetAllRollup(iduser, modnum, divmsg) {
-        console.log('sessionGetAllRollup(iduser, modnum, divmsg)');
+        console.log('sessionGetAllRollup(iduser)');
         console.log(iduser, '=iduser');
         var obj = objectstoreGet('session', true);
         var req = null;
@@ -616,10 +475,6 @@ var RMM_DB = (function() {
         var txt = getStr('TXT_data_loading');
         var txt_count = '';
         var count_read = 0;
-        var count_skip = 0;
-        var count_unique = 0;
-        var count_multi = 0;
-        var count_user = 0;
         var basic = 'a1_s1_m1_m2b_m2c_d3';
         var recs = [];
         var rec_last = {};
@@ -633,6 +488,7 @@ var RMM_DB = (function() {
         var total_recs = 0;
         if (!obj) { return; }
         transactionInit();
+        count_read = 0;
         obj.openCursor().onsuccess = function(ev) {
             cursor = ev.target.result;
             if (cursor) {
@@ -652,12 +508,8 @@ var RMM_DB = (function() {
                 id_curr = data.idsession.split('_');
                 id_curr = id_curr[0] + '_' + id_curr[1];
                 // skip recs not matching iduser
-                // iduser == null gets all records
                 if (iduser !== null) {
-                    if (data.iduser !== iduser) {
-                        count_skip += 1;
-                        cursor.continue;
-                    }
+                    if (data.iduser !== iduser) { cursor.continue; }
                 }
                 if (basic.indexOf(data.idlevel) > -1) {
                     // basic one-digit problems have only one rec per problem
@@ -667,11 +519,9 @@ var RMM_DB = (function() {
                     multi = false;
                     eq_time = data.time;
                     id_last = '';
-                    count_unique += 1;
                 } else {
                     // accumulate time for multi-step a2, a3, s2, s3 problems
                     multi = true;
-                    count_multi += 1;
                     eq_time += data.time;
                     // if id_last is not '', then it is second or later step
                     if (id_last !== '') {
@@ -690,7 +540,6 @@ var RMM_DB = (function() {
                     eq_time = 0;
                     id_last = '';
                 }
-                count_user += 1;
                 cursor.continue();
             } else {
                 if (!write_active) {
@@ -705,10 +554,6 @@ var RMM_DB = (function() {
                 db_complete = true;
                 console.warn('sessionGetAllRollup finished');
                 console.warn(total_recs, Date.now() - date_now, 'total_recs, milliseconds to run');
-                console.warn('count_skip: ', count_skip);
-                console.warn('count_unique: ', count_unique);
-                console.warn('count_multi: ', count_multi);
-                console.warn('count_user: ', count_user);
                 db_next_function();
             }
         }
@@ -1191,205 +1036,84 @@ var RMM_DB = (function() {
         console.log('exportDBWrapup');
         RMM_MENU.settingsClick();
     }
-//*****************************************************************************
-//*****************************************************************************
-function exportDBLoadFile() {
-    console.log('exportDBLoadFile');
-    RMM_MENU.hideAll();
-    mydoc.getElementById('div_loadDB').style.display = 'block';
-    document.getElementById('file_input').onchange = function(event) {
-        const file = event.target.files[0];
-        if (!file) {
-            console.log('file select failed');
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            console.log('reader.onload complete');
-            handleFileLoad(e.target.result);
-        };
-        reader.readAsText(file); 
-    };
-}
-
-async function handleFileLoad(txt) {
-    console.warn('handleFileLoad(ev)');
-    const lines = txt.split('\n');
-    const len = lines.length;
-    mydoc.getElementById('div_loadDB').style.display = 'none';
-    mydoc.getElementById('div_exportDB').style.display = 'block';
-    mydoc.getElementById('div_exportDB_title').innerHTML = getStr('TXT_exportDB_load');
-    let batches = {'print': [], 'setup': [], 'user': [], 'session': []};
-    let current_table = '';
-    let count_session = 0;
-    let total_processed = 0;
-    // Phase 1: Group records by table name to batch them
-    mydoc.getElementById('div_exportDB_count').innerHTML = ''; // the table div will be used for count
-    mydoc.getElementById('div_exportDB_table').innerHTML = '0 / ' + len;
-    for (let i = 0; i < len; i++) {
-        total_processed += 1;
-        if (total_processed % 10 == 0) {
-            mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
-        }
-        const line = lines[i].trim();
-        if (line.length === 0) continue;
-        if (line.startsWith('-----table:')) {
-            current_table = line.split(':')[1].trim();
-            continue;
-        }
-        // Edge check: Skip if text data appears before a valid table header declaration
-        if (!current_table || !batches[current_table]) continue;
-        try {
-            const rec = JSON.parse(line);
-            batches[current_table].push({
-                index: i,
-                lineText: line,
-                data: rec
-            });
-            if (current_table === 'session') { 
-                count_session += 1; 
+    function exportDBLoadFile() {
+        console.log('exportDBLoadFile');
+        RMM_MENU.hideAll();
+        mydoc.getElementById('div_loadDB').style.display = 'block';
+        // Bind event listener to the file input element
+        document.getElementById('file_input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                console.log('file select failed');
+                return;
             }
-        } catch (err) {
-            exportDBAddRecError(i, line, 'JSON Parse Error: ' + (err.message || err));
-            return;
-        }
-    }
-    // Phase 2: Process each batch atomically using a single transaction per table
-    mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
-    for (const key in batches) {
-        const records = batches[key];
-        if (records.length === 0) continue;
-        try {
-            // FIX: Corrected parameters passed to function, removing the broken arrow callback
-            const successCount = await saveBatchToIndexedDB(key, records);
-        } catch (batch_error) {
-            console.error(batch_error);
-            // FIX: Corrected missing closing parenthesis syntax error
-            alert('Failed to process batch for table: ' + key);
-            return;
-        }
-    }
-    console.warn('total_processed: ', total_processed);
-    alert(total_processed + ' data lines loaded');
-    RMM_STATSLIVE.loadSessionData();
-}
-function saveBatchToIndexedDB(table_name, records) {
-    return new Promise((resolve, reject) => {
-        if (!records || records.length === 0) return resolve(0);
-        transactionInit(); 
-        const store = objectstoreGet(table_name, true); 
-        let success_count = 0;
-        let pending_requests = records.length;
-        records.forEach((item) => {
-            const req = store.add(item.data);
-            req.onsuccess = function() {
-                success_count++;
-                pending_requests--;
-                if (pending_requests === 0) {
-                    resolve(success_count);
-                }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                console.log('reader.onload complete');
+                handleFileLoad(e.target.result);
             };
-            req.onerror = function(ev) {
-                pending_requests--;
-                const errMsg = req.error ? req.error.message : 'Database write conflict';
-                exportDBAddRecError(item.index, item.lineText, errMsg);
-                if (pending_requests === 0) {
-                    resolve(success_count);
-                }
-            };
+            reader.readAsText(file);
         });
-    });
-}
-
-function exportDBAddRecError(i, line_in, err) {
-    console.error('exportDBAddRecError(i, line_in, err)');
-    console.error('err:', err);
-    console.error('Line Index =', i);
-    console.error(line_in);
-    alert(getStr('MSG_exportDBAddError'));
-}
-//*****************************************************************************
-//*****************************************************************************
-
-//////
-//////    function exportDBLoadFile() {
-//////        console.log('exportDBLoadFile');
-//////        RMM_MENU.hideAll();
-//////        mydoc.getElementById('div_loadDB').style.display = 'block';
-//////        // Bind event listener to the file input element
-//////        document.getElementById('file_input').addEventListener('change', function(event) {
-//////            const file = event.target.files[0];
-//////            if (!file) {
-//////                console.log('file select failed');
-//////                return;
-//////            }
-//////            const reader = new FileReader();
-//////            reader.onload = function(e) {
-//////                console.log('reader.onload complete');
-//////                handleFileLoad(e.target.result);
-//////            };
-//////            reader.readAsText(file); 
-//////        });
-//////    }
-//////    async function handleFileLoad(txt) {
-//////        console.warn('handleFileLoad(ev)');
-//////        var lines = txt.split('\n');
-//////        var line = '';
-//////        var table_name = ''; // Changed to track current table name
-//////        var i = 0;
-//////        var len = lines.length;
-//////        var valid = ''; 
-//////        var count = 0; // shows count of table recs loaded
-//////        console.warn('---------------------------------------lines.length:', len);
-//////        mydoc.getElementById('div_loadDB').style.display = 'none';
-//////        mydoc.getElementById('div_exportDB').style.display = 'block';
-//////        mydoc.getElementById('div_exportDB_title').innerHTML = getStr('TXT_exportDB_load');
-//////        mydoc.getElementById('div_exportDB_count').innerHTML = '0 / ' + len;
-//////        for (i = 0; i < len; i++) {
-//////            line = lines[i].trim(); // .trim() handles trailing hidden spaces or \r characters
-//////            if (line.length === 0) { continue; } 
-//////            if (line.indexOf('-----table:') > -1) {
-//////                table_name = lines[i].split(':')[1].trim(); // Trim spaces around table name
-//////                mydoc.getElementById('div_exportDB_table').innerHTML = table_name;
-//////                continue;
-//////            }
-//////            try {
-//////                var rec = JSON.parse(line);
-//////                valid = await exportDBAddRec(table_name, rec); 
-//////                if (valid !== 'OK') { exportDBAddRecError(i, line, valid); }
-//////            } catch (err) {
-//////                exportDBAddRecError(i, line, err.message || err);
-//////            }
-//////            count += 1;
-//////            if (count % 10 == 0) {
-//////                mydoc.getElementById('div_exportDB_count').innerHTML = count + ' / ' + len;
-//////            }
-//////        }
-//////        console.warn('recs loaded = ' , count);
-//////        RMM_STATSLIVE.loadSessionData();
-//////    }
-//////    function exportDBAddRec(table, rec) {
-//////        return new Promise((resolve) => {
-//////            //console.log('exportDBAddRec(table, rec)');
-//////            if (!rec) { return resolve('!rec'); }
-//////            var obj = objectstoreGet(table, true);
-//////            transactionInit();
-//////            var req = obj.add(rec); 
-//////            req.onsuccess = function(ev) {
-//////                resolve('OK');
-//////            }
-//////            req.onerror = function(ev) {
-//////                resolve(req.error ? req.error.message : 'Database error');
-//////            }
-//////        });
-//////    }
-//////    function exportDBAddRecError(i, line_in, err) {
-//////        console.error('exportDBAddRecError(i, line_in, err)');
-//////        console.error('err:', err);
-//////        console.error('i=', i);
-//////        console.error(line_in);
-//////        alert(getStr('MSG_exportDBAddError'));
-//////    }
+    }
+    async function handleFileLoad(txt) {
+        console.log('handleFileLoad(ev)');
+        var lines = txt.split('\n');
+        var line = '';
+        var table_name = ''; // Changed to track current table name
+        var i = 0;
+        var len = lines.length;
+        var valid = '';
+        var count = 0; // shows count of table recs loaded
+        console.log('lines.length:', len);
+        mydoc.getElementById('div_loadDB').style.display = 'none';
+        mydoc.getElementById('div_exportDB').style.display = 'block';
+        mydoc.getElementById('div_exportDB_title').innerHTML = getStr('TXT_exportDB_load');
+        mydoc.getElementById('div_exportDB_count').innerHTML = '0 / ' + len;
+        for (i = 0; i < len; i++) {
+            line = lines[i].trim(); // .trim() handles trailing hidden spaces or \r characters
+            if (line.length === 0) { continue; }
+            if (line.indexOf('-----table:') > -1) {
+                table_name = lines[i].split(':')[1].trim(); // Trim spaces around table name
+                mydoc.getElementById('div_exportDB_table').innerHTML = table_name;
+                continue;
+            }
+            try {
+                var rec = JSON.parse(line);
+                valid = await exportDBAddRec(table_name, rec);
+                if (valid !== 'OK') { exportDBAddRecError(i, line, valid); }
+            } catch (err) {
+                exportDBAddRecError(i, line, err.message || err);
+            }
+            count += 1;
+            if (count % 10 == 0) {
+                mydoc.getElementById('div_exportDB_count').innerHTML = count + ' / ' + len;
+            }
+        }
+        //mydoc.getElementById('div_exportDB').style.display = 'none';
+        RMM_STATSLIVE.loadSessionData();
+    }
+    function exportDBAddRec(table, rec) {
+        return new Promise((resolve) => {
+            ////console.log('exportDBAddRec(table, rec)');
+            if (!rec) { return resolve('!rec'); }
+            var obj = objectstoreGet(table, true);
+            transactionInit();
+            var req = obj.add(rec);
+            req.onsuccess = function(ev) {
+                resolve('OK');
+            }
+            req.onerror = function(ev) {
+                resolve(req.error ? req.error.message : 'Database error');
+            }
+        });
+    }
+    function exportDBAddRecError(i, line_in, err) {
+        console.error('exportDBAddRecError(i, line_in, err)');
+        console.error('err:', err);
+        console.error('i=', i);
+        console.error(line_in);
+        alert(getStr('MSG_exportDBAddError'));
+    }
 
 // >>> EXPORTDB: end
 //
