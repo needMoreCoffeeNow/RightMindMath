@@ -112,7 +112,6 @@ var RMM_ASM = (function() {
         slash_num_1.innerHTML = spath;
         slash_num_2.innerHTML = spath;
         processInnerHtml();
-        //////RMM_DB.dbSetWaitVars(db_wait_tries_std, RMM_STATSLIVE.loadSessionData);
         RMM_DB.init();
     }
 
@@ -1174,7 +1173,7 @@ var RMM_ASM = (function() {
             if (!subborrow && borrowNeeded()) { continue; }
             if (probRowsAsTotal('-') > -1) { pos_needed = false; }
         }
-        ///prob_asm  = [ [9,2,6], [1,3,7], [7,8,9] ];
+        //prob_asm  = [ [9,2,6], [1,3,7], [7,8,9] ];
         //prob_asm  = [ [4,1,2], [1,8,3], [2,2,9] ];
         //prob_asm  = [ [8,6,2], [5,0,9], [3,5,3] ];
         //prob_asm  = [ [7,0,5], [5,6,8], [1,4,3] ];

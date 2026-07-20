@@ -1,18 +1,9 @@
 var RMM_DB = (function() {
     var mydoc = window.document;
-//////    var db_active = false; // set to true when opend DB is successful
-//////    var db = null;
     var rw_session = null;
     var RW = 'readwrite';
-//////    var db_load_active = false; // use to properly handle load in db open success function
-//////    var db_result = null; // stores the request results
-//////    var db_error = false;
-//////    var db_complete = false;
-//////    var db_upgrade = false;
     var timervar = null; // use for setTimeout and clearTimeout functions
-//////    var VERSION = 1; // indexedDB version initially set to zero to force upgrade logic
     var IDSETUP = 1;
-//////    var IDGUEST = 10884293110550;
     var pass_caller = ''; // set to function name to help passError debuging
     // async
     var MAX_TRIES = 100; // limit on how many waits for db_complete
@@ -176,114 +167,6 @@ var RMM_DB = (function() {
     }
 
     // processes run before fully functional main page displays
-//////    function init() {
-//////        console.warn('db.init()');
-//////        console.log(Date.now(), 'Date.now()');
-//////        var req = null;
-//////        if (!window.indexedDB) {
-//////            alert(getStr('MSG_db_not_supported'));
-//////        } else { 
-//////            transactionInit();
-//////            //timervar = window.setTimeout(dbWait, DB_MILLI_LONG);
-//////            console.log('init open next');
-//////            req = window.indexedDB.open('rmm_db', VERSION);
-//////            req.onsuccess = dbhandleOpenSuccess;
-//////            req.onerror = dbhandleOpenError;
-//////            req.onupgradeneeded = dbhandleOpenUpgrade;
-//////            console.log(req);
-//////        }
-//////    }
-//////
-//////    // initialize db transaction fields
-//////    function transactionInit() {
-//////        //////console.log('transactionInit()');  //KEEPIN
-//////        db_complete = false;
-//////        db_error = false;
-//////        db_result = null;
-//////    }
-//////    // handle db open upgrade
-//////    function dbhandleOpenUpgrade(ev) {
-//////        console.log('dbhandleOpenUpgrade(ev)');
-//////        console.log(ev);
-//////        var old_version = ev.oldVersion;
-//////        var new_version = ev.newVersion;
-//////        var db_session = null;
-//////        var db_user = null;
-//////        var db_setup = null;
-//////        var db_print = null;
-//////        console.log('old_version:', old_version);
-//////        console.log('new_version:', new_version);
-//////        db = ev.target.result;
-//////        if (old_version !== new_version) {
-//////            db_upgrade = true;
-//////        }
-//////        if (old_version < 1) {
-//////            db_session = db.createObjectStore('session', { keyPath: 'idsession' });
-//////            db_session.createIndex('iduser', 'iduser', { unique: false });
-//////            db_session.createIndex('idlevel', 'idlevel', { unique: false });
-//////            db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
-//////            db_user = db.createObjectStore('user', { keyPath: 'iduser' });
-//////            db_user.createIndex('name', 'name', { unique: true });
-//////            db_setup = db.createObjectStore('setup', { keyPath: 'idkey' });
-//////            db_setup = db.createObjectStore('print', { keyPath: 'idprint' });
-//////            console.warn('------------------------------------version setup complete');
-//////        }
-//////        if (confirm(getStr('MSG_exportDBLoadFile')) == true) {
-//////            db_load_active = true;
-//////            mydoc.getElementById('div_info').style.display = 'none';
-//////            console.log('exportDBLoadFile confirmed');
-//////            exportDBLoadFile();
-//////        }
-//////    }
-//////    // handle db open success
-//////    function dbhandleOpenSuccess(ev) {
-//////        console.log('dbhandleOpenSuccess(ev)');
-//////        if (db_load_active) {
-//////            db_upgrade = false;
-//////            db_active = true;
-//////            return;
-//////        }
-//////        db = ev.target.result;
-//////        db_active = true;
-//////        if (db_upgrade) {
-//////            // write guest user rec first time DB is setup only
-//////            if (VERSION < 2) { dbupgradeWriteUser(); }
-//////            if (VERSION == 2) {
-//////                // need to add future upgrade logic herersion2();
-//////            }
-//////            db_upgrade = false;
-//////        } else {
-//////            db_complete = true;
-//////        }
-//////        RMM_STATSLIVE.loadSessionData();
-//////    }
-//////
-//////    // handle db open error
-//////    function dbhandleOpenError(ev) {
-//////        console.log('dbhandleOpenError(ev)');
-//////        console.error('Database error:'  + ev.target.errorCode); //KEEPIN
-//////    }
-//////
-//////    // write the Guest user record in new DB Note: after upgrade only
-//////    // if data export is to be uploaded, the initial setup & user table entried will be over-written by export data
-//////    function dbupgradeWriteUser(ev) {
-//////        console.log('dbupgradeWriteUser(ev)');
-//////        var obj = objectstoreGet('user', true);
-//////        var req = null;
-//////        var data = { iduser:IDGUEST, 'name':getStr('DAT_guest')};
-//////        if (!obj) { return; }
-//////        transactionInit();
-//////        req = obj.add(data);
-//////        req.onsuccess = function(ev) {
-//////            console.log('db.user.added:  ' + getStr('DAT_guest'));
-//////            dbupgradeWriteSetup(data);
-//////        }
-//////        req.onerror = function(ev) {
-//////            alert('ERR: dbupgradeWriteUser id=' + getStr('DAT_guest'));
-//////            db_error = true;
-//////        }
-//////    }
-
     // initial pdata values
     function pdataInit() {
         console.log('pdataInit()');
@@ -379,7 +262,7 @@ var RMM_DB = (function() {
 
     // create an objectStore variable for DB transactions
     function objectstoreGet(store, readwrite) {
-        //////console.log('----objectstoreGet(store) + store = ' + store); //KEEPIN
+        //console.log('----objectstoreGet(store) + store = ' + store); //KEEPIN
         if (!db_active) {
             console.warn('DB NOT ACTIVE');
             return null;
@@ -721,7 +604,7 @@ var RMM_DB = (function() {
 
     // add session record for recursive adds
     function addSessionRecRecursive(data, my_callback) {
-        //////console.log('addSessionRecRecursive(data, my_callback)'); //KEEPIN
+        //console.log('addSessionRecRecursive(data, my_callback)'); //KEEPIN
         var obj = objectstoreGet('session', true);
         var req = null;
         if (!obj) {
@@ -1193,204 +1076,121 @@ var RMM_DB = (function() {
     }
 //*****************************************************************************
 //*****************************************************************************
-function exportDBLoadFile() {
-    console.log('exportDBLoadFile');
-    RMM_MENU.hideAll();
-    mydoc.getElementById('div_loadDB').style.display = 'block';
-    document.getElementById('file_input').onchange = function(event) {
-        const file = event.target.files[0];
-        if (!file) {
-            console.log('file select failed');
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            console.log('reader.onload complete');
-            handleFileLoad(e.target.result);
-        };
-        reader.readAsText(file); 
-    };
-}
-
-async function handleFileLoad(txt) {
-    console.warn('handleFileLoad(ev)');
-    const lines = txt.split('\n');
-    const len = lines.length;
-    mydoc.getElementById('div_loadDB').style.display = 'none';
-    mydoc.getElementById('div_exportDB').style.display = 'block';
-    mydoc.getElementById('div_exportDB_title').innerHTML = getStr('TXT_exportDB_load');
-    let batches = {'print': [], 'setup': [], 'user': [], 'session': []};
-    let current_table = '';
-    let count_session = 0;
-    let total_processed = 0;
-    // Phase 1: Group records by table name to batch them
-    mydoc.getElementById('div_exportDB_count').innerHTML = ''; // the table div will be used for count
-    mydoc.getElementById('div_exportDB_table').innerHTML = '0 / ' + len;
-    for (let i = 0; i < len; i++) {
-        total_processed += 1;
-        if (total_processed % 10 == 0) {
-            mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
-        }
-        const line = lines[i].trim();
-        if (line.length === 0) continue;
-        if (line.startsWith('-----table:')) {
-            current_table = line.split(':')[1].trim();
-            continue;
-        }
-        // Edge check: Skip if text data appears before a valid table header declaration
-        if (!current_table || !batches[current_table]) continue;
-        try {
-            const rec = JSON.parse(line);
-            batches[current_table].push({
-                index: i,
-                lineText: line,
-                data: rec
-            });
-            if (current_table === 'session') { 
-                count_session += 1; 
+    function exportDBLoadFile() {
+        console.log('exportDBLoadFile');
+        RMM_MENU.hideAll();
+        mydoc.getElementById('div_loadDB').style.display = 'block';
+        document.getElementById('file_input').onchange = function(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                console.log('file select failed');
+                return;
             }
-        } catch (err) {
-            exportDBAddRecError(i, line, 'JSON Parse Error: ' + (err.message || err));
-            return;
-        }
-    }
-    // Phase 2: Process each batch atomically using a single transaction per table
-    mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
-    for (const key in batches) {
-        const records = batches[key];
-        if (records.length === 0) continue;
-        try {
-            // FIX: Corrected parameters passed to function, removing the broken arrow callback
-            const successCount = await saveBatchToIndexedDB(key, records);
-        } catch (batch_error) {
-            console.error(batch_error);
-            // FIX: Corrected missing closing parenthesis syntax error
-            alert('Failed to process batch for table: ' + key);
-            return;
-        }
-    }
-    console.warn('total_processed: ', total_processed);
-    alert(total_processed + ' data lines loaded');
-    RMM_STATSLIVE.loadSessionData();
-}
-function saveBatchToIndexedDB(table_name, records) {
-    return new Promise((resolve, reject) => {
-        if (!records || records.length === 0) return resolve(0);
-        transactionInit(); 
-        const store = objectstoreGet(table_name, true); 
-        let success_count = 0;
-        let pending_requests = records.length;
-        records.forEach((item) => {
-            const req = store.add(item.data);
-            req.onsuccess = function() {
-                success_count++;
-                pending_requests--;
-                if (pending_requests === 0) {
-                    resolve(success_count);
-                }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                console.log('reader.onload complete');
+                handleFileLoad(e.target.result);
             };
-            req.onerror = function(ev) {
-                pending_requests--;
-                const errMsg = req.error ? req.error.message : 'Database write conflict';
-                exportDBAddRecError(item.index, item.lineText, errMsg);
-                if (pending_requests === 0) {
-                    resolve(success_count);
+            reader.readAsText(file);
+        };
+    }
+    async function handleFileLoad(txt) {
+        console.warn('handleFileLoad(ev)');
+        const lines = txt.split('\n');
+        const len = lines.length;
+        mydoc.getElementById('div_loadDB').style.display = 'none';
+        mydoc.getElementById('div_exportDB').style.display = 'block';
+        mydoc.getElementById('div_exportDB_title').innerHTML = getStr('TXT_exportDB_load');
+        let batches = {'print': [], 'setup': [], 'user': [], 'session': []};
+        let current_table = '';
+        let count_session = 0;
+        let total_processed = 0;
+        // Phase 1: Group records by table name to batch them
+        mydoc.getElementById('div_exportDB_count').innerHTML = ''; // the table div will be used for count
+        mydoc.getElementById('div_exportDB_table').innerHTML = '0 / ' + len;
+        for (let i = 0; i < len; i++) {
+            total_processed += 1;
+            if (total_processed % 10 == 0) {
+                mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
+            }
+            const line = lines[i].trim();
+            if (line.length === 0) continue;
+            if (line.startsWith('-----table:')) {
+                current_table = line.split(':')[1].trim();
+                continue;
+            }
+            // Edge check: Skip if text data appears before a valid table header declaration
+            if (!current_table || !batches[current_table]) continue;
+            try {
+                const rec = JSON.parse(line);
+                batches[current_table].push({
+                    index: i,
+                    lineText: line,
+                    data: rec
+                });
+                if (current_table === 'session') {
+                    count_session += 1;
                 }
-            };
+            } catch (err) {
+                exportDBAddRecError(i, line, 'JSON Parse Error: ' + (err.message || err));
+                return;
+            }
+        }
+        // Phase 2: Process each batch atomically using a single transaction per table
+        mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
+        for (const key in batches) {
+            const records = batches[key];
+            if (records.length === 0) continue;
+            try {
+                // FIX: Corrected parameters passed to function, removing the broken arrow callback
+                const successCount = await saveBatchToIndexedDB(key, records);
+            } catch (batch_error) {
+                console.error(batch_error);
+                // FIX: Corrected missing closing parenthesis syntax error
+                alert('Failed to process batch for table: ' + key);
+                return;
+            }
+        }
+        console.warn('total_processed: ', total_processed);
+        alert(total_processed + ' data lines loaded');
+        RMM_STATSLIVE.loadSessionData();
+    }
+    function saveBatchToIndexedDB(table_name, records) {
+        return new Promise((resolve, reject) => {
+            if (!records || records.length === 0) return resolve(0);
+            transactionInit();
+            const store = objectstoreGet(table_name, true);
+            let success_count = 0;
+            let pending_requests = records.length;
+            records.forEach((item) => {
+                const req = store.add(item.data);
+                req.onsuccess = function() {
+                    success_count++;
+                    pending_requests--;
+                    if (pending_requests === 0) {
+                        resolve(success_count);
+                    }
+                };
+                req.onerror = function(ev) {
+                    pending_requests--;
+                    const errMsg = req.error ? req.error.message : 'Database write conflict';
+                    exportDBAddRecError(item.index, item.lineText, errMsg);
+                    if (pending_requests === 0) {
+                        resolve(success_count);
+                    }
+                };
+            });
         });
-    });
-}
-
-function exportDBAddRecError(i, line_in, err) {
-    console.error('exportDBAddRecError(i, line_in, err)');
-    console.error('err:', err);
-    console.error('Line Index =', i);
-    console.error(line_in);
-    alert(getStr('MSG_exportDBAddError'));
-}
+    }
+    function exportDBAddRecError(i, line_in, err) {
+        console.error('exportDBAddRecError(i, line_in, err)');
+        console.error('err:', err);
+        console.error('Line Index =', i);
+        console.error(line_in);
+        alert(getStr('MSG_exportDBAddError'));
+    }
 //*****************************************************************************
 //*****************************************************************************
-
-//////
-//////    function exportDBLoadFile() {
-//////        console.log('exportDBLoadFile');
-//////        RMM_MENU.hideAll();
-//////        mydoc.getElementById('div_loadDB').style.display = 'block';
-//////        // Bind event listener to the file input element
-//////        document.getElementById('file_input').addEventListener('change', function(event) {
-//////            const file = event.target.files[0];
-//////            if (!file) {
-//////                console.log('file select failed');
-//////                return;
-//////            }
-//////            const reader = new FileReader();
-//////            reader.onload = function(e) {
-//////                console.log('reader.onload complete');
-//////                handleFileLoad(e.target.result);
-//////            };
-//////            reader.readAsText(file); 
-//////        });
-//////    }
-//////    async function handleFileLoad(txt) {
-//////        console.warn('handleFileLoad(ev)');
-//////        var lines = txt.split('\n');
-//////        var line = '';
-//////        var table_name = ''; // Changed to track current table name
-//////        var i = 0;
-//////        var len = lines.length;
-//////        var valid = ''; 
-//////        var count = 0; // shows count of table recs loaded
-//////        console.warn('---------------------------------------lines.length:', len);
-//////        mydoc.getElementById('div_loadDB').style.display = 'none';
-//////        mydoc.getElementById('div_exportDB').style.display = 'block';
-//////        mydoc.getElementById('div_exportDB_title').innerHTML = getStr('TXT_exportDB_load');
-//////        mydoc.getElementById('div_exportDB_count').innerHTML = '0 / ' + len;
-//////        for (i = 0; i < len; i++) {
-//////            line = lines[i].trim(); // .trim() handles trailing hidden spaces or \r characters
-//////            if (line.length === 0) { continue; } 
-//////            if (line.indexOf('-----table:') > -1) {
-//////                table_name = lines[i].split(':')[1].trim(); // Trim spaces around table name
-//////                mydoc.getElementById('div_exportDB_table').innerHTML = table_name;
-//////                continue;
-//////            }
-//////            try {
-//////                var rec = JSON.parse(line);
-//////                valid = await exportDBAddRec(table_name, rec); 
-//////                if (valid !== 'OK') { exportDBAddRecError(i, line, valid); }
-//////            } catch (err) {
-//////                exportDBAddRecError(i, line, err.message || err);
-//////            }
-//////            count += 1;
-//////            if (count % 10 == 0) {
-//////                mydoc.getElementById('div_exportDB_count').innerHTML = count + ' / ' + len;
-//////            }
-//////        }
-//////        console.warn('recs loaded = ' , count);
-//////        RMM_STATSLIVE.loadSessionData();
-//////    }
-//////    function exportDBAddRec(table, rec) {
-//////        return new Promise((resolve) => {
-//////            //console.log('exportDBAddRec(table, rec)');
-//////            if (!rec) { return resolve('!rec'); }
-//////            var obj = objectstoreGet(table, true);
-//////            transactionInit();
-//////            var req = obj.add(rec); 
-//////            req.onsuccess = function(ev) {
-//////                resolve('OK');
-//////            }
-//////            req.onerror = function(ev) {
-//////                resolve(req.error ? req.error.message : 'Database error');
-//////            }
-//////        });
-//////    }
-//////    function exportDBAddRecError(i, line_in, err) {
-//////        console.error('exportDBAddRecError(i, line_in, err)');
-//////        console.error('err:', err);
-//////        console.error('i=', i);
-//////        console.error(line_in);
-//////        alert(getStr('MSG_exportDBAddError'));
-//////    }
-
 // >>> EXPORTDB: end
 //
 
