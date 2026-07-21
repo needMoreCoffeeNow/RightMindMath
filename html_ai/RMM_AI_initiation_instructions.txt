@@ -1,0 +1,3 @@
+Please use the attached instructions .txt file to analyze the .csv file will be loaded in the next step. The instructions file has an initial set of instructions followed by a series of questions where each question is denoted QNN where NN will be 01, 02, ... After processing the .csv data file response to the overview Q01.
+
+Here is the .csv data file to analyze

@@ -1,0 +1,35 @@
+Please prepare to analyze the attached csv file with the following columns where the column header preceeded by a "###" set of characters (please ignore them). The column header is before the "=" character. The description of the column data follows the "=" character: ###idname=user name (note a "+" in the name denotes a sync added user) ###iduser=the unique numeric id for the idname ###days=days since starting RMM for this session ###idlevel=problem type (a/s/m/d) followed by the number of digits in the problem ###timestamp=timestamp marking start of a problem sesssion ###problemNum=problem number for the session ###Date=session start date/time (may be either MM/DD/YYYY or DD/MM/YYYY format) ###time=total amount of time to answer a problem ###tries=for single-digit problems tries needed (1-4) to answer correctly ###equation=equation as a delimited string ###ordered=for single-digit multiplication the value is True for ordered (not random) equation presentation such as 2x1, 2x2, 2x3, etc. It is blank from random problems. ###chunked=m2 problem dialog presented where c is used to denote use of the Chunkit button and b is used to denote no Chunkit button (b stands for "basic")
+
+Do not perform the question analysis until prompted with the QNN label that preceeds the ":' charcter. The NN portion will be 01, 02,... 10, 11, etc.
+
+DEFINITIONS: Here are some definitions that will be referenced in the questions:
+
+Define weekly as each seven day period starting on the first date a problem was completed.
+
+Define idlevel=d3 problems the equation columns expresses the problem as divisor/dividend using the format determine the number of problems where there was no remainder and the number of problems with a remainder
+
+Define for idlevel=a2 problems the equation shows number1|number2|number3 where the equation is number1 + number2 = number3. For all the a2 problems, determine how many required carries from the ones to the tens value and how many did not require any carries
+
+Define idlevels that start with the characters m1 as one-digit multiplication problems where the third character of the idlevel is the number that appears in every problem for that idlevel which we will call type. calculate the number of m1 problems for each m1 problem type.
+
+QUESTIONS (QNN):
+
+Q01: Create an overview of the .csv data file
+
+Q02: Create a column chart showing the number of problems completed per week where each week is the seven day period starting on the date of the earliest problem
+
+Q03: For idlevel = a1 create a line chart showing the average number of tries per problem where the x-axis and the y-axis is average per day also add a second line to the chart using the right axis showing the average time per problem
+
+Q04: For idlevel = a1 create a line chart showing the average number of tries per problem where the x-axis is the date day including all days even those without data and the left y-axis is average per day and the right y-axis is the average time per problem ensure that all data points are connected so as to create a line-graph
+
+Q05: Create a column bar chart where the x-axis is the idlevel and the y-axis is the number of problems per idlevel sort by idlevel
+
+Q06: Create a column chart showing the total number of weekly problems for all idlevels where the x-axis is the weekly value and the y-axis is the total number of problems
+
+Q07: Create a column chart showing the total number of weekly problems for only idlevel problems that include s1, s2, and s3
+
+Q08: Calculate the two average times for a2 problems that required carries and for problems that did not require carries
+
+Q09: For each m1 problem calculate the average time to complete the problems for each number that appears as the third character in the idlevel
+
+Q10: For each category of idlevel d3 problems, calculate the average time for the problems without remainder and problems with remainders
