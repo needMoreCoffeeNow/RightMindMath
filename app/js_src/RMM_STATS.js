@@ -274,72 +274,197 @@ var RMM_STATS = (function() {
         chartBuild();
     }
 
-    function statsExportClick(ev) {
-        console.log('statsExportClick()');
-        var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
-        var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,equation,ordered,chunked';
-        var date = null;
-        var chunked = ''; // stores b/c for m2 else ''
-        var i = 0;
-        var len = sdata.length;
-        var err = false;
-        var anchor = null; // used to create csv file download anchor link
-        showMomentPlease('MSG_moment_please');
-        for (i=0; i<len; i++) {
-            chunked = '';
-            txt += '\n';
-            txt += idname + ',';
-            txt += sdata[i].iduser + ',';
-            txt += sdata[i].days + ',';
-            if (sdata[i].idlevel.substr(0, 2) !== 'm2') {
-                txt += sdata[i].idlevel + ',';
-            } else {
-                txt += sdata[i].idlevel.substr(0, 2) + ',';
-                chunked = sdata[i].idlevel.substr(2, 3);
-            }
-            txt += sdata[i].idsession.split('_')[0] + ',';
-            txt += sdata[i].idsession.split('_')[1] + ',';
-            date = new Date(parseInt( sdata[i].idsession.split('_')[0], 10));
-            if (ddmm_format) {
-                txt += (date.getDate() + '/' + (date.getMonth()+1));
-            } else {
-                txt += (date.getMonth()+1) + '/' + (date.getDate());
-            }
-            // finish remaind of sheet readable date
-            txt += '/' + date.getFullYear()
-                + ' ' + date.getHours()
-                + ':' + date.getMinutes()
-                + ':' + date.getSeconds()
-                + ',';
-            // end of sheet readable date
-            txt += (sdata[i].time/1000) + ',';
-            if (sdata[i].tries) {
-                txt += sdata[i].tries + ',';
-            } else {
-                txt += ',';
-            }
-            txt += sdata[i].equation;
-            if (sdata[i].ordered) {
-                txt += ',True,';
-            } else {
-                txt += ',,';
-            }
-            txt += chunked;
+
+//gemini code start
+async function statsExportClick(ev) {
+    console.log('statsExportClick()');
+    var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
+    var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,equation,ordered,chunked';
+    var date = null;
+    var chunked = ''; // stores b/c for m2 else ''
+    var i = 0;
+    var len = sdata.length;
+    var anchor = null; // used as fallback
+
+    showMomentPlease('MSG_moment_please');
+
+    for (i = 0; i < len; i++) {
+        chunked = '';
+        txt += '\n';
+        txt += idname + ',';
+        txt += sdata[i].iduser + ',';
+        txt += sdata[i].days + ',';
+        if (sdata[i].idlevel.substr(0, 2) !== 'm2') {
+            txt += sdata[i].idlevel + ',';
+        } else {
+            txt += sdata[i].idlevel.substr(0, 2) + ',';
+            chunked = sdata[i].idlevel.substr(2, 3);
         }
-        RMM_MENU.hideAll();
-        mydoc.getElementById('div_stats_type').style.display = 'none';
-        mydoc.getElementById('div_stats_export_close').style.display = 'block';
-        mydoc.getElementById('div_stats_container').style.display = 'block';
+        txt += sdata[i].idsession.split('_')[0] + ',';
+        txt += sdata[i].idsession.split('_')[1] + ',';
+        date = new Date(parseInt(sdata[i].idsession.split('_')[0], 10));
+        if (ddmm_format) {
+            txt += (date.getDate() + '/' + (date.getMonth() + 1));
+        } else {
+            txt += (date.getMonth() + 1) + '/' + (date.getDate());
+        }
+        // finish remainder of sheet readable date
+        txt += '/' + date.getFullYear()
+            + ' ' + date.getHours()
+            + ':' + date.getMinutes()
+            + ':' + date.getSeconds()
+            + ',';
+        // end of sheet readable date
+        txt += (sdata[i].time / 1000) + ',';
+        if (sdata[i].tries) {
+            txt += sdata[i].tries + ',';
+        } else {
+            txt += ',';
+        }
+        txt += sdata[i].equation;
+        if (sdata[i].ordered) {
+            txt += ',True,';
+        } else {
+            txt += ',,';
+        }
+        txt += chunked;
+    }
+
+    RMM_MENU.hideAll();
+    mydoc.getElementById('div_stats_type').style.display = 'none';
+    mydoc.getElementById('div_stats_export_close').style.display = 'block';
+    mydoc.getElementById('div_stats_container').style.display = 'block';
+
+    var fileName = 'RMM_' + idname + '_stats.csv';
+
+    // Check if the File System Access API is supported
+    if ('showSaveFilePicker' in window) {
+        try {
+            // Prompt the user with a native file save dialog
+            const handle = await window.showSaveFilePicker({
+                suggestedName: fileName,
+                types: [{
+                    description: 'CSV File',
+                    accept: {
+                        'text/csv': ['.csv'],
+                    },
+                }],
+            });
+
+            // Write the formatted CSV text to the selected file handle
+            const writableStream = await handle.createWritable();
+            await writableStream.write(txt);
+            await writableStream.close();
+
+        } catch (err) {
+            // Handle when the user clicks 'Cancel' in the file picker
+            if (err.name === 'AbortError') {
+                console.log('User cancelled the save picker dialog.');
+            } else {
+                console.error('Error saving file:', err);
+                alert(getStr('MSG_export_not_supported'));
+            }
+        }
+    } else {
+        // Fallback for browsers that do not support showSaveFilePicker
         try {
             anchor = document.createElement('a');
             anchor.id = 'a_stats_export_csv';
-            anchor.href = window.URL.createObjectURL(new Blob([txt], {type: 'text/plain'}));
-            anchor.download = 'RMM_' + idname + '_stats.csv';
+            anchor.href = window.URL.createObjectURL(new Blob([txt], { type: 'text/csv' }));
+            anchor.download = fileName;
             anchor.click();
-        } catch(err) {
+        } catch (err) {
             alert(getStr('MSG_export_not_supported'));
         }
     }
+}
+//gemini code end
+//
+//gemini ios workaround start
+if ('showSaveFilePicker' in window) {
+  // Desktop Chrome, Edge, Opera, etc.
+  const handle = await window.showSaveFilePicker(options);
+  const writable = await handle.createWritable();
+  await writable.write(content);
+  await writable.close();
+} else {
+  // iOS Safari, macOS Safari, Firefox fallback
+  const blob = new Blob([content], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'filename.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+//gemini ios workaround end
+
+//////    function statsExportClick(ev) {
+//////        console.log('statsExportClick()');
+//////        var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
+//////        var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,equation,ordered,chunked';
+//////        var date = null;
+//////        var chunked = ''; // stores b/c for m2 else ''
+//////        var i = 0;
+//////        var len = sdata.length;
+//////        var err = false;
+//////        var anchor = null; // used to create csv file download anchor link
+//////        showMomentPlease('MSG_moment_please');
+//////        for (i=0; i<len; i++) {
+//////            chunked = '';
+//////            txt += '\n';
+//////            txt += idname + ',';
+//////            txt += sdata[i].iduser + ',';
+//////            txt += sdata[i].days + ',';
+//////            if (sdata[i].idlevel.substr(0, 2) !== 'm2') {
+//////                txt += sdata[i].idlevel + ',';
+//////            } else {
+//////                txt += sdata[i].idlevel.substr(0, 2) + ',';
+//////                chunked = sdata[i].idlevel.substr(2, 3);
+//////            }
+//////            txt += sdata[i].idsession.split('_')[0] + ',';
+//////            txt += sdata[i].idsession.split('_')[1] + ',';
+//////            date = new Date(parseInt( sdata[i].idsession.split('_')[0], 10));
+//////            if (ddmm_format) {
+//////                txt += (date.getDate() + '/' + (date.getMonth()+1));
+//////            } else {
+//////                txt += (date.getMonth()+1) + '/' + (date.getDate());
+//////            }
+//////            // finish remaind of sheet readable date
+//////            txt += '/' + date.getFullYear()
+//////                + ' ' + date.getHours()
+//////                + ':' + date.getMinutes()
+//////                + ':' + date.getSeconds()
+//////                + ',';
+//////            // end of sheet readable date
+//////            txt += (sdata[i].time/1000) + ',';
+//////            if (sdata[i].tries) {
+//////                txt += sdata[i].tries + ',';
+//////            } else {
+//////                txt += ',';
+//////            }
+//////            txt += sdata[i].equation;
+//////            if (sdata[i].ordered) {
+//////                txt += ',True,';
+//////            } else {
+//////                txt += ',,';
+//////            }
+//////            txt += chunked;
+//////        }
+//////        RMM_MENU.hideAll();
+//////        mydoc.getElementById('div_stats_type').style.display = 'none';
+//////        mydoc.getElementById('div_stats_export_close').style.display = 'block';
+//////        mydoc.getElementById('div_stats_container').style.display = 'block';
+//////        try {
+//////            anchor = document.createElement('a');
+//////            anchor.id = 'a_stats_export_csv';
+//////            anchor.href = window.URL.createObjectURL(new Blob([txt], {type: 'text/plain'}));
+//////            anchor.download = 'RMM_' + idname + '_stats.csv';
+//////            anchor.click();
+//////        } catch(err) {
+//////            alert(getStr('MSG_export_not_supported'));
+//////        }
+//////    }
 
     function statsExportExit(ev) {
         console.log('statsExportExit(ev)');
@@ -884,7 +1009,6 @@ var RMM_STATS = (function() {
         statsChartClick : statsChartClick,
         statsExportRecords : statsExportRecords,
         statsWriteJson : statsWriteJson,
-        statsExportClick : statsExportClick,
         statsExportExit : statsExportExit,
         statsUsageClick : statsUsageClick
     };
