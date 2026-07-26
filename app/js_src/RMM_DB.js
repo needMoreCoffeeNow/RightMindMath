@@ -48,7 +48,7 @@ var RMM_DB = (function() {
             await openDB();
             console.log('Database successfully connected and schema checks complete.');
             // 2. Prompt user for external data restore
-            if (confirm(getStr('MSG_exportDBLoadFile')) === true) {
+            if (!db_active && confirm(getStr('MSG_exportDBLoadFile')) === true) {
                 // PATH A: User confirmed file upload. Run import and bypass standard seed.
                 db_load_active = true;
                 // Safe fallback DOM handling (handles 'mydoc' or 'document')
@@ -62,7 +62,7 @@ var RMM_DB = (function() {
             } else {
                 // PATH B: User declined upload. Process standard new-database installations.
                 console.log('Export file load declined. Processing standard database seeding...');
-                if (VERSION < 2) { 
+                if (VERSION < 1) { 
                     await dbupgradeWriteUser(); 
                 }
                 if (VERSION === 2) {

@@ -17,6 +17,7 @@ var RMM_STATS = (function() {
     var xposXright = RMM_SymsNums.getXpos('chart_xright');
     var averaged = false; // flag set to true when charts times.length > 100
     var avg_len = 0; // stores times array length before averaging
+    var file_save_valid = false; // stores the outcome of the file save asyc fnc
     // db
     var IDGUEST = 10884293110550;
 
@@ -150,7 +151,7 @@ var RMM_STATS = (function() {
             total = rollup[nlist[i][1]]['total'];
             html += '<div style="margin-top:10px;">';
             html += '<button id="b_' + nlist[i][1] + '_' + nlist[i][0] + '_' + total + ' " class="stats_id" ';
-            html += 'onclick="RMM_STATS.userNameClick(event);">';        
+            html += 'onclick="RMM_STATS.userNameClick(event);">';
             html += nlist[i][0];
             html += '</button></div>';
         }
@@ -198,7 +199,7 @@ var RMM_STATS = (function() {
             if (myroll[levels[i]] === undefined) { continue; }
             html += '<div style="margin-top:10px;">';
             html += '<button id="b_' + levels[i] + '" class="stats_id" ';
-            html += 'onclick="RMM_STATS.levelClick(event);">';        
+            html += 'onclick="RMM_STATS.levelClick(event);">';
             html += getStr('TXT_level_' + levels[i]) + '<br>';
             html += '<span id="bspan_' + levels[i] + '" ';
             html += 'style="font-size:70%;">(' + myroll[levels[i]] ;
@@ -273,199 +274,163 @@ var RMM_STATS = (function() {
         if (times.length > 100) { averageTimes(); }
         chartBuild();
     }
-
-
-//gemini code start
-async function statsExportClick(ev) {
-    console.log('statsExportClick()');
-    var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
-    var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,equation,ordered,chunked';
-    var date = null;
-    var chunked = ''; // stores b/c for m2 else ''
-    var i = 0;
-    var len = sdata.length;
-    var anchor = null; // used as fallback
-
-    showMomentPlease('MSG_moment_please');
-
-    for (i = 0; i < len; i++) {
-        chunked = '';
-        txt += '\n';
-        txt += idname + ',';
-        txt += sdata[i].iduser + ',';
-        txt += sdata[i].days + ',';
-        if (sdata[i].idlevel.substr(0, 2) !== 'm2') {
-            txt += sdata[i].idlevel + ',';
-        } else {
-            txt += sdata[i].idlevel.substr(0, 2) + ',';
-            chunked = sdata[i].idlevel.substr(2, 3);
-        }
-        txt += sdata[i].idsession.split('_')[0] + ',';
-        txt += sdata[i].idsession.split('_')[1] + ',';
-        date = new Date(parseInt(sdata[i].idsession.split('_')[0], 10));
-        if (ddmm_format) {
-            txt += (date.getDate() + '/' + (date.getMonth() + 1));
-        } else {
-            txt += (date.getMonth() + 1) + '/' + (date.getDate());
-        }
-        // finish remainder of sheet readable date
-        txt += '/' + date.getFullYear()
-            + ' ' + date.getHours()
-            + ':' + date.getMinutes()
-            + ':' + date.getSeconds()
-            + ',';
-        // end of sheet readable date
-        txt += (sdata[i].time / 1000) + ',';
-        if (sdata[i].tries) {
-            txt += sdata[i].tries + ',';
-        } else {
-            txt += ',';
-        }
-        txt += sdata[i].equation;
-        if (sdata[i].ordered) {
-            txt += ',True,';
-        } else {
-            txt += ',,';
-        }
-        txt += chunked;
-    }
-
-    RMM_MENU.hideAll();
-    mydoc.getElementById('div_stats_type').style.display = 'none';
-    mydoc.getElementById('div_stats_export_close').style.display = 'block';
-    mydoc.getElementById('div_stats_container').style.display = 'block';
-
-    var fileName = 'RMM_' + idname + '_stats.csv';
-
-    // Check if the File System Access API is supported
-    if ('showSaveFilePicker' in window) {
-        try {
-            // Prompt the user with a native file save dialog
-            const handle = await window.showSaveFilePicker({
-                suggestedName: fileName,
-                types: [{
-                    description: 'CSV File',
-                    accept: {
-                        'text/csv': ['.csv'],
-                    },
-                }],
-            });
-
-            // Write the formatted CSV text to the selected file handle
-            const writableStream = await handle.createWritable();
-            await writableStream.write(txt);
-            await writableStream.close();
-
-        } catch (err) {
-            // Handle when the user clicks 'Cancel' in the file picker
-            if (err.name === 'AbortError') {
-                console.log('User cancelled the save picker dialog.');
+    function statsExportWrapup(fileName) {
+        console.log('statsExportWrapup()');
+            RMM_MENU.hideAll();
+            mydoc.getElementById('div_stats_type').style.display = 'none';
+            mydoc.getElementById('div_stats_export_close').style.display = 'block';
+            mydoc.getElementById('div_stats_container').style.display = 'block';
+            msg = fileName + ' ';
+            if (file_save_valid) {
+                msg += getStr('MSG_stats_export_complete');
             } else {
-                console.error('Error saving file:', err);
-                alert(getStr('MSG_export_not_supported'));
+                msg += getStr('MSG_stats_export_failed');
             }
+            alert(msg);
+    }
+    function statsExportClick(ev) {
+        console.log('statsExportClick()');
+        var now = new Date();
+        var yr = now.getFullYear();  // Returns the 4-digit year (YYYY)
+        var mn = String((now.getMonth() + 1)).padStart(2, '0');
+        var dy = String(now.getDate()).padStart(2, '0');
+        var fileName = 'RMM_' + idname + '_' + yr + mn + dy + '_stats.csv';
+        showMomentPlease('MSG_moment_please');
+        statsExportBuild(fileName)
+        .then((data) => {
+            console.log('stats export complete');
+            statsExportWrapup(fileName);
+        })
+        .catch((error) => {
+            console.error('Error occurred:', error);
+            statsExportWrapup('no_file_saved');
+        });
+    }
+    async function statsExportBuild(fileName) {
+        console.log('statsExportBuild()');
+        var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
+        var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,equation,ordered,chunked';
+        var date = null;
+        var chunked = ''; // stores b/c for m2 else ''
+        var i = 0;
+        var len = sdata.length;
+        var dsplit = []; // holds idsession split
+        for (i = 0; i < len; i++) {
+            chunked = '';
+            txt += '\n';
+            // final col should be 12 (non-zero indexed)
+            // idname col 01
+            txt += idname;
+            txt += ',';
+            // iduse col 02
+            txt += sdata[i].iduser;
+            txt += ',';
+            // days col 03
+            txt += sdata[i].days;
+            txt += ',';
+            // idlevel col 04
+            if (sdata[i].idlevel.substr(0, 2) !== 'm2') {
+                txt += sdata[i].idlevel;
+            } else {
+                txt += sdata[i].idlevel.substr(0, 2) ;
+                // set chuncked for final col
+                chunked = sdata[i].idlevel.substr(2, 3);
+            }
+            txt += ',';
+            dsplit = sdata[i].idsession.split('_'); // timestamp_problemNum
+            // timestamp col 05
+            txt += dsplit[0];
+            txt += ',';
+            // problemNum col 06
+            txt += dsplit[1];
+            txt += ',';
+            // Date col 07 -- will be in either DDMM or MMDD format
+            // with YYYY followed ' ' + HH:MM:SS
+            date = new Date(parseInt(dsplit[0], 10));
+            if (ddmm_format) {
+                txt += String(date.getDate()).padStart(2, '0'); // DD
+                txt += '/'
+                txt += String((date.getMonth() + 1)).padStart(2, '0'); // MM
+            } else {
+                txt += String((date.getMonth() + 1)).padStart(2, '0'); // MM
+                txt += '/';
+                txt += String(date.getDate()).padStart(2, '0'); // DD
+            }
+            // Date is now DDMM or MMDD need to add /YYYYY
+            txt += '/' + date.getFullYear();
+            // finally add HH:MM:SS which is preceeded with a space
+            txt +=  ' ' + String(date.getHours()).padStart(2, '0');
+            txt +=  ':' + String(date.getMinutes()).padStart(2, '0');
+            txt +=  ':' + String(date.getSeconds()).padStart(2, '0');
+            txt += ',';
+            // time col 08
+            txt += (sdata[i].time / 1000);
+            txt += ',';
+            // tries col 09-- could be number or blank (muti-step problems)
+            if (sdata[i].tries) {
+                txt += sdata[i].tries;
+            }
+            txt += ',';
+            // equation col 10
+            txt += sdata[i].equation;
+            txt += ',';
+            // ordered col 11
+            if (sdata[i].ordered) { txt += 'True'; }
+            txt += ',';
+            // chuncked col 12
+            txt += chunked;
         }
-    } else {
-        // Fallback for browsers that do not support showSaveFilePicker
         try {
-            anchor = document.createElement('a');
-            anchor.id = 'a_stats_export_csv';
-            anchor.href = window.URL.createObjectURL(new Blob([txt], { type: 'text/csv' }));
-            anchor.download = fileName;
-            anchor.click();
-        } catch (err) {
-            alert(getStr('MSG_export_not_supported'));
+            await saveTextAsFile(txt, fileName, true);
+            console.log('saveTextFileOk');
+        } catch (error) {
+            console.error('saveTextFileError:', error);
         }
     }
-}
-//gemini code end
-//
-//gemini ios workaround start
-if ('showSaveFilePicker' in window) {
-  // Desktop Chrome, Edge, Opera, etc.
-  const handle = await window.showSaveFilePicker(options);
-  const writable = await handle.createWritable();
-  await writable.write(content);
-  await writable.close();
-} else {
-  // iOS Safari, macOS Safari, Firefox fallback
-  const blob = new Blob([content], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'filename.csv';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-//gemini ios workaround end
-
-//////    function statsExportClick(ev) {
-//////        console.log('statsExportClick()');
-//////        var ddmm_format = mydoc.getElementById('cb_export_ddmm').checked;
-//////        var txt = 'idname,iduser,days,idlevel,timestamp,problemNum,Date,time,tries,equation,ordered,chunked';
-//////        var date = null;
-//////        var chunked = ''; // stores b/c for m2 else ''
-//////        var i = 0;
-//////        var len = sdata.length;
-//////        var err = false;
-//////        var anchor = null; // used to create csv file download anchor link
-//////        showMomentPlease('MSG_moment_please');
-//////        for (i=0; i<len; i++) {
-//////            chunked = '';
-//////            txt += '\n';
-//////            txt += idname + ',';
-//////            txt += sdata[i].iduser + ',';
-//////            txt += sdata[i].days + ',';
-//////            if (sdata[i].idlevel.substr(0, 2) !== 'm2') {
-//////                txt += sdata[i].idlevel + ',';
-//////            } else {
-//////                txt += sdata[i].idlevel.substr(0, 2) + ',';
-//////                chunked = sdata[i].idlevel.substr(2, 3);
-//////            }
-//////            txt += sdata[i].idsession.split('_')[0] + ',';
-//////            txt += sdata[i].idsession.split('_')[1] + ',';
-//////            date = new Date(parseInt( sdata[i].idsession.split('_')[0], 10));
-//////            if (ddmm_format) {
-//////                txt += (date.getDate() + '/' + (date.getMonth()+1));
-//////            } else {
-//////                txt += (date.getMonth()+1) + '/' + (date.getDate());
-//////            }
-//////            // finish remaind of sheet readable date
-//////            txt += '/' + date.getFullYear()
-//////                + ' ' + date.getHours()
-//////                + ':' + date.getMinutes()
-//////                + ':' + date.getSeconds()
-//////                + ',';
-//////            // end of sheet readable date
-//////            txt += (sdata[i].time/1000) + ',';
-//////            if (sdata[i].tries) {
-//////                txt += sdata[i].tries + ',';
-//////            } else {
-//////                txt += ',';
-//////            }
-//////            txt += sdata[i].equation;
-//////            if (sdata[i].ordered) {
-//////                txt += ',True,';
-//////            } else {
-//////                txt += ',,';
-//////            }
-//////            txt += chunked;
-//////        }
-//////        RMM_MENU.hideAll();
-//////        mydoc.getElementById('div_stats_type').style.display = 'none';
-//////        mydoc.getElementById('div_stats_export_close').style.display = 'block';
-//////        mydoc.getElementById('div_stats_container').style.display = 'block';
-//////        try {
-//////            anchor = document.createElement('a');
-//////            anchor.id = 'a_stats_export_csv';
-//////            anchor.href = window.URL.createObjectURL(new Blob([txt], {type: 'text/plain'}));
-//////            anchor.download = 'RMM_' + idname + '_stats.csv';
-//////            anchor.click();
-//////        } catch(err) {
-//////            alert(getStr('MSG_export_not_supported'));
-//////        }
-//////    }
-
+    async function saveTextAsFile(txt, fileName, is_csv) {
+        console.log('async function saveTextAsFile(txt, fileName)');
+        const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+        // 1. Try the modern File System Access API (Desktop Chrome / Android Chrome supporting it)
+        if ('showSaveFilePicker' in window) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: fileName,
+                    types: [{
+                        description: is_csv ? 'CSV Files' : 'Text Files',
+                        accept: is_csv 
+                            ? { 'text/csv': ['.csv'] } 
+                            : { 'text/plain': ['.txt'] }
+                    }],
+                });
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                file_save_valid = true;
+                return;
+                } catch (err) {
+                    // If the user cancels the picker, do not trigger fallback error
+                    file_save_valid = false;
+                    if (err.name === 'AbortError') return;
+                    console.warn('File System Access API failed, falling back...', err);
+                }
+        }
+        // 2. Universal Fallback for iOS Safari and browsers lacking File System Access
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = fileName;
+        anchor.style.display = 'none';
+        try {
+          document.body.appendChild(anchor);
+          anchor.click();
+          file_save_valid = true;
+        } catch (err) {
+            file_save_valid = false;
+        }
+        // Clean up
+        document.body.removeChild(anchor);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
     function statsExportExit(ev) {
         console.log('statsExportExit(ev)');
         window.URL.revokeObjectURL('a_stats_export_csv');
@@ -510,7 +475,6 @@ if ('showSaveFilePicker' in window) {
         }
         mydoc.getElementById('div_stats_container').style.display = 'block';
     }
-
     // fit more than 100 times into 100 buckets
     function averageTimes() {
         console.log('averageTimes()');
@@ -569,7 +533,7 @@ if ('showSaveFilePicker' in window) {
             vars = mykeys[i].split('_');
             html += '<div style="margin-top:10px;">';
             html += '<button id="b_m1_' + mykeys[i] + '" class="stats_id" ';
-            html += 'onclick="RMM_STATS.m1Select(event);">';        
+            html += 'onclick="RMM_STATS.m1Select(event);">';
             html += vars[0] + getStr('TXT_Plural_s') + ' : ';
             html += vars[1] === 'O' ? ord : ran;
             html += '&nbsp;&nbsp;(' + mydict[mykeys[i]] + ')';
@@ -1009,6 +973,7 @@ if ('showSaveFilePicker' in window) {
         statsChartClick : statsChartClick,
         statsExportRecords : statsExportRecords,
         statsWriteJson : statsWriteJson,
+        statsExportClick : statsExportClick,
         statsExportExit : statsExportExit,
         statsUsageClick : statsUsageClick
     };
