@@ -88,6 +88,8 @@
         TXT_a1_neg_current : 'REPLACE_number / 10',
         TXT_exportDB_export : 'Exporting Data',
         TXT_exportDB_load : 'Loading Data',
+        MSG_openDB_Failed : 'There was an error calling the openDB() function.',
+        MSG_loadDB_exit : 'Important Note: You MUST CLOSE this browser window. Exiting leaves your RMM database incomplete. This causes a database error. Please close the PWA. Then unistall and reinstall RMM as a PWA. If you get this message using RMM in a regular browser window, you must delete the application database named "rmm_db". Use Control+Shift+I on Windows/Linux, and Command+Option+I on Mac to open the Developer Appication window. Select the rmm_db listed under IndexedDB and click the Delete button.',
         MSG_exportDBConfirm: 'Confirm Export of Your Data',
         MSG_exportDBLoadFile: 'Do you want to load a data export?\n\nClick "OK" to load\n\nClick "Cancel" to continue without loading.',
         MSG_exportDBAddError: 'A JSON.parse() error occurred which means the .txt file used was incorrect. You must close and delete app. Then reinstall the PWA app, and try the data load again ensuring you chose the right file. The file nname starts with RMM_Export_Data_ and ends with the YYYYMMDDHHMMSS datetime numeric values, and has a .txt file extension.',
@@ -309,7 +311,8 @@
         b_sync_key_update : 'Update Current Key',
         b_subborrow_0 : 'No',
         b_subborrow_1 : 'Yes',
-        b_print_window : 'Print'
+        b_print_window : 'Print',
+        b_load_exit : 'Exit Data Load'
     };
     // charRange is a series of strings that will be expanded into a dict
     // of numbers against which valid string entries will be verifies

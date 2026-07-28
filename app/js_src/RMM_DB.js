@@ -29,106 +29,375 @@ var RMM_DB = (function() {
     var db_error = false;
     var db_result = null;
     var db_load_active = false;
+    var db_upgraded = false;
+    var db_open_error = true;
+    // Track the state and the active resolve function to allow premature termination
+    let isExportDBLoadFileRunning = false;
+    let currentExportDBResolve = null;
 
-    // RMM_CFG shortcuts start
+// RMM_CFG shortcuts start
     function getStr(id) { return RMM_CFG.getStr(id); }
-//
-// >>> --------------------------------OPEN:Start
-//
-    /**
-     * Master Initialization Sequence
-     * Coordinates database startup, user migration approval, and standard post-setup steps.
-     */
-    async function init() {
-        console.warn('db.init()');
-        console.log(Date.now(), 'Date.now()');
-        try {
-            // 1. Initialize variables and wait for database setup to finish completely
-            transactionInit();
-            await openDB();
-            console.log('Database successfully connected and schema checks complete.');
-            // 2. Prompt user for external data restore
-            if (!db_active && confirm(getStr('MSG_exportDBLoadFile')) === true) {
-                // PATH A: User confirmed file upload. Run import and bypass standard seed.
-                db_load_active = true;
-                // Safe fallback DOM handling (handles 'mydoc' or 'document')
-                const docContext = typeof mydoc !== 'undefined' ? mydoc : document;
-                const infoDiv = docContext.getElementById('div_info');
-                if (infoDiv) infoDiv.style.display = 'none';
-                console.log('exportDBLoadFile confirmed. Executing file import...');
-                if (typeof exportDBLoadFile === 'function') {
-                    exportDBLoadFile();
-                }
-            } else {
-                // PATH B: User declined upload. Process standard new-database installations.
-                console.log('Export file load declined. Processing standard database seeding...');
-                if (VERSION < 1) { 
-                    await dbupgradeWriteUser(); 
-                }
-                if (VERSION === 2) {
-                    // Future v2 data migration pathways go here
-                }
-                if (typeof RMM_STATSLIVE !== 'undefined' && RMM_STATSLIVE.loadSessionData) {
-                    RMM_STATSLIVE.loadSessionData();
-                }
-                db_complete = true;
-            }
-        } catch (error) {
-            console.error('Critical error during database initialization sequence:', error);
-        }
-    }
-    /**
-     * Resets tracking fields for an operational database transaction cycle
-     */
+
+// Main program Start
     function transactionInit() {
         db_complete = false;
         db_error = false;
         db_result = null;
     }
-    /**
-     * Promise wrapper around the native IndexedDB open event loop
-     */
-    function openDB() {
+// >>> --------------------------------OPEN:Start
+    async function init() {
+        console.warn('db.init()');
+        console.warn('db_active:', db_active);
+        console.log(Date.now(), 'Date.now()');
+        try {
+            await openDB();
+        }
+        catch (error) {
+            alert(getStr('MSG_openDB_Failed'));
+            console.error('Critical error during database initialization sequence:', error);
+            return;
+        }
+        if (db_open_error) {
+            alert(getStr('MSG_openDB_Failed'));
+            return;
+        }
+        if (db_upgraded) {
+            confirmDBFileLoad();
+            if (db_load_active) {
+                console.warn('-----------------------------------------db_upgraded', db_upgraded, 'db_load_active', db_load_active);
+                db_active = false;
+                RMM_MENU.hideAll();
+                mydoc.getElementById('div_loadDB').style.display = 'block';
+                await exportDBLoadFile(); // db_active & db_load_error will be set in this function & call the handleDBFileLoad
+            }
+        }
+        if (db_open_error) {
+            alert(getStr('MSG_openDB_Failed'));
+            return;
+        }
+        console.warn('db_active:', db_active);
+        if (!db_active) {
+            alert(getStr('MSG_openDB_Failed'));
+            return;
+        }
+        if (db_upgraded && !db_load_active) {
+            await dbupgradeWriteUser();
+        }
+        if (typeof RMM_STATSLIVE !== 'undefined' && RMM_STATSLIVE.loadSessionData) {
+            RMM_STATSLIVE.loadSessionData();
+        }
+        db_complete = true;
+    }
+    async function openDB() {
+        console.warn('openDB()');
+        db_open_error = false;
         return new Promise((resolve, reject) => {
             if (!window.indexedDB) {
                 alert(getStr('MSG_db_not_supported'));
                 return reject(new Error('IndexedDB is not supported by this browser.'));
             }
-            console.log('init open next');
+            console.warn('START IndexedDB open request');
             const req = window.indexedDB.open(DB_NAME, VERSION);
-            // Synchronously handle structural schema migrations when version updates
             req.onupgradeneeded = (ev) => {
-                console.log('dbhandleOpenUpgrade(ev)', ev);
-                const upgradeDb = ev.target.result;
-                const old_version = ev.oldVersion;
-                const new_version = ev.newVersion;
-                console.log('old_version:', old_version, 'new_version:', new_version);
-                if (old_version < 1) {
-                    const db_session = upgradeDb.createObjectStore('session', { keyPath: 'idsession' });
+                console.warn('req.onupgradeneeded =>', ev);
+                db_upgraded = true;
+                db = ev.target.result;
+                try { 
+                    const db_session = db.createObjectStore('session', { keyPath: 'idsession' });
                     db_session.createIndex('iduser', 'iduser', { unique: false });
                     db_session.createIndex('idlevel', 'idlevel', { unique: false });
                     db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
-                    const db_user = upgradeDb.createObjectStore('user', { keyPath: 'iduser' });
+                    const db_user = db.createObjectStore('user', { keyPath: 'iduser' });
                     db_user.createIndex('name', 'name', { unique: true });
-                    // FIXED: Separate assignments preserve both objectStores securely
-                    const db_setup = upgradeDb.createObjectStore('setup', { keyPath: 'idkey' });
-                    const db_print = upgradeDb.createObjectStore('print', { keyPath: 'idprint' });
-                    console.warn('------------------------------------version setup complete');
+                    const db_setup = db.createObjectStore('setup', { keyPath: 'idkey' });
+                    const db_print = db.createObjectStore('print', { keyPath: 'idprint' });
+                    db_active = true;
+                } catch (error) {
+                    db_open_error = true;
+                    ev.target.transaction.abort()
+                    reject(error);
+                    return;
                 }
             };
             req.onsuccess = (ev) => {
-                console.log('dbhandleOpenSuccess(ev)');
+                console.warn('req.onsuccess =>', ev);
                 db = ev.target.result;
-                db_active = true;
                 resolve(db);
+                db_active = true;
             };
             req.onerror = (ev) => {
-                console.log('dbhandleOpenError(ev)');
-                console.error('Database error: ' + ev.target.errorCode);
+                db_open_error = true;
+                console.error('req.onerror =>', ev);
                 reject(ev.target.error);
+            };
+            console.warn('END IndexedDB open request initiated');
+        });
+    }
+    function confirmDBFileLoad() {
+        console.warn('confirmDBFileLoad()');
+        if (confirm(getStr('MSG_exportDBLoadFile')) === true) {
+            console.log('exportDBLoadFile confirmed. Executing file import...');
+            db_load_active = true;
+            return;
+        }
+        db_load_active = false;
+    }
+    async function exportDBLoadFile() {
+        console.warn('exportDBLoadFile()');
+        isExportDBLoadFileRunning = true;
+        RMM_MENU.hideAll();
+        mydoc.getElementById('div_loadDB').style.display = 'block';
+        return new Promise((resolve) => {
+            currentExportDBResolve = resolve;
+            const fileInput = mydoc.getElementById('file_input');
+            fileInput.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) {
+                    console.log('file select failed');
+                    cleanupAndResolve();
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    console.log('reader.onload complete');
+                    await handleDBFileLoad(e.target.result);
+                    cleanupAndResolve();
+                };
+                reader.onerror = function(e) {
+                    console.error('File reading failed', e);
+                    cleanupAndResolve();
+                };
+                reader.readAsText(file);
             };
         });
     }
+    function cleanupAndResolve() {
+        const fileInput = mydoc.getElementById('file_input');
+        if (fileInput) fileInput.onchange = null;
+        mydoc.getElementById('div_loadDB').style.display = 'none';
+        isExportDBLoadFileRunning = false;
+        if (currentExportDBResolve) {
+            const resolve = currentExportDBResolve;
+            currentExportDBResolve = null;
+            resolve();
+        }
+    }
+    function loadDBExit() {
+        console.log('loadDBExit()');
+        // If exportDBLoadFile is currently running, terminate it properly
+        if (isExportDBLoadFileRunning) {
+            cleanupAndResolve();
+        }
+        alert(getStr('MSG_loadDB_exit'));
+    }
+    async function handleDBFileLoad(txt) {
+        console.warn('handleDBFileLoad(ev)');
+        const lines = txt.split('\n');
+        const len = lines.length;
+        mydoc.getElementById('div_loadDB').style.display = 'none';
+        mydoc.getElementById('div_exportDB').style.display = 'block';
+        mydoc.getElementById('div_exportDB_title').innerHTML = getStr('TXT_exportDB_load');
+        let batches = {'print': [], 'setup': [], 'user': [], 'session': []};
+        let current_table = '';
+        let count_session = 0;
+        let total_processed = 0;
+        // Phase 1: Group records by table name to batch them
+        mydoc.getElementById('div_exportDB_count').innerHTML = ''; // the table div will be used for count
+        mydoc.getElementById('div_exportDB_table').innerHTML = '0 / ' + len;
+        for (let i = 0; i < len; i++) {
+            total_processed += 1;
+            if (total_processed % 10 == 0) {
+                mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
+            }
+            const line = lines[i].trim();
+            if (line.length === 0) continue;
+            if (line.startsWith('-----table:')) {
+                current_table = line.split(':')[1].trim();
+                continue;
+            }
+            // Edge check: Skip if text data appears before a valid table header declaration
+            if (!current_table || !batches[current_table]) continue;
+            try {
+                const rec = JSON.parse(line);
+                batches[current_table].push({
+                    index: i,
+                    lineText: line,
+                    data: rec
+                });
+                if (current_table === 'session') {
+                    count_session += 1;
+                }
+            } catch (err) {
+                exportDBAddRecError(i, line, 'JSON Parse Error: ' + (err.message || err));
+                db_active = false;
+                return;
+            }
+        }
+        // Phase 2: Process each batch atomically using a single transaction per table
+        mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
+        for (const key in batches) {
+            const records = batches[key];
+            if (records.length === 0) continue;
+            try {
+                // FIX: Corrected parameters passed to function, removing the broken arrow callback
+                const successCount = await saveBatchToIndexedDB(key, records);
+            } catch (batch_error) {
+                console.error(batch_error);
+                // FIX: Corrected missing closing parenthesis syntax error
+                alert('Failed to process batch for table: ' + key);
+                db_active = false;
+                return;
+            }
+        }
+        console.warn('total_processed: ', total_processed);
+        alert(total_processed + ' data lines loaded');
+        db_active = true;
+    }
+    function exportDBAddRecError(i, line_in, err) {
+        console.error('exportDBAddRecError(i, line_in, err)');
+        db_open_error = true;
+        console.error('err:', err);
+        console.error('Line Index =', i);
+        console.error(line_in);
+        alert(getStr('MSG_exportDBAddError'));
+    }
+    function saveBatchToIndexedDB(table_name, records) {
+        console.log('saveBatchToIndexedDB(table_name, records)');
+        return new Promise((resolve, reject) => {
+            if (!records || records.length === 0) return resolve(0);
+
+            // Open an explicit transaction per batch
+            const tx = db.transaction(table_name, 'readwrite');
+            const store = tx.objectStore(table_name);
+            let success_count = 0;
+
+            tx.oncomplete = () => resolve(success_count);
+            tx.onerror = (ev) => reject(tx.error);
+            tx.onabort = (ev) => reject(new Error('Transaction aborted'));
+
+            records.forEach((item) => {
+                const req = store.add(item.data);
+                req.onsuccess = () => {
+                    success_count++;
+                };
+                req.onerror = (ev) => {
+                    // Prevent transaction abort on individual record failures
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    const errMsg = req.error ? req.error.message : 'Database write conflict';
+                    exportDBAddRecError(item.index, item.lineText, errMsg);
+                };
+            });
+        });
+    }
+//////    async function openDB() {
+//////        console.warn('openDB()');
+//////        return new Promise((resolve, reject) => {
+//////            if (!window.indexedDB) {
+//////                alert(getStr('MSG_db_not_supported'));
+//////                return reject(new Error('IndexedDB is not supported by this browser.'));
+//////            }
+//////            console.warn('START return new Promise((resolve, reject) =>');
+//////            const req = window.indexedDB.open(DB_NAME, VERSION);
+//////            // Synchronously handle structural schema migrations when version updates
+//////            req.onupgradeneeded = (ev) => {
+//////                console.warn('req.onopgradedneeded =>', ev);
+//////                const upgradeDb = ev.target.result;
+//////                const old_version = ev.oldVersion;
+//////                const new_version = ev.newVersion;
+//////                console.log('old_version:', old_version, 'new_version:', new_version);
+//////                const db_session = upgradeDb.createObjectStore('session', { keyPath: 'idsession' });
+//////                db_session.createIndex('iduser', 'iduser', { unique: false });
+//////                db_session.createIndex('idlevel', 'idlevel', { unique: false });
+//////                db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
+//////                const db_user = upgradeDb.createObjectStore('user', { keyPath: 'iduser' });
+//////                db_user.createIndex('name', 'name', { unique: true });
+//////                // FIXED: Separate assignments preserve both objectStores securely
+//////                const db_setup = upgradeDb.createObjectStore('setup', { keyPath: 'idkey' });
+//////                const db_print = upgradeDb.createObjectStore('print', { keyPath: 'idprint' });
+//////                console.warn('------------------------------------version setup complete');
+//////                }
+//////            req.onsuccess = (ev) => {
+//////                console.warn('req.onsuccess =>', ev);
+//////                db = ev.target.result;
+//////                db_active = true;
+//////                resolve(db);
+//////            };
+//////            req.onerror = (ev) => ({
+//////                console.error('req.onerror =>', ev);
+//////                console.log('dbhandleOpenError(ev)');
+//////                console.error('Database error: ' + ev.target.errorCode);
+//////                reject(ev.target.error);
+//////            });
+//////        console.warn('END return new Promise((resolve, reject) =>');
+//////        }
+//////    }
+    async function handleDBDatabasePreCheck() {
+        console.warn('handleDatabasePreCheck()');
+        if (await confirmDBFileLoad()) {
+            await exportDBLoadFile();
+            return true; 
+        }
+        await openExistingDB();
+    }
+    async function openExistingDB() {
+        console.warn('openExistingDB()');
+        const req = window.indexedDB.open(DB_NAME, VERSION);
+    }
+//////function openDB() {
+//////    console.warn('openDB()');
+//////    return new Promise((resolve, reject) => {
+//////        if (!window.indexedDB) {
+//////            alert(getStr('MSG_db_not_supported'));
+//////            return reject(new Error('IndexedDB is not supported by this browser.'));
+//////        }
+//////        console.warn('START IndexedDB open request');
+//////        const req = window.indexedDB.open(DB_NAME, VERSION);
+//////    req.onupgradeneeded = (ev) => {
+//////        console.warn('req.onupgradeneeded =>', ev);
+//////        const upgradeDb = ev.target.result;
+//////        const old_version = ev.oldVersion;
+//////        const new_version = ev.newVersion;
+//////        console.log('old_version:', old_version, 'new_version:', new_version);
+//////        // Create Object Stores synchronously. 
+//////        // IndexedDB will automatically skip this if the stores already exist and version hasn't changed.
+//////        if (!upgradeDb.objectStoreNames.contains('session')) {
+//////            const db_session = upgradeDb.createObjectStore('session', { keyPath: 'idsession' });
+//////            db_session.createIndex('iduser', 'iduser', { unique: false });
+//////            db_session.createIndex('idlevel', 'idlevel', { unique: false });
+//////            db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
+//////        }
+//////        if (!upgradeDb.objectStoreNames.contains('user')) {
+//////            const db_user = upgradeDb.createObjectStore('user', { keyPath: 'iduser' });
+//////            db_user.createIndex('name', 'name', { unique: true });
+//////        }
+//////        if (!upgradeDb.objectStoreNames.contains('setup')) {
+//////            upgradeDb.createObjectStore('setup', { keyPath: 'idkey' });
+//////        }
+//////        if (!upgradeDb.objectStoreNames.contains('print')) {
+//////            upgradeDb.createObjectStore('print', { keyPath: 'idprint' });
+//////        }
+//////        console.warn('------------------------------------version setup complete');
+//////        db_active = true;
+//////    };
+//////    req.onsuccess = (ev) => {
+//////        console.warn('req.onsuccess =>', ev);
+//////        db = ev.target.result;
+//////        db_active = true;
+//////        resolve(db);
+//////    };
+//////    req.onerror = (ev) => {
+//////        console.error('req.onerror =>', ev);
+//////        console.log('dbhandleOpenError(ev)');
+//////        console.error('Database error: ' + ev.target.errorCode);
+//////        db_active = false;
+//////        reject(ev.target.error);
+//////    };
+//////    console.warn('END IndexedDB open request initiated');
+//////    // Synchronously handles schema mutations. No async pauses allowed here.
+//////}); // FIXED: Added missing closing parenthesis for the Promise constructor
+//////}
+//-------------------------------------------------------------------
 
     /**
      * Handles seeding the initial Guest user record down into the datastore safely
@@ -150,7 +419,6 @@ var RMM_DB = (function() {
                 const tx = db.transaction(['user'], 'readwrite');
                 const store = tx.objectStore('user');
                 const req = store.add(data);
-
                 req.onsuccess = () => resolve();
                 req.onerror = (ev) => reject(ev.target.error);
             });
@@ -1076,119 +1344,6 @@ var RMM_DB = (function() {
     }
 //*****************************************************************************
 //*****************************************************************************
-    function exportDBLoadFile() {
-        console.log('exportDBLoadFile');
-        RMM_MENU.hideAll();
-        mydoc.getElementById('div_loadDB').style.display = 'block';
-        document.getElementById('file_input').onchange = function(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                console.log('file select failed');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                console.log('reader.onload complete');
-                handleFileLoad(e.target.result);
-            };
-            reader.readAsText(file);
-        };
-    }
-    async function handleFileLoad(txt) {
-        console.warn('handleFileLoad(ev)');
-        const lines = txt.split('\n');
-        const len = lines.length;
-        mydoc.getElementById('div_loadDB').style.display = 'none';
-        mydoc.getElementById('div_exportDB').style.display = 'block';
-        mydoc.getElementById('div_exportDB_title').innerHTML = getStr('TXT_exportDB_load');
-        let batches = {'print': [], 'setup': [], 'user': [], 'session': []};
-        let current_table = '';
-        let count_session = 0;
-        let total_processed = 0;
-        // Phase 1: Group records by table name to batch them
-        mydoc.getElementById('div_exportDB_count').innerHTML = ''; // the table div will be used for count
-        mydoc.getElementById('div_exportDB_table').innerHTML = '0 / ' + len;
-        for (let i = 0; i < len; i++) {
-            total_processed += 1;
-            if (total_processed % 10 == 0) {
-                mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
-            }
-            const line = lines[i].trim();
-            if (line.length === 0) continue;
-            if (line.startsWith('-----table:')) {
-                current_table = line.split(':')[1].trim();
-                continue;
-            }
-            // Edge check: Skip if text data appears before a valid table header declaration
-            if (!current_table || !batches[current_table]) continue;
-            try {
-                const rec = JSON.parse(line);
-                batches[current_table].push({
-                    index: i,
-                    lineText: line,
-                    data: rec
-                });
-                if (current_table === 'session') {
-                    count_session += 1;
-                }
-            } catch (err) {
-                exportDBAddRecError(i, line, 'JSON Parse Error: ' + (err.message || err));
-                return;
-            }
-        }
-        // Phase 2: Process each batch atomically using a single transaction per table
-        mydoc.getElementById('div_exportDB_table').innerHTML = total_processed + ' / ' + len;
-        for (const key in batches) {
-            const records = batches[key];
-            if (records.length === 0) continue;
-            try {
-                // FIX: Corrected parameters passed to function, removing the broken arrow callback
-                const successCount = await saveBatchToIndexedDB(key, records);
-            } catch (batch_error) {
-                console.error(batch_error);
-                // FIX: Corrected missing closing parenthesis syntax error
-                alert('Failed to process batch for table: ' + key);
-                return;
-            }
-        }
-        console.warn('total_processed: ', total_processed);
-        alert(total_processed + ' data lines loaded');
-        RMM_STATSLIVE.loadSessionData();
-    }
-    function saveBatchToIndexedDB(table_name, records) {
-        return new Promise((resolve, reject) => {
-            if (!records || records.length === 0) return resolve(0);
-            transactionInit();
-            const store = objectstoreGet(table_name, true);
-            let success_count = 0;
-            let pending_requests = records.length;
-            records.forEach((item) => {
-                const req = store.add(item.data);
-                req.onsuccess = function() {
-                    success_count++;
-                    pending_requests--;
-                    if (pending_requests === 0) {
-                        resolve(success_count);
-                    }
-                };
-                req.onerror = function(ev) {
-                    pending_requests--;
-                    const errMsg = req.error ? req.error.message : 'Database write conflict';
-                    exportDBAddRecError(item.index, item.lineText, errMsg);
-                    if (pending_requests === 0) {
-                        resolve(success_count);
-                    }
-                };
-            });
-        });
-    }
-    function exportDBAddRecError(i, line_in, err) {
-        console.error('exportDBAddRecError(i, line_in, err)');
-        console.error('err:', err);
-        console.error('Line Index =', i);
-        console.error(line_in);
-        alert(getStr('MSG_exportDBAddError'));
-    }
 //*****************************************************************************
 //*****************************************************************************
 // >>> EXPORTDB: end
@@ -1230,6 +1385,7 @@ var RMM_DB = (function() {
         // exportDB
         exportDBConfirm : exportDBConfirm,
         exportDBWrite : exportDBWrite,
+        loadDBExit : loadDBExit,
         // developer
         developerResetSessionDevice : developerResetSessionDevice
     };

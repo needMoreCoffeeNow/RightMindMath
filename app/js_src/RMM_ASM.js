@@ -112,7 +112,12 @@ var RMM_ASM = (function() {
         slash_num_1.innerHTML = spath;
         slash_num_2.innerHTML = spath;
         processInnerHtml();
-        RMM_DB.init();
+        runDBInit();
+    }
+    
+    async function runDBInit() {
+        console.warn(' runDBInit()')
+        await RMM_DB.init();
     }
 
     // last step of init is to read iduser from DB
