@@ -290,48 +290,6 @@ var RMM_DB = (function() {
             });
         });
     }
-//////    async function openDB() {
-//////        console.warn('openDB()');
-//////        return new Promise((resolve, reject) => {
-//////            if (!window.indexedDB) {
-//////                alert(getStr('MSG_db_not_supported'));
-//////                return reject(new Error('IndexedDB is not supported by this browser.'));
-//////            }
-//////            console.warn('START return new Promise((resolve, reject) =>');
-//////            const req = window.indexedDB.open(DB_NAME, VERSION);
-//////            // Synchronously handle structural schema migrations when version updates
-//////            req.onupgradeneeded = (ev) => {
-//////                console.warn('req.onopgradedneeded =>', ev);
-//////                const upgradeDb = ev.target.result;
-//////                const old_version = ev.oldVersion;
-//////                const new_version = ev.newVersion;
-//////                console.log('old_version:', old_version, 'new_version:', new_version);
-//////                const db_session = upgradeDb.createObjectStore('session', { keyPath: 'idsession' });
-//////                db_session.createIndex('iduser', 'iduser', { unique: false });
-//////                db_session.createIndex('idlevel', 'idlevel', { unique: false });
-//////                db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
-//////                const db_user = upgradeDb.createObjectStore('user', { keyPath: 'iduser' });
-//////                db_user.createIndex('name', 'name', { unique: true });
-//////                // FIXED: Separate assignments preserve both objectStores securely
-//////                const db_setup = upgradeDb.createObjectStore('setup', { keyPath: 'idkey' });
-//////                const db_print = upgradeDb.createObjectStore('print', { keyPath: 'idprint' });
-//////                console.warn('------------------------------------version setup complete');
-//////                }
-//////            req.onsuccess = (ev) => {
-//////                console.warn('req.onsuccess =>', ev);
-//////                db = ev.target.result;
-//////                db_active = true;
-//////                resolve(db);
-//////            };
-//////            req.onerror = (ev) => ({
-//////                console.error('req.onerror =>', ev);
-//////                console.log('dbhandleOpenError(ev)');
-//////                console.error('Database error: ' + ev.target.errorCode);
-//////                reject(ev.target.error);
-//////            });
-//////        console.warn('END return new Promise((resolve, reject) =>');
-//////        }
-//////    }
     async function handleDBDatabasePreCheck() {
         console.warn('handleDatabasePreCheck()');
         if (await confirmDBFileLoad()) {
@@ -344,61 +302,6 @@ var RMM_DB = (function() {
         console.warn('openExistingDB()');
         const req = window.indexedDB.open(DB_NAME, VERSION);
     }
-//////function openDB() {
-//////    console.warn('openDB()');
-//////    return new Promise((resolve, reject) => {
-//////        if (!window.indexedDB) {
-//////            alert(getStr('MSG_db_not_supported'));
-//////            return reject(new Error('IndexedDB is not supported by this browser.'));
-//////        }
-//////        console.warn('START IndexedDB open request');
-//////        const req = window.indexedDB.open(DB_NAME, VERSION);
-//////    req.onupgradeneeded = (ev) => {
-//////        console.warn('req.onupgradeneeded =>', ev);
-//////        const upgradeDb = ev.target.result;
-//////        const old_version = ev.oldVersion;
-//////        const new_version = ev.newVersion;
-//////        console.log('old_version:', old_version, 'new_version:', new_version);
-//////        // Create Object Stores synchronously. 
-//////        // IndexedDB will automatically skip this if the stores already exist and version hasn't changed.
-//////        if (!upgradeDb.objectStoreNames.contains('session')) {
-//////            const db_session = upgradeDb.createObjectStore('session', { keyPath: 'idsession' });
-//////            db_session.createIndex('iduser', 'iduser', { unique: false });
-//////            db_session.createIndex('idlevel', 'idlevel', { unique: false });
-//////            db_session.createIndex('device_iduser', 'device_iduser', { unique: false });
-//////        }
-//////        if (!upgradeDb.objectStoreNames.contains('user')) {
-//////            const db_user = upgradeDb.createObjectStore('user', { keyPath: 'iduser' });
-//////            db_user.createIndex('name', 'name', { unique: true });
-//////        }
-//////        if (!upgradeDb.objectStoreNames.contains('setup')) {
-//////            upgradeDb.createObjectStore('setup', { keyPath: 'idkey' });
-//////        }
-//////        if (!upgradeDb.objectStoreNames.contains('print')) {
-//////            upgradeDb.createObjectStore('print', { keyPath: 'idprint' });
-//////        }
-//////        console.warn('------------------------------------version setup complete');
-//////        db_active = true;
-//////    };
-//////    req.onsuccess = (ev) => {
-//////        console.warn('req.onsuccess =>', ev);
-//////        db = ev.target.result;
-//////        db_active = true;
-//////        resolve(db);
-//////    };
-//////    req.onerror = (ev) => {
-//////        console.error('req.onerror =>', ev);
-//////        console.log('dbhandleOpenError(ev)');
-//////        console.error('Database error: ' + ev.target.errorCode);
-//////        db_active = false;
-//////        reject(ev.target.error);
-//////    };
-//////    console.warn('END IndexedDB open request initiated');
-//////    // Synchronously handles schema mutations. No async pauses allowed here.
-//////}); // FIXED: Added missing closing parenthesis for the Promise constructor
-//////}
-//-------------------------------------------------------------------
-
     /**
      * Handles seeding the initial Guest user record down into the datastore safely
      */

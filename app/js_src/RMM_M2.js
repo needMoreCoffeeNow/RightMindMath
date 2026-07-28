@@ -156,7 +156,6 @@ var RMM_M2 = (function() {
         }
         lo_numberSet('41', nums.n41); // need this here for chunk
         if (rows.r4 < 1000) {
-            //////recordAnswer();
             finalMessage();
             return;
         }
@@ -660,7 +659,6 @@ var RMM_M2 = (function() {
         nums.n02 = getRandInt(1,9);
         nums.n13 = getRandInt(0,9);
         nums.n12 = getRandInt(1,9);
-
         //////nums.n03 = 8;
         //////nums.n02 = 4;
         //////nums.n13 = 7;
