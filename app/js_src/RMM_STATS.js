@@ -387,118 +387,68 @@ var RMM_STATS = (function() {
             console.error('saveTextFileError:', error);
         }
     }
-async function saveTextAsFile(txt, fileName, is_csv) {
-    console.log('async function saveTextAsFile(txt, fileName)');
-    const mimeType = is_csv ? 'text/csv;charset=utf-8' : 'text/plain;charset=utf-8';
-    const blob = new Blob([txt], { type: mimeType });
-
-    // 1. Modern File System Access API (Desktop Chrome, Edge, Android Chrome)
-    if ('showSaveFilePicker' in window) {
+    async function saveTextAsFile(txt, fileName, is_csv) {
+        console.log('async function saveTextAsFile(txt, fileName)');
+        const mimeType = is_csv ? 'text/csv;charset=utf-8' : 'text/plain;charset=utf-8';
+        const blob = new Blob([txt], { type: mimeType });
+        // 1. Modern File System Access API (Desktop Chrome, Edge, Android Chrome)
+        if ('showSaveFilePicker' in window) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: fileName,
+                    types: [{
+                        description: is_csv ? 'CSV Files' : 'Text Files',
+                        accept: is_csv ? { 'text/csv': ['.csv'] } : { 'text/plain': ['.txt'] }
+                    }],
+                });
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                file_save_valid = true;
+                return;
+            } catch (err) {
+                file_save_valid = false;
+                if (err.name === 'AbortError') return;
+                console.warn('File System Access API failed, falling back...', err);
+            }
+        }
+        // 2. iOS-Specific Fallback: Use Web Share API if available (iOS 15+)
+        const file = new File([blob], fileName, { type: mimeType });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: fileName,
+                });
+                file_save_valid = true;
+                return;
+            } catch (err) {
+                if (err.name === 'AbortError') return; // User cancelled share sheet
+                console.warn('Web Share API failed, falling back to anchor...', err);
+            }
+        }
+        // 3. Universal Fallback (Desktop Safari/Firefox/Older Mobile)
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = fileName;
+        anchor.style.display = 'none';
+        // On iOS, force target="_blank" if it refuses to download, 
+        // allowing the user to view and share/save the text manually.
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            anchor.target = '_blank';
+        }
         try {
-            const handle = await window.showSaveFilePicker({
-                suggestedName: fileName,
-                types: [{
-                    description: is_csv ? 'CSV Files' : 'Text Files',
-                    accept: is_csv ? { 'text/csv': ['.csv'] } : { 'text/plain': ['.txt'] }
-                }],
-            });
-            const writable = await handle.createWritable();
-            await writable.write(blob);
-            await writable.close();
+            document.body.appendChild(anchor);
+            anchor.click();
             file_save_valid = true;
-            return;
         } catch (err) {
             file_save_valid = false;
-            if (err.name === 'AbortError') return;
-            console.warn('File System Access API failed, falling back...', err);
         }
+        document.body.removeChild(anchor);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
-
-    // 2. iOS-Specific Fallback: Use Web Share API if available (iOS 15+)
-    const file = new File([blob], fileName, { type: mimeType });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-            await navigator.share({
-                files: [file],
-                title: fileName,
-            });
-            file_save_valid = true;
-            return;
-        } catch (err) {
-            if (err.name === 'AbortError') return; // User cancelled share sheet
-            console.warn('Web Share API failed, falling back to anchor...', err);
-        }
-    }
-
-    // 3. Universal Fallback (Desktop Safari/Firefox/Older Mobile)
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = fileName;
-    anchor.style.display = 'none';
-    
-    // On iOS, force target="_blank" if it refuses to download, 
-    // allowing the user to view and share/save the text manually.
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS) {
-        anchor.target = '_blank';
-    }
-
-    try {
-        document.body.appendChild(anchor);
-        anchor.click();
-        file_save_valid = true;
-    } catch (err) {
-        file_save_valid = false;
-    }
-
-    document.body.removeChild(anchor);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-//////    async function saveTextAsFile(txt, fileName, is_csv) {
-//////        console.log('async function saveTextAsFile(txt, fileName)');
-//////        const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-//////        // 1. Try the modern File System Access API (Desktop Chrome / Android Chrome supporting it)
-//////        if ('showSaveFilePicker' in window) {
-//////            try {
-//////                const handle = await window.showSaveFilePicker({
-//////                    suggestedName: fileName,
-//////                    types: [{
-//////                        description: is_csv ? 'CSV Files' : 'Text Files',
-//////                        accept: is_csv 
-//////                            ? { 'text/csv': ['.csv'] } 
-//////                            : { 'text/plain': ['.txt'] }
-//////                    }],
-//////                });
-//////                const writable = await handle.createWritable();
-//////                await writable.write(blob);
-//////                await writable.close();
-//////                file_save_valid = true;
-//////                return;
-//////                } catch (err) {
-//////                    // If the user cancels the picker, do not trigger fallback error
-//////                    file_save_valid = false;
-//////                    if (err.name === 'AbortError') return;
-//////                    console.warn('File System Access API failed, falling back...', err);
-//////                }
-//////        }
-//////        // 2. Universal Fallback for iOS Safari and browsers lacking File System Access
-//////        const url = URL.createObjectURL(blob);
-//////        const anchor = document.createElement('a');
-//////        anchor.href = url;
-//////        anchor.download = fileName;
-//////        anchor.style.display = 'none';
-//////        try {
-//////          document.body.appendChild(anchor);
-//////          anchor.click();
-//////          file_save_valid = true;
-//////        } catch (err) {
-//////            file_save_valid = false;
-//////        }
-//////        // Clean up
-//////        document.body.removeChild(anchor);
-//////        setTimeout(() => URL.revokeObjectURL(url), 1000);
-//////    }
     function statsExportExit(ev) {
         console.log('statsExportExit(ev)');
         window.URL.revokeObjectURL('a_stats_export_csv');
@@ -545,17 +495,6 @@ async function saveTextAsFile(txt, fileName, is_csv) {
             console.error('Error occurred:', error);
             statsExportWrapup('no_file_saved');
         });
-//////
-//////        try {
-//////            anchor = document.createElement('a');
-//////            anchor.id = 'a_stats_export_csv';
-//////            anchor.href = window.URL.createObjectURL(new Blob([txt], {type: 'text/plain'}));
-//////            anchor.download = 'RMM_' + idname + '_JSON.txt';
-//////            anchor.click();
-//////        } catch(err) {
-//////            alert(getStr('MSG_export_not_supported'));
-//////        }
-//////        mydoc.getElementById('div_stats_container').style.display = 'block';
     }
     // fit more than 100 times into 100 buckets
     function averageTimes() {
