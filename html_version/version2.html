@@ -115,7 +115,13 @@
                 <img id="logo" src="../html_assets/rmm_logo.svg" alt="Mathflash App Logo" class="logo">
                 <div id="div_main_text" style="text-align:left;">
                     <hr style="border: 1px solid #000;">
-                    <p>RightMindMath <b><u>Version 2</u></b> has one important new feature, and some bug fixes. When you are using the new version a small "v2" text will appear to the right of the Settings (gear) button. If you are happy with the first version, you may choose not to upgrade. Note though that apart from Apple iOS devices, upgrading is quite simple. Even for iOS, it is not that hard. How to upgrade is covered below.</p>
+                    <p>RightMindMath <b><u>Version 2</u></b> has one important new feature, and some bug fixes. When you are using the new version a small "v2" text will appear to the right of the Settings (gear) button. If you are happy with the first version, you may choose not to upgrade.</p>
+                </div>
+                <!--Auto Upgrade-->
+                <hr style="border:1px solid #000;">
+                <div class="step">Automatic Upgrade</div>
+                <div style="text-align:left;">
+                    <p>Your installed RMM application should automatically update to the new version. It does this because the version identifier has been changed. To update simply open RMM. Doing this will cause the nversion two files to be installed. Close RMM, and re-open it to start using the updated files.</p><p>If this does not work, try the upgrade process below for your specific device.</P
                 </div>
                 <!--SHEET start-->
                 <hr style="border:1px solid #000;">
@@ -128,16 +134,72 @@
                     <p><b>Fix 4: </b>The usage export function did not save the file on iOS devices due to iOS Safari specific needs for file saving.</p>
                 </div>
             </div>
+            <!--Computer Upgrade-->
+            <hr style="border:1px solid #000;">
+            <div class="step">How to Upgrade RMM on a Computer</div>
+            <div style="text-align:left;">
+                <p><b><u>For Computers:</b></u> Start RMM. On Windows press Ctrl+Shift+I. On Mac press Option+Cmd+I. This will open the Developer Tools Application window. Ensure that "Application" is the active tab at the top of the window. In the left sidebar right-click on the "Cache Storage" and select the "Refresh" option. Close and restart RMM. This will result in the version two files to be downloaded and used when running RMM.</p>
+            </div>
+            <!--Androd Upgrade-->
             <hr style="border:1px solid #000;">
             <div class="step">How to Upgrade RMM on an Android</div>
             <div style="text-align:left;">
+            <div>
+                <ol>
+                  <li>Open the <strong>Settings</strong> app on your Android device.</li>
+                  <li>Tap on <strong>Apps</strong> (this may also be labeled as <strong>Apps & Notifications</strong> or <strong>App Management</strong> depending on your device).</li>
+                  <li>Scroll through the list or search to find your <strong>PWA</strong> by its app name.</li>
+                  <li>Tap on <strong>Storage & cache</strong> (or simply <strong>Storage</strong>).</li>
+                  <li>Tap <strong>Clear Storage</strong> (or <strong>Clear Data</strong>) and <strong>Clear Cache</strong> to completely wipe out the local files, offline storage, and service workers.</li>
+                </ol>
+                </div>
             </div>
+            <!--iOs Upgrade-->
             <hr style="border:1px solid #000;">
-            <div class="step">How to Upgrade RMM on a PC and iOS Device</div>
+            <div class="step">How to Upgrade RMM on an iOS Device</div>
             <div style="text-align:left;">
-                <p><b><u>For Computers:</b></u> Start RMM. On Windows press Ctrl+Shift+I. On Mac press Option+Cmd+I. This will open the Developer Tools Application window. Ensure that "Application" is the active tab at the top of the window. In the left sidebar right-click on the "Cache Storage" and select the "Refresh" option. Close and restart RMM. This will result in the version two files to be downloaded and used when running RMM.</p>
-                <p><b><u>For an iOS Device:</b></u> Because Apple will not allow you to refresh the RMM cache on the iOS device, you must first connect the device to a Mac. If you do not have a Mac, you can borrow one from a friend as this is a one-time-only process that is safe and secure. First you must enable developer settings on the Mac. Open Safari --> Settings (or Preferences) --> Select the Advanced tab --> Check the "Show features for web developers". Next attach your device to the Mac using a cable. Follow the dialog to allow the Mac to attach to the device. Start RMM on the device. When it opens, go to the Mac and select the iOS device using the "" menu. Once the device is available to Safari on the Mac, follow the instruction above.</p>
+                <h2>Step 1: Prepare the iPhone</h2>
+                <ol>
+                  <li>Open the <strong>Settings</strong> app on your iPhone.</li>
+                  <li>Scroll down and tap <strong>Safari</strong>.</li>
+                  <li>Scroll down to the bottom and tap <strong>Advanced</strong>.</li>
+                  <li>Toggle on <strong>Web Inspector</strong>.</li>
+                </ol>
+                <hr>
+                <h2>Step 2: Connect the iPhone to the Mac</h2>
+                <ol>
+                  <li>Plug your iPhone into your Mac using a USB-C or Lightning cable.</li>
+                  <li>If prompted on your iPhone, tap <strong>Trust</strong> this computer and enter your device passcode.</li>
+                </ol>
+                <hr>
+                <h2>Step 3: Prepare Safari on the Mac</h2>
+                <ol>
+                  <li>Open <strong>Safari</strong> on your Mac.</li>
+                  <li>Click <strong>Safari</strong> in the top-left menu bar, then select <strong>Settings</strong> (or <em>Preferences</em> on older macOS versions).</li>
+                  <li>Go to the <strong>Advanced</strong> tab.</li>
+                  <li>Check the box for <strong>Show features for web developers</strong> (or <em>Show Develop menu in menu bar</em>).</li>
+                </ol>
+                <hr>
+                <h2>Step 4: Open the Target Website on Your iPhone</h2>
+                <ol>
+                  <li>On your iPhone, open <strong>Safari</strong> and navigate to the website whose cache you want to delete. Leave the webpage open.</li>
+                </ol>
+                <hr>
+                <h2>Step 5: Access the Web Inspector and Clear Cache on Mac</h2>
+                <ol>
+                  <li>On your Mac's Safari menu bar, click <strong>Develop</strong>.</li>
+                  <li>Hover over the name of your connected iPhone in the drop-down list.</li>
+                  <li>Select the specific website title/tab that is currently open on your iPhone. This will launch the <strong>Web Inspector</strong> window on your Mac.</li>
+                  <li>Inside the Web Inspector panel, click on the <strong>Storage</strong> tab (or <strong>Network</strong> tab depending on your Safari version).</li>
+                  <li>Alternatively, to completely wipe local caches, cookies, and databases for that targeted session:
+                    <ul>
+                      <li>Go to the <strong>Storage</strong> section, right-click (or control-click) on the listed storage domains/resources, and choose <strong>Delete</strong> or <strong>Clear</strong>.</li>
+                      <li>To force a complete clean reload of the page ignoring local files, click into the web inspector and press <strong>Command + Option + R</strong> (Hard Refresh).</li>
+                    </ul>
+                  </li>
+                </ol>
             </div>
+        <!--main div end-->
         </div>
                 <div style="margin-top:40px;">
                     <hr style="border: 5px solid #444;">
