@@ -1,5 +1,6 @@
-const cache_name = 'rightmindmath_en_us_v01';
-const assets = [
+const CACHE_NAME = 'rightmindmath_en_us_v02';
+
+const PRECACHE_ASSETS = [
     // localized assets
     './rightmindmath_en_us.html',
     './css/RMM_styles_en_us.css',
@@ -16,51 +17,60 @@ const assets = [
     './js_src/RMM_MENU.js'
 ];
 
-
-self.addEventListener('install', (e) => {
-    console.log('[ServiceWorker] Install');
-    e.waitUntil((async () => {
-        const cache = await caches.open(cache_name);
-        console.log(`[ServiceWorker] Open/add cache: ${cache_name}`);
-        await cache.addAll(assets);
-    })());
+// Install Event: Pre-cache static assets & activate immediately
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(PRECACHE_ASSETS);
+        })
+    );
 });
 
-
-self.addEventListener('fetch', (e) => {
-    e.respondWith((async () => {
-        const r = await caches.match(e.request);
-        const url = e.request.url;
-        console.log(`[ServiceWorker] Fetching resource: ${e.request.url}`);
-        if (r) {
-            console.log('cache hit');
-            return r;
-        }
-        const response = await fetch(e.request);
-        if (url.indexOf('script.google') > -1) {
-            console.log('skipping cache for script.google');
-            return response;
-        }
-        const cache = await caches.open(cache_name);
-        console.log(`[ServiceWorker] Caching new resource: ${e.request.url}`);
-        try {
-            cache.put(e.request, response.clone());
-        } catch (err) {
-            console.log('cache.put error for fetch');
-            console.log(e.request.url);
-            console.log(err.message);
-        }
-        return response;
-    })());
+// Activate Event: Clean up stale caches and claim clients
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keys) => {
+            return Promise.all(
+                keys
+                    .filter((key) => key !== CACHE_NAME)
+                    .map((key) => caches.delete(key))
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
+// Fetch Event: Handle asset retrieval and dynamic caching
+self.addEventListener('fetch', (event) => {
+    const request = event.request;
 
-self.addEventListener('activate', (e) => {
-    e.waitUntil(caches.keys().then((keyList) => {
-        return Promise.all(keyList.map((key) => {
-            if (key === cache_name) { return; }
-            console.log(`[ServiceWorker] Deleting Cache Key: ${key}`);
-            return caches.delete(key);
-        }))
-    }));
+    // 1. Bypass caching for non-GET requests and specific external endpoints
+    if (request.method !== 'GET' || request.url.includes('script.google')) {
+        return;
+    }
+
+    // 2. Cache-First strategy with dynamic fallback
+    event.respondWith(
+        (async () => {
+            const cachedResponse = await caches.match(request);
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            try {
+                const response = await fetch(request);
+
+                // 3. Verify valid response before caching
+                if (response && response.status === 200 && (response.type === 'basic' || response.type === 'cors')) {
+                    const cache = await caches.open(CACHE_NAME);
+                    cache.put(request, response.clone());
+                }
+
+                return response;
+            } catch (error) {
+                console.error('[ServiceWorker] Fetch failed:', request.url, error);
+                throw error;
+            }
+        })()
+    );
 });
