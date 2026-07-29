@@ -517,13 +517,17 @@ async function saveTextAsFile(txt, fileName, is_csv) {
         RMM_DB.setDbNextFunction(RMM_STATS.statsWriteJson);
         RMM_DB.tableGetAll('session');
     }
-
     function statsWriteJson() {
         console.log('statsWriteJson()');
         var result = RMM_DB.getDbResult();
         var txt = '';
         var i = 0;
         var len = result.length;
+        var now = new Date();
+        var yr = now.getFullYear();  // Returns the 4-digit year (YYYY)
+        var mn = String((now.getMonth() + 1)).padStart(2, '0');
+        var dy = String(now.getDate()).padStart(2, '0');
+        var fileName = 'RMM_' + idname + '_' + yr + mn + dy + '_JSON.txt';
         for (i=0; i<len; i++) {
             if (result[i].iduser !== idstats) { continue; }
             result[i]['idname'] = idname;
@@ -532,16 +536,26 @@ async function saveTextAsFile(txt, fileName, is_csv) {
         }
         RMM_MENU.hideAll();
         mydoc.getElementById('div_info').style.display = 'none';
-        try {
-            anchor = document.createElement('a');
-            anchor.id = 'a_stats_export_csv';
-            anchor.href = window.URL.createObjectURL(new Blob([txt], {type: 'text/plain'}));
-            anchor.download = 'RMM_' + idname + '_JSON.txt';
-            anchor.click();
-        } catch(err) {
-            alert(getStr('MSG_export_not_supported'));
-        }
-        mydoc.getElementById('div_stats_container').style.display = 'block';
+        saveTextAsFile(txt, fileName, false)
+        .then((data) => {
+            console.log('stats export complete');
+            statsExportWrapup(fileName);
+        })
+        .catch((error) => {
+            console.error('Error occurred:', error);
+            statsExportWrapup('no_file_saved');
+        });
+//////
+//////        try {
+//////            anchor = document.createElement('a');
+//////            anchor.id = 'a_stats_export_csv';
+//////            anchor.href = window.URL.createObjectURL(new Blob([txt], {type: 'text/plain'}));
+//////            anchor.download = 'RMM_' + idname + '_JSON.txt';
+//////            anchor.click();
+//////        } catch(err) {
+//////            alert(getStr('MSG_export_not_supported'));
+//////        }
+//////        mydoc.getElementById('div_stats_container').style.display = 'block';
     }
     // fit more than 100 times into 100 buckets
     function averageTimes() {
