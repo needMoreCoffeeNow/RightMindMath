@@ -213,7 +213,7 @@
         b_menu_print : 'Pencil &amp; Paper',
         b_menu_stats : 'Stats',
         b_menu_sync : 'Sync',
-        b_menu_exportDB : 'Export Data',
+        b_menu_exportDB : 'Export DataBase',
         b_menu_exit : 'Exit',
         b_menu_help : 'Continue',
         b_print_create : 'New Worksheet',

@@ -1218,33 +1218,69 @@ var RMM_DB = (function() {
         if (tables_done < 4) { exportDB_txt += '\n'; }
         exportDB();
     }
-    function exportDBFileSave() {
-        console.log('exportDBFileSave');
-        var now = new Date();
-        var yr = now.getFullYear();  // Returns the 4-digit year (YYYY)
-        var mn = String((now.getMonth() + 1)).padStart(2, '0'); // Returns the month (0-11), so add 1 to get (1-12)
-        var dy = String((now.getDay() + 1)).padStart(2, '0');
-        var hh = String(now.getHours()).padStart(2, '0');
-        var mm = String(now.getMinutes()).padStart(2, '0');
-        var ss = String(now.getSeconds()).padStart(2, '0');
-        exportDB_fname = 'RMM_Export_Data_' + yr + mn + dy + hh + mm + ss + '.txt';
-        try {
-            anchor = document.createElement('a');
-            anchor.id = 'a_exportDB_text_file';
-            anchor.href = window.URL.createObjectURL(new Blob([exportDB_txt], {type: 'text/plain'}));
-            anchor.download = exportDB_fname;
-            anchor.click();
-        } catch(err) {
-            exportDB_failed = true;
-            alert(getStr('MSG_export_not_supported'));
-            exportDBWrapup();
-            return;
-        }
+function exportDBFileSave() {
+    console.log('exportDBFileSave');
+    
+    const now = new Date();
+    const yr = now.getFullYear();
+    const mn = String(now.getMonth() + 1).padStart(2, '0');
+    const dy = String(now.getDate()).padStart(2, '0'); // Fixed: getDay() -> getDate()
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    
+    const exportDB_fname = `RMM_Export_Data_${yr}${mn}${dy}${hh}${mm}${ss}.txt`;
+    
+    try {
+        const blob = new Blob([exportDB_txt], { type: 'text/plain;charset=utf-8' });
+        const fileUrl = window.URL.createObjectURL(blob);
+        
+        const anchor = document.createElement('a');
+        anchor.id = 'a_exportDB_text_file';
+        anchor.href = fileUrl;
+        anchor.download = exportDB_fname;
+        
+        // Append to body is recommended for compatibility across certain browsers
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        
+        // Clean up the object URL to release memory
+        window.URL.revokeObjectURL(fileUrl);
+    } catch (err) {
+        console.error(err);
+        exportDB_failed = true;
+        alert(getStr('MSG_export_not_supported'));
+        exportDBWrapup();
     }
-    function exportDBWrapup() {
-        console.log('exportDBWrapup');
-        RMM_MENU.settingsClick();
-    }
+}
+//////    function exportDBFileSave() {
+//////        console.log('exportDBFileSave');
+//////        var now = new Date();
+//////        var yr = now.getFullYear();  // Returns the 4-digit year (YYYY)
+//////        var mn = String((now.getMonth() + 1)).padStart(2, '0'); // Returns the month (0-11), so add 1 to get (1-12)
+//////        var dy = String((now.getDay() + 1)).padStart(2, '0');
+//////        var hh = String(now.getHours()).padStart(2, '0');
+//////        var mm = String(now.getMinutes()).padStart(2, '0');
+//////        var ss = String(now.getSeconds()).padStart(2, '0');
+//////        exportDB_fname = 'RMM_Export_Data_' + yr + mn + dy + hh + mm + ss + '.txt';
+//////        try {
+//////            anchor = document.createElement('a');
+//////            anchor.id = 'a_exportDB_text_file';
+//////            anchor.href = window.URL.createObjectURL(new Blob([exportDB_txt], {type: 'text/plain'}));
+//////            anchor.download = exportDB_fname;
+//////            anchor.click();
+//////        } catch(err) {
+//////            exportDB_failed = true;
+//////            alert(getStr('MSG_export_not_supported'));
+//////            exportDBWrapup();
+//////            return;
+//////        }
+//////    }
+//////    function exportDBWrapup() {
+//////        console.log('exportDBWrapup');
+//////        RMM_MENU.settingsClick();
+//////    }
 //*****************************************************************************
 //*****************************************************************************
 //*****************************************************************************
