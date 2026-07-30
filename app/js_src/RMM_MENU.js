@@ -46,6 +46,7 @@ var RMM_MENU = (function() {
         mydoc.getElementById('div_info').style.display = 'none';
         mydoc.getElementById('div_user_menu').style.display = 'none';
         mydoc.getElementById('div_d3_options').style.display = 'none';
+        mydoc.getElementById('div_loadDB_confirm').style.display = 'none';
     }
 
     // load the char_range var from the CFG values
@@ -314,7 +315,7 @@ var RMM_MENU = (function() {
 
     // prompt the user for a device name
     function inputDeviceName() {
-        console.log('inputDeviceName()');
+        console.warn('inputDeviceName()');
         var txt = getStr('TXT_input_device');
         mydoc.getElementById('input_1').value = '';
         input_active = true;
@@ -322,6 +323,7 @@ var RMM_MENU = (function() {
         input1_type = 'device_name';
         // hide the exit button area forcing entry
         mydoc.getElementById('div_input1_exit_area').style.display = 'none';
+        mydoc.getElementById('b_input1_exit').style.display = 'none';
         mydoc.getElementById('div_input1').style.display = 'block';
         mydoc.getElementById('div_input1_input').style.display = 'block';
         mydoc.getElementById('div_input1_text').innerHTML = txt;
@@ -336,6 +338,7 @@ var RMM_MENU = (function() {
         input_active = true;
         input1_type = 'user_name';
         mydoc.getElementById('div_input1_exit_area').style.display = 'block';
+        mydoc.getElementById('b_input1_exit').style.display = 'block';
         mydoc.getElementById('div_input1').style.display = 'block';
         mydoc.getElementById('div_input1_input').style.display = 'block';
         mydoc.getElementById('div_input1_text').innerHTML = txt;
@@ -600,17 +603,44 @@ var RMM_MENU = (function() {
         }
     }
     
-    // handle logic after adding device name
     function handleDeviceUpdate() {
         console.log('handleDeviceUpdate()');
-        console.log('no load file chosen');
         hideAll();
-        msg_div_next = 'div_menu_main';
-        // restore the exit button area
+        // reset to exit button which was hidden to force device_name input
         mydoc.getElementById('div_input1_exit_area').style.display = 'block';
-        mydoc.getElementById('div_msg_text').innerHTML = getStr('MSG_device_entry_done');
-        mydoc.getElementById('txt_msg_textarea').style.display = 'none';
-        mydoc.getElementById('div_msg').style.display = 'block';
+        mydoc.getElementById('b_input1_exit').style.display = 'block';
+        mydoc.getElementById('div_loadDB_confirm').style.display = 'block';
+//--        msg_div_next = 'div_menu_main';
+//--        // restore the exit button area
+//--        mydoc.getElementById('div_input1_exit_area').style.display = 'block';
+//--        mydoc.getElementById('div_msg_text').innerHTML = getStr('MSG_device_entry_done');
+//--        mydoc.getElementById('txt_msg_textarea').style.display = 'none';
+//--        mydoc.getElementById('div_msg').style.display = 'block';
+    }
+    // handle logic after adding device name
+    function loadDBConfirm(ev) {
+        console.warn('loadDBConfirm(ev)');
+        var load_confirm = ev.srcElement.id === 'b_loadDB_confirm_yes';
+        console.log('load_confirm', load_confirm);
+        mydoc.getElementById('div_loadDB_confirm').style.display = 'none';
+        if (!load_confirm) {
+            console.log('loadDB skipped');
+            msg_div_next = 'div_menu_main';
+            // restore the exit button area
+            mydoc.getElementById('div_input1_exit_area').style.display = 'block';
+            mydoc.getElementById('div_msg_text').innerHTML = getStr('MSG_device_entry_done');
+            mydoc.getElementById('txt_msg_textarea').style.display = 'none';
+            mydoc.getElementById('div_msg').style.display = 'block';
+            return;
+        }
+            RMM_DB.exportDBLoadFile()
+            .then(() => {
+                console.log('DB export completed successfully.');
+                settingsClick(null);
+            })
+            .catch((error) => {
+                console.error('Failed to export DB load file:', error);
+            }); 
     }
 
     // checks to see if new user name exists
@@ -1674,6 +1704,7 @@ var RMM_MENU = (function() {
         m1optionsStartChange : m1optionsStartChange,
         m2optionsType : m2optionsType,
         resize : resize,
+        loadDBConfirm : loadDBConfirm,
         // setup handlers
         levelsSet : levelsSet,
         digitsSet : digitsSet,

@@ -28,7 +28,7 @@ var RMM_DB = (function() {
     var db_complete = false;
     var db_error = false;
     var db_result = null;
-    var db_load_active = false;
+//////    var db_load_active = false;
     var db_upgraded = false;
     var db_open_error = true;
     // Track the state and the active resolve function to allow premature termination
@@ -61,16 +61,16 @@ var RMM_DB = (function() {
             alert(getStr('MSG_openDB_Failed'));
             return;
         }
-        if (db_upgraded) {
-            confirmDBFileLoad();
-            if (db_load_active) {
-                console.warn('-----------------------------------------db_upgraded', db_upgraded, 'db_load_active', db_load_active);
-                db_active = false;
-                RMM_MENU.hideAll();
-                mydoc.getElementById('div_loadDB').style.display = 'block';
-                await exportDBLoadFile(); // db_active & db_load_error will be set in this function & call the handleDBFileLoad
-            }
-        }
+//////        if (db_upgraded) {
+//////            confirmDBFileLoad();
+//////            if (db_load_active) {
+//////                console.warn('-----------------------------------------db_upgraded', db_upgraded, 'db_load_active', db_load_active);
+//////                db_active = false;
+//////                RMM_MENU.hideAll();
+//////                mydoc.getElementById('div_loadDB').style.display = 'block';
+//////                await exportDBLoadFile(); // db_active & db_load_error will be set in this function & call the handleDBFileLoad
+//////            }
+//////        }
         if (db_open_error) {
             alert(getStr('MSG_openDB_Failed'));
             return;
@@ -80,7 +80,8 @@ var RMM_DB = (function() {
             alert(getStr('MSG_openDB_Failed'));
             return;
         }
-        if (db_upgraded && !db_load_active) {
+//////        if (db_upgraded && !db_load_active) {
+        if (db_upgraded) {
             await dbupgradeWriteUser();
         }
         if (typeof RMM_STATSLIVE !== 'undefined' && RMM_STATSLIVE.loadSessionData) {
@@ -133,20 +134,21 @@ var RMM_DB = (function() {
             console.warn('END IndexedDB open request initiated');
         });
     }
-    function confirmDBFileLoad() {
-        console.warn('confirmDBFileLoad()');
-        if (confirm(getStr('MSG_exportDBLoadFile')) === true) {
-            console.log('exportDBLoadFile confirmed. Executing file import...');
-            db_load_active = true;
-            return;
-        }
-        db_load_active = false;
-    }
+//////    function confirmDBFileLoad() {
+//////        console.warn('confirmDBFileLoad()');
+//////        if (confirm(getStr('MSG_exportDBLoadFile')) === true) {
+//////            console.log('exportDBLoadFile confirmed. Executing file import...');
+//////            db_load_active = true;
+//////            return;
+//////        }
+//////        db_load_active = false;
+//////    }
     async function exportDBLoadFile() {
         console.warn('exportDBLoadFile()');
         isExportDBLoadFileRunning = true;
         RMM_MENU.hideAll();
         mydoc.getElementById('div_loadDB').style.display = 'block';
+        await clearAllTables();
         return new Promise((resolve) => {
             currentExportDBResolve = resolve;
             const fileInput = mydoc.getElementById('file_input');
@@ -298,6 +300,25 @@ var RMM_DB = (function() {
         }
         await openExistingDB();
     }
+    async function clearAllTables() {
+        console.warn('clearAllTables()');
+        const store_names = Array.from(db.objectStoreNames);
+        if (store_names.length === 0) {
+          console.log('No tables found.');
+          return;
+        }
+        const transaction = db.transaction(store_names, 'readwrite');
+        transaction.oncomplete = () => {
+          console.log('All tables cleared successfully.');
+        };
+        transaction.onerror = () => {
+          console.error('Transaction failed:', transaction.error);
+        };
+        store_names.forEach(store_name => {
+          transaction.objectStore(store_name).clear();
+        });
+    }
+
     async function openExistingDB() {
         console.warn('openExistingDB()');
         const req = window.indexedDB.open(DB_NAME, VERSION);
@@ -1325,6 +1346,7 @@ function exportDBFileSave() {
         exportDBConfirm : exportDBConfirm,
         exportDBWrite : exportDBWrite,
         loadDBExit : loadDBExit,
+        exportDBLoadFile : exportDBLoadFile,
         // developer
         developerResetSessionDevice : developerResetSessionDevice
     };

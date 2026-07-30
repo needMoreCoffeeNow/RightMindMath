@@ -90,8 +90,7 @@
         TXT_exportDB_load : 'Loading Data',
         MSG_openDB_Failed : 'There was an error calling the openDB() function.',
         MSG_loadDB_exit : 'Important Note: You MUST CLOSE this browser window. Exiting leaves your RMM database incomplete. This causes a database error. Please close the PWA. Then unistall and reinstall RMM as a PWA. If you get this message using RMM in a regular browser window, you must delete the application database named "rmm_db". Use Control+Shift+I on Windows/Linux, and Command+Option+I on Mac to open the Developer Appication window. Select the rmm_db listed under IndexedDB and click the Delete button.',
-        MSG_exportDBConfirm: 'Confirm Export of Your Data',
-        MSG_exportDBLoadFile: 'Do you want to load a data export?\n\nClick "OK" to load\n\nClick "Cancel" to continue without loading.',
+        MSG_exportDBConfirm: 'Confirm Export of Your DataBase',
         MSG_exportDBAddError: 'A JSON.parse() error occurred which means the .txt file used was incorrect. You must close and delete app. Then reinstall the PWA app, and try the data load again ensuring you chose the right file. The file nname starts with RMM_Export_Data_ and ends with the YYYYMMDDHHMMSS datetime numeric values, and has a .txt file extension.',
         MSG_level_not_set : 'You need to choose a Problem Type for this user',
         MSG_no_usage_data : 'Sorry there is no usage data.',
@@ -242,8 +241,9 @@
         b_tog_help : 'Help',
         b_m2_next : 'New Problem',
         b_d3_next : 'New Problem',
+        div_exportDB_confirm_text : 'Exporting Data',
         div_exportDB_title : 'Exporting Data',
-        div_loadDB_title : 'Loading Data',
+        div_loadDB_confirm_title : 'Do you want to load a database file you previously exported ?<br><br><span style="font-size:80%;">Please note that if you choose to load a database, the device name you just entered will be changed to the device name in the database load.</span>',
         div_tog_text : 'Click item below to switch it on<span style="font-size:80%;"> / </span>off',
         div_tog_popups : 'Popups',
         div_tog_explanations : 'Explanations',
@@ -312,7 +312,10 @@
         b_subborrow_0 : 'No',
         b_subborrow_1 : 'Yes',
         b_print_window : 'Print',
-        b_load_exit : 'Exit Data Load'
+        b_load_exit : 'Exit Data Load',
+        b_loadDB_confirm_no : 'No: Continue without Loading',
+        b_loadDB_confirm_yes : 'Yes: Load My Data Base File'
+
     };
     // charRange is a series of strings that will be expanded into a dict
     // of numbers against which valid string entries will be verifies

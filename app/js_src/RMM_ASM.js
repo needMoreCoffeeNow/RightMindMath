@@ -130,7 +130,7 @@ var RMM_ASM = (function() {
 
     // set iduser based on db.setup.idser_last
     function initSetupDBSet() {
-        console.log('initSetupDBSet()');
+        console.warn('initSetupDBSet()');
         var db_result = RMM_DB.getDbResult();
         var pd = null; // used only to shorten db_result.pdata for if stmts
         var level = '';
@@ -156,6 +156,9 @@ var RMM_ASM = (function() {
         if (db_result.device === null) {
             RMM_MENU.inputDeviceName(null);
             return;
+            //RMM_MENU.hideAll();
+            //mydoc.getElementById('div_exportDB_confirm').style.display = 'block';
+            //return;
         } else {
             RMM_DB.setDevice(db_result.device);
         }
